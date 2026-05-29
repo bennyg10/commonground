@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Construction OS — Project Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<style>
+:root {
+  --bg: #f8f7f4;
+  --surface: #ffffff;
+  --surface2: #f2f1ee;
+  --border: rgba(0,0,0,0.09);
+  --border-mid: rgba(0,0,0,0.15);
+  --text: #1a1917;
+  --text2: #6b6a66;
+  --text3: #9c9a96;
+  --blue: #185FA5;
+  --blue-bg: #e8f1fb;
+  --blue-text: #0c447c;
+  --green: #2d6e1a;
+  --green-bg: #eaf3de;
+  --green-text: #27500a;
+  --amber: #854F0B;
+  --amber-bg: #faeeda;
+  --amber-text: #633806;
+  --red: #a32d2d;
+  --red-bg: #fcebeb;
+  --red-text: #791f1f;
+  --purple-bg: #eeedfe;
+  --purple-text: #3c3489;
+  --teal-bg: #e1f5ee;
+  --teal-text: #085041;
+  --radius: 10px;
+  --radius-sm: 6px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.6; min-height: 100vh; }
+
+/* Layout */
+.app { display: flex; min-height: 100vh; }
+.sidebar { width: 220px; background: var(--surface); border-right: 0.5px solid var(--border); padding: 0; flex-shrink: 0; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
+.main { flex: 1; padding: 28px 32px; max-width: 860px; }
+
+/* Sidebar */
+.sidebar-logo { padding: 20px 18px 16px; border-bottom: 0.5px solid var(--border); }
+.logo-mark { font-size: 13px; font-weight: 600; color: var(--text); letter-spacing: -0.02em; }
+.logo-sub { font-size: 11px; color: var(--text3); margin-top: 1px; }
+.sidebar-project { padding: 14px 18px; border-bottom: 0.5px solid var(--border); }
+.project-label { font-size: 10px; text-transform: uppercase; letter-spacing: .06em; color: var(--text3); margin-bottom: 5px; }
+.project-name { font-size: 13px; font-weight: 500; color: var(--text); }
+.project-status { font-size: 11px; color: var(--text2); margin-top: 2px; }
+.sidebar-nav { padding: 10px 10px; }
+.nav-section { font-size: 10px; text-transform: uppercase; letter-spacing: .06em; color: var(--text3); padding: 12px 8px 5px; }
+.nav-item { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: var(--radius-sm); cursor: pointer; font-size: 13px; color: var(--text2); transition: all .15s; border: none; background: none; width: 100%; text-align: left; }
+.nav-item:hover { background: var(--surface2); color: var(--text); }
+.nav-item.active { background: var(--blue-bg); color: var(--blue-text); font-weight: 500; }
+.nav-item i { font-size: 15px; }
+.nav-badge { margin-left: auto; font-size: 10px; background: var(--amber-bg); color: var(--amber-text); padding: 1px 6px; border-radius: 20px; }
+.nav-badge.red { background: var(--red-bg); color: var(--red-text); }
+
+/* Top bar */
+.topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+.page-title { font-size: 20px; font-weight: 600; color: var(--text); letter-spacing: -0.02em; }
+.topbar-actions { display: flex; gap: 8px; }
+
+/* Buttons */
+.btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 500; cursor: pointer; border: 0.5px solid var(--border-mid); background: var(--surface); color: var(--text); transition: all .15s; font-family: inherit; }
+.btn:hover { background: var(--surface2); }
+.btn-primary { background: var(--blue); color: #fff; border-color: var(--blue); }
+.btn-primary:hover { background: #0c447c; }
+.btn-sm { padding: 5px 10px; font-size: 12px; }
+.btn:disabled { opacity: .4; cursor: not-allowed; }
+
+/* Stat cards */
+.stat-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 24px; }
+.stat { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 14px 16px; }
+.stat-label { font-size: 11px; color: var(--text3); margin-bottom: 5px; }
+.stat-num { font-size: 26px; font-weight: 600; color: var(--text); letter-spacing: -0.03em; }
+.stat-num.amber { color: var(--amber); }
+.stat-num.red { color: var(--red); }
+.stat-num.green { color: var(--green); }
+
+/* Alert flags */
+.flags { display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; }
+.flag { display: flex; align-items: flex-start; gap: 12px; background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 13px 15px; }
+.flag-left { width: 3px; border-radius: 2px; align-self: stretch; flex-shrink: 0; }
+.flag-icon { font-size: 17px; flex-shrink: 0; margin-top: 1px; }
+.flag-content { flex: 1; }
+.flag-title { font-size: 13px; font-weight: 500; color: var(--text); }
+.flag-sub { font-size: 12px; color: var(--text2); margin-top: 2px; }
+
+/* Pills */
+.pill { display: inline-flex; align-items: center; font-size: 11px; padding: 2px 9px; border-radius: 20px; font-weight: 500; white-space: nowrap; }
+.pill-green { background: var(--green-bg); color: var(--green-text); }
+.pill-amber { background: var(--amber-bg); color: var(--amber-text); }
+.pill-red { background: var(--red-bg); color: var(--red-text); }
+.pill-blue { background: var(--blue-bg); color: var(--blue-text); }
+.pill-purple { background: var(--purple-bg); color: var(--purple-text); }
+.pill-gray { background: var(--surface2); color: var(--text2); }
+.pill-teal { background: var(--teal-bg); color: var(--teal-text); }
+
+/* Section headers */
+.section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.section-title { font-size: 13px; font-weight: 600; color: var(--text); }
+
+/* Room grid */
+.room-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 24px; }
+.room-card { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 15px; cursor: pointer; transition: all .15s; }
+.room-card:hover { border-color: var(--border-mid); box-shadow: var(--shadow); }
+.room-card.active { border: 2px solid var(--blue); }
+.room-icon { font-size: 22px; color: var(--text3); margin-bottom: 9px; }
+.room-name { font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 7px; }
+.room-pills { display: flex; gap: 4px; flex-wrap: wrap; }
+
+/* Detail panel */
+.detail-panel { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 24px; }
+.detail-header { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-bottom: 0.5px solid var(--border); }
+.cat-strip { display: flex; gap: 6px; padding: 12px 16px; border-bottom: 0.5px solid var(--border); flex-wrap: wrap; }
+.cat-btn { font-size: 12px; padding: 4px 12px; border-radius: 20px; border: 0.5px solid var(--border-mid); cursor: pointer; background: var(--surface); color: var(--text2); font-family: inherit; transition: all .15s; }
+.cat-btn.active { background: var(--blue); color: #fff; border-color: var(--blue); }
+.cat-btn:hover:not(.active) { background: var(--surface2); color: var(--text); }
+
+/* Item list */
+.item-list { display: flex; flex-direction: column; }
+.item { border-bottom: 0.5px solid var(--border); }
+.item:last-child { border-bottom: none; }
+.item-header { display: flex; align-items: center; gap: 10px; padding: 12px 16px; cursor: pointer; transition: background .12s; }
+.item-header:hover { background: var(--surface2); }
+.item-name { flex: 1; font-size: 13px; font-weight: 500; color: var(--text); }
+.item-body { display: none; padding: 14px 16px; background: var(--surface2); border-top: 0.5px solid var(--border); }
+.item-body.open { display: block; }
+.field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+.field-label { font-size: 10px; text-transform: uppercase; letter-spacing: .05em; color: var(--text3); margin-bottom: 3px; }
+.field-val { font-size: 13px; color: var(--text); }
+.field-val a { color: var(--blue); text-decoration: none; }
+.field-val a:hover { text-decoration: underline; }
+.alert-box { border-radius: var(--radius-sm); padding: 10px 12px; margin-bottom: 10px; font-size: 12px; display: flex; gap: 8px; align-items: flex-start; }
+.alert-warn { background: var(--amber-bg); color: var(--amber-text); border: 0.5px solid #EF9F27; }
+.alert-red { background: var(--red-bg); color: var(--red-text); border: 0.5px solid #E24B4A; }
+.alert-blue { background: var(--blue-bg); color: var(--blue-text); border: 0.5px solid #378ADD; }
+.install-note { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-sm); padding: 8px 11px; font-size: 12px; color: var(--text2); margin-bottom: 10px; }
+.action-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+
+/* Decision log */
+.log-list { display: flex; flex-direction: column; }
+.log-row { display: flex; gap: 12px; padding: 12px 0; border-bottom: 0.5px solid var(--border); }
+.log-row:last-child { border-bottom: none; }
+.log-dot { width: 8px; height: 8px; border-radius: 50%; margin-top: 5px; flex-shrink: 0; }
+.log-text { font-size: 13px; color: var(--text); }
+.log-meta { font-size: 11px; color: var(--text3); margin-top: 2px; }
+
+/* Notes */
+.notes-thread { display: flex; flex-direction: column; }
+.note { padding: 14px 0; border-bottom: 0.5px solid var(--border); }
+.note:last-child { border-bottom: none; }
+.note-header { display: flex; align-items: center; gap: 9px; margin-bottom: 7px; }
+.avatar { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; flex-shrink: 0; }
+.note-body { font-size: 13px; color: var(--text); line-height: 1.65; padding-left: 37px; }
+.note-edit { font-size: 11px; color: var(--text3); padding-left: 37px; margin-top: 4px; font-style: italic; }
+
+/* Read receipts */
+.receipt { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border: 0.5px solid var(--border); border-radius: var(--radius-sm); margin-bottom: 7px; background: var(--surface); }
+.receipt-info { flex: 1; }
+.receipt-name { font-size: 13px; font-weight: 500; color: var(--text); }
+.receipt-time { font-size: 11px; color: var(--text3); margin-top: 1px; }
+.dot { width: 7px; height: 7px; border-radius: 50%; }
+
+/* Add note */
+.add-note { margin-top: 14px; padding-top: 14px; border-top: 0.5px solid var(--border); }
+.add-note textarea { width: 100%; padding: 10px 12px; font-size: 13px; border: 0.5px solid var(--border-mid); border-radius: var(--radius-sm); background: var(--surface); color: var(--text); font-family: inherit; resize: none; line-height: 1.5; outline: none; }
+.add-note textarea:focus { border-color: var(--blue); }
+.add-note-row { display: flex; gap: 8px; align-items: center; margin-top: 8px; }
+.role-sel { font-size: 13px; padding: 7px 10px; border: 0.5px solid var(--border-mid); border-radius: var(--radius-sm); background: var(--surface); color: var(--text); font-family: inherit; }
+
+/* Open wall */
+.opp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+.opp-item { display: flex; align-items: center; gap: 8px; font-size: 13px; cursor: pointer; padding: 6px 0; }
+.opp-item input { cursor: pointer; }
+
+/* Tab bar */
+.tabbar { display: flex; gap: 2px; border-bottom: 0.5px solid var(--border); margin-bottom: 24px; }
+.tab { padding: 9px 16px; font-size: 13px; font-weight: 500; cursor: pointer; color: var(--text2); border: none; background: none; border-bottom: 2px solid transparent; margin-bottom: -0.5px; font-family: inherit; transition: all .15s; }
+.tab.active { color: var(--text); border-bottom-color: var(--text); }
+.tab:hover:not(.active) { color: var(--text); }
+
+/* Divider */
+.divider { height: 0.5px; background: var(--border); margin: 14px 0; }
+
+/* Mobile menu */
+.mob-menu-btn { display: none; background: none; border: none; cursor: pointer; padding: 8px; color: var(--text); font-size: 22px; }
+.sidebar-overlay { display: none; }
+
+@media (max-width: 720px) {
+  .sidebar { position: fixed; left: -220px; top: 0; height: 100vh; z-index: 100; transition: left .25s; }
+  .sidebar.open { left: 0; }
+  .sidebar-overlay { display: block; position: fixed; inset: 0; background: rgba(0,0,0,.3); z-index: 99; opacity: 0; pointer-events: none; transition: opacity .25s; }
+  .sidebar-overlay.open { opacity: 1; pointer-events: all; }
+  .mob-menu-btn { display: flex; }
+  .main { padding: 16px; }
+  .stat-row { grid-template-columns: repeat(2, 1fr); }
+  .room-grid { grid-template-columns: repeat(2, 1fr); }
+  .field-grid { grid-template-columns: 1fr; }
+}
+
+.toast { display: none; font-size: 12px; color: var(--green-text); margin-top: 6px; }
+.toast.show { display: flex; align-items: center; gap: 5px; }
+.chevron { font-size: 14px; color: var(--text3); transition: transform .2s; }
+.chevron.open { transform: rotate(180deg); }
+</style>
+</head>
+<body>
+
+<div class="sidebar-overlay" id="overlay" onclick="closeSidebar()"></div>
+
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-mark">Construction OS</div>
+      <div class="logo-sub">Project management platform</div>
+    </div>
+    <div class="sidebar-project">
+      <div class="project-label">Active project</div>
+      <div class="project-name">Primary Residence Remodel</div>
+      <div class="project-status">In progress · Est. completion Q3 2025</div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section">Overview</div>
+      <button class="nav-item active" onclick="showTab('dashboard');setNav(this)"><i class="ti ti-layout-dashboard"></i> Dashboard <span class="nav-badge red">3</span></button>
+      <button class="nav-item" onclick="showTab('rooms');setNav(this)"><i class="ti ti-home"></i> Rooms</button>
+      <button class="nav-item" onclick="showTab('log');setNav(this)"><i class="ti ti-clipboard-list"></i> Decision log</button>
+      <button class="nav-item" onclick="showTab('docs');setNav(this)"><i class="ti ti-file-check"></i> Documents</button>
+      <div class="nav-section">People</div>
+      <button class="nav-item" onclick="showTab('team');setNav(this)"><i class="ti ti-users"></i> Team &amp; trades</button>
+      <div class="nav-section">Project</div>
+      <button class="nav-item" onclick="showTab('products');setNav(this)"><i class="ti ti-package"></i> Products <span class="nav-badge">11</span></button>
+      <div class="nav-section">Outdoors</div>
+      <button class="nav-item" onclick="showTab('landscape');setNav(this)"><i class="ti ti-trees"></i> Landscape zones <span class="nav-badge">5</span></button>
+      <button class="nav-item" onclick="showTab('outdoor-log');setNav(this)"><i class="ti ti-clipboard-list"></i> Outdoor decisions</button>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div style="display:flex;align-items:center;gap:10px">
+        <button class="mob-menu-btn" onclick="openSidebar()" aria-label="Open menu"><i class="ti ti-menu-2"></i></button>
+        <h1 class="page-title" id="page-title">Dashboard</h1>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn btn-sm" onclick="alert('In the full version this exports a PDF summary for your GC.')"><i class="ti ti-download" style="font-size:13px"></i> Export</button>
+        <button class="btn btn-sm btn-primary" onclick="alert('In the full version this sends SMS/email notifications to your selected trades.')"><i class="ti ti-bell" style="font-size:13px"></i> Notify trades</button>
+      </div>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div id="tab-dashboard">
+      <div class="stat-row">
+        <div class="stat"><div class="stat-label">Total items</div><div class="stat-num">84</div></div>
+        <div class="stat"><div class="stat-label">Open decisions</div><div class="stat-num amber">18</div></div>
+        <div class="stat"><div class="stat-label">Blocked tasks</div><div class="stat-num red">3</div></div>
+        <div class="stat"><div class="stat-label">Installed</div><div class="stat-num green">29</div></div>
+      </div>
+
+      <div class="section-header"><span class="section-title"><i class="ti ti-alert-triangle" style="color:var(--amber);margin-right:5px"></i>Needs attention this week</span></div>
+      <div class="flags" style="margin-bottom:24px">
+        <div class="flag">
+          <div class="flag-left" style="background:var(--red)"></div>
+          <i class="ti ti-droplet flag-icon" style="color:var(--red)"></i>
+          <div class="flag-content">
+            <div class="flag-title">Primary bath — wall-mount faucet rough</div>
+            <div class="flag-sub">Plumber needs final approval before tile goes in. Hard deadline: Thursday.</div>
+          </div>
+          <span class="pill pill-red">Blocked</span>
+        </div>
+        <div class="flag">
+          <div class="flag-left" style="background:var(--amber)"></div>
+          <i class="ti ti-bolt flag-icon" style="color:var(--amber)"></i>
+          <div class="flag-content">
+            <div class="flag-title">Smart privacy film — wall access required</div>
+            <div class="flag-sub">Electrician + film vendor must coordinate before drywall closes.</div>
+          </div>
+          <span class="pill pill-amber">Urgent</span>
+        </div>
+        <div class="flag">
+          <div class="flag-left" style="background:var(--blue)"></div>
+          <i class="ti ti-temperature flag-icon" style="color:var(--blue)"></i>
+          <div class="flag-content">
+            <div class="flag-title">Heated floor mat — tile crew needs install guide</div>
+            <div class="flag-sub">NuHeat mat arriving Friday. Tile crew should review install PDF 1–2 days prior.</div>
+          </div>
+          <span class="pill pill-blue">Heads up</span>
+        </div>
+      </div>
+
+      <div class="section-header"><span class="section-title"><i class="ti ti-list-check" style="margin-right:5px"></i>Open wall opportunities — primary bath</span><span style="font-size:12px;color:var(--text3)">Walls currently open</span></div>
+      <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:24px">
+        <div style="font-size:12px;color:var(--text2);margin-bottom:12px">Check off before walls close — costs 5–15× more to retrofit later:</div>
+        <div class="opp-grid" id="opp-grid">
+          <label class="opp-item"><input type="checkbox" id="opp1" onchange="checkOpps()"> Blocking for TV mount</label>
+          <label class="opp-item"><input type="checkbox" id="opp2" onchange="checkOpps()"> Bidet outlet rough</label>
+          <label class="opp-item"><input type="checkbox" id="opp3" onchange="checkOpps()"> Towel warmer wiring</label>
+          <label class="opp-item"><input type="checkbox" id="opp4" onchange="checkOpps()"> Water leak sensor rough</label>
+          <label class="opp-item"><input type="checkbox" id="opp5" onchange="checkOpps()"> Extra ethernet drops</label>
+          <label class="opp-item"><input type="checkbox" id="opp6" onchange="checkOpps()"> Future steam rough</label>
+        </div>
+        <div id="opp-action" style="display:none;margin-top:12px">
+          <button class="btn btn-primary btn-sm" onclick="alert('In the full version this generates a trade coordination brief for Lance covering all checked items.')"><i class="ti ti-file-text" style="font-size:13px"></i> Generate GC coordination brief</button>
+        </div>
+      </div>
+
+      <div class="section-header"><span class="section-title"><i class="ti ti-shovel" style="margin-right:5px;color:var(--teal-text)"></i>Open ground opportunities — backyard</span><span style="font-size:12px;color:var(--text3)">Before hardscape poured</span></div>
+      <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:24px">
+        <div style="font-size:12px;color:var(--text2);margin-bottom:12px">Conduit and rough work must go in before any concrete or paving — impossible to add later without jackhammering:</div>
+        <div class="opp-grid" id="ground-opp-grid">
+          <label class="opp-item"><input type="checkbox" id="gopp1" onchange="checkGroundOpps()"> Irrigation mainline + zones</label>
+          <label class="opp-item"><input type="checkbox" id="gopp2" onchange="checkGroundOpps()"> Landscape lighting conduit</label>
+          <label class="opp-item"><input type="checkbox" id="gopp3" onchange="checkGroundOpps()"> EV charger conduit</label>
+          <label class="opp-item"><input type="checkbox" id="gopp4" onchange="checkGroundOpps()"> Gate motor rough</label>
+          <label class="opp-item"><input type="checkbox" id="gopp5" onchange="checkGroundOpps()"> Outdoor speaker wire</label>
+          <label class="opp-item"><input type="checkbox" id="gopp6" onchange="checkGroundOpps()"> Security camera conduit</label>
+          <label class="opp-item"><input type="checkbox" id="gopp7" onchange="checkGroundOpps()"> Holiday lighting outlets</label>
+          <label class="opp-item"><input type="checkbox" id="gopp8" onchange="checkGroundOpps()"> Future pool / spa rough</label>
+        </div>
+        <div id="ground-opp-action" style="display:none;margin-top:12px">
+          <button class="btn btn-primary btn-sm" onclick="alert('In the full version this generates a landscape coordination brief covering all checked conduit items.')"><i class="ti ti-file-text" style="font-size:13px"></i> Generate landscape coordination brief</button>
+        </div>
+      </div>
+
+      <div class="section-header"><span class="section-title"><i class="ti ti-alert-triangle" style="color:var(--teal-text);margin-right:5px"></i>Landscape flags this week</span></div>
+      <div class="flags">
+        <div class="flag">
+          <div class="flag-left" style="background:#1D9E75"></div>
+          <i class="ti ti-trees flag-icon" style="color:#085041"></i>
+          <div class="flag-content">
+            <div class="flag-title">Specimen trees — order now, 6–8 week lead time</div>
+            <div class="flag-sub">36" box olive trees and 24" box citrus not yet ordered. Nursery availability changes — confirm selections with landscape architect this week.</div>
+          </div>
+          <span class="pill pill-teal">Long lead</span>
+        </div>
+        <div class="flag">
+          <div class="flag-left" style="background:var(--amber)"></div>
+          <i class="ti ti-road flag-icon" style="color:var(--amber)"></i>
+          <div class="flag-content">
+            <div class="flag-title">Driveway paving — conduit sign-off needed before pour</div>
+            <div class="flag-sub">EV conduit and gate motor rough must be inspected and approved before concrete contractor schedules the pour.</div>
+          </div>
+          <span class="pill pill-amber">Urgent</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ROOMS -->
+    <div id="tab-rooms" style="display:none">
+      <div id="room-list">
+        <div class="room-grid">
+          <div class="room-card" onclick="openRoom('bath')"><div class="room-icon"><i class="ti ti-bath"></i></div><div class="room-name">Primary bath</div><div class="room-pills"><span class="pill pill-red">3 blocked</span><span class="pill pill-amber">5 pending</span></div></div>
+          <div class="room-card" onclick="openRoom('kitchen')"><div class="room-icon"><i class="ti ti-chef-hat"></i></div><div class="room-name">Kitchen</div><div class="room-pills"><span class="pill pill-amber">4 pending</span><span class="pill pill-green">8 approved</span></div></div>
+          <div class="room-card" onclick="openRoom('master')"><div class="room-icon"><i class="ti ti-bed"></i></div><div class="room-name">Primary bedroom</div><div class="room-pills"><span class="pill pill-green">All approved</span></div></div>
+          <div class="room-card" onclick="openRoom('living')"><div class="room-icon"><i class="ti ti-sofa"></i></div><div class="room-name">Living room</div><div class="room-pills"><span class="pill pill-amber">2 pending</span><span class="pill pill-blue">1 ordered</span></div></div>
+          <div class="room-card" onclick="openRoom('adu')"><div class="room-icon"><i class="ti ti-building"></i></div><div class="room-name">ADU bath</div><div class="room-pills"><span class="pill pill-amber">3 pending</span></div></div>
+          <div class="room-card" onclick="openRoom('exterior')"><div class="room-icon"><i class="ti ti-trees"></i></div><div class="room-name">Exterior</div><div class="room-pills"><span class="pill pill-green">In progress</span></div></div>
+        </div>
+      </div>
+      <div id="room-detail" style="display:none">
+        <div class="detail-panel">
+          <div class="detail-header">
+            <button class="btn btn-sm" onclick="closeRoom()"><i class="ti ti-arrow-left" style="font-size:13px"></i> Rooms</button>
+            <span id="room-title" style="font-size:15px;font-weight:600;color:var(--text)"></span>
+          </div>
+          <div class="cat-strip" id="cat-strip"></div>
+          <div class="item-list" id="item-list"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DECISION LOG -->
+    <div id="tab-log" style="display:none">
+      <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:16px 18px;margin-bottom:16px">
+        <div class="log-list">
+          <div class="log-row"><div class="log-dot" style="background:var(--green)"></div><div><div class="log-text">Vanity faucet confirmed — wall mount, Brizo Litze, chrome</div><div class="log-meta">Primary bath · Plumbing · Approved by client · May 20, 2025</div></div></div>
+          <div class="log-row"><div class="log-dot" style="background:var(--amber)"></div><div><div class="log-text">Tile layout changed to herringbone — adds approx. 2 labor days</div><div class="log-meta">Primary bath · Tile · Approved by client · May 24, 2025 · Cost impact flagged</div></div></div>
+          <div class="log-row"><div class="log-dot" style="background:var(--blue)"></div><div><div class="log-text">NuHeat heated floor mat ordered — Amazon, arriving Friday</div><div class="log-meta">Primary bath · Flooring · Ordered · May 25, 2025</div></div></div>
+          <div class="log-row"><div class="log-dot" style="background:var(--red)"></div><div><div class="log-text">Smart privacy film — coordination window before drywall identified. No decision yet.</div><div class="log-meta">Primary bath · Windows · Decision needed · May 26, 2025</div></div></div>
+          <div class="log-row"><div class="log-dot" style="background:var(--green)"></div><div><div class="log-text">Schluter trim profile — Rondec, brushed nickel, confirmed</div><div class="log-meta">Primary bath · Tile · Approved · May 22, 2025</div></div></div>
+          <div class="log-row"><div class="log-dot" style="background:var(--amber)"></div><div><div class="log-text">Pendant over island — rough location needs sign-off before drywall</div><div class="log-meta">Kitchen · Electrical · Pending GC · May 27, 2025</div></div></div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-primary btn-sm" onclick="alert('In the full version you can add a new decision entry here, timestamped and attributed to your role.')"><i class="ti ti-plus" style="font-size:13px"></i> Add decision</button>
+        <button class="btn btn-sm" onclick="alert('In the full version this generates a weekly summary email you can send directly to Lance.')"><i class="ti ti-mail" style="font-size:13px"></i> Email summary to GC</button>
+      </div>
+    </div>
+
+    <!-- DOCUMENTS -->
+    <div id="tab-docs" style="display:none">
+      <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:16px">
+        <div style="padding:14px 16px;border-bottom:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+          <span style="font-size:13px;font-weight:600">Primary bath — NuHeat heated floor mat</span>
+          <span class="pill pill-amber">3 / 5 have read</span>
+        </div>
+        <div style="padding:16px">
+          <div style="font-size:12px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px">Install documents</div>
+          <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:0.5px solid var(--border);border-radius:var(--radius-sm);margin-bottom:8px;background:var(--surface2)">
+            <i class="ti ti-file-type-pdf" style="font-size:20px;color:var(--red)"></i>
+            <div style="flex:1"><div style="font-size:13px;font-weight:500">NuHeat install guide — NH-240W-50.pdf</div><div style="font-size:11px;color:var(--text3);margin-top:1px">Added by GC · May 25, 2025 · 2.1MB</div></div>
+            <span class="pill pill-amber">3/5 read</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:0.5px solid var(--border);border-radius:var(--radius-sm);background:var(--surface2)">
+            <i class="ti ti-file-type-pdf" style="font-size:20px;color:var(--red)"></i>
+            <div style="flex:1"><div style="font-size:13px;font-weight:500">Ardex self-leveling floor prep spec.pdf</div><div style="font-size:11px;color:var(--text3);margin-top:1px">Added by GC · May 24, 2025 · 890KB</div></div>
+            <span class="pill pill-green">5/5 read</span>
+          </div>
+
+          <div class="divider"></div>
+          <div style="font-size:12px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px">Read receipts</div>
+
+          <div class="receipt"><div class="avatar" style="background:var(--blue-bg);color:var(--blue-text)">LC</div><div class="receipt-info"><div class="receipt-name">Lance C. <span style="font-size:11px;color:var(--text3);font-weight:400">· GC</span></div><div class="receipt-time">Opened May 25 · 9:14 AM · iPhone · Downloaded</div></div><div class="dot" style="background:var(--green)"></div><span class="pill pill-green" style="margin-left:4px">Read</span></div>
+          <div class="receipt"><div class="avatar" style="background:var(--purple-bg);color:var(--purple-text)">MT</div><div class="receipt-info"><div class="receipt-name">Marco T. <span style="font-size:11px;color:var(--text3);font-weight:400">· Tile contractor</span></div><div class="receipt-time">Opened May 26 · 7:42 AM · Android · Viewed</div></div><div class="dot" style="background:var(--green)"></div><span class="pill pill-green" style="margin-left:4px">Read</span></div>
+          <div class="receipt"><div class="avatar" style="background:var(--purple-bg);color:var(--purple-text)">JR</div><div class="receipt-info"><div class="receipt-name">Jorge R. <span style="font-size:11px;color:var(--text3);font-weight:400">· Tile laborer</span></div><div class="receipt-time">Opened May 26 · 8:03 AM · iPhone · Downloaded</div></div><div class="dot" style="background:var(--green)"></div><span class="pill pill-green" style="margin-left:4px">Read</span></div>
+          <div class="receipt" style="border-color:var(--red)"><div class="avatar" style="background:var(--red-bg);color:var(--red-text)">DK</div><div class="receipt-info"><div class="receipt-name">Dave K. <span style="font-size:11px;color:var(--text3);font-weight:400">· Electrician</span></div><div class="receipt-time">Notified May 25 · Not opened · Required for same-day work</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px"><span class="pill pill-red">Overdue</span><button class="btn btn-sm" id="resend-btn" onclick="resend()">Resend</button></div></div>
+          <div class="receipt"><div class="avatar" style="background:var(--amber-bg);color:var(--amber-text)">BW</div><div class="receipt-info"><div class="receipt-name">Ben W. <span style="font-size:11px;color:var(--text3);font-weight:400">· Client</span></div><div class="receipt-time">Not yet notified — optional</div></div><div class="dot" style="background:#D3D1C7"></div><span class="pill pill-gray" style="margin-left:4px">Not sent</span></div>
+          <div class="toast" id="resend-toast"><i class="ti ti-check" style="font-size:13px;color:var(--green)"></i> Reminder sent to Dave K. — logged May 28, 9:41 AM</div>
+
+          <div class="divider"></div>
+          <div style="font-size:12px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px">Notes</div>
+          <div class="notes-thread" id="docs-notes">
+            <div class="note"><div class="note-header"><div class="avatar" style="background:var(--blue-bg);color:var(--blue-text)">LC</div><div><span style="font-size:13px;font-weight:500">Lance C.</span><span style="font-size:11px;color:var(--text3);margin-left:7px">GC · May 25 · 9:18 AM</span></div></div><div class="note-body">Mat needs to be resistance tested before AND after tile. Electrician (Dave) must be on-site same day — do not close tile until Dave signs off.</div></div>
+            <div class="note"><div class="note-header"><div class="avatar" style="background:var(--purple-bg);color:var(--purple-text)">MT</div><div><span style="font-size:13px;font-weight:500">Marco T.</span><span style="font-size:11px;color:var(--text3);margin-left:7px">Tile · May 26 · 7:50 AM</span></div></div><div class="note-body">Confirmed — we'll test on arrival. Need 24 hrs after self-leveling before mat goes down. Floor prep crew Wed so mat install likely Thursday earliest.</div></div>
+            <div class="note"><div class="note-header"><div class="avatar" style="background:var(--amber-bg);color:var(--amber-text)">BW</div><div><span style="font-size:13px;font-weight:500">Ben W.</span><span style="font-size:11px;color:var(--text3);margin-left:7px">Client · May 26 · 11:22 AM</span></div></div><div class="note-body">Thursday works. Can we extend mat coverage under the vanity area? Want to confirm before install.</div></div>
+            <div class="note"><div class="note-header"><div class="avatar" style="background:var(--blue-bg);color:var(--blue-text)">LC</div><div><span style="font-size:13px;font-weight:500">Lance C.</span><span style="font-size:11px;color:var(--text3);margin-left:7px">GC · May 26 · 2:05 PM</span><span style="font-size:11px;color:var(--text3);margin-left:5px;font-style:italic">edited 2:34 PM</span></div></div><div class="note-body">Ben — under vanity adds ~$180 to mat cost. Will need client approval before ordering.</div><div class="note-edit"><i class="ti ti-pencil" style="font-size:11px;margin-right:3px"></i>Edit logged: original said "$220" — corrected to $180 after supplier check</div></div>
+          </div>
+          <div class="add-note">
+            <textarea id="note-txt" rows="2" placeholder="Add a note — permanently logged with your name and timestamp…" oninput="document.getElementById('post-btn').disabled=this.value.trim().length===0"></textarea>
+            <div class="add-note-row">
+              <select class="role-sel" id="note-role">
+                <option value="client">Ben W. (Client)</option>
+                <option value="gc">Lance C. (GC)</option>
+                <option value="tile">Marco T. (Tile)</option>
+                <option value="elec">Dave K. (Electrician)</option>
+              </select>
+              <button class="btn btn-primary btn-sm" id="post-btn" onclick="postNote()" disabled>Post note</button>
+              <span style="font-size:11px;color:var(--text3);margin-left:auto">Visible to all · permanent</span>
+            </div>
+            <div class="toast" id="note-toast"><i class="ti ti-check" style="font-size:13px;color:var(--green)"></i> Note posted and logged.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TEAM -->
+    <div id="tab-team" style="display:none">
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:14px 16px">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+            <div class="avatar" style="width:40px;height:40px;font-size:13px;background:var(--blue-bg);color:var(--blue-text)">LC</div>
+            <div><div style="font-size:14px;font-weight:500">Lance C.</div><div style="font-size:12px;color:var(--text2)">General Contractor</div></div>
+            <span class="pill pill-green" style="margin-left:auto">Active</span>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:12px;color:var(--text2)">
+            <div><i class="ti ti-phone" style="margin-right:4px;font-size:13px"></i>(310) 555-0142</div>
+            <div><i class="ti ti-mail" style="margin-right:4px;font-size:13px"></i>lance@buildco.com</div>
+          </div>
+        </div>
+        <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:14px 16px">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+            <div class="avatar" style="width:40px;height:40px;font-size:13px;background:var(--purple-bg);color:var(--purple-text)">MT</div>
+            <div><div style="font-size:14px;font-weight:500">Marco T.</div><div style="font-size:12px;color:var(--text2)">Tile Contractor</div></div>
+            <span class="pill pill-blue" style="margin-left:auto">On-site this week</span>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:12px;color:var(--text2)">
+            <div><i class="ti ti-phone" style="margin-right:4px;font-size:13px"></i>(323) 555-0188</div>
+            <div><i class="ti ti-file-check" style="margin-right:4px;font-size:13px"></i>Read: 2/3 docs</div>
+          </div>
+        </div>
+        <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:14px 16px">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+            <div class="avatar" style="width:40px;height:40px;font-size:13px;background:var(--red-bg);color:var(--red-text)">DK</div>
+            <div><div style="font-size:14px;font-weight:500">Dave K.</div><div style="font-size:12px;color:var(--text2)">Electrician</div></div>
+            <span class="pill pill-red" style="margin-left:auto">Doc overdue</span>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:12px;color:var(--text2)">
+            <div><i class="ti ti-phone" style="margin-right:4px;font-size:13px"></i>(818) 555-0211</div>
+            <div><i class="ti ti-alert-triangle" style="margin-right:4px;font-size:13px;color:var(--red)"></i>NuHeat guide unread</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PRODUCTS -->
+    <div id="tab-products" style="display:none">
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:14px 16px;display:flex;align-items:center;gap:12px">
+          <i class="ti ti-temperature" style="font-size:22px;color:var(--blue)"></i>
+          <div style="flex:1"><div style="font-size:13px;font-weight:500">NuHeat heated floor mat — NH-240W-50</div><div style="font-size:11px;color:var(--text3)">Primary bath · Floor heating · Amazon</div></div>
+          <span class="pill pill-blue">Ordered</span>
+        </div>
+        <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:14px 16px;display:flex;align-items:center;gap:12px">
+          <i class="ti ti-droplet" style="font-size:22px;color:var(--blue)"></i>
+          <div style="flex:1"><div style="font-size:13px;font-weight:500">Brizo Litze wall-mount faucet — T65798LF-PC</div><div style="font-size:11px;color:var(--text3)">Primary bath · Plumbing · Build.com</div></div>
+          <span class="pill pill-amber">Pending rough</span>
+        </div>
+        <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:14px 16px;display:flex;align-items:center;gap:12px">
+          <i class="ti ti-square-rotated" style="font-size:22px;color:var(--text3)"></i>
+          <div style="flex:1"><div style="font-size:13px;font-weight:500">Porcelanosa floor tile — NOA-CALACATTA 24"×48"</div><div style="font-size:11px;color:var(--text3)">Primary bath · Tile · Herringbone layout</div></div>
+          <span class="pill pill-green">Approved</span>
+        </div>
+        <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:14px 16px;display:flex;align-items:center;gap:12px">
+          <i class="ti ti-settings" style="font-size:22px;color:var(--text3)"></i>
+          <div style="flex:1"><div style="font-size:13px;font-weight:500">Kohler Rite-Temp shower valve — K-304-KS-CP</div><div style="font-size:11px;color:var(--text3)">Primary bath · Plumbing · Ferguson</div></div>
+          <span class="pill pill-green">Approved</span>
+        </div>
+        <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:14px 16px;display:flex;align-items:center;gap:12px">
+          <i class="ti ti-rectangle" style="font-size:22px;color:var(--text3)"></i>
+          <div style="flex:1"><div style="font-size:13px;font-weight:500">Schluter Rondec trim — brushed nickel 1/2"</div><div style="font-size:11px;color:var(--text3)">Primary bath · Tile · Schluter direct</div></div>
+          <span class="pill pill-green">Approved</span>
+        </div>
+        <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:14px 16px;display:flex;align-items:center;gap:12px">
+          <i class="ti ti-tool" style="font-size:22px;color:var(--amber)"></i>
+          <div style="flex:1"><div style="font-size:13px;font-weight:500">Wolf 36" range — GR366</div><div style="font-size:11px;color:var(--text3)">Kitchen · Appliances · Sub-Zero Wolf dealer</div></div>
+          <span class="pill pill-green">Installed</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- LANDSCAPE ZONES -->
+    <div id="tab-landscape" style="display:none">
+      <div id="zone-list">
+        <div style="font-size:12px;color:var(--text2);margin-bottom:14px">Same system as Rooms — select a zone to see all decisions, products, install guides, and trade assignments.</div>
+        <div class="room-grid">
+          <div class="room-card" onclick="openZone('frontyard')"><div class="room-icon"><i class="ti ti-home-2"></i></div><div class="room-name">Front yard</div><div class="room-pills"><span class="pill pill-amber">3 pending</span><span class="pill pill-green">2 approved</span></div></div>
+          <div class="room-card" onclick="openZone('backyard')"><div class="room-icon"><i class="ti ti-trees"></i></div><div class="room-name">Backyard</div><div class="room-pills"><span class="pill pill-red">1 blocked</span><span class="pill pill-amber">4 pending</span></div></div>
+          <div class="room-card" onclick="openZone('pool')"><div class="room-icon"><i class="ti ti-pool"></i></div><div class="room-name">Pool area</div><div class="room-pills"><span class="pill pill-teal">In design</span></div></div>
+          <div class="room-card" onclick="openZone('outdoor-kitchen')"><div class="room-icon"><i class="ti ti-grill"></i></div><div class="room-name">Outdoor kitchen</div><div class="room-pills"><span class="pill pill-amber">2 pending</span></div></div>
+          <div class="room-card" onclick="openZone('driveway')"><div class="room-icon"><i class="ti ti-road"></i></div><div class="room-name">Driveway / entry</div><div class="room-pills"><span class="pill pill-red">Conduit sign-off needed</span></div></div>
+          <div class="room-card" onclick="openZone('sideyard')"><div class="room-icon"><i class="ti ti-fence"></i></div><div class="room-name">Side yards</div><div class="room-pills"><span class="pill pill-green">Approved</span></div></div>
+        </div>
+      </div>
+      <div id="zone-detail" style="display:none">
+        <div class="detail-panel">
+          <div class="detail-header">
+            <button class="btn btn-sm" onclick="closeZone()"><i class="ti ti-arrow-left" style="font-size:13px"></i> Zones</button>
+            <span id="zone-title" style="font-size:15px;font-weight:600;color:var(--text)"></span>
+          </div>
+          <div class="cat-strip" id="zone-cat-strip"></div>
+          <div class="item-list" id="zone-item-list"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- OUTDOOR DECISION LOG -->
+    <div id="tab-outdoor-log" style="display:none">
+      <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:16px 18px;margin-bottom:16px">
+        <div class="log-list">
+          <div class="log-row"><div class="log-dot" style="background:var(--green)"></div><div><div class="log-text">Driveway material confirmed — exposed aggregate concrete, broom-finish apron</div><div class="log-meta">Driveway · Hardscape · Approved by client · May 18, 2025</div></div></div>
+          <div class="log-row"><div class="log-dot" style="background:#1D9E75"></div><div><div class="log-text">Irrigation system — Hunter Pro-C controller, 6 zones, drip for beds + rotors for lawn</div><div class="log-meta">Backyard · Irrigation · Approved · May 20, 2025</div></div></div>
+          <div class="log-row"><div class="log-dot" style="background:var(--amber)"></div><div><div class="log-text">Specimen olive trees — 36" box, 3 required. Nursery sourcing in progress.</div><div class="log-meta">Backyard · Planting · Pending order · May 24, 2025 · Long lead flagged</div></div></div>
+          <div class="log-row"><div class="log-dot" style="background:var(--red)"></div><div><div class="log-text">EV charger conduit — 2 runs required (garage + driveway pad). Electrician sign-off pending before pour.</div><div class="log-meta">Driveway · Electrical · Blocked · May 26, 2025</div></div></div>
+          <div class="log-row"><div class="log-dot" style="background:var(--blue)"></div><div><div class="log-text">Landscape lighting design — FX Luminaire LED path + uplighting. Layout staked, awaiting client walk.</div><div class="log-meta">Backyard · Lighting · Pending walk · May 27, 2025</div></div></div>
+          <div class="log-row"><div class="log-dot" style="background:var(--green)"></div><div><div class="log-text">Side yard fencing — horizontal cedar, 6ft, automated gate on north side</div><div class="log-meta">Side yards · Fencing · Approved · May 21, 2025</div></div></div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-primary btn-sm" onclick="alert('In the full version you can add a new outdoor decision here.')"><i class="ti ti-plus" style="font-size:13px"></i> Add decision</button>
+        <button class="btn btn-sm" onclick="alert('In the full version this generates an outdoor summary for your landscape architect.')"><i class="ti ti-mail" style="font-size:13px"></i> Email summary to landscape architect</button>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+const rooms = {
+  bath:{title:'Primary bath',cats:['All','Plumbing','Tile','Electrical','Windows'],items:[
+    {cat:'Plumbing',name:'Vanity faucet — wall mount',status:'approved',sl:'Approved',fields:{Brand:'Brizo Litze',SKU:'T65798LF-PC',Finish:'Chrome',Location:'Wall, 8" above vanity',Vendor:'Build.com'},link:'https://www.build.com',note:'Rough-in depth: 4". Valve installed before wall closure.',alert:{t:'warn',m:'Plumber must confirm rough height matches vanity spec before tile.'}},
+    {cat:'Plumbing',name:'Shower valve + diverter',status:'approved',sl:'Approved',fields:{Brand:'Kohler Rite-Temp',SKU:'K-304-KS-CP',Finish:'Polished chrome',Outlets:'3 body / 1 head',Vendor:'Ferguson'},alert:null},
+    {cat:'Tile',name:'NuHeat heated floor mat',status:'ordered',sl:'Ordered',fields:{Brand:'NuHeat',SKU:'NH-240W-50',Vendor:'Amazon',Arrives:'Friday',LeadTime:'5 days'},note:'Test mat resistance before AND after tile. Self-leveling required first.',alert:{t:'blue',m:'Tile crew: review install PDF 1–2 days prior. Electrician needed same day.'}},
+    {cat:'Tile',name:'Floor tile — large format',status:'approved',sl:'Approved',fields:{Brand:'Porcelanosa',SKU:'NOA-CALACATTA',Size:'24"×48"',Layout:'Herringbone',Grout:'Mapei Warm Gray'},alert:{t:'warn',m:'+2 labor days for herringbone. Client approved May 24.'}},
+    {cat:'Tile',name:'Schluter trim — Rondec',status:'approved',sl:'Approved',fields:{Profile:'Rondec',Finish:'Brushed nickel',Size:'1/2"',Vendor:'Schluter direct'},alert:null},
+    {cat:'Electrical',name:'Heated floor thermostat',status:'pending',sl:'Pending',fields:{Brand:'NuHeat nHancer',Location:'TBD — left of vanity?',SmartHome:'Yes',Vendor:'Amazon'},alert:{t:'warn',m:'Location not finalized. Must decide before drywall.'}},
+    {cat:'Windows',name:'Smart privacy film',status:'blocked',sl:'Blocked',fields:{Type:'Electrochromic film',Vendor:'TBD',Power:'Hidden transformer required',Switch:'Smart home integrated'},alert:{t:'red',m:'HARD DEADLINE: coordinate electrician + film vendor before drywall closes. Wall access required.'}}
+  ]},
+  kitchen:{title:'Kitchen',cats:['All','Electrical','Plumbing','Appliances'],items:[
+    {cat:'Electrical',name:'Island pendants — location',status:'pending',sl:'Pending',fields:{Qty:'2',Height:'32" above counter',Spacing:'28" apart',Dimmer:'Yes'},alert:{t:'warn',m:'Rough location needs GC sign-off before drywall.'}},
+    {cat:'Plumbing',name:'Pot filler',status:'approved',sl:'Approved',fields:{Brand:'Rohl',Finish:'Matte black',Height:'24" above cooktop'},alert:null},
+    {cat:'Appliances',name:'36" range — gas rough',status:'installed',sl:'Installed',fields:{Brand:'Wolf',SKU:'GR366',BTU:'50,000',Vendor:'Sub-Zero Wolf'},alert:null}
+  ]},
+  master:{title:'Primary bedroom',cats:['All'],items:[
+    {cat:'All',name:'Motorized shades',status:'approved',sl:'Approved',fields:{Brand:'Lutron Serena',Windows:'3',SmartHome:'Yes — Caséta',Vendor:'Lutron dealer'},alert:null}
+  ]},
+  living:{title:'Living room',cats:['All'],items:[
+    {cat:'All',name:'Fireplace tile surround',status:'pending',sl:'Pending',fields:{Material:'Marble slab',Size:'12"×24"',Layout:'TBD'},alert:{t:'warn',m:'Layout direction not finalized. Designer review needed.'}}
+  ]},
+  adu:{title:'ADU bath',cats:['All'],items:[
+    {cat:'All',name:'Shower valve',status:'pending',sl:'Pending',fields:{Type:'Pressure balance',Brand:'TBD'},alert:{t:'warn',m:'Selection needed before rough-in.'}}
+  ]},
+  exterior:{title:'Exterior',cats:['All'],items:[
+    {cat:'All',name:'Landscape conduit',status:'installed',sl:'Installed',fields:{Purpose:'Future lighting + irrigation',Depth:'18"'},alert:null}
+  ]}
+};
+
+const zones = {
+  frontyard:{title:'Front yard',cats:['All','Hardscape','Planting','Irrigation','Lighting'],items:[
+    {cat:'Hardscape',name:'Front walkway — concrete pavers',status:'approved',sl:'Approved',fields:{Material:'Belgard Urbana 24"×24"',Pattern:'Running bond',Finish:'Smooth',Vendor:'Belgard dealer'},alert:null},
+    {cat:'Planting',name:'Foundation shrubs',status:'pending',sl:'Pending',fields:{Species:'TBD',Qty:'TBD',Size:'5 gal',Designer:'Landscape architect'},alert:{t:'warn',m:'Plant selection not finalized. Need landscape architect sign-off.'}},
+    {cat:'Irrigation',name:'Drip irrigation — front beds',status:'approved',sl:'Approved',fields:{Controller:'Hunter Pro-C',Zone:'Zone 1',Type:'Drip — 0.5 GPH emitters',Vendor:'Hunter'},alert:null},
+    {cat:'Lighting',name:'Path lighting — front walk',status:'pending',sl:'Pending',fields:{Brand:'FX Luminaire',Type:'LED path light',Qty:'TBD',Voltage:'12V low voltage'},alert:{t:'warn',m:'Fixture qty and spacing not finalized. Layout walk needed with client.'}},
+    {cat:'Lighting',name:'Uplighting — front trees',status:'pending',sl:'Pending',fields:{Brand:'FX Luminaire',Type:'In-ground uplight',Finish:'Bronze',Voltage:'12V'},alert:{t:'blue',m:'Conduit must be in before any hardscape. Coordinate with electrician.'}}
+  ]},
+  backyard:{title:'Backyard',cats:['All','Hardscape','Planting','Irrigation','Lighting','Drainage'],items:[
+    {cat:'Hardscape',name:'Patio — large format concrete',status:'approved',sl:'Approved',fields:{Material:'Broom-finish concrete',Size:'800 sq ft',Edge:'Redwood header',Contractor:'ABC Concrete'},note:'Conduit for lighting, irrigation, and speakers must be installed and inspected before pour.',alert:{t:'red',m:'BLOCKED: EV conduit and lighting conduit sign-off required before scheduling concrete pour.'}},
+    {cat:'Planting',name:'Specimen olive trees — 36" box',status:'pending',sl:'Pending',fields:{Species:'Olea europaea',Qty:'3',Size:'36" box',Vendor:'TBD — sourcing'},alert:{t:'warn',m:'6–8 week lead time. Order this week. Nursery availability limited for 36" box.'}},
+    {cat:'Planting',name:'Lawn — artificial turf',status:'approved',sl:'Approved',fields:{Brand:'SYNLawn',Product:'SYNAugustine 347',Area:'1,200 sq ft',Backing:'EnviroLoc+'},alert:null},
+    {cat:'Irrigation',name:'Lawn irrigation — rotors',status:'approved',sl:'Approved',fields:{Brand:'Hunter',Heads:'MP Rotator',Zone:'Zone 2',Coverage:'Full lawn'},alert:null},
+    {cat:'Lighting',name:'Landscape lighting — backyard',status:'pending',sl:'Pending',fields:{Brand:'FX Luminaire',Type:'Path + uplighting',Transformer:'300W Luxor',Zones:'3'},note:'Layout staked. Client walk needed to approve fixture locations before conduit is finalized.',alert:{t:'warn',m:'Client walk-through scheduled for Thursday. Do not trench until approved.'}},
+    {cat:'Drainage',name:'French drain — perimeter',status:'approved',sl:'Approved',fields:{Type:'4" perforated pipe',Length:'120 LF',Outlet:'Street',Gravel:'3/4" drain rock'},alert:null}
+  ]},
+  pool:{title:'Pool area',cats:['All','Pool','Coping','Deck','Lighting'],items:[
+    {cat:'Pool',name:'Pool shell + equipment',status:'pending',sl:'In design',fields:{Type:'Gunite',Size:'40×20 ft',Spa:'Yes — attached',Equipment:'Pentair IntelliFlo'},alert:{t:'blue',m:'Pool design in progress with pool contractor. Equipment pad location TBD.'}},
+    {cat:'Coping',name:'Pool coping — travertine',status:'pending',sl:'Pending',fields:{Material:'Silver travertine',Profile:'Bullnose',Size:'12"×24"',Vendor:'TBD'},alert:{t:'warn',m:'Coping selection must be coordinated with pool tile for finish consistency.'}},
+    {cat:'Deck',name:'Pool deck — cool-coat concrete',status:'pending',sl:'Pending',fields:{Material:'Kool Deck',Color:'Monterey',Area:'~600 sq ft'},alert:{t:'warn',m:'Deck material decision needed before pool contractor finalizes edge details.'}},
+    {cat:'Lighting',name:'Pool LED lighting',status:'pending',sl:'Pending',fields:{Brand:'Pentair IntelliBrite',Color:'Color LED',Qty:'2 main + 1 spa'},alert:{t:'blue',m:'Wiring must be included in pool shell installation. Cannot add after gunite.'}}
+  ]},
+  'outdoor-kitchen':{title:'Outdoor kitchen',cats:['All','Appliances','Plumbing','Electrical','Structure'],items:[
+    {cat:'Appliances',name:'Built-in BBQ grill',status:'approved',sl:'Approved',fields:{Brand:'Lynx Professional',Size:'36"',BTU:'50,000',Fuel:'Natural gas'},note:'Gas rough must be pressure-tested before enclosure is built.',alert:null},
+    {cat:'Appliances',name:'Outdoor refrigerator',status:'pending',sl:'Pending',fields:{Brand:'TBD',Size:'24"',Type:'Undercounter',Vendor:'TBD'},alert:{t:'warn',m:'Selection needed before electrical rough is finalized — amp draw varies by model.'}},
+    {cat:'Plumbing',name:'Outdoor sink',status:'approved',sl:'Approved',fields:{Brand:'Elkay',Material:'Stainless steel',Size:'16×18',Drain:'To drywell'},alert:null},
+    {cat:'Electrical',name:'Outdoor kitchen circuits',status:'pending',sl:'Pending',fields:{Circuits:'3 required',GFCI:'All outlets',Lighting:'2 circuits',SmartSwitch:'Yes'},alert:{t:'warn',m:'Finalize appliance list before electrician roughs circuits — need confirmed amp requirements.'}},
+    {cat:'Structure',name:'Pergola — steel frame',status:'approved',sl:'Approved',fields:{Material:'Powder-coated steel',Size:'20×16 ft',Shade:'Louvered roof',Brand:'Equinox'},alert:null}
+  ]},
+  driveway:{title:'Driveway / entry',cats:['All','Hardscape','Electrical','Lighting','Security'],items:[
+    {cat:'Hardscape',name:'Driveway — exposed aggregate concrete',status:'blocked',sl:'Blocked',fields:{Material:'Exposed aggregate',Finish:'Broom-finish apron',Area:'~1,800 sq ft',Contractor:'ABC Concrete'},note:'All conduit (EV, gate, camera, lighting) must be in the ground and inspected before scheduling pour.',alert:{t:'red',m:'BLOCKED: EV conduit and gate motor rough not yet signed off. Do not schedule pour.'}},
+    {cat:'Electrical',name:'EV charger conduit — 2 runs',status:'blocked',sl:'Blocked',fields:{Runs:'2 (garage + driveway pad)',Size:'1" EMT',Circuit:'50A each',Electrician:'Dave K.'},alert:{t:'red',m:'Sign-off required before driveway pour. Dave K. has not yet confirmed inspection date.'}},
+    {cat:'Electrical',name:'Gate motor rough',status:'pending',sl:'Pending',fields:{Brand:'LiftMaster LA500',Power:'120V',Location:'North entry',SmartHome:'Yes — myQ'},alert:{t:'warn',m:'Conduit and junction box must be in before concrete. Gate vendor must specify exact location.'}},
+    {cat:'Security',name:'Security cameras — entry',status:'approved',sl:'Approved',fields:{Brand:'Axis',Qty:'2',Type:'4K outdoor dome',POE:'Yes — low voltage'},alert:null},
+    {cat:'Lighting',name:'Entry pillar lighting',status:'approved',sl:'Approved',fields:{Brand:'FX Luminaire',Type:'Hardscape light',Finish:'Bronze',Voltage:'12V'},alert:null}
+  ]},
+  sideyard:{title:'Side yards',cats:['All','Fencing','Drainage'],items:[
+    {cat:'Fencing',name:'Side yard fencing — horizontal cedar',status:'approved',sl:'Approved',fields:{Material:'Clear cedar',Style:'Horizontal 1×6',Height:'6 ft',Gate:'Automated north side'},alert:null},
+    {cat:'Drainage',name:'Side yard drainage',status:'approved',sl:'Approved',fields:{Type:'Surface drain + pipe',Outlet:'Front street',Gradient:'2% min slope'},alert:null}
+  ]}
+};
+
+let curZone=null,curZoneCat='All';
+
+function openZone(id){
+  curZone=id;curZoneCat='All';
+  document.getElementById('zone-list').style.display='none';
+  document.getElementById('zone-detail').style.display='block';
+  const z=zones[id];
+  document.getElementById('zone-title').textContent=z.title;
+  renderZoneCats(z);renderZoneItems(z,'All');
+}
+function closeZone(){document.getElementById('zone-list').style.display='block';document.getElementById('zone-detail').style.display='none';}
+
+function renderZoneCats(z){
+  document.getElementById('zone-cat-strip').innerHTML=z.cats.map(c=>`<button class="cat-btn${c===curZoneCat?' active':''}" onclick="selectZoneCat('${c}')">${c}</button>`).join('');
+}
+function selectZoneCat(c){curZoneCat=c;const z=zones[curZone];renderZoneCats(z);renderZoneItems(z,c);}
+
+function renderZoneItems(z,cat){
+  const list=cat==='All'?z.items:z.items.filter(i=>i.cat===cat);
+  document.getElementById('zone-item-list').innerHTML=list.map((item,idx)=>{
+    const al=item.alert?`<div class="alert-box alert-${item.alert.t==='red'?'red':item.alert.t==='blue'?'blue':'warn'}"><i class="ti ti-${item.alert.t==='red'?'alert-circle':item.alert.t==='blue'?'info-circle':'alert-triangle'}" style="font-size:15px;flex-shrink:0;margin-top:1px"></i><span>${item.alert.m}</span></div>`:'';
+    const nt=item.note?`<div class="install-note"><i class="ti ti-tool" style="margin-right:4px;font-size:13px"></i>${item.note}</div>`:'';
+    const flds=Object.entries(item.fields).map(([k,v])=>`<div><div class="field-label">${k}</div><div class="field-val">${v}</div></div>`).join('');
+    const act=item.status==='pending'?`<div class="action-row"><button class="btn btn-sm" style="background:var(--green);color:#fff;border-color:var(--green)" onclick="approveZoneItem(${idx})"><i class="ti ti-check" style="font-size:12px"></i> Approve</button></div>`:'';
+    return `<div class="item"><div class="item-header" onclick="toggleZoneItem(${idx})"><span class="item-name">${item.name}</span><span class="pill ${sc(item.status)}">${item.sl}</span><i class="ti ti-chevron-down chevron" id="zchev-${idx}"></i></div><div class="item-body" id="zbody-${idx}">${al}${nt}<div class="field-grid">${flds}</div>${act}</div></div>`;
+  }).join('');
+}
+
+function toggleZoneItem(i){
+  const b=document.getElementById('zbody-'+i),c=document.getElementById('zchev-'+i);
+  const open=b.classList.contains('open');
+  b.classList.toggle('open',!open);c.classList.toggle('open',!open);
+}
+
+function approveZoneItem(idx){
+  const z=zones[curZone];
+  const list=curZoneCat==='All'?z.items:z.items.filter(i=>i.cat===curZoneCat);
+  list[idx].status='approved';list[idx].sl='Approved';
+  renderZoneItems(z,curZoneCat);
+}
+
+function checkGroundOpps(){
+  const any=['gopp1','gopp2','gopp3','gopp4','gopp5','gopp6','gopp7','gopp8'].some(id=>document.getElementById(id).checked);
+  document.getElementById('ground-opp-action').style.display=any?'block':'none';
+}
+
+function showTab(t){
+  ['dashboard','rooms','log','docs','team','products','landscape','outdoor-log'].forEach(x=>document.getElementById('tab-'+x).style.display='none');
+  document.getElementById('tab-'+t).style.display='block';
+  const titles={dashboard:'Dashboard',rooms:'Rooms',log:'Decision log',docs:'Documents',team:'Team & trades',products:'Products',landscape:'Landscape zones','outdoor-log':'Outdoor decisions'};
+  document.getElementById('page-title').textContent=titles[t]||t;
+  closeSidebar();
+}
+function setNav(el){document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));el.classList.add('active');}
+
+function openRoom(id){
+  curRoom=id;curCat='All';
+  document.getElementById('room-list').style.display='none';
+  document.getElementById('room-detail').style.display='block';
+  const r=rooms[id];
+  document.getElementById('room-title').textContent=r.title;
+  renderCats(r);renderItems(r,'All');
+}
+function closeRoom(){document.getElementById('room-list').style.display='block';document.getElementById('room-detail').style.display='none';}
+
+function renderCats(r){
+  document.getElementById('cat-strip').innerHTML=r.cats.map(c=>`<button class="cat-btn${c===curCat?' active':''}" onclick="selectCat('${c}')">${c}</button>`).join('');
+}
+function selectCat(c){curCat=c;const r=rooms[curRoom];renderCats(r);renderItems(r,c);}
+
+function sc(s){return{approved:'pill-green',pending:'pill-amber',blocked:'pill-red',installed:'pill-blue',ordered:'pill-purple'}[s]||'pill-amber';}
+
+function renderItems(r,cat){
+  const list=cat==='All'?r.items:r.items.filter(i=>i.cat===cat);
+  document.getElementById('item-list').innerHTML=list.map((item,idx)=>{
+    const al=item.alert?`<div class="alert-box alert-${item.alert.t==='red'?'red':item.alert.t==='blue'?'blue':'warn'}"><i class="ti ti-${item.alert.t==='red'?'alert-circle':item.alert.t==='blue'?'info-circle':'alert-triangle'}" style="font-size:15px;flex-shrink:0;margin-top:1px"></i><span>${item.alert.m}</span></div>`:'';
+    const nt=item.note?`<div class="install-note"><i class="ti ti-tool" style="margin-right:4px;font-size:13px"></i>${item.note}</div>`:'';
+    const lk=item.link?`<div><div class="field-label">Purchase link</div><div class="field-val"><a href="${item.link}" target="_blank"><i class="ti ti-external-link" style="margin-right:3px;font-size:12px"></i>View product</a></div></div>`:'';
+    const flds=Object.entries(item.fields).map(([k,v])=>`<div><div class="field-label">${k}</div><div class="field-val">${v}</div></div>`).join('');
+    const act=item.status==='pending'?`<div class="action-row"><button class="btn btn-sm" style="background:var(--green);color:#fff;border-color:var(--green)" onclick="approveItem(${idx})"><i class="ti ti-check" style="font-size:12px"></i> Approve</button></div>`:'';
+    return `<div class="item"><div class="item-header" onclick="toggleItem(${idx})"><span class="item-name">${item.name}</span><span class="pill ${sc(item.status)}">${item.sl}</span><i class="ti ti-chevron-down chevron" id="chev-${idx}"></i></div><div class="item-body" id="body-${idx}">${al}${nt}<div class="field-grid">${flds}${lk}</div>${act}</div></div>`;
+  }).join('');
+}
+
+function toggleItem(i){
+  const b=document.getElementById('body-'+i),c=document.getElementById('chev-'+i);
+  const open=b.classList.contains('open');
+  b.classList.toggle('open',!open);c.classList.toggle('open',!open);
+}
+
+function approveItem(idx){
+  const r=rooms[curRoom];
+  const list=curCat==='All'?r.items:r.items.filter(i=>i.cat===curCat);
+  list[idx].status='approved';list[idx].sl='Approved';
+  renderItems(r,curCat);
+}
+
+function checkOpps(){
+  const any=['opp1','opp2','opp3','opp4','opp5','opp6'].some(id=>document.getElementById(id).checked);
+  document.getElementById('opp-action').style.display=any?'block':'none';
+}
+
+function resend(){
+  const btn=document.getElementById('resend-btn');
+  btn.textContent='Sent';btn.style.background='var(--green-bg)';btn.style.color='var(--green-text)';btn.disabled=true;
+  const t=document.getElementById('resend-toast');t.classList.add('show');
+}
+
+function postNote(){
+  const txt=document.getElementById('note-txt').value.trim();if(!txt)return;
+  const roleMap={client:{name:'Ben W.',role:'Client',av:'BW',bg:'var(--amber-bg)',c:'var(--amber-text)'},gc:{name:'Lance C.',role:'GC',av:'LC',bg:'var(--blue-bg)',c:'var(--blue-text)'},tile:{name:'Marco T.',role:'Tile',av:'MT',bg:'var(--purple-bg)',c:'var(--purple-text)'},elec:{name:'Dave K.',role:'Electrician',av:'DK',bg:'var(--red-bg)',c:'var(--red-text)'}};
+  const r=roleMap[document.getElementById('note-role').value];
+  const now=new Date().toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit',hour12:true});
+  const div=document.createElement('div');div.className='note';
+  div.innerHTML=`<div class="note-header"><div class="avatar" style="background:${r.bg};color:${r.c}">${r.av}</div><div><span style="font-size:13px;font-weight:500">${r.name}</span><span style="font-size:11px;color:var(--text3);margin-left:7px">${r.role} · ${now}</span></div></div><div class="note-body">${txt}</div>`;
+  document.getElementById('docs-notes').appendChild(div);
+  document.getElementById('note-txt').value='';
+  document.getElementById('post-btn').disabled=true;
+  const t=document.getElementById('note-toast');t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+function openSidebar(){document.getElementById('sidebar').classList.add('open');document.getElementById('overlay').classList.add('open');}
+function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('overlay').classList.remove('open');}
+</script>
+</body>
+</html>
