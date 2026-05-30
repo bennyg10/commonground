@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Construction OS — 2560 Coolidge Ave</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<style>
+:root{
+  /* Rivex brand palette */
+  --forest:#0F332C;
+  --olive:#ADB783;
+  --butter:#F9F9C7;
+  --offwhite:#F7F7EB;
+  --charcoal:#2D2D2D;
+  --midgray:#636363;
+
+  /* Mapped to system roles */
+  --bg:#F7F7EB;
+  --surface:#FFFFFF;
+  --surface2:#F2F2E8;
+  --border:rgba(15,51,44,0.12);
+  --border-mid:rgba(15,51,44,0.22);
+  --text:#2D2D2D;
+  --text2:#636363;
+  --text3:#9A9A8A;
+
+  /* Primary = Deep Forest Green */
+  --blue:#0F332C;
+  --blue-bg:#E8EFE8;
+  --blue-text:#0F332C;
+
+  /* Success / approved = Olive */
+  --green:#5A6E35;
+  --green-bg:#EDF0DC;
+  --green-text:#3A4A20;
+
+  /* Warning = warm amber (kept readable) */
+  --amber:#7A5800;
+  --amber-bg:#F5F0C8;
+  --amber-text:#5A4000;
+
+  /* Error / blocked = deep red (kept) */
+  --red:#8B2020;
+  --red-bg:#F5E8E8;
+  --red-text:#6B1515;
+
+  /* Accent = Muted Olive */
+  --purple-bg:#E8EDD8;
+  --purple-text:#4A5A28;
+
+  /* Teal = Forest teal */
+  --teal-bg:#E2EDE8;
+  --teal-text:#0F332C;
+
+  --radius:10px;--radius-sm:6px;
+  --shadow:0 1px 4px rgba(15,51,44,0.08),0 1px 2px rgba(15,51,44,0.05);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"DM Sans",sans-serif;background:var(--offwhite);color:var(--text);font-size:14px;line-height:1.6;min-height:100vh}
+.app{display:flex;min-height:100vh}
+.sidebar{width:224px;background:var(--forest);border-right:none;flex-shrink:0;position:sticky;top:0;height:100vh;overflow-y:auto}
+.main{flex:1;padding:28px 32px;max-width:880px;border-top:3px solid var(--olive)}
+.sidebar-logo{padding:18px 16px 14px;border-bottom:0.5px solid rgba(247,247,235,0.1)}
+.logo-mark{font-size:13px;font-weight:600;letter-spacing:-.02em;color:#F7F7EB}
+.logo-sub{font-size:11px;color:rgba(247,247,235,0.5);margin-top:1px}
+.sidebar-project{padding:12px 16px;border-bottom:0.5px solid rgba(247,247,235,0.1)}
+.proj-label{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin-bottom:4px}
+.proj-name{font-size:13px;font-weight:500;color:#F7F7EB}
+.proj-addr{font-size:11px;color:rgba(173,183,131,0.9);margin-top:1px}
+.proj-status{font-size:11px;color:rgba(247,247,235,0.4);margin-top:1px}
+.nav-section{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:rgba(173,183,131,0.7);padding:12px 8px 4px 16px}
+.nav-item{display:flex;align-items:center;gap:8px;padding:8px 10px;margin:0 6px;border-radius:var(--radius-sm);cursor:pointer;font-size:13px;color:rgba(247,247,235,0.65);border:none;background:none;width:calc(100% - 12px);text-align:left;transition:all .15s;font-family:inherit}
+.nav-item:hover{background:rgba(247,247,235,0.08);color:#F7F7EB}
+.nav-item.active{background:rgba(173,183,131,0.18);color:#ADB783;font-weight:500}
+.nav-item i{font-size:15px;flex-shrink:0}
+.nav-badge{margin-left:auto;font-size:10px;background:rgba(249,249,199,0.15);color:#F9F9C7;padding:1px 6px;border-radius:20px}
+.nav-badge.red{background:rgba(255,100,100,0.18);color:#FFB3B3}
+.nav-badge.teal{background:rgba(173,183,131,0.2);color:#ADB783}
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}
+.page-title{font-size:20px;font-weight:600;letter-spacing:-.03em;color:var(--forest)}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:var(--radius-sm);font-size:13px;font-weight:500;cursor:pointer;border:0.5px solid var(--border-mid);background:var(--surface);color:var(--text);transition:all .15s;font-family:inherit}
+.btn:hover{background:var(--surface2)}
+.btn-primary{background:var(--forest);color:#F7F7EB;border-color:var(--forest)}
+.btn-primary:hover{background:#1a4d43}
+.btn-green{background:#5A6E35;color:#fff;border-color:#5A6E35}
+.btn-green:hover{background:#3A4A20}
+.btn-sm{padding:5px 10px;font-size:12px}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:24px}
+.stat{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:14px 16px;transition:box-shadow .15s}
+.stat-label{font-size:11px;color:var(--text3);margin-bottom:4px}
+.stat-num{font-size:26px;font-weight:600;letter-spacing:-.03em}
+.stat-num.amber{color:var(--amber)}.stat-num.red{color:var(--red)}.stat-num.green{color:#5A6E35}
+.flags{display:flex;flex-direction:column;gap:8px;margin-bottom:24px}
+.flag{display:flex;align-items:flex-start;gap:12px;background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:13px 15px}
+.flag-bar{width:3px;border-radius:2px;align-self:stretch;flex-shrink:0}
+.flag-icon{font-size:17px;flex-shrink:0;margin-top:1px}
+.flag-content{flex:1}
+.flag-title{font-size:13px;font-weight:500}
+.flag-sub{font-size:12px;color:var(--text2);margin-top:2px}
+.pill{display:inline-flex;align-items:center;font-size:11px;padding:2px 9px;border-radius:20px;font-weight:500;white-space:nowrap}
+.p-green{background:var(--green-bg);color:var(--green-text)}.p-amber{background:var(--amber-bg);color:var(--amber-text)}.p-red{background:var(--red-bg);color:var(--red-text)}.p-blue{background:var(--blue-bg);color:var(--blue-text)}.p-purple{background:var(--purple-bg);color:var(--purple-text)}.p-teal{background:var(--teal-bg);color:var(--teal-text)}
+.p-olive{background:#E8EDD8;color:#3A4A20}
+.p-butter{background:#F5F5C0;color:#4A4800}.p-gray{background:var(--surface2);color:var(--text2)}
+.section-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.section-title{font-size:13px;font-weight:600;color:var(--forest)}
+.room-grid,.zone-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:24px}
+.room-card,.zone-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:15px;cursor:pointer;transition:all .15s}
+.room-card:hover,.zone-card:hover{border-color:var(--olive);box-shadow:var(--shadow)}
+.card-icon{font-size:22px;color:var(--text3);margin-bottom:8px}
+.card-name{font-size:14px;font-weight:500;margin-bottom:7px}
+.card-pills{display:flex;gap:4px;flex-wrap:wrap}
+.detail-panel{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:24px}
+.detail-hd{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:0.5px solid var(--border);background:var(--offwhite)}
+.cat-strip{display:flex;gap:6px;padding:12px 16px;border-bottom:0.5px solid var(--border);flex-wrap:wrap}
+.cat-btn{font-size:12px;padding:4px 12px;border-radius:20px;border:0.5px solid var(--border-mid);cursor:pointer;background:var(--surface);color:var(--text2);font-family:inherit;transition:all .15s}
+.cat-btn.active{background:var(--forest);color:#F7F7EB;border-color:var(--forest)}
+.cat-btn:hover:not(.active){background:var(--surface2);color:var(--text)}
+.item-list{display:flex;flex-direction:column}
+.item{border-bottom:0.5px solid var(--border)}
+.item:last-child{border-bottom:none}
+.item-hd{display:flex;align-items:center;gap:10px;padding:12px 16px;cursor:pointer;transition:background .12s}
+.item-hd:hover{background:#F2F2E8}
+.item-name{flex:1;font-size:13px;font-weight:500}
+.item-body{display:none;padding:14px 16px;background:var(--surface2);border-top:0.5px solid var(--border)}
+.item-body.open{display:block}
+.field-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.field-label{font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--text3);margin-bottom:3px}
+.field-val{font-size:13px}
+.alert-box{border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:10px;font-size:12px;display:flex;gap:8px;align-items:flex-start}
+.alert-warn{background:var(--amber-bg);color:var(--amber-text);border:0.5px solid #EF9F27}
+.alert-red{background:var(--red-bg);color:var(--red-text);border:0.5px solid #E24B4A}
+.alert-blue{background:var(--blue-bg);color:var(--blue-text);border:0.5px solid #378ADD}
+.install-note{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:8px 11px;font-size:12px;color:var(--text2);margin-bottom:10px}
+.action-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.log-list{display:flex;flex-direction:column}
+.log-row{display:flex;gap:12px;padding:12px 0;border-bottom:0.5px solid var(--border)}
+.log-row:last-child{border-bottom:none}
+.log-dot{width:8px;height:8px;border-radius:50%;margin-top:5px;flex-shrink:0}
+.log-text{font-size:13px}
+.log-meta{font-size:11px;color:var(--text3);margin-top:2px}
+.opp-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.opp-item{display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer;padding:5px 0}
+.opp-item input{cursor:pointer}
+.chevron{font-size:14px;color:var(--text3);transition:transform .2s}
+.chevron.open{transform:rotate(180deg)}
+.mob-menu-btn{display:none;background:none;border:none;cursor:pointer;padding:8px;color:var(--text);font-size:22px}
+.sidebar-overlay{display:none}
+.avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex-shrink:0}
+.team-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:8px}
+@media(max-width:720px){.sidebar{position:fixed;left:-224px;top:0;height:100vh;z-index:100;transition:left .25s;background:var(--forest)}.sidebar.open{left:0}.sidebar-overlay{display:block;position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:99;opacity:0;pointer-events:none;transition:opacity .25s}.sidebar-overlay.open{opacity:1;pointer-events:all}.mob-menu-btn{display:flex}.main{padding:16px}.stat-row{grid-template-columns:repeat(2,1fr)}.room-grid,.zone-grid{grid-template-columns:repeat(2,1fr)}.field-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="sidebar-overlay" id="overlay" onclick="closeSidebar()"></div>
+<div class="app">
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo"><div class="logo-mark" style="font-size:14px;letter-spacing:.05em;text-transform:uppercase;font-weight:600">Coolidge OS</div><div class="logo-sub">Project intelligence platform</div></div>
+  <div class="sidebar-project">
+    <div class="proj-label" style="color:rgba(173,183,131,0.7);font-size:10px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Active project</div>
+    <div class="proj-name">Coolidge Remodel + ADU</div>
+    <div class="proj-addr">2560 Coolidge Ave, Santa Monica CA 90405</div>
+    <div class="proj-status">In progress &middot; 1,400 SF + 405 SF ADU</div>
+  </div>
+  <nav>
+    <div class="nav-section">Overview</div>
+    <button class="nav-item active" onclick="showTab('dashboard');setNav(this)"><i class="ti ti-layout-dashboard"></i> Dashboard <span class="nav-badge red">4</span></button>
+    <button class="nav-item" onclick="showTab('log');setNav(this)"><i class="ti ti-clipboard-list"></i> Decision log</button>
+    <button class="nav-item" onclick="showTab('docs');setNav(this)"><i class="ti ti-file-check"></i> Documents</button>
+    <div class="nav-section">Interior</div>
+    <button class="nav-item" onclick="showTab('rooms');setNav(this)"><i class="ti ti-home"></i> Rooms <span class="nav-badge red">3</span></button>
+    <button class="nav-item" onclick="showTab('adu');setNav(this)"><i class="ti ti-building"></i> ADU <span class="nav-badge amber">2</span></button>
+    <div class="nav-section">Outdoors</div>
+    <button class="nav-item" onclick="showTab('landscape');setNav(this)"><i class="ti ti-trees"></i> Landscape zones <span class="nav-badge teal">$110k</span></button>
+    <button class="nav-item" onclick="showTab('outdoor-log');setNav(this)"><i class="ti ti-clipboard-list"></i> Outdoor decisions</button>
+    <div class="nav-section">People</div>
+    <button class="nav-item" onclick="showTab('team');setNav(this)"><i class="ti ti-users"></i> Team &amp; trades</button>
+    <div class="nav-section">Project</div>
+    <button class="nav-item" onclick="showTab('finance');setNav(this)"><i class="ti ti-receipt"></i> Financials <span class="nav-badge red">$131k due</span></button>
+    <button class="nav-item" onclick="showTab('progress');setNav(this)"><i class="ti ti-checks"></i> Progress tracker</button>
+    <button class="nav-item" onclick="showTab('products');setNav(this)"><i class="ti ti-package"></i> Products <span class="nav-badge amber">5</span></button>
+  </nav>
+</aside>
+<main class="main">
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:10px">
+      <button class="mob-menu-btn" onclick="openSidebar()"><i class="ti ti-menu-2"></i></button>
+      <h1 class="page-title" id="page-title">Dashboard</h1>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-sm" onclick="alert('Exports a PDF summary for Ebru or Lance.')" style="border-color:var(--forest);color:var(--forest)"><i class="ti ti-download" style="font-size:13px"></i> Export</button>
+      <button class="btn btn-sm btn-primary" onclick="alert('Sends SMS/email to selected trades.')"><i class="ti ti-bell" style="font-size:13px"></i> Notify trades</button>
+    </div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div id="tab-dashboard">
+    <div class="stat-row">
+      <div class="stat"><div class="stat-label">Total scope items</div><div class="stat-num">96</div></div>
+      <div class="stat"><div class="stat-label">Open decisions</div><div class="stat-num amber">22</div></div>
+      <div class="stat"><div class="stat-label">Blocked tasks</div><div class="stat-num red">4</div></div>
+      <div class="stat"><div class="stat-label">Approved / installed</div><div class="stat-num green">31</div></div>
+    </div>
+    <div class="section-hd"><span class="section-title"><i class="ti ti-alert-triangle" style="color:var(--amber);margin-right:5px"></i>Needs attention this week</span></div>
+    <div class="flags">
+      <div class="flag"><div class="flag-bar" style="background:var(--red)"></div><i class="ti ti-bath flag-icon" style="color:var(--red)"></i><div class="flag-content"><div class="flag-title">Primary bath &mdash; freestanding tub drain location</div><div class="flag-sub">Ebru's Option B shows freestanding tub. Drain rough must be confirmed before subfloor work. Reference plan dated Aug 13, 2025.</div></div><span class="pill p-red">Blocked</span></div>
+      <div class="flag"><div class="flag-bar" style="background:var(--red)"></div><i class="ti ti-droplet flag-icon" style="color:var(--red)"></i><div class="flag-content"><div class="flag-title">Primary bath &mdash; wall-mount faucet rough height</div><div class="flag-sub">Plumber needs finalized vanity dimensions from Ebru. Cannot rough-in until confirmed.</div></div><span class="pill p-red">Blocked</span></div>
+      <div class="flag"><div class="flag-bar" style="background:var(--amber)"></div><i class="ti ti-bolt flag-icon" style="color:var(--amber)"></i><div class="flag-content"><div class="flag-title">ADU bedroom &mdash; mirror box electrical rough</div><div class="flag-sub">Ebru's Dec 8, 2025 plan notes "box for the mirror." Exact location must be confirmed before drywall.</div></div><span class="pill p-amber">Needs decision</span></div>
+      <div class="flag"><div class="flag-bar" style="background:var(--amber)"></div><i class="ti ti-window flag-icon" style="color:var(--amber)"></i><div class="flag-content"><div class="flag-title">Option B new window &mdash; framer needs opening + header spec</div><div class="flag-sub">Option B layout adds a new window. Framer needs confirmed dimensions and structural header spec from Ebru before framing.</div></div><span class="pill p-amber">Urgent</span></div>
+    </div>
+    <div class="section-hd"><span class="section-title"><i class="ti ti-list-check" style="margin-right:5px"></i>Open wall opportunities &mdash; primary bath</span><span style="font-size:12px;color:var(--text3)">Walls currently open</span></div>
+    <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:20px">
+      <div style="font-size:12px;color:var(--text2);margin-bottom:12px">Check off before walls close &mdash; 5&ndash;15&times; more expensive to retrofit later:</div>
+      <div class="opp-grid">
+        <label class="opp-item"><input type="checkbox" id="opp1" onchange="checkOpps('opp')"> Blocking for wall-mount TV</label>
+        <label class="opp-item"><input type="checkbox" id="opp2" onchange="checkOpps('opp')"> Bidet outlet rough (primary bath)</label>
+        <label class="opp-item"><input type="checkbox" id="opp3" onchange="checkOpps('opp')"> Towel warmer wiring</label>
+        <label class="opp-item"><input type="checkbox" id="opp4" onchange="checkOpps('opp')"> Water leak sensor rough</label>
+        <label class="opp-item"><input type="checkbox" id="opp5" onchange="checkOpps('opp')"> Ethernet drops (bath + bedrooms)</label>
+        <label class="opp-item"><input type="checkbox" id="opp6" onchange="checkOpps('opp')"> Future steam rough (primary bath)</label>
+        <label class="opp-item"><input type="checkbox" id="opp7" onchange="checkOpps('opp')"> Smart privacy film power rough</label>
+        <label class="opp-item"><input type="checkbox" id="opp8" onchange="checkOpps('opp')"> Speaker wire &mdash; living room</label>
+      </div>
+      <div id="opp-action" style="display:none;margin-top:12px"><button class="btn btn-primary btn-sm" onclick="alert('Generates a trade coordination brief for Lance.')"><i class="ti ti-file-text" style="font-size:13px"></i> Generate GC coordination brief</button></div>
+    </div>
+    <div class="section-hd"><span class="section-title"><i class="ti ti-shovel" style="margin-right:5px;color:var(--teal-text)"></i>Open ground opportunities</span><span style="font-size:12px;color:var(--text3)">Before concrete / hardscape</span></div>
+    <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:16px">
+      <div style="font-size:12px;color:var(--text2);margin-bottom:12px">Must go in before any paving &mdash; impossible to add without jackhammering later:</div>
+      <div class="opp-grid">
+        <label class="opp-item"><input type="checkbox" id="gopp1" onchange="checkOpps('gopp')"> Irrigation mainline + zones</label>
+        <label class="opp-item"><input type="checkbox" id="gopp2" onchange="checkOpps('gopp')"> Landscape lighting conduit</label>
+        <label class="opp-item"><input type="checkbox" id="gopp3" onchange="checkOpps('gopp')"> EV charger conduit (garage/driveway)</label>
+        <label class="opp-item"><input type="checkbox" id="gopp4" onchange="checkOpps('gopp')"> Gate motor rough</label>
+        <label class="opp-item"><input type="checkbox" id="gopp5" onchange="checkOpps('gopp')"> Outdoor speaker wire</label>
+        <label class="opp-item"><input type="checkbox" id="gopp6" onchange="checkOpps('gopp')"> Security camera conduit</label>
+      </div>
+      <div id="gopp-action" style="display:none;margin-top:12px"><button class="btn btn-primary btn-sm" onclick="alert('Generates a landscape coordination brief for Lance.')"><i class="ti ti-file-text" style="font-size:13px"></i> Generate landscape coordination brief</button></div>
+    </div>
+  </div>
+
+  <!-- ROOMS -->
+  <div id="tab-rooms" style="display:none">
+    <div id="room-list">
+      <div style="font-size:12px;color:var(--text2);margin-bottom:14px">2560 Coolidge Ave &mdash; 1,400 SF main house &middot; Designer: Ebru Kuyak &middot; Option B layout (Aug 13, 2025)</div>
+      <div class="room-grid">
+        <div class="room-card" onclick="openRoom('pbath')"><div class="card-icon"><i class="ti ti-bath"></i></div><div class="card-name">Primary bath</div><div class="card-pills"><span class="pill p-red">2 blocked</span><span class="pill p-amber">3 pending</span></div></div>
+        <div class="room-card" onclick="openRoom('pbr')"><div class="card-icon"><i class="ti ti-bed"></i></div><div class="card-name">Primary bedroom</div><div class="card-pills"><span class="pill p-amber">2 pending</span><span class="pill p-green">1 approved</span></div></div>
+        <div class="room-card" onclick="openRoom('kitchen')"><div class="card-icon"><i class="ti ti-chef-hat"></i></div><div class="card-name">Kitchen</div><div class="card-pills"><span class="pill p-amber">3 pending</span><span class="pill p-green">1 approved</span></div></div>
+        <div class="room-card" onclick="openRoom('living')"><div class="card-icon"><i class="ti ti-sofa"></i></div><div class="card-name">Living / dining room</div><div class="card-pills"><span class="pill p-amber">2 pending</span></div></div>
+        <div class="room-card" onclick="openRoom('hallbath')"><div class="card-icon"><i class="ti ti-droplet"></i></div><div class="card-name">Hall bath</div><div class="card-pills"><span class="pill p-amber">3 pending</span></div></div>
+        <div class="room-card" onclick="openRoom('br2')"><div class="card-icon"><i class="ti ti-bed"></i></div><div class="card-name">Bedroom 2 &amp; 3</div><div class="card-pills"><span class="pill p-green">Approved</span></div></div>
+        <div class="room-card" onclick="openRoom('patio')"><div class="card-icon"><i class="ti ti-umbrella"></i></div><div class="card-name">Covered patio</div><div class="card-pills"><span class="pill p-amber">2 pending</span></div></div>
+      </div>
+    </div>
+    <div id="room-detail" style="display:none"><div class="detail-panel"><div class="detail-hd"><button class="btn btn-sm" onclick="closeRoom()"><i class="ti ti-arrow-left" style="font-size:13px"></i> Rooms</button><span id="room-title" style="font-size:15px;font-weight:600"></span></div><div class="cat-strip" id="cat-strip"></div><div class="item-list" id="item-list"></div></div></div>
+  </div>
+
+  <!-- ADU -->
+  <div id="tab-adu" style="display:none">
+    <div id="adu-list">
+      <div style="font-size:12px;color:var(--text2);margin-bottom:14px">Detached garage conversion &mdash; 405 SF &middot; Designer: Ebru Kuyak &middot; ADU plan dated Dec 8, 2025</div>
+      <div class="room-grid">
+        <div class="room-card" onclick="openAdu('adu-bath')"><div class="card-icon"><i class="ti ti-bath"></i></div><div class="card-name">ADU bath</div><div class="card-pills"><span class="pill p-amber">3 pending</span></div></div>
+        <div class="room-card" onclick="openAdu('adu-br')"><div class="card-icon"><i class="ti ti-bed"></i></div><div class="card-name">ADU bedroom / studio</div><div class="card-pills"><span class="pill p-amber">2 pending</span><span class="pill p-green">1 approved</span></div></div>
+        <div class="room-card" onclick="openAdu('adu-structure')"><div class="card-icon"><i class="ti ti-building"></i></div><div class="card-name">ADU structure / MEP</div><div class="card-pills"><span class="pill p-blue">In progress</span></div></div>
+      </div>
+    </div>
+    <div id="adu-detail" style="display:none"><div class="detail-panel"><div class="detail-hd"><button class="btn btn-sm" onclick="closeAdu()"><i class="ti ti-arrow-left" style="font-size:13px"></i> ADU</button><span id="adu-title" style="font-size:15px;font-weight:600"></span></div><div class="cat-strip" id="adu-cat-strip"></div><div class="item-list" id="adu-item-list"></div></div></div>
+  </div>
+
+  <!-- LANDSCAPE -->
+  <div id="tab-landscape" style="display:none">
+    <div id="zone-list">
+      <div style="font-size:12px;color:var(--text2);margin-bottom:14px">Outdoor zones &mdash; 2560 Coolidge Ave &middot; All conduit must be in before concrete or hardscape is poured</div>
+      <div class="zone-grid">
+        <div class="zone-card" onclick="openZone('front')"><div class="card-icon"><i class="ti ti-home-2"></i></div><div class="card-name">Front yard</div><div class="card-pills"><span class="pill p-amber">3 pending</span></div></div>
+        <div class="zone-card" onclick="openZone('back')"><div class="card-icon"><i class="ti ti-trees"></i></div><div class="card-name">Backyard / patio</div><div class="card-pills"><span class="pill p-red">1 blocked</span><span class="pill p-amber">3 pending</span></div></div>
+        <div class="zone-card" onclick="openZone('driveway')"><div class="card-icon"><i class="ti ti-road"></i></div><div class="card-name">Driveway / entry</div><div class="card-pills"><span class="pill p-red">EV conduit pending</span></div></div>
+        <div class="zone-card" onclick="openZone('sideyard')"><div class="card-icon"><i class="ti ti-fence"></i></div><div class="card-name">Side yards</div><div class="card-pills"><span class="pill p-green">Approved</span></div></div>
+        <div class="zone-card" onclick="openZone('garageext')"><div class="card-icon"><i class="ti ti-car-garage"></i></div><div class="card-name">Garage / ADU exterior</div><div class="card-pills"><span class="pill p-teal">Conversion scope</span></div></div>
+      </div>
+    </div>
+    <div id="zone-detail" style="display:none"><div class="detail-panel"><div class="detail-hd"><button class="btn btn-sm" onclick="closeZone()"><i class="ti ti-arrow-left" style="font-size:13px"></i> Zones</button><span id="zone-title" style="font-size:15px;font-weight:600"></span></div><div class="cat-strip" id="zone-cat-strip"></div><div class="item-list" id="zone-item-list"></div></div></div>
+  </div>
+
+  <!-- DECISION LOG -->
+  <div id="tab-log" style="display:none">
+    <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:16px 18px;margin-bottom:14px">
+      <div class="log-list">
+        <div class="log-row"><div class="log-dot" style="background:var(--green)"></div><div><div class="log-text">Option B layout approved &mdash; new window, reconfigured primary bath + bedroom 2</div><div class="log-meta">Whole house &middot; Design &middot; Approved by Ben &amp; Svetlana &middot; Aug 13, 2025 &middot; Designed by Ebru Kuyak</div></div></div>
+        <div class="log-row"><div class="log-dot" style="background:var(--green)"></div><div><div class="log-text">ADU plan approved &mdash; garage conversion, bedroom + bath studio layout</div><div class="log-meta">ADU &middot; Structure &middot; Approved by client &middot; Dec 8, 2025 &middot; Ebru Kuyak</div></div></div>
+        <div class="log-row"><div class="log-dot" style="background:var(--red)"></div><div><div class="log-text">Freestanding tub drain location &mdash; not yet confirmed. Plumber blocked.</div><div class="log-meta">Primary bath &middot; Plumbing &middot; Blocked &middot; Needs Ebru confirmation</div></div></div>
+        <div class="log-row"><div class="log-dot" style="background:var(--red)"></div><div><div class="log-text">Wall-mount faucet rough height &mdash; pending vanity dimensions from Ebru</div><div class="log-meta">Primary bath &middot; Plumbing &middot; Blocked</div></div></div>
+        <div class="log-row"><div class="log-dot" style="background:var(--amber)"></div><div><div class="log-text">Option B window &mdash; framer needs confirmed opening size + structural header</div><div class="log-meta">Living room &middot; Structural &middot; Pending</div></div></div>
+        <div class="log-row"><div class="log-dot" style="background:var(--amber)"></div><div><div class="log-text">ADU mirror box &mdash; electrical rough location to confirm with Ebru before drywall</div><div class="log-meta">ADU bedroom &middot; Electrical &middot; Pending &middot; Dec 8, 2025 plan</div></div></div>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-primary btn-sm" onclick="alert('Add a new timestamped decision entry.')"><i class="ti ti-plus" style="font-size:13px"></i> Add decision</button>
+      <button class="btn btn-sm" onclick="alert('Generates a weekly summary email to Lance.')"><i class="ti ti-mail" style="font-size:13px"></i> Email summary to GC</button>
+    </div>
+  </div>
+
+  <!-- OUTDOOR LOG -->
+  <div id="tab-outdoor-log" style="display:none">
+    <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:16px 18px;margin-bottom:14px">
+      <div class="log-list">
+        <div class="log-row"><div class="log-dot" style="background:var(--teal-text)"></div><div><div class="log-text">Landscape concept plan completed by Ebru Kuyak &mdash; front yard concept with Brazilian deck, CMU wall, Cumaru gates, artificial turf, raised planters, jasmine trellis, water wall outside master</div><div class="log-meta">Whole property &middot; Design &middot; Concept complete &middot; Feb 25, 2026</div></div></div>
+        <div class="log-row"><div class="log-dot" style="background:var(--teal-text)"></div><div><div class="log-text">Liliput Phase I estimate received &mdash; Proposal #2982 &middot; $110,829 total &middot; Site prep, CMU wall + columns, Cumaru topper + gates, Cumaru deck + steps</div><div class="log-meta">Front yard &middot; Liliput (Mariani Enterprises) &middot; Jan 26, 2026 &middot; Not yet signed</div></div></div>
+        <div class="log-row"><div class="log-dot" style="background:var(--amber)"></div><div><div class="log-text">Pergola decision needed before deck footings can be finalized &mdash; footing placement depends on pergola type + location</div><div class="log-meta">Backyard deck &middot; Structural &middot; Pending decision &middot; Liliput note</div></div></div>
+        <div class="log-row"><div class="log-dot" style="background:var(--amber)"></div><div><div class="log-text">Gate motorization &mdash; electric strikes are NOT included in Liliput scope. Decision needed: basic hardware only vs motorized. Must rough-in before paving.</div><div class="log-meta">Front gates &middot; Electrical &middot; Pending decision</div></div></div>
+        <div class="log-row"><div class="log-dot" style="background:var(--red)"></div><div><div class="log-text">EV charger conduit &mdash; must be in ground before any driveway or entry paving. Coordinate Lance electrician with Liliput start date.</div><div class="log-meta">Driveway &middot; Electrical &middot; Blocked &middot; Critical sequence item</div></div></div>
+        <div class="log-row"><div class="log-dot" style="background:var(--amber)"></div><div><div class="log-text">Tariff warning from Liliput &mdash; material costs volatile. Estimate valid 30 days from Jan 26, 2026. Labor fixed, materials may change.</div><div class="log-meta">All landscape &middot; Liliput note &middot; Jan 26, 2026</div></div></div>
+        <div class="log-row"><div class="log-dot" style="background:var(--blue)"></div><div><div class="log-text">Backyard concrete fully demoed by Lance (Remodel 5) &mdash; backyard ready for Phase II landscape scope</div><div class="log-meta">Backyard &middot; Lance Todd Construction &middot; Complete &middot; Feb 2026</div></div></div>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px"><button class="btn btn-primary btn-sm" onclick="alert('Add a new outdoor decision entry.')"><i class="ti ti-plus" style="font-size:13px"></i> Add decision</button></div>
+  </div>
+
+  <!-- DOCUMENTS -->
+  <div id="tab-docs" style="display:none">
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:14px 16px">
+        <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px">Design documents</div>
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:0.5px solid var(--border);border-radius:var(--radius-sm);margin-bottom:7px;background:var(--surface2)"><i class="ti ti-file-type-pdf" style="font-size:20px;color:var(--red)"></i><div style="flex:1"><div style="font-size:13px;font-weight:500">Coolidge Floor Plan &mdash; Base (FPV Group LLC)</div><div style="font-size:11px;color:var(--text3)">2560 Coolidge Ave &middot; 1,400 SF &middot; May 7, 2025</div></div><span class="pill p-green">Reference</span></div>
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:0.5px solid var(--border);border-radius:var(--radius-sm);margin-bottom:7px;background:var(--surface2)"><i class="ti ti-file-type-pdf" style="font-size:20px;color:var(--red)"></i><div style="flex:1"><div style="font-size:13px;font-weight:500">Svetlana &amp; Ben &mdash; Option B with window (Ebru Kuyak)</div><div style="font-size:11px;color:var(--text3)">Design layout &middot; Aug 13, 2025 &middot; Approved by client &middot; Signature required</div></div><span class="pill p-green">Approved</span></div>
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:0.5px solid var(--border);border-radius:var(--radius-sm);background:var(--surface2)"><i class="ti ti-file-type-pdf" style="font-size:20px;color:var(--red)"></i><div style="flex:1"><div style="font-size:13px;font-weight:500">Svetlana &amp; Ben &mdash; ADU Plan (Ebru Kuyak)</div><div style="font-size:11px;color:var(--text3)">Garage conversion &middot; Dec 8, 2025 &middot; Approved by client &middot; Note: mirror box location TBD</div></div><span class="pill p-green">Approved</span></div>
+      </div>
+      <div style="background:var(--surface);border:0.5px dashed var(--border-mid);border-radius:var(--radius);padding:14px 16px;display:flex;align-items:center;gap:12px;opacity:.7"><i class="ti ti-file-plus" style="font-size:20px;color:var(--text3)"></i><div style="flex:1"><div style="font-size:13px;font-weight:500;color:var(--text2)">Upload product install guides</div><div style="font-size:11px;color:var(--text3)">Assign PDFs to rooms and trades &mdash; read receipts tracked automatically</div></div><button class="btn btn-sm btn-primary" onclick="alert('Upload install PDFs and assign to trades.')">Upload</button></div>
+    </div>
+  </div>
+
+  <!-- TEAM -->
+  <div id="tab-team" style="display:none">
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div class="team-card"><div style="display:flex;align-items:center;gap:12px"><div class="avatar" style="background:var(--purple-bg);color:var(--purple-text)">EK</div><div style="flex:1"><div style="font-size:14px;font-weight:500">Ebru Kuyak &mdash; Interior Designer</div><div style="font-size:12px;color:var(--text2)">Option B (Aug 2025) + ADU plan (Dec 2025) &middot; All finish decisions route through Ebru</div></div><span class="pill p-green">Active</span></div></div>
+      <div class="team-card"><div style="display:flex;align-items:center;gap:12px"><div class="avatar" style="background:var(--blue-bg);color:var(--blue-text)">LC</div><div style="flex:1"><div style="font-size:14px;font-weight:500">Lance C. &mdash; General Contractor</div><div style="font-size:12px;color:var(--text2)">Coolidge remodel + ADU garage conversion</div></div><span class="pill p-green">Active</span></div></div>
+      <div class="team-card" style="border-color:var(--red)"><div style="display:flex;align-items:center;gap:12px"><div class="avatar" style="background:var(--red-bg);color:var(--red-text)">PL</div><div style="flex:1"><div style="font-size:14px;font-weight:500">Plumber &mdash; Assign</div><div style="font-size:12px;color:var(--text2)">2 items blocked: freestanding tub drain + wall-mount faucet rough height</div></div><span class="pill p-red">2 blocked</span></div></div>
+      <div class="team-card"><div style="display:flex;align-items:center;gap:12px"><div class="avatar" style="background:var(--amber-bg);color:var(--amber-text)">BS</div><div style="flex:1"><div style="font-size:14px;font-weight:500">Ben &amp; Svetlana &mdash; Clients / owners</div><div style="font-size:12px;color:var(--text2)">2560 Coolidge Ave, Santa Monica CA 90405</div></div><span class="pill p-blue">Approver</span></div></div>
+    </div>
+  </div>
+
+  <!-- PRODUCTS -->
+  <div id="tab-products" style="display:none">
+    <div style="font-size:12px;color:var(--text2);margin-bottom:14px">Add product selections as Ebru specifies them. Each card tracks SKU, vendor, purchase link, install guide, lead time, and install status.</div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:14px 16px;display:flex;align-items:center;gap:12px"><i class="ti ti-bath" style="font-size:20px;color:var(--blue)"></i><div style="flex:1"><div style="font-size:13px;font-weight:500">Freestanding soaking tub &mdash; primary bath</div><div style="font-size:11px;color:var(--text3)">Primary bath &middot; Plumbing &middot; Ebru to specify &middot; Drain location blocked</div></div><span class="pill p-red">Blocked</span></div>
+      <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:14px 16px;display:flex;align-items:center;gap:12px"><i class="ti ti-droplet" style="font-size:20px;color:var(--blue)"></i><div style="flex:1"><div style="font-size:13px;font-weight:500">Vanity faucet &mdash; wall mount, primary bath</div><div style="font-size:11px;color:var(--text3)">Primary bath &middot; Plumbing &middot; Rough height blocked on vanity dims from Ebru</div></div><span class="pill p-red">Blocked</span></div>
+      <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:14px 16px;display:flex;align-items:center;gap:12px"><i class="ti ti-square-rotated" style="font-size:20px;color:var(--text3)"></i><div style="flex:1"><div style="font-size:13px;font-weight:500">Floor + wall tile &mdash; primary bath</div><div style="font-size:11px;color:var(--text3)">Primary bath &middot; Tile &middot; Ebru to specify &middot; Heated floor decision needed now</div></div><span class="pill p-amber">Pending Ebru</span></div>
+      <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:14px 16px;display:flex;align-items:center;gap:12px"><i class="ti ti-chef-hat" style="font-size:20px;color:var(--text3)"></i><div style="flex:1"><div style="font-size:13px;font-weight:500">Kitchen appliances &mdash; range, hood, fridge, dishwasher</div><div style="font-size:11px;color:var(--text3)">Kitchen &middot; Appliances &middot; Gas vs induction affects rough-in &mdash; decide before MEP</div></div><span class="pill p-amber">Decision needed</span></div>
+      <div style="background:var(--surface);border:0.5px dashed var(--border-mid);border-radius:var(--radius);padding:14px 16px;display:flex;align-items:center;gap:12px;opacity:.7"><i class="ti ti-plus" style="font-size:20px;color:var(--text3)"></i><div style="flex:1"><div style="font-size:13px;font-weight:500;color:var(--text2)">Add product</div><div style="font-size:11px;color:var(--text3)">Paste vendor link, add SKU, attach install PDF, assign to room + trade</div></div><button class="btn btn-sm btn-primary" onclick="alert('Add any product with SKU, link, install PDF, trade assignment.')">Add</button></div>
+    </div>
+  </div>
+
+
+  <!-- FINANCE -->
+  <div id="tab-finance" style="display:none">
+    <div style="font-size:12px;color:var(--text2);margin-bottom:16px">Lance Todd Construction, Inc. &middot; LIC#692325 &middot; All invoices for 2560 Coolidge Ave</div>
+
+    <!-- Summary cards -->
+    <div class="stat-row" style="grid-template-columns:repeat(3,1fr)">
+      <div class="stat"><div class="stat-label">Total contracted (incl. landscape est.)</div><div class="stat-num" style="font-size:22px">$572,907</div></div>
+      <div class="stat"><div class="stat-label">Paid to date</div><div class="stat-num green" style="font-size:22px">$111,181</div></div>
+      <div class="stat"><div class="stat-label">Balance due</div><div class="stat-num red" style="font-size:22px">$136,488</div></div>
+    </div>
+
+    <!-- Invoice table -->
+    <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:16px">
+      <div style="padding:12px 16px;border-bottom:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+        <span style="font-size:13px;font-weight:600">Invoice history</span>
+        <span style="font-size:12px;color:var(--text3)">Lance Todd Construction &middot; LIC#692325</span>
+      </div>
+      <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse;font-size:13px">
+          <thead>
+            <tr style="background:var(--surface2)">
+              <th style="padding:9px 16px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--text3);font-weight:500">Invoice</th>
+              <th style="padding:9px 16px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--text3);font-weight:500">Date</th>
+              <th style="padding:9px 16px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--text3);font-weight:500">Scope summary</th>
+              <th style="padding:9px 16px;text-align:right;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--text3);font-weight:500">Total</th>
+              <th style="padding:9px 16px;text-align:right;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--text3);font-weight:500">Paid</th>
+              <th style="padding:9px 16px;text-align:right;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--text3);font-weight:500">Balance</th>
+              <th style="padding:9px 16px;text-align:center;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--text3);font-weight:500">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-top:0.5px solid var(--border)">
+              <td style="padding:10px 16px;font-weight:500">Remodel 1</td>
+              <td style="padding:10px 16px;color:var(--text2)">Jul 8, 2025</td>
+              <td style="padding:10px 16px;color:var(--text2)">Panel, demo kitchen/baths/floors, framing pocket doors + master bath</td>
+              <td style="padding:10px 16px;text-align:right;font-weight:500">$48,330</td>
+              <td style="padding:10px 16px;text-align:right;color:var(--green-text)">$48,330</td>
+              <td style="padding:10px 16px;text-align:right;color:var(--text3)">$0</td>
+              <td style="padding:10px 16px;text-align:center"><span class="pill p-green">Paid</span></td>
+            </tr>
+            <tr style="border-top:0.5px solid var(--border)">
+              <td style="padding:10px 16px;font-weight:500">Remodel 2</td>
+              <td style="padding:10px 16px;color:var(--text2)">Aug 20, 2025</td>
+              <td style="padding:10px 16px;color:var(--text2)">Front wall demo, PSL beam, living room extension, stucco/framing</td>
+              <td style="padding:10px 16px;text-align:right;font-weight:500">$38,640</td>
+              <td style="padding:10px 16px;text-align:right;color:var(--green-text)">$38,640</td>
+              <td style="padding:10px 16px;text-align:right;color:var(--text3)">$0</td>
+              <td style="padding:10px 16px;text-align:center"><span class="pill p-green">Paid</span></td>
+            </tr>
+            <tr style="border-top:0.5px solid var(--border)">
+              <td style="padding:10px 16px;font-weight:500">Remodel 3</td>
+              <td style="padding:10px 16px;color:var(--text2)">Sep 16, 2025</td>
+              <td style="padding:10px 16px;color:var(--text2)">Back patio beam, laundry room, subfloor, drywall on new work</td>
+              <td style="padding:10px 16px;text-align:right;font-weight:500">$31,020</td>
+              <td style="padding:10px 16px;text-align:right;color:var(--green-text)">$31,020</td>
+              <td style="padding:10px 16px;text-align:right;color:var(--text3)">$0</td>
+              <td style="padding:10px 16px;text-align:center"><span class="pill p-green">Paid</span></td>
+            </tr>
+            <tr style="border-top:0.5px solid var(--border)">
+              <td style="padding:10px 16px;font-weight:500">Remodel 4</td>
+              <td style="padding:10px 16px;color:var(--text2)">Jan 13, 2026</td>
+              <td style="padding:10px 16px;color:var(--text2)">Window framing, ADU garage framing, wood flooring, plumbing/electrical/AC deposits</td>
+              <td style="padding:10px 16px;text-align:right;font-weight:500">$104,640</td>
+              <td style="padding:10px 16px;text-align:right;color:var(--green-text)">$104,640</td>
+              <td style="padding:10px 16px;text-align:right;color:var(--text3)">$0</td>
+              <td style="padding:10px 16px;text-align:center"><span class="pill p-green">Paid</span></td>
+            </tr>
+            <tr style="border-top:0.5px solid var(--border)">
+              <td style="padding:10px 16px;font-weight:500">Remodel 5</td>
+              <td style="padding:10px 16px;color:var(--text2)">Feb 24, 2026</td>
+              <td style="padding:10px 16px;color:var(--text2)">ADU doors/windows/bath framing, backyard concrete demo, rough plumbing + electrical</td>
+              <td style="padding:10px 16px;text-align:right;font-weight:500">$69,540</td>
+              <td style="padding:10px 16px;text-align:right;color:var(--amber-text)">$65,000</td>
+              <td style="padding:10px 16px;text-align:right;color:var(--amber-text);font-weight:500">$4,540</td>
+              <td style="padding:10px 16px;text-align:center"><span class="pill p-amber">Balance due</span></td>
+            </tr>
+            <tr style="border-top:0.5px solid var(--border);background:rgba(252,235,235,0.3)">
+              <td style="padding:10px 16px;font-weight:500">Remodel 6</td>
+              <td style="padding:10px 16px;color:var(--text2)">Apr 2, 2026</td>
+              <td style="padding:10px 16px;color:var(--text2)">Windows/doors, ADU slab, insulation, drywall, electrical, mini-split, tile, paint, pre-wire</td>
+              <td style="padding:10px 16px;text-align:right;font-weight:500">$169,908</td>
+              <td style="padding:10px 16px;text-align:right;color:var(--green-text)">$50,000</td>
+              <td style="padding:10px 16px;text-align:right;color:var(--red-text);font-weight:600">$119,908</td>
+              <td style="padding:10px 16px;text-align:center"><span class="pill p-red">$119,908 due</span></td>
+            </tr>
+            <tr style="border-top:2px solid var(--border);background:var(--surface2)">
+              <td colspan="3" style="padding:10px 16px;font-weight:600">Total</td>
+              <td style="padding:10px 16px;text-align:right;font-weight:600">$462,078</td>
+              <td style="padding:10px 16px;text-align:right;font-weight:600;color:var(--green-text)">$337,630</td>
+              <td style="padding:10px 16px;text-align:right;font-weight:600;color:var(--red-text)">$124,448</td>
+              <td style="padding:10px 16px"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Liliput landscape estimate -->
+    <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:16px">
+      <div style="padding:12px 16px;border-bottom:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+        <span style="font-size:13px;font-weight:600"><i class="ti ti-trees" style="margin-right:5px;color:var(--teal-text)"></i>Landscape — Liliput (Mariani Enterprises)</span>
+        <span style="font-size:12px;color:var(--text3)">Proposal #2982 &middot; Jan 26, 2026</span>
+      </div>
+      <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse;font-size:13px">
+          <thead><tr style="background:var(--surface2)">
+            <th style="padding:8px 16px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--text3);font-weight:500">Phase I scope</th>
+            <th style="padding:8px 16px;text-align:right;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--text3);font-weight:500">Amount</th>
+            <th style="padding:8px 16px;text-align:center;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--text3);font-weight:500">Status</th>
+          </tr></thead>
+          <tbody>
+            <tr style="border-top:0.5px solid var(--border)"><td style="padding:9px 16px">Front yard site prep — demo, grade, amendments, side yard cleanup</td><td style="padding:9px 16px;text-align:right;font-weight:500">$15,110</td><td style="padding:9px 16px;text-align:center"><span class="pill p-amber">Pending</span></td></tr>
+            <tr style="border-top:0.5px solid var(--border)"><td style="padding:9px 16px">CMU wall + columns — 65 LF 24"ht wall, (6) 60"ht columns, stucco finish</td><td style="padding:9px 16px;text-align:right;font-weight:500">$31,993</td><td style="padding:9px 16px;text-align:center"><span class="pill p-amber">Pending</span></td></tr>
+            <tr style="border-top:0.5px solid var(--border)"><td style="padding:9px 16px">Cumaru wood wall topper + gates — 65 LF topper, (2) 60"ht gates, (1) 72"ht gate</td><td style="padding:9px 16px;text-align:right;font-weight:500">$25,284</td><td style="padding:9px 16px;text-align:center"><span class="pill p-amber">Pending</span></td></tr>
+            <tr style="border-top:0.5px solid var(--border)"><td style="padding:9px 16px">Cumaru deck + steps — 375 sq ft deck, 105 LF steps, concrete footings for future pergola</td><td style="padding:9px 16px;text-align:right;font-weight:500">$38,442</td><td style="padding:9px 16px;text-align:center"><span class="pill p-amber">Pending</span></td></tr>
+            <tr style="border-top:2px solid var(--border);background:var(--surface2)"><td style="padding:9px 16px;font-weight:600">Phase I Total</td><td style="padding:9px 16px;text-align:right;font-weight:600;color:var(--teal-text)">$110,829</td><td style="padding:9px 16px;text-align:center"><span class="pill p-teal">Not yet signed</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="padding:10px 16px;background:var(--amber-bg);border-top:0.5px solid #EF9F27">
+        <div style="font-size:12px;color:var(--amber-text)"><i class="ti ti-alert-triangle" style="margin-right:4px"></i><strong>Tariff warning from Liliput:</strong> Material costs are volatile due to tariffs. Labor rates are fixed but material pricing may change. Estimate valid 30 days from Jan 26, 2026. Payment schedule: 20% upfront, 30% / 30% progress, 20% completion. Does NOT include plans, permits, electrical, or sanitation.</div>
+      </div>
+    </div>
+
+    <!-- Grand total with landscape -->
+    <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:16px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Grand total — all contractors</div>
+      <div style="display:flex;flex-direction:column;gap:6px;font-size:13px">
+        <div style="display:flex;justify-content:space-between"><span style="color:var(--text2)">Lance Todd Construction (invoices 1–6)</span><span style="font-weight:500">$462,078</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:var(--text2)">Liliput Landscape Phase I (pending)</span><span style="font-weight:500;color:var(--teal-text)">$110,829</span></div>
+        <div style="height:0.5px;background:var(--border);margin:4px 0"></div>
+        <div style="display:flex;justify-content:space-between"><span style="font-weight:600">Total project cost (so far)</span><span style="font-weight:600;font-size:16px">$572,907</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:var(--text2)">Paid to date (Lance only)</span><span style="color:var(--green-text);font-weight:500">~$337,630</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:var(--text2)">Outstanding (Lance balances)</span><span style="color:var(--red-text);font-weight:500">~$124,448</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:var(--text2)">Landscape (not yet contracted)</span><span style="color:var(--teal-text);font-weight:500">$110,829</span></div>
+      </div>
+    </div>
+
+    <!-- Remaining work note -->
+    <div style="background:var(--amber-bg);border:0.5px solid #EF9F27;border-radius:var(--radius);padding:14px 16px;margin-bottom:16px">
+      <div style="font-size:13px;font-weight:500;color:var(--amber-text);margin-bottom:6px"><i class="ti ti-info-circle" style="margin-right:5px"></i>Interior remaining work — not yet invoiced</div>
+      <div style="font-size:12px;color:var(--amber-text);line-height:1.7">
+        Master bath tile (in progress) &middot; Jack &amp; Jill tile (in progress) &middot; ADU tile (in progress) &middot;
+        All toilets, tubs, vanities, shower heads, faucets &middot; Electric drying racks &middot; Bathroom mirrors &middot;
+        All electrical outlets, switches &amp; lights (whole house + ADU) &middot; Water heater installation &middot;
+        Kitchen disposal hookup &middot; Front door installation
+      </div>
+    </div>
+
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-sm btn-primary" onclick="alert('In the full version you can log a payment against any invoice.')"><i class="ti ti-circle-check" style="font-size:13px"></i> Log payment</button>
+      <button class="btn btn-sm" onclick="alert('Exports a financial summary PDF.')"><i class="ti ti-download" style="font-size:13px"></i> Export summary</button>
+    </div>
+  </div>
+
+  <!-- PROGRESS TRACKER -->
+  <div id="tab-progress" style="display:none">
+    <div style="font-size:12px;color:var(--text2);margin-bottom:16px">2560 Coolidge Ave &middot; Based on Lance Todd Construction invoices 1&ndash;6 + remaining work list</div>
+
+    <div id="progress-sections" style="display:flex;flex-direction:column;gap:8px"></div>
+  </div>
+</main>
+</div>
+<script>
+const rooms={
+  pbath:{title:"Primary bath",cats:["All","Plumbing","Tile","Electrical"],items:[
+    {cat:"Plumbing",name:"Freestanding soaking tub",status:"blocked",sl:"Blocked",fields:{Type:"Freestanding",Drain:"Floor drain — location TBD",Designer:"Ebru Kuyak Option B",Vendor:"TBD"},note:"Drain rough-in location must be confirmed with Ebru before any subfloor or slab work.",alert:{t:"red",m:"BLOCKED: Drain location not confirmed. Plumber cannot proceed. Reference Option B plan Aug 13, 2025."}},
+    {cat:"Plumbing",name:"Vanity faucet — wall mount",status:"blocked",sl:"Blocked",fields:{Type:"Wall mount",RoughHeight:"TBD — pending vanity dims from Ebru",Vendor:"TBD"},alert:{t:"red",m:"BLOCKED: Rough height requires finalized vanity dimensions from Ebru Kuyak. Plumber on hold."}},
+    {cat:"Plumbing",name:"Shower valve + configuration",status:"pending",sl:"Pending",fields:{Type:"Thermostatic TBD",BodySprays:"Count TBD",NicheLocation:"TBD",Designer:"Ebru Kuyak"},alert:{t:"warn",m:"Shower valve type, body spray count, and niche location need Ebru sign-off before rough-in."}},
+    {cat:"Tile",name:"Floor tile",status:"pending",sl:"Pending — Ebru to spec",fields:{Material:"TBD",Layout:"TBD",HeatedFloor:"Decide now or never"},alert:{t:"warn",m:"If heated floor is desired, electrician must rough circuit before tile. Decide this week."}},
+    {cat:"Tile",name:"Wall + shower tile",status:"pending",sl:"Pending — Ebru to spec",fields:{Material:"TBD",Grout:"TBD",NicheLocation:"TBD"},alert:{t:"warn",m:"Niche location must be framed before walls close. Needs Ebru specification."}},
+    {cat:"Electrical",name:"Heated floor mat",status:"pending",sl:"Consider now",fields:{Type:"Electric mat under tile",Circuit:"Dedicated 120V",Timing:"Before tile"},note:"Add before tile — impossible after. Low cost now vs major demo later.",alert:{t:"blue",m:"Decision needed this week. Electrician roughs circuit before tile crew arrives."}},
+  ]},
+  pbr:{title:"Primary bedroom",cats:["All","Electrical","Windows"],items:[
+    {cat:"Windows",name:"New window — Option B addition",status:"pending",sl:"Pending",fields:{Location:"Per Option B Aug 2025 plan",OpeningSize:"TBD — confirm with Ebru",Header:"Structural — framer to spec"},alert:{t:"warn",m:"Framer needs confirmed opening dimensions and structural header spec from Ebru before framing."}},
+    {cat:"Electrical",name:"Lighting layout",status:"pending",sl:"Pending",fields:{Type:"Recessed + sconces TBD",Dimmer:"Yes",SmartHome:"TBD"},alert:{t:"warn",m:"Lighting positions must be finalized before drywall. Coordinate with Ebru."}},
+    {cat:"Electrical",name:"Motorized shade rough",status:"approved",sl:"Approved",fields:{Brand:"TBD",Power:"In-wall",SmartHome:"Yes"},alert:null},
+  ]},
+  kitchen:{title:"Kitchen",cats:["All","Plumbing","Electrical","Appliances"],items:[
+    {cat:"Appliances",name:"Range / cooktop",status:"pending",sl:"Pending",fields:{Type:"Gas or induction — TBD",Size:"TBD",Vendor:"TBD"},alert:{t:"warn",m:"Gas vs induction affects MEP rough-in scope significantly. Must decide before plumber and electrician schedule."}},
+    {cat:"Appliances",name:"Range hood",status:"pending",sl:"Pending",fields:{Type:"TBD",Duct:"Exterior preferred",CFM:"TBD"},alert:{t:"warn",m:"Duct path must be coordinated with framer before walls close."}},
+    {cat:"Plumbing",name:"Kitchen sink + faucet",status:"pending",sl:"Pending",fields:{Type:"TBD",Faucet:"TBD",Disposal:"TBD"},alert:null},
+    {cat:"Electrical",name:"Island pendant rough",status:"pending",sl:"Pending",fields:{Qty:"TBD",Location:"Over island — confirm dims",Dimmer:"Yes"},alert:{t:"warn",m:"Pendant location requires island dimensions from Ebru before electrical rough."}},
+    {cat:"Appliances",name:"Refrigerator",status:"approved",sl:"Approved — size TBD",fields:{Type:"TBD",Size:"TBD",WaterLine:"Yes if ice maker"},alert:null},
+  ]},
+  living:{title:"Living / dining room",cats:["All","Structural","Electrical"],items:[
+    {cat:"Structural",name:"Option B wall reconfiguration",status:"pending",sl:"Pending",fields:{Scope:"Per Option B plan Aug 2025",Designer:"Ebru Kuyak",Framer:"Review with Lance"},note:"Red lines on Option B plan indicate new and moved walls. Framer must review before any demo.",alert:{t:"warn",m:"Wall changes per Option B must be reviewed by framer and Lance before demo begins."}},
+    {cat:"Electrical",name:"Living room lighting",status:"pending",sl:"Pending",fields:{Type:"Recessed layout TBD",Dimmer:"Yes",SmartHome:"TBD"},alert:null},
+  ]},
+  hallbath:{title:"Hall bath",cats:["All","Plumbing","Tile"],items:[
+    {cat:"Plumbing",name:"Vanity + faucet",status:"pending",sl:"Pending",fields:{Type:"TBD — Ebru to spec",Faucet:"TBD",Vendor:"TBD"},alert:null},
+    {cat:"Plumbing",name:"Shower or tub/shower combo",status:"pending",sl:"Pending",fields:{Type:"Tub/shower vs shower only — TBD",Valve:"TBD"},alert:{t:"warn",m:"Tub vs shower-only decision affects rough-in scope. Must confirm before plumber schedules."}},
+    {cat:"Tile",name:"Floor + wall tile",status:"pending",sl:"Pending",fields:{Material:"TBD — Ebru to spec",Layout:"TBD"},alert:null},
+  ]},
+  br2:{title:"Bedroom 2 & 3",cats:["All"],items:[
+    {cat:"All",name:"Bedroom 2 — closet + lighting",status:"approved",sl:"Approved",fields:{Closet:"Built-in TBD",Lighting:"Recessed standard layout"},alert:null},
+    {cat:"All",name:"Bedroom 3 — closet + lighting",status:"approved",sl:"Approved",fields:{Closet:"Built-in TBD",Lighting:"Recessed standard layout"},alert:null},
+  ]},
+  patio:{title:"Covered patio",cats:["All","Electrical","Structure"],items:[
+    {cat:"Electrical",name:"Patio lighting",status:"pending",sl:"Pending",fields:{Type:"Ceiling mount or string TBD",Dimmer:"Yes",GFCI:"Required"},alert:null},
+    {cat:"Structure",name:"Ceiling fan rough",status:"pending",sl:"Pending",fields:{Location:"Center of covered patio",Box:"Fan-rated required"},alert:{t:"blue",m:"Fan-rated box must be installed during framing. Standard box cannot support fan weight."}},
+  ]},
+};
+const aduRooms={
+  "adu-bath":{title:"ADU bath",cats:["All","Plumbing","Tile"],items:[
+    {cat:"Plumbing",name:"Vanity + sink",status:"pending",sl:"Pending",fields:{Type:"Single vanity per Ebru Dec 2025 plan",Faucet:"TBD",Vendor:"TBD"},alert:{t:"warn",m:"Vanity selection needed — single sink per Dec 8, 2025 plan."}},
+    {cat:"Plumbing",name:"Toilet",status:"pending",sl:"Pending",fields:{Type:"Standard or wall-hung TBD",Rough:"12in standard"},alert:null},
+    {cat:"Tile",name:"Bath tile — floor + walls",status:"pending",sl:"Pending",fields:{Material:"TBD — Ebru to spec",Layout:"TBD"},alert:{t:"warn",m:"Tile selection needed before ADU bath tile crew schedules."}},
+  ]},
+  "adu-br":{title:"ADU bedroom / studio",cats:["All","Electrical"],items:[
+    {cat:"Electrical",name:"Mirror box electrical rough",status:"pending",sl:"Pending — confirm with Ebru",fields:{Location:"Per Ebru Dec 2025 plan — exact TBD",Note:"Callout: box for the mirror"},note:"Ebru Dec 8 2025 plan callout: box for the mirror. Exact location must be confirmed before drywall.",alert:{t:"warn",m:"DECISION NEEDED: Confirm exact mirror box location with Ebru Kuyak. Note appears on Dec 8, 2025 ADU plan."}},
+    {cat:"Electrical",name:"ADU bedroom lighting",status:"pending",sl:"Pending",fields:{Type:"Recessed — 2 cans per plan",Dimmer:"Yes"},alert:null},
+    {cat:"Electrical",name:"Exterior entry light",status:"approved",sl:"Approved",fields:{Type:"Wall mount at ADU entry",GFCI:"Yes"},alert:null},
+  ]},
+  "adu-structure":{title:"ADU structure / MEP",cats:["All","Structural","Plumbing","Electrical"],items:[
+    {cat:"Structural",name:"Garage conversion framing",status:"pending",sl:"In progress",fields:{Scope:"Garage to ADU conversion",Plan:"Ebru Kuyak Dec 8 2025",Permits:"Coordinate with Lance"},alert:{t:"blue",m:"Confirm permit status for ADU conversion with Lance before framing begins."}},
+    {cat:"Plumbing",name:"ADU plumbing rough",status:"pending",sl:"Pending",fields:{Scope:"Bath + kitchenette TBD",TieIn:"Main house line vs separate"},alert:{t:"warn",m:"Confirm plumbing tie-in approach before rough-in. Separate vs shared affects permit scope."}},
+    {cat:"Electrical",name:"ADU sub-panel",status:"pending",sl:"Pending",fields:{Size:"TBD — based on ADU load",Location:"TBD",Permits:"Required"},alert:{t:"warn",m:"Sub-panel size depends on ADU appliance load. Confirm with electrician before permit submittal."}},
+  ]},
+};
+const zones={
+  front:{title:"Front yard",cats:["All","Hardscape","Planting","Irrigation","Lighting"],items:[
+    {cat:"Hardscape",name:"Porcelain paver entry path",status:"pending",sl:"Pending — Liliput Ph I",fields:{Material:"Porcelain pavers",Location:"Front entry per concept plan",Contractor:"Liliput",EstCost:"Included in site prep"},note:"Per Ebru concept plan Feb 25, 2026 — porcelain pavers at residence entry.",alert:{t:"warn",m:"Paver layout must be confirmed with Ebru before Liliput begins site prep."}},
+    {cat:"Planting",name:"Lemon/lilac tree in raised planter",status:"pending",sl:"Pending",fields:{Species:"Lemon + Lilac",Location:"Front corner raised planter per concept",LeadTime:"4-6 weeks for specimen",Contractor:"Liliput"},alert:{t:"blue",m:"Specimen trees have lead times. Confirm nursery availability with Liliput before scheduling."}},
+    {cat:"Planting",name:"Sedums + ornamental grasses + flowering shrubs",status:"pending",sl:"Pending",fields:{Location:"Front garden beds per concept",Style:"Sedum and grass gardens in front",Contractor:"Liliput"},alert:null},
+    {cat:"Planting",name:"Jasmine vine on trellis (right side)",status:"pending",sl:"Pending",fields:{Species:"Jasmine vine",Support:"Custom vertical trellis to match gate",Location:"Right side per concept plan"},alert:{t:"blue",m:"Trellis must be fabricated to match gate material (Cumaru). Coordinate with wall + gate scope."}},
+    {cat:"Irrigation",name:"Front yard drip irrigation",status:"pending",sl:"Pending",fields:{Type:"Drip — beds + planters",Zones:"TBD",Contractor:"Liliput",Warranty:"1 year parts + labor"},alert:{t:"blue",m:"Irrigation conduit must be in before any hardscape or paving is placed."}},
+    {cat:"Lighting",name:"Front yard landscape lighting",status:"pending",sl:"Pending",fields:{Type:"Path + uplighting TBD",Voltage:"12V low voltage",Contractor:"Liliput",Note:"Not included in Phase I estimate — add as line item"},alert:{t:"warn",m:"Lighting is NOT included in Phase I estimate. Confirm with Liliput if adding to scope."}},
+  ]},
+  wall:{title:"CMU wall + Cumaru gates",cats:["All","Masonry","Woodwork"],items:[
+    {cat:"Masonry",name:"CMU wall — 65 LF at 24in height",status:"pending",sl:"Pending — $31,993",fields:{Length:"65 linear feet",Height:"24 inches",Width:"8 inch CMU",Footing:"12x16in footing",Finish:"Smooth stucco",Prep:"Grout-filled CMU — required for wood topper"},note:"Wall must be grout-filled per Liliput spec — required for wood topper attachment.",alert:{t:"warn",m:"Grout-filled CMU is required before wood topper can be installed. Sequence: masonry first, topper second."}},
+    {cat:"Masonry",name:"CMU columns — (6) at 60in height",status:"pending",sl:"Pending",fields:{Qty:"6 columns",Size:"24x24 inches",Height:"60 inches",Finish:"Smooth stucco finish",Location:"Per concept plan — spaced along wall"},alert:null},
+    {cat:"Woodwork",name:"Cumaru wood wall topper — 65 LF",status:"pending",sl:"Pending — $25,284",fields:{Material:"Cumaru hardwood",Length:"65 linear feet",Height:"36 inch topper",Style:"Horizontal 1x6 slats with 1in gaps",Fabrication:"Shop fabricated + field installed"},note:"Cumaru is a Brazilian hardwood — same material as deck. Coordinate lead times together.",alert:{t:"blue",m:"Cumaru material lead time may be affected by tariffs. Confirm availability with Liliput before signing."}},
+    {cat:"Woodwork",name:"Decorative gates — (2) 60in + (1) 72in",status:"pending",sl:"Pending",fields:{Qty:"3 total — 2 standard + 1 tall",Height60:"2 gates at 60 inches",Height72:"1 gate at 72 inches (no gaps)",Style:"Horizontal 1x6 Cumaru slats",Hardware:"Basic hardware included — specialty/electric extra"},alert:{t:"warn",m:"Electric gate strikes and specialty hardware are NOT included. Budget extra if motorized gates are desired. Coordinate with Remodel 6 pre-wire scope."}},
+  ]},
+  deck:{title:"Cumaru deck + steps",cats:["All","Decking","Structural"],items:[
+    {cat:"Decking",name:"Cumaru hardwood deck — 375 sq ft",status:"pending",sl:"Pending — $38,442",fields:{Material:"Cumaru Brazilian hardwood",Area:"375 square feet",Steps:"105 linear feet of deck steps",Style:"Per concept plan — built-in bench area",Contractor:"Liliput"},note:"Deck footing placement depends on pergola decision. Confirm pergola plan before Liliput finalizes footings.",alert:{t:"warn",m:"DECISION NEEDED: Pergola plan must be confirmed before deck footings are placed. Liliput cannot finalize design without this."}},
+    {cat:"Decking",name:"Built-in Brazilian hardwood bench",status:"pending",sl:"Pending",fields:{Height:"16-18 inches high",Material:"Brazilian hardwood (Cumaru)",Location:"Per concept plan — along deck edge",Style:"Built-in — per landscape concept"},alert:null},
+    {cat:"Structural",name:"Concrete footings for future pergola — (2) 12x12x12",status:"pending",sl:"Pending",fields:{Qty:"2 pour-in-place footings",Size:"12x12x12 inches",Purpose:"Pre-positioned for future prefab pergola",Location:"Per landscape design plans"},note:"These footings are included in the deck estimate. Pergola itself is NOT in Phase I scope.",alert:{t:"blue",m:"Pergola footings are included in deck price. Actual pergola purchase and install is a separate future scope item."}},
+  ]},
+  back:{title:"Backyard / turf area",cats:["All","Hardscape","Planting","Irrigation"],items:[
+    {cat:"Hardscape",name:"Artificial turf — backyard",status:"pending",sl:"Phase II TBD",fields:{Type:"Artificial or real — TBD",Location:"Central lawn area per concept plan",Note:"Phase II scope — not in Liliput Phase I"},alert:{t:"blue",m:"Backyard concrete was demoed by Lance (Remodel 5). Backyard scope is Phase II — confirm with Liliput."}},
+    {cat:"Planting",name:"Backyard planting plan",status:"pending",sl:"Phase II TBD",fields:{Scope:"Phase II — TBD with Liliput",Trees:"Specimen trees — 6-8 week lead time"},alert:{t:"blue",m:"Phase II scope. Order specimen trees early — availability is limited."}},
+    {cat:"Irrigation",name:"Backyard irrigation",status:"pending",sl:"Phase II TBD",fields:{Type:"Rotors for lawn, drip for beds",Zones:"TBD",Warranty:"1 year parts + labor"},alert:{t:"blue",m:"Irrigation rough must go in before any new hardscape or turf is installed."}},
+  ]},
+  driveway:{title:"Driveway / entry pavers",cats:["All","Hardscape","Electrical"],items:[
+    {cat:"Hardscape",name:"Front entry porcelain pavers",status:"pending",sl:"Pending",fields:{Material:"Porcelain pavers — barn gray per concept",Location:"Entry path to residence front door",Contractor:"Liliput Phase I"},note:"Per Ebru concept plan. Paver layout and grout color to be confirmed before install.",alert:{t:"warn",m:"Confirm paver layout direction and grout color with Ebru before Liliput begins."}},
+    {cat:"Electrical",name:"EV charger conduit — pre-wire",status:"pending",sl:"Pending — critical",fields:{Runs:"Garage + driveway pad",Size:"1in EMT conduit",Circuit:"50A each",Contractor:"Remodel 6 electrical scope"},alert:{t:"red",m:"EV conduit must be in before any driveway or entry paving. Coordinate Lance electrician with Liliput schedule."}},
+    {cat:"Electrical",name:"Gate motor rough — decorative gate",status:"pending",sl:"Pending",fields:{GateType:"Decorative gate per concept plan",Power:"120V",Hardware:"Basic only in Liliput scope — electric strike extra",SmartHome:"TBD"},alert:{t:"warn",m:"If motorized gate is desired, electric strike is extra cost. Rough must be in before paving."}},
+  ]},
+  garageext:{title:"Garage / ADU exterior",cats:["All","Structure","Electrical"],items:[
+    {cat:"Structure",name:"ADU exterior — garage conversion finish",status:"pending",sl:"In progress",fields:{Scope:"Exterior finish + entry door",Plan:"Ebru Kuyak Dec 2025",Windows:"Installed per Remodel 6"},alert:{t:"blue",m:"Exterior stucco patched per Remodel 6. Entry door and final exterior finish to coordinate with ADU interior."}},
+    {cat:"Electrical",name:"ADU exterior lighting — installed",status:"installed",sl:"Installed",fields:{Type:"Wall mount at entry per Remodel 6",GFCI:"Yes",Circuit:"New circuit from panel"},alert:null},
+    {cat:"Electrical",name:"Car charger — per Remodel 6",status:"installed",sl:"Installed",fields:{Circuit:"New circuit from main panel",Location:"Garage / ADU",Type:"EV ready"},alert:null},
+  ]},
+};
+
+let curRoom=null,curCat="All",curAdu=null,curAduCat="All",curZone=null,curZoneCat="All";
+
+function showTab(t){
+  ["dashboard","rooms","adu","landscape","log","outdoor-log","docs","team","products","finance","progress"].forEach(x=>{const e=document.getElementById("tab-"+x);if(e)e.style.display="none";});
+  document.getElementById("tab-"+t).style.display="block";
+  const titles={dashboard:"Dashboard",rooms:"Rooms",adu:"ADU — Garage conversion",landscape:"Landscape zones",log:"Decision log","outdoor-log":"Outdoor decisions",docs:"Documents",team:"Team & trades",products:"Products",finance:"Financials",progress:"Progress tracker"};
+  document.getElementById("page-title").textContent=titles[t]||t;
+  closeSidebar();
+}
+function setNav(el){document.querySelectorAll(".nav-item").forEach(n=>n.classList.remove("active"));el.classList.add("active");}
+function sc(s){return{approved:"p-green",pending:"p-amber",blocked:"p-red",installed:"p-blue",ordered:"p-purple"}[s]||"p-amber";}
+
+function renderCatStrip(id,cats,active,fn){
+  document.getElementById(id).innerHTML=cats.map(c=>`<button class="cat-btn${c===active?" active":""}" onclick="${fn}('${c}')">${c}</button>`).join("");
+}
+function renderItemList(listId,items,cat,approveFn){
+  const list=cat==="All"?items:items.filter(i=>i.cat===cat);
+  document.getElementById(listId).innerHTML=list.map((item,idx)=>{
+    const al=item.alert?`<div class="alert-box alert-${item.alert.t==="red"?"red":item.alert.t==="blue"?"blue":"warn"}"><i class="ti ti-${item.alert.t==="red"?"alert-circle":item.alert.t==="blue"?"info-circle":"alert-triangle"}" style="font-size:15px;flex-shrink:0;margin-top:1px"></i><span>${item.alert.m}</span></div>`:"";
+    const nt=item.note?`<div class="install-note"><i class="ti ti-tool" style="margin-right:4px;font-size:13px"></i>${item.note}</div>`:"";
+    const flds=Object.entries(item.fields).map(([k,v])=>`<div><div class="field-label">${k}</div><div class="field-val">${v}</div></div>`).join("");
+    const act=item.status==="pending"?`<div class="action-row"><button class="btn btn-sm btn-green" onclick="${approveFn}(${idx})"><i class="ti ti-check" style="font-size:12px"></i> Approve</button></div>`:"";
+    return `<div class="item"><div class="item-hd" onclick="toggleItem('${listId}',${idx})"><span class="item-name">${item.name}</span><span class="pill ${sc(item.status)}">${item.sl}</span><i class="ti ti-chevron-down chevron" id="${listId}-chev-${idx}"></i></div><div class="item-body" id="${listId}-body-${idx}">${al}${nt}<div class="field-grid">${flds}</div>${act}</div></div>`;
+  }).join("");
+}
+function toggleItem(p,i){const b=document.getElementById(p+"-body-"+i),c=document.getElementById(p+"-chev-"+i);const o=b.classList.contains("open");b.classList.toggle("open",!o);c.classList.toggle("open",!o);}
+
+function openRoom(id){curRoom=id;curCat="All";document.getElementById("room-list").style.display="none";document.getElementById("room-detail").style.display="block";const r=rooms[id];document.getElementById("room-title").textContent=r.title;renderCatStrip("cat-strip",r.cats,"All","selectCat");renderItemList("item-list",r.items,"All","approveRoom");}
+function closeRoom(){document.getElementById("room-list").style.display="block";document.getElementById("room-detail").style.display="none";}
+function selectCat(c){curCat=c;const r=rooms[curRoom];renderCatStrip("cat-strip",r.cats,c,"selectCat");renderItemList("item-list",r.items,c,"approveRoom");}
+function approveRoom(idx){const r=rooms[curRoom];const list=curCat==="All"?r.items:r.items.filter(i=>i.cat===curCat);list[idx].status="approved";list[idx].sl="Approved";renderItemList("item-list",r.items,curCat,"approveRoom");}
+
+function openAdu(id){curAdu=id;curAduCat="All";document.getElementById("adu-list").style.display="none";document.getElementById("adu-detail").style.display="block";const r=aduRooms[id];document.getElementById("adu-title").textContent=r.title;renderCatStrip("adu-cat-strip",r.cats,"All","selectAduCat");renderItemList("adu-item-list",r.items,"All","approveAdu");}
+function closeAdu(){document.getElementById("adu-list").style.display="block";document.getElementById("adu-detail").style.display="none";}
+function selectAduCat(c){curAduCat=c;const r=aduRooms[curAdu];renderCatStrip("adu-cat-strip",r.cats,c,"selectAduCat");renderItemList("adu-item-list",r.items,c,"approveAdu");}
+function approveAdu(idx){const r=aduRooms[curAdu];const list=curAduCat==="All"?r.items:r.items.filter(i=>i.cat===curAduCat);list[idx].status="approved";list[idx].sl="Approved";renderItemList("adu-item-list",r.items,curAduCat,"approveAdu");}
+
+function openZone(id){curZone=id;curZoneCat="All";document.getElementById("zone-list").style.display="none";document.getElementById("zone-detail").style.display="block";const z=zones[id];document.getElementById("zone-title").textContent=z.title;renderCatStrip("zone-cat-strip",z.cats,"All","selectZoneCat");renderItemList("zone-item-list",z.items,"All","approveZone");}
+function closeZone(){document.getElementById("zone-list").style.display="block";document.getElementById("zone-detail").style.display="none";}
+function selectZoneCat(c){curZoneCat=c;const z=zones[curZone];renderCatStrip("zone-cat-strip",z.cats,c,"selectZoneCat");renderItemList("zone-item-list",z.items,c,"approveZone");}
+function approveZone(idx){const z=zones[curZone];const list=curZoneCat==="All"?z.items:z.items.filter(i=>i.cat===curZoneCat);list[idx].status="approved";list[idx].sl="Approved";renderItemList("zone-item-list",z.items,curZoneCat,"approveZone");}
+
+function checkOpps(prefix){
+  const ids=prefix==="opp"?["opp1","opp2","opp3","opp4","opp5","opp6","opp7","opp8"]:["gopp1","gopp2","gopp3","gopp4","gopp5","gopp6"];
+  const any=ids.some(id=>{const e=document.getElementById(id);return e&&e.checked;});
+  const a=document.getElementById(prefix+"-action");if(a)a.style.display=any?"block":"none";
+}
+
+// ── PROGRESS DATA ──
+const progressSections = [
+  {title:"Demo + rough framing",status:"complete",items:[
+    {name:"Demo kitchen, cabinets, countertops, appliances",status:"complete"},
+    {name:"Demo kids bathroom (tile, floor, cabinet, drywall, framing)",status:"complete"},
+    {name:"Demo master bathroom (tile, floor, cabinet, drywall, framing)",status:"complete"},
+    {name:"Demo existing hardwood floors",status:"complete"},
+    {name:"Demo front exterior wall",status:"complete"},
+    {name:"Demo front entry tile deck",status:"complete"},
+    {name:"Demo existing kitchen exterior windows",status:"complete"},
+    {name:"Demo back patio double doors + wall",status:"complete"},
+    {name:"Demo existing patio cover",status:"complete"},
+    {name:"Demo backyard concrete",status:"complete"},
+    {name:"Demo ADU shelving, door, wall",status:"complete"},
+  ]},
+  {title:"Structural / framing",status:"complete",items:[
+    {name:"New 200 amp main panel",status:"complete"},
+    {name:"Moen Flo valve + pressure regulator",status:"complete"},
+    {name:"Frame pocket door openings + Jack & Jill bathroom layout",status:"complete"},
+    {name:"Frame master bathroom new layout",status:"complete"},
+    {name:"New PSL beam + ceiling joist + roof rafters (living room extension)",status:"complete"},
+    {name:"New laundry room framing",status:"complete"},
+    {name:"1/2in CPX subfloor throughout house",status:"complete"},
+    {name:"Frame new window openings — living room, master bath, kids bath, bedroom 1",status:"complete"},
+    {name:"ADU — new 12in ceiling joist, 10ft door opening, new beam",status:"complete"},
+    {name:"ADU — new door opening back, new window west side, bathroom walls",status:"complete"},
+    {name:"ADU — new slab poured with rebar + machine finish",status:"complete"},
+    {name:"Wood flooring installed throughout main house",status:"complete"},
+  ]},
+  {title:"MEP rough-in",status:"complete",items:[
+    {name:"Rough plumbing — main house",status:"complete"},
+    {name:"Rough electrical — main house",status:"complete"},
+    {name:"ADU plumbing — toilet, shower, sink, future kitchen capped",status:"complete"},
+    {name:"ADU rough electrical",status:"complete"},
+    {name:"Pre-wire speakers, cameras, ethernet, intercom",status:"complete"},
+    {name:"AC rough + ducting — main house + ADU",status:"complete"},
+  ]},
+  {title:"Insulation + drywall",status:"complete",items:[
+    {name:"Insulation — R-38 ceiling, R-15 walls",status:"complete"},
+    {name:"Drywall all new work — main house",status:"complete"},
+    {name:"Drywall patch throughout (plumbing + electrical work)",status:"complete"},
+    {name:"Drywall ADU walls + ceiling",status:"complete"},
+  ]},
+  {title:"Windows + doors + exterior",status:"complete",items:[
+    {name:"Exterior windows and doors installed",status:"complete"},
+    {name:"Stucco patched to match existing",status:"complete"},
+    {name:"Interior doors + baseboards + Kert jamb detail",status:"complete"},
+    {name:"Mitsubishi mini-split installed (ADU)",status:"complete"},
+    {name:"Exterior paint — main house + ADU",status:"complete"},
+  ]},
+  {title:"Tile work",status:"in-progress",items:[
+    {name:"Master bath — porcelain tile walls",status:"in-progress"},
+    {name:"Master bath — porcelain tile floor",status:"in-progress"},
+    {name:"Jack & Jill bath — porcelain tile walls",status:"in-progress"},
+    {name:"Jack & Jill bath — porcelain tile floor",status:"in-progress"},
+    {name:"ADU bath — porcelain tile walls + floor",status:"in-progress"},
+  ]},
+  {title:"Interior paint",status:"complete",items:[
+    {name:"Interior paint — main house + ADU (doors + baseboards included)",status:"complete"},
+  ]},
+  {title:"Plumbing fixtures + finish",status:"remaining",items:[
+    {name:"All toilets installed",status:"remaining"},
+    {name:"Freestanding tub — primary bath",status:"remaining"},
+    {name:"All vanities installed",status:"remaining"},
+    {name:"All shower heads + faucets",status:"remaining"},
+    {name:"Electric drying racks",status:"remaining"},
+    {name:"Bathroom mirrors",status:"remaining"},
+    {name:"Water heater installation",status:"remaining"},
+    {name:"Kitchen disposal hookup",status:"remaining"},
+  ]},
+  {title:"Electrical finish",status:"remaining",items:[
+    {name:"All outlets + switches — whole house",status:"remaining"},
+    {name:"All light fixtures — whole house + ADU",status:"remaining"},
+    {name:"EV charger connection",status:"remaining"},
+    {name:"Exterior lights — main house + ADU",status:"remaining"},
+  ]},
+  {title:"Final items",status:"remaining",items:[
+    {name:"Front door installation",status:"remaining"},
+    {name:"Kitchen appliances installed + connected",status:"remaining"},
+  ]},
+  {title:"Landscape Phase I — Liliput",status:"remaining",items:[
+    {name:"Front yard demo, site prep + grading (raise grade 12in)",status:"remaining"},
+    {name:"Side yard clean up",status:"remaining"},
+    {name:"CMU wall — 65 LF at 24in height with 6 columns at 60in",status:"remaining"},
+    {name:"Cumaru wood wall topper — 65 LF horizontal slats",status:"remaining"},
+    {name:"Cumaru decorative gates — (2) 60in + (1) 72in",status:"remaining"},
+    {name:"Cumaru hardwood deck — 375 sq ft",status:"remaining"},
+    {name:"Deck steps — 105 linear feet",status:"remaining"},
+    {name:"Concrete footings for future pergola (2 qty)",status:"remaining"},
+    {name:"Front planting — lemon/lilac trees, sedums, ornamental grasses",status:"remaining"},
+    {name:"Jasmine vine on custom trellis (right side)",status:"remaining"},
+    {name:"Porcelain paver entry path",status:"remaining"},
+    {name:"Irrigation — front yard drip system",status:"remaining"},
+  ]},
+  {title:"Landscape Phase II — TBD",status:"remaining",items:[
+    {name:"Backyard artificial turf or real lawn",status:"remaining"},
+    {name:"Built-in Brazilian hardwood bench (concept plan)",status:"remaining"},
+    {name:"Gentle/soothing water wall outside master bedroom",status:"remaining"},
+    {name:"Backyard planting plan",status:"remaining"},
+    {name:"Backyard irrigation",status:"remaining"},
+    {name:"Landscape lighting — front + back",status:"remaining"},
+    {name:"Pergola (future — footings included in Phase I)",status:"remaining"},
+  ]},
+];
+
+function renderProgress(){
+  const el=document.getElementById("progress-sections");
+  if(!el)return;
+  el.innerHTML=progressSections.map(sec=>{
+    const total=sec.items.length;
+    const done=sec.items.filter(i=>i.status==="complete").length;
+    const pct=Math.round(done/total*100);
+    const sc2=s=>s==="complete"?"p-green":s==="in-progress"?"p-blue":"p-gray";
+    const ic=s=>s==="complete"?"ti-circle-check":s==="in-progress"?"ti-clock":"ti-circle";
+    const col=s=>s==="complete"?"#5A6E35":s==="in-progress"?"#0F332C":"var(--text3)";
+    const sl=s=>s==="complete"?"Done":s==="in-progress"?"In progress":"Remaining";
+    return `<div style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);overflow:hidden">
+      <div style="padding:12px 16px;display:flex;align-items:center;gap:10px;cursor:pointer" onclick="toggleProgress(this)">
+        <i class="ti ${ic(sec.status)}" style="font-size:16px;color:${col(sec.status)};flex-shrink:0"></i>
+        <span style="flex:1;font-size:13px;font-weight:500">${sec.title}</span>
+        <span style="font-size:12px;color:var(--text3)">${done}/${total}</span>
+        <div style="width:80px;height:5px;background:var(--surface2);border-radius:3px;overflow:hidden"><div style="height:100%;width:${pct}%;background:${col(sec.status)};border-radius:3px"></div></div>
+        <span class="pill ${sc2(sec.status)}">${sl(sec.status)}</span>
+        <i class="ti ti-chevron-down chevron" style="font-size:14px;color:var(--text3)"></i>
+      </div>
+      <div class="progress-body" style="display:none;border-top:0.5px solid var(--border)">
+        ${sec.items.map(item=>`<div style="display:flex;align-items:center;gap:10px;padding:9px 16px;border-bottom:0.5px solid var(--border);font-size:13px"><i class="ti ${ic(item.status)}" style="font-size:14px;color:${col(item.status)};flex-shrink:0"></i><span style="flex:1;color:${item.status==="remaining"?"var(--text3)":"var(--text)"}">${item.name}</span><span class="pill ${sc2(item.status)}" style="font-size:10px">${sl(item.status)}</span></div>`).join("")}
+      </div>
+    </div>`;
+  }).join("");
+}
+function toggleProgress(hd){
+  const body=hd.nextElementSibling;
+  const chev=hd.querySelector(".chevron");
+  const open=body.style.display!=="none";
+  body.style.display=open?"none":"block";
+  if(chev)chev.style.transform=open?"":"rotate(180deg)";
+}
+renderProgress();
+
+function openSidebar(){document.getElementById("sidebar").classList.add("open");document.getElementById("overlay").classList.add("open");}
+function closeSidebar(){document.getElementById("sidebar").classList.remove("open");document.getElementById("overlay").classList.remove("open");}
+</script>
+</body>
+</html>
