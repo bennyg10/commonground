@@ -181,7 +181,8 @@ body{font-family:"DM Sans",sans-serif;background:var(--offwhite);color:var(--tex
     <div class="nav-section">Project</div>
     <button class="nav-item" onclick="showTab('finance');setNav(this)"><i class="ti ti-receipt"></i> Financials <span class="nav-badge red">$131k due</span></button>
     <button class="nav-item" onclick="showTab('progress');setNav(this)"><i class="ti ti-checks"></i> Progress tracker</button>
-    <button class="nav-item" onclick="showTab('punch');setNav(this)"><i class="ti ti-clipboard-check"></i> Punch list <span class="nav-badge red">14</span></button>
+    <button class="nav-item" onclick="showTab('punch');setNav(this)"><i class="ti ti-clipboard-check"></i> Punch list <span class="nav-badge red">26</span></button>
+    <button class="nav-item" onclick="showTab('sitenotes');setNav(this)" style="background:rgba(173,183,131,0.15);color:#ADB783;font-weight:500"><i class="ti ti-writing"></i> Site notes <span class="nav-badge" style="background:rgba(249,249,199,0.2);color:#F9F9C7">AI</span></button>
     <button class="nav-item" onclick="showTab('materials');setNav(this)"><i class="ti ti-ruler-measure"></i> Materials <span class="nav-badge red">track</span></button>
     <button class="nav-item" onclick="showTab('products');setNav(this)"><i class="ti ti-package"></i> Products <span class="nav-badge amber">5</span></button>
   </nav>
@@ -208,16 +209,75 @@ body{font-family:"DM Sans",sans-serif;background:var(--offwhite);color:var(--tex
     </div>
     <!-- TODAY'S SITE UPDATE -->
     <div class="section-hd" style="margin-bottom:8px">
-      <span class="section-title" style="color:var(--forest);display:flex;align-items:center;gap:6px"><i class="ti ti-calendar-event" style="font-size:15px"></i>Today — June 1, 2026</span>
-      <span style="font-size:11px;color:var(--text3)">Site update logged</span>
+      <span class="section-title" style="color:var(--forest);display:flex;align-items:center;gap:6px"><i class="ti ti-calendar-event" style="font-size:15px"></i>Monday — June 9, 2026</span>
+      <span style="font-size:11px;background:#EDF0DC;color:#3A4A20;padding:2px 8px;border-radius:20px;font-weight:500">Tile · Electrical on site · Trash pickup tomorrow</span>
     </div>
-    <div style="background:var(--forest);border-radius:var(--radius);padding:14px 16px;margin-bottom:20px">
-      <div style="font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:rgba(173,183,131,0.7);margin-bottom:10px">Active work today</div>
-      <div style="display:flex;flex-direction:column;gap:7px">
-        <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:#F7F7EB"><i class="ti ti-square-rotated" style="color:#ADB783;font-size:14px;flex-shrink:0"></i><span><strong style="color:#ADB783">Tile:</strong> ADU corrections (3 tiles) + master bath corrections + start Jack &amp; Jill floor</span></div>
-        <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:#F7F7EB"><i class="ti ti-droplet" style="color:#ADB783;font-size:14px;flex-shrink:0"></i><span><strong style="color:#ADB783">Plumbing:</strong> ADU wall-mount rough + shower/sink hookup &middot; Plumber Friday/Saturday</span></div>
-        <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:#F7F7EB"><i class="ti ti-bolt" style="color:#ADB783;font-size:14px;flex-shrink:0"></i><span><strong style="color:#ADB783">Electrical:</strong> Fix ADU speaker locations, install outlets/lights &middot; Main house Legrand outlets + speakers</span></div>
-        <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:#F7F7EB"><i class="ti ti-package" style="color:#ADB783;font-size:14px;flex-shrink:0"></i><span><strong style="color:#ADB783">Delivery:</strong> ADU sink arriving Wednesday — schedule plumber around this</span></div>
+    <div style="background:var(--forest);border-radius:var(--radius);padding:14px 16px;margin-bottom:12px">
+      <div style="font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:rgba(173,183,131,0.7);margin-bottom:10px">Tile on site &middot; Electrician on site &middot; Trash pickup pushed to Tuesday</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+
+        <div style="background:rgba(247,247,235,0.06);border-radius:8px;padding:10px 12px">
+          <div style="font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:#ADB783;margin-bottom:6px">🪟 Tile crew</div>
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <div style="font-size:12px;color:rgba(247,247,235,0.85);display:flex;gap:8px"><span style="color:#ADB783;font-weight:600;min-width:80px">Jack &amp; Jill:</span>Tiling in progress — scratch coat done</div>
+            <div style="font-size:12px;color:rgba(247,247,235,0.85);display:flex;gap:8px"><span style="color:#F9F9C7;font-weight:600;min-width:80px">Decide:</span>Pocket door finish — slightly crooked+slim vs leveled+pinched toilet area</div>
+          </div>
+        </div>
+
+        <div style="background:rgba(247,247,235,0.06);border-radius:8px;padding:10px 12px">
+          <div style="font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:#ADB783;margin-bottom:6px">⚡ Electrical</div>
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <div style="font-size:12px;color:rgba(247,247,235,0.85);display:flex;gap:8px"><span style="color:#ADB783;font-weight:600;min-width:80px">Active:</span>Outlets, appliances, washer/dryer, Nest A/C, speakers</div>
+            <div style="font-size:12px;color:rgba(247,247,235,0.85);display:flex;gap:8px"><span style="color:#ADB783;font-weight:600;min-width:80px">ADU:</span>Outlet boxes flush to tile face, lights, exhaust fan</div>
+            <div style="font-size:12px;color:#F9F9C7;display:flex;gap:8px"><span style="color:#F9F9C7;font-weight:600;min-width:80px">Buy today:</span>Dark/black Legrand outlet + wall plate</div>
+          </div>
+        </div>
+
+        <div style="background:rgba(247,247,235,0.06);border-radius:8px;padding:10px 12px">
+          <div style="font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:#ADB783;margin-bottom:6px">📋 Personal execution</div>
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <div style="font-size:12px;color:rgba(247,247,235,0.85);display:flex;gap:8px"><span style="color:#ADB783;font-weight:600;min-width:80px">Coordinate:</span>Outdoor living scope + appraisal (Charmel forbearance)</div>
+            <div style="font-size:12px;color:rgba(247,247,235,0.85);display:flex;gap:8px"><span style="color:#ADB783;font-weight:600;min-width:80px">Coordinate:</span>Glass guy — master bedroom + ADU bathroom</div>
+            <div style="font-size:12px;color:rgba(247,247,235,0.85);display:flex;gap:8px"><span style="color:#ADB783;font-weight:600;min-width:80px">Schedule:</span>Ebru — towel warmer locations (master bath design consistency)</div>
+          </div>
+        </div>
+
+      </div>
+      <div style="display:flex;gap:8px;margin-top:12px">
+        <button class="btn btn-sm" onclick="showTab('sitenotes');setNav(document.querySelector('[onclick*=sitenotes]')); startBlast();" style="background:rgba(173,183,131,0.2);color:#ADB783;border-color:rgba(173,183,131,0.3);font-weight:500"><i class="ti ti-writing" style="font-size:13px"></i> Blast notes</button>
+        <button class="btn btn-sm" onclick="showTab('sitenotes');setNav(document.querySelector('[onclick*=sitenotes]')); startWalkthrough();" style="background:rgba(247,247,235,0.1);color:#F7F7EB;border-color:rgba(247,247,235,0.2)"><i class="ti ti-walk" style="font-size:13px"></i> Start walkthrough</button>
+      </div>
+    </div>
+
+    <!-- JUNE 9 DECISIONS -->
+    <div style="background:var(--surface);border:1.5px solid var(--amber);border-radius:var(--radius);padding:14px 16px;margin-bottom:20px">
+      <div style="font-size:13px;font-weight:600;color:var(--forest);margin-bottom:12px"><i class="ti ti-alert-triangle" style="color:var(--amber);margin-right:6px"></i>Decisions needed today</div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+
+        <div style="border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:11px 13px">
+          <div style="font-size:11px;font-weight:600;color:var(--amber-text);text-transform:uppercase;letter-spacing:.04em;margin-bottom:5px">Jack &amp; Jill — pocket door finish</div>
+          <div style="font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:8px">Door framing is slightly crooked. Two options: <strong style="color:var(--text)">Option A</strong> — accept slight crook, keep slimmer profile. <strong style="color:var(--text)">Option B</strong> — level it out, but toilet area + outlet become more pinched. Either way the outlet box must move to flush-mount on tile face.</div>
+          <div style="display:flex;gap:7px">
+            <button onclick="logDecision2('JJ pocket door: Option A approved — accept slight crook, slim profile')" class="btn btn-sm btn-primary">Option A — slim + accept</button>
+            <button onclick="logDecision2('JJ pocket door: Option B approved — level out, tighter toilet area')" class="btn btn-sm">Option B — level out</button>
+          </div>
+          <div id="jj-door-log" style="display:none;margin-top:6px;font-size:11px;color:var(--green-text);background:var(--green-bg);padding:6px 9px;border-radius:var(--radius-sm)"></div>
+        </div>
+
+        <div style="border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:11px 13px">
+          <div style="font-size:11px;font-weight:600;color:var(--amber-text);text-transform:uppercase;letter-spacing:.04em;margin-bottom:5px">Master bath — towel warmer locations</div>
+          <div style="font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:8px">Towel warmer is installed but needs final location confirmation with Ebru for design consistency. Schedule meeting before hardwiring.</div>
+          <button onclick="logDecision2('Master bath towel warmer: Ebru meeting scheduled')" class="btn btn-sm btn-primary">Schedule Ebru meeting</button>
+          <div id="towel-log" style="display:none;margin-top:6px;font-size:11px;color:var(--green-text);background:var(--green-bg);padding:6px 9px;border-radius:var(--radius-sm)"></div>
+        </div>
+
+        <div style="border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:11px 13px">
+          <div style="font-size:11px;font-weight:600;color:var(--amber-text);text-transform:uppercase;letter-spacing:.04em;margin-bottom:5px">Buy today — dark Legrand outlets</div>
+          <div style="font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:8px">Black/dark Legrand outlet + wall plate needed. Electrician on site — confirm quantity before going to store.</div>
+          <button onclick="logDecision2('Dark Legrand outlet + wall plate: purchased')" class="btn btn-sm btn-primary">Mark as purchased</button>
+          <div id="legrand-log" style="display:none;margin-top:6px;font-size:11px;color:var(--green-text);background:var(--green-bg);padding:6px 9px;border-radius:var(--radius-sm)"></div>
+        </div>
+
       </div>
     </div>
 
@@ -280,7 +340,7 @@ body{font-family:"DM Sans",sans-serif;background:var(--offwhite);color:var(--tex
     <div id="adu-list">
       <div style="font-size:12px;color:var(--text2);margin-bottom:14px">Detached garage conversion &mdash; 405 SF &middot; Designer: Ebru Kuyak &middot; ADU plan dated Dec 8, 2025</div>
       <div class="room-grid">
-        <div class="room-card" onclick="openAdu('adu-bath')"><div class="card-icon"><i class="ti ti-bath"></i></div><div class="card-name">ADU bath</div><div class="card-pills"><span class="pill p-amber">3 pending</span></div></div>
+        <div class="room-card" onclick="openAdu('adu-bath')"><div class="card-icon"><i class="ti ti-bath"></i></div><div class="card-name">ADU bath</div><div class="card-pills"><span class="pill p-green">Complete ✓</span></div></div>
         <div class="room-card" onclick="openAdu('adu-br')"><div class="card-icon"><i class="ti ti-bed"></i></div><div class="card-name">ADU bedroom / studio</div><div class="card-pills"><span class="pill p-amber">2 pending</span><span class="pill p-green">1 approved</span></div></div>
         <div class="room-card" onclick="openAdu('adu-structure')"><div class="card-icon"><i class="ti ti-building"></i></div><div class="card-name">ADU structure / MEP</div><div class="card-pills"><span class="pill p-blue">In progress</span></div></div>
       </div>
@@ -312,6 +372,19 @@ body{font-family:"DM Sans",sans-serif;background:var(--offwhite);color:var(--tex
         <div class="log-row"><div class="log-dot" style="background:var(--red)"></div><div><div class="log-text">Freestanding tub drain location &mdash; not yet confirmed. Plumber blocked.</div><div class="log-meta">Primary bath &middot; Plumbing &middot; Blocked &middot; Needs Ebru confirmation</div></div></div>
         <div class="log-row"><div class="log-dot" style="background:var(--red)"></div><div><div class="log-text">Wall-mount faucet rough height &mdash; pending vanity dimensions from Ebru</div><div class="log-meta">Primary bath &middot; Plumbing &middot; Blocked</div></div></div>
         <div class="log-row"><div class="log-dot" style="background:var(--amber)"></div><div><div class="log-text">Option B window &mdash; framer needs confirmed opening size + structural header</div><div class="log-meta">Living room &middot; Structural &middot; Pending</div></div></div>
+        <div class="log-row"><div class="log-dot" style="background:var(--red)"></div><div><div class="log-text">Dryer installation error — shuts off in 5 seconds. Electrician to investigate wiring / 240V connection.</div><div class="log-meta">Laundry &middot; Electrical &middot; Issue logged &middot; June 10, 2026</div></div></div>
+        <div class="log-row"><div class="log-dot" style="background:var(--red)"></div><div><div class="log-text">Fireplace incomplete — heater unit not installed, top finish unresolved. Lance to assess scope vs contract.</div><div class="log-meta">Living room &middot; GC &middot; Issue logged &middot; June 10, 2026</div></div></div>
+        <div class="log-row"><div class="log-dot" style="background:var(--amber)"></div><div><div class="log-text">Master bath hot water not exceeding 90°F — plumber to check water heater temp + thermostatic cartridge.</div><div class="log-meta">Master bath &middot; Plumbing &middot; Issue logged &middot; June 10, 2026</div></div></div>
+        <div class="log-row"><div class="log-dot" style="background:var(--amber)"></div><div><div class="log-text">Kitchen faucet: reverse hot/cold so cold is first turn — plumber to swap supply lines or adjust cartridge.</div><div class="log-meta">Kitchen &middot; Plumbing &middot; Client request &middot; June 10, 2026</div></div></div>
+        <div class="log-row"><div class="log-dot" style="background:var(--amber)"></div><div><div class="log-text">Sonos install: LABEL ALL WIRES — each amp must be mapped to its speaker zone before connecting.</div><div class="log-meta">Whole house &middot; Electrical &middot; Critical instruction &middot; June 10, 2026</div></div></div>
+        <div class="log-row"><div class="log-dot" style="background:var(--blue)"></div><div><div class="log-text">Shower glass: ready to order — confirm dimensions with Ebru first. One call away.</div><div class="log-meta">Master bath &middot; Glass &middot; Pending Ebru &middot; June 10, 2026</div></div></div>
+        <div class="log-row"><div class="log-dot" style="background:var(--blue)"></div><div><div class="log-text">Master bath mirror: ready to install — very heavy, needs electrician + extra crew. Coordinate dedicated install day.</div><div class="log-meta">Master bath &middot; Coordinate &middot; June 10, 2026</div></div></div>
+        <div class="log-row"><div class="log-dot" style="background:var(--green)"></div><div><div class="log-text">June 9 — Tile (J&amp;J tiling), Electrical (outlets, appliances, A/C, speakers) on site. Trash pickup pushed to Tuesday (jury duty).</div><div class="log-meta">Whole house &middot; Site status &middot; June 9, 2026</div></div></div>
+        <div class="log-row"><div class="log-dot" style="background:var(--green)"></div><div><div class="log-text">ADU bath COMPLETE — tiles finished, vanity + faucet + toilet + shower head all installed</div><div class="log-meta">ADU bath &middot; Plumbing + Tile &middot; Complete &middot; June 9, 2026</div></div></div>
+        <div class="log-row"><div class="log-dot" style="background:var(--amber)"></div><div><div class="log-text">Jack &amp; Jill bath: scratch coat complete, tiling in progress. Pocket door finish decision needed before tile continues around it.</div><div class="log-meta">Jack &amp; Jill bath &middot; Tile &middot; In progress &middot; June 9, 2026</div></div></div>
+        <div class="log-row"><div class="log-dot" style="background:var(--amber)"></div><div><div class="log-text">Master bedroom: adjustable fixtures not dimming equally with fixed lights — electrician to investigate + fix</div><div class="log-meta">Master bedroom &middot; Electrical &middot; Issue logged &middot; June 9, 2026</div></div></div>
+        <div class="log-row"><div class="log-dot" style="background:var(--amber)"></div><div><div class="log-text">Master bath towel warmer: installed but location needs Ebru confirmation for design consistency — meeting to be scheduled</div><div class="log-meta">Master bath &middot; Design &middot; Pending Ebru &middot; June 9, 2026</div></div></div>
+        <div class="log-row"><div class="log-dot" style="background:var(--green)"></div><div><div class="log-text">June 6 — fumigation tent removed, all three trades on site: tile crew, plumber, electrician working outlets</div><div class="log-meta">Whole house &middot; Site status &middot; Confirmed &middot; June 6, 2026</div></div></div>
         <div class="log-row"><div class="log-dot" style="background:var(--amber)"></div><div><div class="log-text">ADU mirror box &mdash; electrical rough location to confirm with Ebru before drywall</div><div class="log-meta">ADU bedroom &middot; Electrical &middot; Pending &middot; Dec 8, 2025 plan</div></div></div>
       </div>
     </div>
@@ -607,6 +680,117 @@ body{font-family:"DM Sans",sans-serif;background:var(--offwhite);color:var(--tex
     <button class="btn btn-primary btn-sm" onclick="alert('Add any material — tile, flooring, lumber, fixtures — with quantity, location, and install status.')"><i class="ti ti-plus" style="font-size:13px"></i> Add material</button>
   </div>
 
+  <!-- SITE NOTES / AI WALKTHROUGH -->
+  <div id="tab-sitenotes" style="display:none">
+
+    <!-- Mode selector -->
+    <div id="sn-mode-select" style="display:block">
+      <div style="font-size:20px;font-weight:600;color:var(--forest);letter-spacing:-.02em;margin-bottom:6px">Site notes</div>
+      <div style="font-size:13px;color:var(--text2);margin-bottom:24px">Add today's notes — AI organizes them by room, trade, and priority when you're done.</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px">
+        <div onclick="startBlast()" style="background:var(--forest);border-radius:var(--radius);padding:22px 20px;cursor:pointer;transition:opacity .15s" onmouseover="this.style.opacity='.88'" onmouseout="this.style.opacity='1'">
+          <div style="font-size:22px;margin-bottom:10px">⚡</div>
+          <div style="font-size:15px;font-weight:600;color:#F7F7EB;margin-bottom:6px">Blast mode</div>
+          <div style="font-size:12px;color:rgba(247,247,235,0.65);line-height:1.6">Type everything at once — stream of consciousness, messy is fine. AI sorts it all when you hit Finish.</div>
+        </div>
+        <div onclick="startWalkthrough()" style="background:var(--surface);border:1.5px solid var(--forest);border-radius:var(--radius);padding:22px 20px;cursor:pointer;transition:all .15s" onmouseover="this.style.background='#F2F2E8'" onmouseout="this.style.background='var(--surface)'">
+          <div style="font-size:22px;margin-bottom:10px">🚶</div>
+          <div style="font-size:15px;font-weight:600;color:var(--forest);margin-bottom:6px">Walkthrough mode</div>
+          <div style="font-size:12px;color:var(--text2);line-height:1.6">Room by room — type notes per space, hit Next to move on. AI organizes when you hit Finish.</div>
+        </div>
+      </div>
+
+      <!-- Previous notes log -->
+      <div id="sn-history" style="display:none">
+        <div style="font-size:12px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px">Previous site notes</div>
+        <div id="sn-history-list" style="display:flex;flex-direction:column;gap:8px"></div>
+      </div>
+    </div>
+
+    <!-- BLAST MODE -->
+    <div id="sn-blast" style="display:none">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+        <button onclick="backToMode()" class="btn btn-sm"><i class="ti ti-arrow-left" style="font-size:12px"></i> Back</button>
+        <div>
+          <div style="font-size:15px;font-weight:600;color:var(--forest)">Blast mode ⚡</div>
+          <div style="font-size:12px;color:var(--text2)">Type everything — messy is fine. AI sorts it when you hit Finish.</div>
+        </div>
+      </div>
+      <div style="background:var(--surface);border:1.5px solid var(--forest);border-radius:var(--radius);overflow:hidden;margin-bottom:12px">
+        <div style="padding:8px 14px;background:var(--forest);display:flex;align-items:center;justify-content:space-between">
+          <span style="font-size:12px;color:rgba(247,247,235,0.7)">Your notes — just start typing</span>
+          <span style="font-size:11px;color:rgba(173,183,131,0.8)" id="blast-char-count">0 characters</span>
+        </div>
+        <textarea id="blast-input" rows="14" placeholder="e.g. ADU tile 3 bad cuts around plumbing, master niche still off center needs to be fixed and 2 tiles replaced, plumber coming friday need to remove ADU vanity tiles first, Legrand outlets need installing in main house, sink arriving Wednesday, electrician needs to fix speaker locations in ADU before connecting sonos, Jack and Jill floor starting today watch the waste..." style="width:100%;padding:14px 16px;font-size:14px;border:none;outline:none;font-family:inherit;line-height:1.7;color:var(--text);background:var(--surface);resize:none" oninput="document.getElementById('blast-char-count').textContent=this.value.length+' characters'"></textarea>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button id="blast-finish-btn" onclick="finishBlast()" class="btn btn-primary" style="font-size:14px;padding:10px 20px"><i class="ti ti-sparkles" style="font-size:14px"></i> Finish — let AI organize</button>
+        <span style="font-size:12px;color:var(--text3)">AI will sort by room, trade, and priority</span>
+      </div>
+    </div>
+
+    <!-- WALKTHROUGH MODE -->
+    <div id="sn-walkthrough" style="display:none">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+        <button onclick="backToMode()" class="btn btn-sm"><i class="ti ti-arrow-left" style="font-size:12px"></i> Back</button>
+        <div style="flex:1">
+          <div style="font-size:15px;font-weight:600;color:var(--forest)">Walkthrough mode 🚶</div>
+          <div style="font-size:12px;color:var(--text2)">Room by room — type what you see, hit Next</div>
+        </div>
+        <span style="font-size:12px;color:var(--text3)" id="wt-progress-label">Room 1 of 7</span>
+      </div>
+      <!-- Progress dots -->
+      <div id="wt-dots" style="display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap"></div>
+      <!-- Room card -->
+      <div style="background:var(--surface);border:1.5px solid var(--forest);border-radius:var(--radius);overflow:hidden;margin-bottom:12px">
+        <div style="padding:12px 16px;background:var(--forest);display:flex;align-items:center;gap:10px">
+          <span style="font-size:18px" id="wt-room-icon">🛁</span>
+          <div>
+            <div style="font-size:14px;font-weight:600;color:#F7F7EB" id="wt-room-name">Primary bath</div>
+            <div style="font-size:11px;color:rgba(173,183,131,0.8)" id="wt-room-hint">Tile corrections, plumbing rough, fixtures</div>
+          </div>
+        </div>
+        <textarea id="wt-input" rows="7" placeholder="Type notes for this room — anything goes. e.g. tile corrections needed on niche, plumber needs access before vanity tiles go back, faucet selection still TBD..." style="width:100%;padding:14px 16px;font-size:14px;border:none;outline:none;font-family:inherit;line-height:1.7;color:var(--text);background:var(--surface);resize:none"></textarea>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button onclick="wtPrev()" class="btn btn-sm" id="wt-prev-btn" style="display:none"><i class="ti ti-arrow-left" style="font-size:12px"></i> Back</button>
+        <button onclick="wtNext()" class="btn btn-primary" id="wt-next-btn" style="font-size:14px;padding:10px 20px"><i class="ti ti-arrow-right" style="font-size:13px"></i> Next room</button>
+        <button onclick="wtSkip()" class="btn btn-sm" style="color:var(--text3)">Skip</button>
+      </div>
+    </div>
+
+    <!-- AI PROCESSING -->
+    <div id="sn-processing" style="display:none;text-align:center;padding:48px 20px">
+      <div style="font-size:36px;margin-bottom:16px" id="processing-emoji">✨</div>
+      <div style="font-size:16px;font-weight:600;color:var(--forest);margin-bottom:8px" id="processing-msg">Organizing your notes...</div>
+      <div style="font-size:13px;color:var(--text2);margin-bottom:24px" id="processing-sub">Sorting by room, trade, and priority</div>
+      <div style="width:200px;height:4px;background:var(--surface2);border-radius:2px;margin:0 auto;overflow:hidden">
+        <div id="processing-bar" style="height:100%;width:0%;background:var(--forest);border-radius:2px;transition:width .4s ease"></div>
+      </div>
+    </div>
+
+    <!-- AI RESULTS -->
+    <div id="sn-results" style="display:none">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+        <div style="flex:1">
+          <div style="font-size:15px;font-weight:600;color:var(--forest)">Notes organized ✓</div>
+          <div style="font-size:12px;color:var(--text2)" id="results-timestamp"></div>
+        </div>
+        <button onclick="startNewNote()" class="btn btn-sm btn-primary"><i class="ti ti-plus" style="font-size:12px"></i> New notes</button>
+      </div>
+      <div id="ai-results-content" style="display:flex;flex-direction:column;gap:10px"></div>
+      <div style="margin-top:16px;background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:14px 16px">
+        <div style="font-size:12px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">GC summary — ready to send to Lance</div>
+        <div id="gc-summary-text" style="font-size:13px;color:var(--text);line-height:1.7;white-space:pre-wrap;background:var(--surface2);padding:12px 14px;border-radius:var(--radius-sm)"></div>
+        <div style="display:flex;gap:8px;margin-top:10px">
+          <button onclick="copySummary()" class="btn btn-sm btn-primary"><i class="ti ti-copy" style="font-size:12px"></i> Copy to send Lance</button>
+          <button onclick="alert('In the full version this texts Lance directly.')" class="btn btn-sm"><i class="ti ti-message" style="font-size:12px"></i> Text Lance</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
   <!-- PUNCH LIST -->
   <div id="tab-punch" style="display:none">
     <div style="font-size:12px;color:var(--text2);margin-bottom:16px">Active corrections and remaining installs &middot; Updated June 1, 2026</div>
@@ -713,9 +897,9 @@ const zones={
 let curRoom=null,curCat="All",curAdu=null,curAduCat="All",curZone=null,curZoneCat="All";
 
 function showTab(t){
-  ["dashboard","rooms","adu","landscape","log","outdoor-log","docs","team","products","finance","progress","materials","punch"].forEach(x=>{const e=document.getElementById("tab-"+x);if(e)e.style.display="none";});
+  ["dashboard","rooms","adu","landscape","log","outdoor-log","docs","team","products","finance","progress","materials","punch","sitenotes"].forEach(x=>{const e=document.getElementById("tab-"+x);if(e)e.style.display="none";});
   document.getElementById("tab-"+t).style.display="block";
-  const titles={dashboard:"Dashboard",rooms:"Rooms",adu:"ADU — Garage conversion",landscape:"Landscape zones",log:"Decision log","outdoor-log":"Outdoor decisions",docs:"Documents",team:"Team & trades",products:"Products",finance:"Financials",progress:"Progress tracker",materials:"Material inventory",punch:"Punch list"};
+  const titles={dashboard:"Dashboard",rooms:"Rooms",adu:"ADU — Garage conversion",landscape:"Landscape zones",log:"Decision log","outdoor-log":"Outdoor decisions",docs:"Documents",team:"Team & trades",products:"Products",finance:"Financials",progress:"Progress tracker",materials:"Material inventory",punch:"Punch list",sitenotes:"Site notes"};
   document.getElementById("page-title").textContent=titles[t]||t;
   closeSidebar();
 }
@@ -900,37 +1084,49 @@ renderProgress();
 
 // ── PUNCH LIST DATA ──
 const punchSections = [
-  {title:"Tile — corrections today",trade:"Tile crew",urgency:"today",items:[
-    {text:"ADU bath — replace 3 tiles with bad cuts around rough plumbing in shower",status:"open",note:"Bad cuts by tiler around rough plumbing"},
-    {text:"ADU bath — remove 2 vanity area tiles (floor + one above) to allow plumber access for wall-mount rough",status:"open",note:"Tiler removes, plumber works, tiler reinstalls + groots"},
-    {text:"ADU bath — reinstall 2 vanity tiles + grout after plumber completes wall-mount rough",status:"open",note:"Sequence: tile removes → plumber installs rough → tile reinstalls"},
-    {text:"Master bath — replace 2 tiles with poor rough plumbing cuts",status:"open",note:""},
-    {text:"Master bath — fix 2 niche pieces to proper miter cuts",status:"open",note:"Currently not mitered correctly"},
-    {text:"Master bath — even out niche opening — currently not centered",status:"open",note:"Niche is off-center, needs adjustment"},
-    {text:"Jack & Jill bath — start floating the floor today",status:"open",note:"Monitor waste — do not over-cut"},
-    {text:"Jack & Jill bath — confirm sqft needed vs tile remaining before cutting",status:"open",note:"~356 sqft in 23 boxes + 54 sqft loose = ~410 sqft total"},
+  {title:"Electrical — urgent fixes",trade:"Electrician",urgency:"today",items:[
+    {text:"Dryer not working — shuts off within 5 seconds. Manual says installation error.",status:"open",note:"Check 240V connection, breaker, and dryer vent. Likely wiring issue at outlet or connection."},
+    {text:"Dimmers in bedrooms not dimming all lights equally",status:"open",note:"Adjustable fixtures and fixed lights on same circuit behaving differently — investigate compatibility and fix"},
+    {text:"Master bedroom: adjustable fixtures not dimming equally with fixed lights",status:"open",note:"Same dimmer issue — confirm all bulbs are dimmable and compatible with Lutron/Legrand dimmer spec"},
+    {text:"Sonos amp + speaker install — LABEL ALL WIRES and match each amp to its speaker zone",status:"open",note:"CRITICAL: label every wire before connecting. Map: amp 1 → zone, amp 2 → zone, etc. Do not connect unlabeled."},
+    {text:"Place 2 directional lights in bedroom 3 pointing toward closet",status:"open",note:"Confirm location with client before installing"},
+    {text:"Master bath mirror install — very heavy, needs electrician + extra help",status:"open",note:"Coordinate with GC Lance for extra hands. Confirm wall blocking can support weight before scheduling."},
+    {text:"TV + soundbar mounting — main house",status:"open",note:"Confirm TV location and wall blocking before mounting"},
+    {text:"Range hood: install matching panel to match ceiling color",status:"open",note:"Panel needs to be sourced or painted to match ceiling — confirm with client on color spec"},
   ]},
-  {title:"Plumbing — Friday/Saturday + this week",trade:"Plumber",urgency:"this-week",items:[
-    {text:"ADU — add wall-mount rough plumbing (after tile crew removes vanity tiles)",status:"open",note:"Sequence dependent on tile crew removing 2 vanity tiles first"},
-    {text:"ADU — hook up shower head",status:"open",note:""},
-    {text:"ADU — hook up faucets",status:"open",note:""},
-    {text:"ADU — hook up sink (sink delivering Wednesday — schedule plumber after delivery)",status:"open",note:"Sink arriving Wednesday — coordinate plumber for Friday or Saturday"},
-    {text:"Main house — install master bath toilet",status:"open",note:"After tile is complete"},
-    {text:"Main house — install master bath tub connection",status:"open",note:"After tile is complete"},
-    {text:"Main house — install master bath vanity connection (install vanity alongside plumbing)",status:"open",note:"Vanity and plumbing must be coordinated together"},
-    {text:"Main house — master bath shower head + faucets",status:"open",note:"After tile is complete"},
-    {text:"Main house — kitchen dishwasher part (plumber to get creative with connection)",status:"open",note:"Non-standard connection — plumber needs to source part"},
+  {title:"Plumbing — issues + installs",trade:"Plumber",urgency:"today",items:[
+    {text:"Master bath hot water not heating above 90°F and slow to heat",status:"open",note:"Check water heater temp setting (should be 120°F min), check mixing valve / thermostatic cartridge in shower valve — may be set too low or faulty"},
+    {text:"Kitchen faucet: reverse hot and cold position so cold is first on turn",status:"open",note:"Client wants cold water to be default first turn. Plumber to swap supply lines under sink or adjust cartridge orientation."},
+    {text:"Master bath towel warmer — ready to install, no instructions",status:"open",note:"Review manual together before install. Confirm hardwire vs plug-in. Coordinate location with Ebru first."},
+    {text:"Master bath vanity drawers — adjust alignment",status:"open",note:"Drawers need adjustment — confirm if this is GC or cabinet maker scope"},
   ]},
-  {title:"Electrical — ADU",trade:"Electrician",urgency:"this-week",items:[
-    {text:"ADU — fix incorrect speaker locations to be in line with AC vent",status:"open",note:"Current positions are wrong — need to align with AC vent layout"},
-    {text:"ADU — connect Sonos speakers + amp",status:"open",note:"After speaker locations corrected"},
-    {text:"ADU — install all outlets",status:"open",note:""},
-    {text:"ADU — install all lights",status:"open",note:""},
+  {title:"Glass + mirrors",trade:"Coordinate",urgency:"this-week",items:[
+    {text:"Shower glass order — ready to place. Chat with Ebru on final size before ordering.",status:"open",note:"Do not order until Ebru confirms dimensions. One conversation away from placing order."},
+    {text:"Master bath mirror — install (very heavy)",status:"open",note:"Needs electrician + extra people. Confirm wall backing can support weight. Schedule as a coordinated install day."},
   ]},
-  {title:"Electrical — main house",trade:"Electrician",urgency:"this-week",items:[
-    {text:"Main house — install Legrand outlets throughout",status:"open",note:"Legrand specified by client"},
-    {text:"Main house — install Legrand switches throughout",status:"open",note:""},
-    {text:"Main house — hook up speakers + amp",status:"open",note:""},
+  {title:"Fireplace — investigation needed",trade:"GC — Lance",urgency:"today",items:[
+    {text:"Fireplace: heater unit not installed — confirm if scope was included in contract",status:"open",note:"Check Remodel 6 scope against what was installed. If not complete, schedule with Lance."},
+    {text:"Fireplace: top finish looks incomplete — review and determine what's needed",status:"open",note:"Could be surround, mantel, or finish material. Get Lance to assess and provide plan."},
+  ]},
+  {title:"Tile — Jack and Jill",trade:"Tile crew",urgency:"today",items:[
+    {text:"Jack and Jill bath: tiling in progress — scratch coat complete",status:"open",note:"New tile crew — monitor quality closely"},
+    {text:"Jack and Jill: pocket door finish decision needed before tile continues around frame",status:"open",note:"Option A: accept slight crook, slimmer. Option B: level out, toilet area more pinched. Outlet must move either way."},
+    {text:"Jack and Jill: move outlet box flush to tile face — toilet area",status:"open",note:"Must happen regardless of pocket door decision"},
+    {text:"Jack and Jill: install toilet, vanity, tub, towel warmer after tile done",status:"remaining",note:""},
+  ]},
+  {title:"Cabinets + finish",trade:"GC — Lance",urgency:"this-week",items:[
+    {text:"ADU: cabinet framework almost complete — needs doors + possible inside layout corrections",status:"open",note:"Review layout with client before ordering doors"},
+    {text:"Bedroom 2 (Mila): finishing cabinets",status:"open",note:""},
+    {text:"Bedroom 1 (Leo): finishing cabinets",status:"open",note:""},
+    {text:"Master bedroom: finishing cabinets",status:"open",note:""},
+    {text:"Master bath vanity drawers: adjust alignment",status:"open",note:""},
+  ]},
+  {title:"Personal — coordinate",trade:"Ben",urgency:"this-week",items:[
+    {text:"Buy: dark/black Legrand outlet + wall plate (confirm qty with electrician first)",status:"open",note:""},
+    {text:"Coordinate outdoor living scope",status:"open",note:""},
+    {text:"Appraisal — coordinate with Charmel forbearance",status:"open",note:""},
+    {text:"Call Ebru: shower glass dimensions + towel warmer location",status:"open",note:"Two items to cover in one call"},
+    {text:"ADU: check air conditioning working correctly",status:"open",note:""},
   ]},
 ];
 
@@ -979,6 +1175,305 @@ renderPunch();
 
 
 function openSidebar(){document.getElementById("sidebar").classList.add("open");document.getElementById("overlay").classList.add("open");}
+
+// ── SITE NOTES / AI WALKTHROUGH ──
+const wtRooms = [
+  {name:"Primary bath",icon:"🛁",hint:"Tile corrections, plumbing rough, fixtures, niche"},
+  {name:"ADU bath",icon:"🚿",hint:"Tile corrections, wall-mount plumbing, vanity, shower"},
+  {name:"Jack & Jill bath",icon:"🛁",hint:"Floor tile starting today, waste monitoring"},
+  {name:"Kitchen",icon:"🍳",hint:"Dishwasher, appliances, disposal hookup"},
+  {name:"Living / dining room",icon:"🛋️",hint:"Electrical, outlets, switches, speakers"},
+  {name:"ADU bedroom / studio",icon:"🛏️",hint:"Speaker locations, outlets, lights, AC"},
+  {name:"Exterior / landscape",icon:"🌿",hint:"Outdoor items, driveway, gates, conduit"},
+];
+let wtCurrentRoom = 0;
+let wtNotes = {};
+let blastNotes = '';
+let siteNotesHistory = [];
+
+function backToMode(){
+  document.getElementById('sn-mode-select').style.display='block';
+  document.getElementById('sn-blast').style.display='none';
+  document.getElementById('sn-walkthrough').style.display='none';
+  document.getElementById('sn-processing').style.display='none';
+  document.getElementById('sn-results').style.display='none';
+}
+
+function startBlast(){
+  document.getElementById('sn-mode-select').style.display='none';
+  document.getElementById('sn-blast').style.display='block';
+  document.getElementById('blast-input').focus();
+}
+
+function startWalkthrough(){
+  wtCurrentRoom=0; wtNotes={};
+  document.getElementById('sn-mode-select').style.display='none';
+  document.getElementById('sn-walkthrough').style.display='block';
+  renderWtRoom();
+}
+
+function renderWtRoom(){
+  const r=wtRooms[wtCurrentRoom];
+  document.getElementById('wt-room-icon').textContent=r.icon;
+  document.getElementById('wt-room-name').textContent=r.name;
+  document.getElementById('wt-room-hint').textContent=r.hint;
+  document.getElementById('wt-progress-label').textContent='Room '+(wtCurrentRoom+1)+' of '+wtRooms.length;
+  document.getElementById('wt-input').value=wtNotes[wtCurrentRoom]||'';
+  document.getElementById('wt-input').focus();
+  document.getElementById('wt-prev-btn').style.display=wtCurrentRoom>0?'inline-flex':'none';
+  document.getElementById('wt-next-btn').textContent=wtCurrentRoom===wtRooms.length-1?'Finish — let AI organize ✨':'Next room →';
+  document.getElementById('wt-next-btn').onclick=wtCurrentRoom===wtRooms.length-1?finishWalkthrough:wtNext;
+  // dots
+  document.getElementById('wt-dots').innerHTML=wtRooms.map((r,i)=>`<div style="width:28px;height:5px;border-radius:3px;background:${i<wtCurrentRoom?'#5A6E35':i===wtCurrentRoom?'var(--forest)':'var(--surface2)'}"></div>`).join('');
+}
+
+function wtNext(){
+  wtNotes[wtCurrentRoom]=document.getElementById('wt-input').value;
+  if(wtCurrentRoom<wtRooms.length-1){wtCurrentRoom++;renderWtRoom();}
+}
+function wtPrev(){
+  wtNotes[wtCurrentRoom]=document.getElementById('wt-input').value;
+  if(wtCurrentRoom>0){wtCurrentRoom--;renderWtRoom();}
+}
+function wtSkip(){wtCurrentRoom++;if(wtCurrentRoom<wtRooms.length){renderWtRoom();}else{finishWalkthrough();}}
+
+function finishBlast(){
+  blastNotes=document.getElementById('blast-input').value.trim();
+  if(!blastNotes){alert('Add some notes first!');return;}
+  runAI('blast',blastNotes);
+}
+
+function finishWalkthrough(){
+  wtNotes[wtCurrentRoom]=document.getElementById('wt-input').value;
+  const combined=wtRooms.map((r,i)=>wtNotes[i]?r.name+': '+wtNotes[i]:'').filter(Boolean).join('\n');
+  if(!combined.trim()){alert('Add some notes first!');return;}
+  runAI('walkthrough',combined);
+}
+
+function runAI(mode, rawNotes){
+  document.getElementById('sn-walkthrough').style.display='none';
+  document.getElementById('sn-blast').style.display='none';
+  document.getElementById('sn-processing').style.display='block';
+  // Animate progress bar
+  let pct=0;
+  const msgs=['Organizing your notes...','Sorting by room and trade...','Identifying blockers...','Drafting GC summary...'];
+  let msgIdx=0;
+  const bar=document.getElementById('processing-bar');
+  const msgEl=document.getElementById('processing-msg');
+  const interval=setInterval(()=>{
+    pct=Math.min(pct+4,90);
+    bar.style.width=pct+'%';
+    if(pct%22===0&&msgIdx<msgs.length-1){msgIdx++;msgEl.textContent=msgs[msgIdx];}
+  },120);
+
+  const today=new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+  const prompt=`You are a construction project manager AI for a residential remodel at 2560 Coolidge Ave, Santa Monica CA. 
+
+The project involves: main house remodel (primary bath, Jack & Jill bath, kitchen, living room, bedrooms), ADU garage conversion, and landscaping. Key people: Ben & Svetlana (clients), Lance (GC), Ebru Kuyak (designer), tile crew, plumber (coming Friday/Saturday), electrician.
+
+Today is ${today}. Here are the raw site notes:
+
+---
+${rawNotes}
+---
+
+Organize these notes into a structured JSON response. Return ONLY valid JSON, no markdown, no extra text.
+
+{
+  "date": "${today}",
+  "summary": "2-3 sentence plain English summary of today",
+  "sections": [
+    {
+      "room": "room name",
+      "trade": "Tile / Plumbing / Electrical / General",
+      "urgency": "today / this-week / fyi",
+      "items": [
+        {
+          "text": "clear action item or observation",
+          "type": "correction / install / blocker / dependency / fyi",
+          "note": "any important detail or sequence dependency"
+        }
+      ]
+    }
+  ],
+  "blockers": ["list of anything that blocks other work"],
+  "dependencies": ["list of sequence dependencies like X must happen before Y"],
+  "gc_summary": "A clean professional text message you could send to Lance. 3-6 sentences max. Cover what happened today, what's coming next, and any blockers. Casual but clear."
+}`;
+
+  fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      model:'claude-sonnet-4-20250514',
+      max_tokens:1000,
+      messages:[{role:'user',content:prompt}]
+    })
+  })
+  .then(r=>r.json())
+  .then(data=>{
+    clearInterval(interval);
+    bar.style.width='100%';
+    setTimeout(()=>{
+      document.getElementById('sn-processing').style.display='none';
+      const text=data.content&&data.content[0]&&data.content[0].text?data.content[0].text:'';
+      try{
+        const clean=text.replace(/```json|```/g,'').trim();
+        const parsed=JSON.parse(clean);
+        showResults(parsed,rawNotes);
+      }catch(e){
+        showFallbackResults(rawNotes);
+      }
+    },400);
+  })
+  .catch(()=>{
+    clearInterval(interval);
+    document.getElementById('sn-processing').style.display='none';
+    showFallbackResults(rawNotes);
+  });
+}
+
+function showResults(data, rawNotes){
+  document.getElementById('sn-results').style.display='block';
+  const ts=new Date().toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit',hour12:true});
+  document.getElementById('results-timestamp').textContent='Organized '+ts;
+
+  const urgencyColor={today:'var(--red)','this-week':'var(--amber)',fyi:'var(--text3)'};
+  const urgencyLabel={today:'Today','this-week':'This week',fyi:'FYI'};
+  const typeIcon={correction:'ti-tools',install:'ti-hammer',blocker:'ti-alert-circle',dependency:'ti-arrow-right',fyi:'ti-info-circle'};
+
+  let html='';
+
+  // Summary card
+  if(data.summary){
+    html+=`<div style="background:var(--forest);border-radius:var(--radius);padding:14px 16px;margin-bottom:4px">
+      <div style="font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:rgba(173,183,131,0.7);margin-bottom:6px">Summary</div>
+      <div style="font-size:13px;color:#F7F7EB;line-height:1.6">${data.summary}</div>
+    </div>`;
+  }
+
+  // Blockers
+  if(data.blockers&&data.blockers.length){
+    html+=`<div style="background:var(--red-bg);border:0.5px solid var(--red);border-radius:var(--radius);padding:12px 14px">
+      <div style="font-size:11px;font-weight:600;color:var(--red-text);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px"><i class="ti ti-alert-circle" style="margin-right:4px"></i>Blockers identified</div>
+      ${data.blockers.map(b=>`<div style="font-size:13px;color:var(--red-text);padding:3px 0;display:flex;gap:6px"><i class="ti ti-point-filled" style="font-size:10px;margin-top:5px;flex-shrink:0"></i>${b}</div>`).join('')}
+    </div>`;
+  }
+
+  // Dependencies
+  if(data.dependencies&&data.dependencies.length){
+    html+=`<div style="background:var(--amber-bg);border:0.5px solid #EF9F27;border-radius:var(--radius);padding:12px 14px">
+      <div style="font-size:11px;font-weight:600;color:var(--amber-text);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px"><i class="ti ti-arrow-right" style="margin-right:4px"></i>Sequence dependencies</div>
+      ${data.dependencies.map(d=>`<div style="font-size:13px;color:var(--amber-text);padding:3px 0;display:flex;gap:6px"><i class="ti ti-point-filled" style="font-size:10px;margin-top:5px;flex-shrink:0"></i>${d}</div>`).join('')}
+    </div>`;
+  }
+
+  // Sections by room
+  if(data.sections){
+    data.sections.forEach(sec=>{
+      if(!sec.items||!sec.items.length)return;
+      const urg=sec.urgency||'fyi';
+      html+=`<div style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);overflow:hidden">
+        <div style="padding:11px 16px;background:${urg==='today'?'rgba(139,32,32,0.06)':urg==='this-week'?'rgba(122,88,0,0.06)':'var(--surface2)'};border-bottom:0.5px solid var(--border);display:flex;align-items:center;gap:8px">
+          <div style="width:3px;height:28px;border-radius:2px;background:${urgencyColor[urg]};flex-shrink:0"></div>
+          <div style="flex:1"><span style="font-size:13px;font-weight:600;color:var(--forest)">${sec.room||'General'}</span></div>
+          <span style="font-size:11px;padding:2px 8px;border-radius:20px;background:${urg==='today'?'var(--red-bg)':urg==='this-week'?'var(--amber-bg)':'var(--surface2)'};color:${urgencyColor[urg]};font-weight:500">${urgencyLabel[urg]}</span>
+          <span style="font-size:11px;padding:2px 8px;border-radius:20px;background:#E8EDD8;color:#3A4A20;font-weight:500">${sec.trade||''}</span>
+        </div>
+        <div style="display:flex;flex-direction:column">
+          ${sec.items.map(item=>`<div style="padding:10px 16px;border-bottom:0.5px solid var(--border);display:flex;gap:10px;align-items:flex-start">
+            <i class="ti ${typeIcon[item.type]||'ti-point'}" style="font-size:14px;color:${item.type==='blocker'?'var(--red)':item.type==='correction'?'var(--amber)':item.type==='dependency'?'var(--blue)':'var(--text3)'};margin-top:1px;flex-shrink:0"></i>
+            <div><div style="font-size:13px;color:var(--text)">${item.text}</div>${item.note?`<div style="font-size:11px;color:var(--text3);margin-top:2px">${item.note}</div>`:''}</div>
+          </div>`).join('')}
+        </div>
+      </div>`;
+    });
+  }
+
+  document.getElementById('ai-results-content').innerHTML=html;
+
+  // GC Summary
+  if(data.gc_summary){
+    document.getElementById('gc-summary-text').textContent=data.gc_summary;
+  }
+
+  // Save to history
+  siteNotesHistory.unshift({date:data.date||new Date().toLocaleDateString(),summary:data.summary||'Site notes',raw:rawNotes,parsed:data});
+  renderHistory();
+}
+
+function showFallbackResults(rawNotes){
+  // Fallback if AI fails — show raw notes organized simply
+  document.getElementById('sn-results').style.display='block';
+  document.getElementById('results-timestamp').textContent='Notes saved (organizing offline)';
+  document.getElementById('ai-results-content').innerHTML=`
+    <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:14px 16px">
+      <div style="font-size:13px;font-weight:500;color:var(--forest);margin-bottom:8px">Your notes — saved</div>
+      <div style="font-size:13px;color:var(--text);line-height:1.7;white-space:pre-wrap">${rawNotes}</div>
+    </div>`;
+  document.getElementById('gc-summary-text').textContent=rawNotes;
+}
+
+function startNewNote(){
+  document.getElementById('sn-results').style.display='none';
+  document.getElementById('sn-mode-select').style.display='block';
+  document.getElementById('blast-input')&&(document.getElementById('blast-input').value='');
+}
+
+function copySummary(){
+  const txt=document.getElementById('gc-summary-text').textContent;
+  navigator.clipboard.writeText(txt).then(()=>{
+    const btn=event.target.closest('button');
+    const orig=btn.innerHTML;
+    btn.innerHTML='<i class="ti ti-check" style="font-size:12px"></i> Copied!';
+    btn.style.background='#5A6E35';
+    setTimeout(()=>{btn.innerHTML=orig;btn.style.background='';},2000);
+  });
+}
+
+function renderHistory(){
+  if(!siteNotesHistory.length)return;
+  document.getElementById('sn-history').style.display='block';
+  document.getElementById('sn-history-list').innerHTML=siteNotesHistory.slice(0,5).map((n,i)=>`
+    <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:11px 14px;display:flex;align-items:center;gap:10px;cursor:pointer" onclick="showPastNote(${i})">
+      <i class="ti ti-notes" style="font-size:15px;color:var(--text3)"></i>
+      <div style="flex:1"><div style="font-size:13px;font-weight:500;color:var(--text)">${n.date}</div><div style="font-size:12px;color:var(--text3);margin-top:1px">${n.summary}</div></div>
+      <i class="ti ti-chevron-right" style="font-size:13px;color:var(--text3)"></i>
+    </div>`).join('');
+}
+
+function showPastNote(i){
+  const n=siteNotesHistory[i];
+  if(n.parsed){showResults(n.parsed,n.raw);}
+}
+
+function logDecision2(text){
+  const idMap = {
+    "JJ pocket": "jj-door-log",
+    "Master bath towel": "towel-log",
+    "Dark Legrand": "legrand-log"
+  };
+  let targetId = null;
+  for(const key in idMap){ if(text.startsWith(key)){ targetId = idMap[key]; break; } }
+  if(targetId){
+    const el = document.getElementById(targetId);
+    if(el){
+      const ts = new Date().toLocaleString("en-US",{month:"short",day:"numeric",hour:"numeric",minute:"2-digit",hour12:true});
+      el.innerHTML = "<i class=\"ti ti-check\" style=\"margin-right:5px\"></i><strong>Logged " + ts + ":</strong> " + text;
+      el.style.display = "block";
+    }
+  }
+  event.target.style.opacity = "0.5";
+  event.target.disabled = true;
+}
+function logDecision(text){
+  const el=document.getElementById("outlet-decision-log");
+  const ts=new Date().toLocaleString("en-US",{month:"short",day:"numeric",hour:"numeric",minute:"2-digit",hour12:true});
+  el.innerHTML='<i class="ti ti-check" style="margin-right:5px"></i><strong>Decision logged '+ts+':</strong> '+text;
+  el.style.display="block";
+  // Hide the buttons
+  event.target.closest("div").querySelectorAll("button").forEach(b=>b.style.opacity="0.4");
+}
 function closeSidebar(){document.getElementById("sidebar").classList.remove("open");document.getElementById("overlay").classList.remove("open");}
 </script>
 </body>
