@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Construction OS — 2560 Coolidge Ave</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
 <style>
 :root{
@@ -61,24 +61,24 @@
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:"DM Sans",sans-serif;background:var(--offwhite);color:var(--text);font-size:14px;line-height:1.6;min-height:100vh}
 .app{display:flex;min-height:100vh}
-.sidebar{width:224px;background:var(--forest);border-right:none;flex-shrink:0;position:sticky;top:0;height:100vh;overflow-y:auto}
-.main{flex:1;padding:28px 32px;max-width:880px;border-top:3px solid var(--olive)}
-.sidebar-logo{padding:18px 16px 14px;border-bottom:0.5px solid rgba(247,247,235,0.1)}
+.sidebar{width:224px;background:#111015;border-right:none;flex-shrink:0;position:sticky;top:0;height:100vh;overflow-y:auto}
+.main{flex:1;padding:24px 28px;max-width:920px}
+.sidebar-logo{padding:14px 16px 12px;border-bottom:0.5px solid rgba(213,220,153,0.08)}
 .logo-mark{font-size:13px;font-weight:600;letter-spacing:-.02em;color:#F7F7EB}
 .logo-sub{font-size:11px;color:rgba(247,247,235,0.5);margin-top:1px}
-.sidebar-project{padding:12px 16px;border-bottom:0.5px solid rgba(247,247,235,0.1)}
+.sidebar-project{padding:12px 16px;border-bottom:0.5px solid rgba(213,220,153,0.08)}
 .proj-label{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin-bottom:4px}
 .proj-name{font-size:13px;font-weight:500;color:#F7F7EB}
 .proj-addr{font-size:11px;color:rgba(173,183,131,0.9);margin-top:1px}
 .proj-status{font-size:11px;color:rgba(247,247,235,0.4);margin-top:1px}
-.nav-section{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:rgba(173,183,131,0.7);padding:12px 8px 4px 16px}
-.nav-item{display:flex;align-items:center;gap:8px;padding:8px 10px;margin:0 6px;border-radius:var(--radius-sm);cursor:pointer;font-size:13px;color:rgba(247,247,235,0.65);border:none;background:none;width:calc(100% - 12px);text-align:left;transition:all .15s;font-family:inherit}
-.nav-item:hover{background:rgba(247,247,235,0.08);color:#F7F7EB}
-.nav-item.active{background:rgba(173,183,131,0.18);color:#ADB783;font-weight:500}
-.nav-item i{font-size:15px;flex-shrink:0}
-.nav-badge{margin-left:auto;font-size:10px;background:rgba(249,249,199,0.15);color:#F9F9C7;padding:1px 6px;border-radius:20px}
-.nav-badge.red{background:rgba(255,100,100,0.18);color:#FFB3B3}
-.nav-badge.teal{background:rgba(173,183,131,0.2);color:#ADB783}
+.nav-section{font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:rgba(115,127,115,0.7);padding:10px 8px 3px 14px;font-weight:500}
+.nav-item{display:flex;align-items:center;gap:8px;padding:7px 10px;margin:0 6px;border-radius:7px;cursor:pointer;font-size:12px;color:rgba(253,255,254,0.55);border:none;background:none;width:calc(100% - 12px);text-align:left;transition:all .15s;font-family:inherit}
+.nav-item:hover{background:rgba(253,255,254,0.06);color:rgba(253,255,254,0.85)}
+.nav-item.active{background:rgba(213,220,153,0.12);color:#D5DC99;font-weight:500}
+.nav-item i{font-size:14px;flex-shrink:0;opacity:.8}
+.nav-badge{margin-left:auto;font-size:9px;background:rgba(213,220,153,0.12);color:rgba(213,220,153,0.8);padding:2px 7px;border-radius:20px;font-weight:600}
+.nav-badge.red{background:rgba(224,122,95,0.18);color:#E8735A}
+.nav-badge.teal{background:rgba(213,220,153,0.14);color:#D5DC99}
 .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}
 .page-title{font-size:20px;font-weight:600;letter-spacing:-.03em;color:var(--forest)}
 .btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:var(--radius-sm);font-size:13px;font-weight:500;cursor:pointer;border:0.5px solid var(--border-mid);background:var(--surface);color:var(--text);transition:all .15s;font-family:inherit}
@@ -160,10 +160,46 @@ body{font-family:"DM Sans",sans-serif;background:var(--offwhite);color:var(--tex
 <aside class="sidebar" id="sidebar">
   <div class="sidebar-logo"><div class="logo-mark" style="font-size:14px;letter-spacing:.05em;text-transform:uppercase;font-weight:600">Coolidge OS</div><div class="logo-sub">Project intelligence platform</div></div>
   <div class="sidebar-project">
-    <div class="proj-label" style="color:rgba(173,183,131,0.7);font-size:10px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Active project</div>
+    <div class="proj-label" style="color:rgba(115,127,115,0.7);font-size:9px;text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px">Active project</div>
     <div class="proj-name">Coolidge Remodel + ADU</div>
-    <div class="proj-addr">2560 Coolidge Ave, Santa Monica CA 90405</div>
+    <div class="proj-addr" style="color:rgba(213,220,153,0.5)">2560 Coolidge Ave, Santa Monica CA 90405</div>
     <div class="proj-status">In progress &middot; 1,400 SF + 405 SF ADU</div>
+  </div>
+  <!-- PROJECT PROGRESS TIMELINE -->
+  <div style="padding:12px 14px;border-bottom:0.5px solid rgba(213,220,153,0.08)">
+    <div style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:rgba(115,127,115,0.7);margin-bottom:8px;display:flex;justify-content:space-between"><span>Project progress</span><span style="color:#D5DC99;font-weight:600">78%</span></div>
+    <div style="display:flex;flex-direction:column;gap:5px">
+      <div style="display:flex;align-items:center;gap:7px">
+        <div style="font-size:9px;color:rgba(74,155,111,0.9);min-width:72px">Demolition</div>
+        <div style="flex:1;height:3px;background:rgba(255,255,255,0.06);border-radius:2px;overflow:hidden"><div style="height:100%;width:100%;background:#4A9B6F;border-radius:2px"></div></div>
+        <div style="font-size:9px;color:rgba(74,155,111,0.8)">✓</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:7px">
+        <div style="font-size:9px;color:rgba(74,155,111,0.9);min-width:72px">Rough / MEP</div>
+        <div style="flex:1;height:3px;background:rgba(255,255,255,0.06);border-radius:2px;overflow:hidden"><div style="height:100%;width:100%;background:#4A9B6F;border-radius:2px"></div></div>
+        <div style="font-size:9px;color:rgba(74,155,111,0.8)">✓</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:7px">
+        <div style="font-size:9px;color:rgba(74,155,111,0.9);min-width:72px">Drywall</div>
+        <div style="flex:1;height:3px;background:rgba(255,255,255,0.06);border-radius:2px;overflow:hidden"><div style="height:100%;width:100%;background:#4A9B6F;border-radius:2px"></div></div>
+        <div style="font-size:9px;color:rgba(74,155,111,0.8)">✓</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:7px">
+        <div style="font-size:9px;color:#C9A84C;min-width:72px">Tile + finish</div>
+        <div style="flex:1;height:3px;background:rgba(255,255,255,0.06);border-radius:2px;overflow:hidden"><div style="height:100%;width:70%;background:#C9A84C;border-radius:2px"></div></div>
+        <div style="font-size:9px;color:#C9A84C">70%</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:7px">
+        <div style="font-size:9px;color:rgba(253,255,254,0.35);min-width:72px">Fixtures</div>
+        <div style="flex:1;height:3px;background:rgba(255,255,255,0.06);border-radius:2px;overflow:hidden"><div style="height:100%;width:35%;background:rgba(255,255,255,0.2);border-radius:2px"></div></div>
+        <div style="font-size:9px;color:rgba(255,255,255,0.3)">35%</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:7px">
+        <div style="font-size:9px;color:rgba(253,255,254,0.25);min-width:72px">Final close</div>
+        <div style="flex:1;height:3px;background:rgba(255,255,255,0.06);border-radius:2px;overflow:hidden"><div style="height:100%;width:0%;background:rgba(255,255,255,0.15);border-radius:2px"></div></div>
+        <div style="font-size:9px;color:rgba(255,255,255,0.2)">—</div>
+      </div>
+    </div>
   </div>
   <nav>
     <div class="nav-section">Overview</div>
@@ -181,7 +217,7 @@ body{font-family:"DM Sans",sans-serif;background:var(--offwhite);color:var(--tex
     <div class="nav-section">Project</div>
     <button class="nav-item" onclick="showTab('finance');setNav(this)"><i class="ti ti-receipt"></i> Financials <span class="nav-badge red">$131k due</span></button>
     <button class="nav-item" onclick="showTab('progress');setNav(this)"><i class="ti ti-checks"></i> Progress tracker</button>
-    <button class="nav-item" onclick="showTab('punch');setNav(this)"><i class="ti ti-clipboard-check"></i> Punch list <span class="nav-badge red">26</span></button>
+    <button class="nav-item" onclick="showTab('punch');setNav(this)"><i class="ti ti-clipboard-check"></i> Punch list <span class="nav-badge red">28</span></button>
     <button class="nav-item" onclick="showTab('sitenotes');setNav(this)" style="background:rgba(173,183,131,0.15);color:#ADB783;font-weight:500"><i class="ti ti-writing"></i> Site notes <span class="nav-badge" style="background:rgba(249,249,199,0.2);color:#F9F9C7">AI</span></button>
     <button class="nav-item" onclick="showTab('materials');setNav(this)"><i class="ti ti-ruler-measure"></i> Materials <span class="nav-badge red">track</span></button>
     <button class="nav-item" onclick="showTab('products');setNav(this)"><i class="ti ti-package"></i> Products <span class="nav-badge amber">5</span></button>
@@ -209,36 +245,42 @@ body{font-family:"DM Sans",sans-serif;background:var(--offwhite);color:var(--tex
     </div>
     <!-- TODAY'S SITE UPDATE -->
     <div class="section-hd" style="margin-bottom:8px">
-      <span class="section-title" style="color:var(--forest);display:flex;align-items:center;gap:6px"><i class="ti ti-calendar-event" style="font-size:15px"></i>Monday — June 9, 2026</span>
-      <span style="font-size:11px;background:#EDF0DC;color:#3A4A20;padding:2px 8px;border-radius:20px;font-weight:500">Tile · Electrical on site · Trash pickup tomorrow</span>
+      <span class="section-title" style="color:var(--forest);display:flex;align-items:center;gap:6px"><i class="ti ti-calendar-event" style="font-size:15px"></i>Wednesday — June 11, 2026</span>
+      <span style="font-size:11px;background:#EDF0DC;color:#3A4A20;padding:2px 8px;border-radius:20px;font-weight:500">🏠 Goal: first night in the house tonight</span>
     </div>
     <div style="background:var(--forest);border-radius:var(--radius);padding:14px 16px;margin-bottom:12px">
-      <div style="font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:rgba(173,183,131,0.7);margin-bottom:10px">Tile on site &middot; Electrician on site &middot; Trash pickup pushed to Tuesday</div>
+      <div style="font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:rgba(173,183,131,0.7);margin-bottom:10px">Lance + team on site &middot; Mirror install = bedroom usable tonight</div>
       <div style="display:flex;flex-direction:column;gap:8px">
 
+        <!-- TOP PRIORITY - mirror install -->
+        <div style="background:rgba(213,220,153,0.12);border:1px solid rgba(213,220,153,0.25);border-radius:8px;padding:10px 12px">
+          <div style="font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:#D5DC99;margin-bottom:6px">⭐ Top priority today</div>
+          <div style="font-size:13px;color:#F7F7EB;font-weight:500;margin-bottom:4px">Master bedroom mirror install</div>
+          <div style="font-size:11px;color:rgba(247,247,235,0.65);line-height:1.5">Very heavy — needs electrician + extra people. Once done, master bedroom is sleepable tonight. Coordinate with Lance now.</div>
+        </div>
+
         <div style="background:rgba(247,247,235,0.06);border-radius:8px;padding:10px 12px">
-          <div style="font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:#ADB783;margin-bottom:6px">🪟 Tile crew</div>
+          <div style="font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:#ADB783;margin-bottom:6px">🔧 Urgent fixes</div>
           <div style="display:flex;flex-direction:column;gap:4px">
-            <div style="font-size:12px;color:rgba(247,247,235,0.85);display:flex;gap:8px"><span style="color:#ADB783;font-weight:600;min-width:80px">Jack &amp; Jill:</span>Tiling in progress — scratch coat done</div>
-            <div style="font-size:12px;color:rgba(247,247,235,0.85);display:flex;gap:8px"><span style="color:#F9F9C7;font-weight:600;min-width:80px">Decide:</span>Pocket door finish — slightly crooked+slim vs leveled+pinched toilet area</div>
+            <div style="font-size:12px;color:rgba(247,247,235,0.85);display:flex;gap:8px"><span style="color:#E8735A;font-weight:600;min-width:24px">!</span>Dryer installation error — shuts off in 5 sec. Electrician check 240V connection.</div>
+            <div style="font-size:12px;color:rgba(247,247,235,0.85);display:flex;gap:8px"><span style="color:#E8735A;font-weight:600;min-width:24px">!</span>Master bath hot water stuck at 90°F — check water heater temp + shower cartridge.</div>
+            <div style="font-size:12px;color:rgba(247,247,235,0.85);display:flex;gap:8px"><span style="color:#E8735A;font-weight:600;min-width:24px">!</span>Bedroom dimmers not working equally — all bulbs must be dimmable + compatible.</div>
+            <div style="font-size:12px;color:rgba(247,247,235,0.85);display:flex;gap:8px"><span style="color:#C9A84C;font-weight:600;min-width:24px">?</span>Fireplace — heater unit not installed, top finish incomplete. Lance to review contract.</div>
           </div>
         </div>
 
         <div style="background:rgba(247,247,235,0.06);border-radius:8px;padding:10px 12px">
-          <div style="font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:#ADB783;margin-bottom:6px">⚡ Electrical</div>
-          <div style="display:flex;flex-direction:column;gap:4px">
-            <div style="font-size:12px;color:rgba(247,247,235,0.85);display:flex;gap:8px"><span style="color:#ADB783;font-weight:600;min-width:80px">Active:</span>Outlets, appliances, washer/dryer, Nest A/C, speakers</div>
-            <div style="font-size:12px;color:rgba(247,247,235,0.85);display:flex;gap:8px"><span style="color:#ADB783;font-weight:600;min-width:80px">ADU:</span>Outlet boxes flush to tile face, lights, exhaust fan</div>
-            <div style="font-size:12px;color:#F9F9C7;display:flex;gap:8px"><span style="color:#F9F9C7;font-weight:600;min-width:80px">Buy today:</span>Dark/black Legrand outlet + wall plate</div>
-          </div>
-        </div>
-
-        <div style="background:rgba(247,247,235,0.06);border-radius:8px;padding:10px 12px">
-          <div style="font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:#ADB783;margin-bottom:6px">📋 Personal execution</div>
-          <div style="display:flex;flex-direction:column;gap:4px">
-            <div style="font-size:12px;color:rgba(247,247,235,0.85);display:flex;gap:8px"><span style="color:#ADB783;font-weight:600;min-width:80px">Coordinate:</span>Outdoor living scope + appraisal (Charmel forbearance)</div>
-            <div style="font-size:12px;color:rgba(247,247,235,0.85);display:flex;gap:8px"><span style="color:#ADB783;font-weight:600;min-width:80px">Coordinate:</span>Glass guy — master bedroom + ADU bathroom</div>
-            <div style="font-size:12px;color:rgba(247,247,235,0.85);display:flex;gap:8px"><span style="color:#ADB783;font-weight:600;min-width:80px">Schedule:</span>Ebru — towel warmer locations (master bath design consistency)</div>
+          <div style="font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:#ADB783;margin-bottom:6px">📋 Today's full punch list</div>
+          <div style="display:flex;flex-direction:column;gap:3px">
+            <div style="font-size:11px;color:rgba(247,247,235,0.7);display:flex;gap:7px"><span style="color:#ADB783">→</span>Sonos: label ALL wires + match amp to speaker zone before connecting</div>
+            <div style="font-size:11px;color:rgba(247,247,235,0.7);display:flex;gap:7px"><span style="color:#ADB783">→</span>Kitchen faucet: reverse hot/cold so cold is first turn</div>
+            <div style="font-size:11px;color:rgba(247,247,235,0.7);display:flex;gap:7px"><span style="color:#ADB783">→</span>Range hood: source panel to match ceiling color</div>
+            <div style="font-size:11px;color:rgba(247,247,235,0.7);display:flex;gap:7px"><span style="color:#ADB783">→</span>TV + soundbar: mount in master bedroom</div>
+            <div style="font-size:11px;color:rgba(247,247,235,0.7);display:flex;gap:7px"><span style="color:#ADB783">→</span>Bedroom 3: add 2 directional lights pointing at closet</div>
+            <div style="font-size:11px;color:rgba(247,247,235,0.7);display:flex;gap:7px"><span style="color:#ADB783">→</span>Master vanity drawers: adjust alignment</div>
+            <div style="font-size:11px;color:rgba(247,247,235,0.7);display:flex;gap:7px"><span style="color:#ADB783">→</span>Shower glass: call Ebru to confirm dimensions, then order</div>
+            <div style="font-size:11px;color:rgba(247,247,235,0.7);display:flex;gap:7px"><span style="color:#ADB783">→</span>Towel warmer: review manual with team before installing</div>
+            <div style="font-size:12px;color:#F9F9C7;display:flex;gap:7px;margin-top:4px;padding:6px 8px;background:rgba(232,115,90,0.12);border-radius:6px"><span style="color:#E8735A;font-weight:700">!</span><strong style="color:#F7F7EB">Purchase front door</strong> — measure opening with Lance, select + order today</div>
           </div>
         </div>
 
@@ -318,36 +360,473 @@ body{font-family:"DM Sans",sans-serif;background:var(--offwhite);color:var(--tex
     </div>
   </div>
 
-  <!-- ROOMS -->
+  <!-- ROOMS - ARCHITECTURAL FLOOR PLAN -->
   <div id="tab-rooms" style="display:none">
     <div id="room-list">
-      <div style="font-size:12px;color:var(--text2);margin-bottom:14px">2560 Coolidge Ave &mdash; 1,400 SF main house &middot; Designer: Ebru Kuyak &middot; Option B layout (Aug 13, 2025)</div>
-      <div class="room-grid">
-        <div class="room-card" onclick="openRoom('pbath')"><div class="card-icon"><i class="ti ti-bath"></i></div><div class="card-name">Primary bath</div><div class="card-pills"><span class="pill p-red">2 blocked</span><span class="pill p-amber">3 pending</span></div></div>
-        <div class="room-card" onclick="openRoom('pbr')"><div class="card-icon"><i class="ti ti-bed"></i></div><div class="card-name">Primary bedroom</div><div class="card-pills"><span class="pill p-amber">2 pending</span><span class="pill p-green">1 approved</span></div></div>
-        <div class="room-card" onclick="openRoom('kitchen')"><div class="card-icon"><i class="ti ti-chef-hat"></i></div><div class="card-name">Kitchen</div><div class="card-pills"><span class="pill p-amber">3 pending</span><span class="pill p-green">1 approved</span></div></div>
-        <div class="room-card" onclick="openRoom('living')"><div class="card-icon"><i class="ti ti-sofa"></i></div><div class="card-name">Living / dining room</div><div class="card-pills"><span class="pill p-amber">2 pending</span></div></div>
-        <div class="room-card" onclick="openRoom('hallbath')"><div class="card-icon"><i class="ti ti-droplet"></i></div><div class="card-name">Hall bath</div><div class="card-pills"><span class="pill p-amber">3 pending</span></div></div>
-        <div class="room-card" onclick="openRoom('br2')"><div class="card-icon"><i class="ti ti-bed"></i></div><div class="card-name">Bedroom 2 &amp; 3</div><div class="card-pills"><span class="pill p-green">Approved</span></div></div>
-        <div class="room-card" onclick="openRoom('patio')"><div class="card-icon"><i class="ti ti-umbrella"></i></div><div class="card-name">Covered patio</div><div class="card-pills"><span class="pill p-amber">2 pending</span></div></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+        <div style="font-size:12px;color:var(--text2)">2560 Coolidge Ave &mdash; 1,400 SF &middot; Ebru Kuyak &middot; <span style="color:var(--text3)">tap any room</span></div>
+        <!-- Before / After toggle -->
+        <div style="display:flex;background:var(--surface2);border-radius:8px;padding:3px;gap:2px" id="fp-toggle-wrap">
+          <button id="fp-btn-original" onclick="setFpMode('original')" style="padding:5px 14px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;border:none;background:var(--forest);color:#F7F7EB;font-family:inherit;transition:all .2s">Original</button>
+          <button id="fp-btn-design" onclick="setFpMode('design')" style="padding:5px 14px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;border:none;background:none;color:var(--text2);font-family:inherit;transition:all .2s">Design ✦</button>
+        </div>
+      </div>
+
+      <!-- FLOOR PLAN CONTAINER -->
+      <div style="position:relative;background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);overflow:hidden">
+
+        <!-- ORIGINAL LAYOUT (default) -->
+        <div id="fp-original" style="padding:18px 20px 14px;transition:opacity .4s">
+          <svg id="fp-svg-original" viewBox="0 0 760 420" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block">
+            <!-- Grid background -->
+            <defs>
+              <pattern id="fpgrid" width="14" height="14" patternUnits="userSpaceOnUse">
+                <path d="M14 0L0 0 0 14" fill="none" stroke="rgba(0,0,0,0.03)" stroke-width="0.5"/>
+              </pattern>
+            </defs>
+            <rect width="760" height="420" fill="url(#fpgrid)"/>
+
+            <!-- ═══ MAIN HOUSE OUTER WALL ═══ -->
+            <!-- North wall top -->
+            <rect x="80" y="30" width="530" height="4" fill="#2C312C" rx="1"/>
+            <!-- West wall -->
+            <rect x="80" y="30" width="4" height="330" fill="#2C312C" rx="1"/>
+            <!-- East wall (main) -->
+            <rect x="610" y="30" width="4" height="240" fill="#2C312C" rx="1"/>
+            <!-- South wall -->
+            <rect x="80" y="356" width="530" height="4" fill="#2C312C" rx="1"/>
+            <!-- Bottom east wall -->
+            <rect x="610" y="200" width="4" height="160" fill="#2C312C" rx="1"/>
+
+            <!-- ═══ INTERIOR WALLS ═══ -->
+            <!-- Entry/living open plan - no dividing wall -->
+            <!-- subtle threshold line only -->
+            <line x1="163" y1="34" x2="163" y2="200" stroke="rgba(74,155,111,0.15)" stroke-width="1" stroke-dasharray="6,4"/>
+            <!-- Vertical wall: separates living from kitchen/dining (x=342) -->
+            <rect x="342" y="34" width="3" height="150" fill="#4A4A4A" rx="0.5"/>
+            <!-- Horizontal wall: separates upper from lower (y=200) -->
+            <rect x="83" y="200" width="530" height="3" fill="#4A4A4A" rx="0.5"/>
+            <!-- Vertical wall: bedroom 3 / bath / br2 separator (x=220) -->
+            <rect x="220" y="203" width="3" height="153" fill="#4A4A4A" rx="0.5"/>
+            <!-- Vertical wall: bath / br2 (x=290) -->
+            <rect x="290" y="203" width="3" height="153" fill="#4A4A4A" rx="0.5"/>
+            <!-- Vertical wall: br2 / p.bath (x=420) -->
+            <rect x="420" y="203" width="3" height="153" fill="#4A4A4A" rx="0.5"/>
+            <!-- Vertical wall: p.bath / primary bedroom (x=490) -->
+            <rect x="490" y="203" width="3" height="153" fill="#4A4A4A" rx="0.5"/>
+            <!-- Horizontal wall patio separator (y=200 continues to right) already done -->
+            <!-- Small wall pocket between dining and kitchen -->
+            <rect x="342" y="160" width="90" height="3" fill="#4A4A4A" rx="0.5"/>
+
+            <!-- ═══ ROOM FILLS - CLICKABLE ═══ -->
+
+            <!-- FRONT PORCH / ENTRY -->
+            <g class="fp-room" onclick="openRoom('entry')" style="cursor:pointer">
+              <rect x="84" y="34" width="73" height="163" fill="rgba(115,127,115,0.07)" rx="1"/>
+              <rect x="84" y="34" width="73" height="163" fill="none" stroke="rgba(115,127,115,0.15)" stroke-width="0.5" rx="1"/>
+              <text x="120" y="112" font-family="DM Sans,sans-serif" font-size="8" fill="rgba(115,127,115,0.7)" text-anchor="middle" font-weight="500">FRONT</text>
+              <text x="120" y="124" font-family="DM Sans,sans-serif" font-size="8" fill="rgba(115,127,115,0.7)" text-anchor="middle" font-weight="500">PORCH</text>
+              <text x="120" y="138" font-family="DM Sans,sans-serif" font-size="7" fill="rgba(115,127,115,0.5)" text-anchor="middle">7&apos;7" &times; 8&apos;3"</text>
+            </g>
+
+            <!-- LIVING ROOM - large, active/ok -->
+            <g class="fp-room" onclick="openRoom('living')" style="cursor:pointer">
+              <rect x="163" y="34" width="176" height="163" fill="rgba(74,155,111,0.09)" rx="1" class="fp-fill-ok"/>
+              <rect x="163" y="34" width="176" height="163" fill="none" stroke="rgba(74,155,111,0.3)" stroke-width="1" rx="1"/>
+              <text x="251" y="104" font-family="DM Sans,sans-serif" font-size="9.5" fill="rgba(30,40,30,0.7)" text-anchor="middle" font-weight="600">LIVING ROOM</text>
+              <text x="251" y="118" font-family="DM Sans,sans-serif" font-size="7.5" fill="rgba(74,155,111,0.8)" text-anchor="middle">18&apos;2" &times; 8&apos;3" AFF</text>
+              <!-- status dot -->
+              <circle cx="328" cy="44" r="4" fill="rgba(74,155,111,0.8)"/>
+            </g>
+
+            <!-- KITCHEN - amber/pending -->
+            <g class="fp-room" onclick="openRoom('kitchen')" style="cursor:pointer">
+              <rect x="345" y="34" width="145" height="123" fill="rgba(201,168,76,0.1)" rx="1"/>
+              <rect x="345" y="34" width="145" height="123" fill="none" stroke="rgba(201,168,76,0.35)" stroke-width="1" rx="1"/>
+              <!-- island suggestion -->
+              <rect x="362" y="90" width="55" height="28" fill="rgba(201,168,76,0.08)" stroke="rgba(201,168,76,0.2)" stroke-width="0.7" stroke-dasharray="3" rx="2"/>
+              <text x="389" y="107" font-family="DM Sans,sans-serif" font-size="6.5" fill="rgba(201,168,76,0.5)" text-anchor="middle">ISLAND</text>
+              <text x="417" y="78" font-family="DM Sans,sans-serif" font-size="9.5" fill="rgba(30,30,20,0.7)" text-anchor="middle" font-weight="600">KITCHEN</text>
+              <text x="417" y="91" font-family="DM Sans,sans-serif" font-size="7.5" fill="rgba(201,168,76,0.8)" text-anchor="middle">17&apos;6" &times; 8&apos;3"</text>
+              <circle cx="479" cy="44" r="4" fill="rgba(201,168,76,0.8)"/>
+            </g>
+
+            <!-- COVERED PATIO - dashed, outdoor -->
+            <g class="fp-room" onclick="openRoom('patio')" style="cursor:pointer">
+              <rect x="490" y="34" width="117" height="163" fill="rgba(115,127,115,0.04)" rx="1"/>
+              <rect x="490" y="34" width="117" height="163" fill="none" stroke="rgba(115,127,115,0.18)" stroke-width="0.8" stroke-dasharray="5,3" rx="1"/>
+              <text x="548" y="108" font-family="DM Sans,sans-serif" font-size="8.5" fill="rgba(115,127,115,0.6)" text-anchor="middle" font-weight="500">COVERED</text>
+              <text x="548" y="121" font-family="DM Sans,sans-serif" font-size="8.5" fill="rgba(115,127,115,0.6)" text-anchor="middle" font-weight="500">PATIO</text>
+            </g>
+
+            <!-- DINING ROOM -->
+            <g class="fp-room" onclick="openRoom('living')" style="cursor:pointer">
+              <rect x="345" y="160" width="145" height="40" fill="rgba(74,155,111,0.06)" rx="1"/>
+              <rect x="345" y="160" width="145" height="40" fill="none" stroke="rgba(74,155,111,0.18)" stroke-width="0.7" rx="1"/>
+              <text x="417" y="184" font-family="DM Sans,sans-serif" font-size="8.5" fill="rgba(74,155,111,0.7)" text-anchor="middle" font-weight="500">DINING ROOM &nbsp; 19&apos;3"</text>
+            </g>
+
+            <!-- BEDROOM 3 (Leo) -->
+            <g class="fp-room" onclick="openRoom('br2')" style="cursor:pointer">
+              <rect x="84" y="203" width="133" height="153" fill="rgba(115,127,115,0.07)" rx="1"/>
+              <rect x="84" y="203" width="133" height="153" fill="none" stroke="rgba(115,127,115,0.2)" stroke-width="0.8" rx="1"/>
+              <text x="150" y="268" font-family="DM Sans,sans-serif" font-size="9" fill="rgba(30,40,30,0.65)" text-anchor="middle" font-weight="600">BEDROOM 3</text>
+              <text x="150" y="281" font-family="DM Sans,sans-serif" font-size="7.5" fill="rgba(115,127,115,0.7)" text-anchor="middle">Leo&apos;s room</text>
+              <text x="150" y="294" font-family="DM Sans,sans-serif" font-size="7" fill="rgba(115,127,115,0.5)" text-anchor="middle">12&apos; &times; 11&apos;8"</text>
+            </g>
+
+            <!-- BATH (Jack & Jill) - lime new crew -->
+            <g class="fp-room" onclick="openRoom('hallbath')" style="cursor:pointer">
+              <rect x="223" y="203" width="64" height="153" fill="rgba(213,220,153,0.1)" rx="1"/>
+              <rect x="223" y="203" width="64" height="153" fill="none" stroke="rgba(213,220,153,0.4)" stroke-width="1" rx="1"/>
+              <circle cx="272" cy="214" r="4" fill="rgba(213,220,153,0.9)" style="animation:pulse 2s infinite"/>
+              <text x="255" y="268" font-family="DM Sans,sans-serif" font-size="8" fill="rgba(80,90,20,0.8)" text-anchor="middle" font-weight="600">MASTER</text>
+              <text x="255" y="280" font-family="DM Sans,sans-serif" font-size="8" fill="rgba(80,90,20,0.8)" text-anchor="middle" font-weight="600">BATH</text>
+              <text x="255" y="294" font-family="DM Sans,sans-serif" font-size="7" fill="rgba(213,220,153,0.7)" text-anchor="middle">New tile crew</text>
+            </g>
+
+            <!-- BEDROOM 2 (Mila) -->
+            <g class="fp-room" onclick="openRoom('br2')" style="cursor:pointer">
+              <rect x="293" y="203" width="124" height="153" fill="rgba(115,127,115,0.07)" rx="1"/>
+              <rect x="293" y="203" width="124" height="153" fill="none" stroke="rgba(115,127,115,0.2)" stroke-width="0.8" rx="1"/>
+              <text x="355" y="268" font-family="DM Sans,sans-serif" font-size="9" fill="rgba(30,40,30,0.65)" text-anchor="middle" font-weight="600">BEDROOM 2</text>
+              <text x="355" y="281" font-family="DM Sans,sans-serif" font-size="7.5" fill="rgba(115,127,115,0.7)" text-anchor="middle">Mila&apos;s room</text>
+              <text x="355" y="294" font-family="DM Sans,sans-serif" font-size="7" fill="rgba(115,127,115,0.5)" text-anchor="middle">10&apos;8" &times; 8&apos;3"</text>
+            </g>
+
+            <!-- PRIMARY BATH - delayed/red pulse -->
+            <g class="fp-room" onclick="openRoom('pbath')" style="cursor:pointer">
+              <rect x="423" y="203" width="64" height="153" fill="rgba(224,122,95,0.13)" rx="1"/>
+              <rect x="423" y="203" width="64" height="153" fill="none" stroke="rgba(224,122,95,0.45)" stroke-width="1.2" rx="1"/>
+              <circle cx="477" cy="213" r="4" fill="rgba(224,122,95,0.9)" style="animation:pulse 2s infinite"/>
+              <text x="455" y="264" font-family="DM Sans,sans-serif" font-size="8" fill="rgba(160,50,30,0.8)" text-anchor="middle" font-weight="600">J&amp;J</text>
+              <text x="455" y="276" font-family="DM Sans,sans-serif" font-size="8" fill="rgba(160,50,30,0.8)" text-anchor="middle" font-weight="600">BATH</text>
+              <text x="455" y="290" font-family="DM Sans,sans-serif" font-size="7" fill="rgba(224,122,95,0.7)" text-anchor="middle">Active</text>
+            </g>
+
+            <!-- PRIMARY BEDROOM -->
+            <g class="fp-room" onclick="openRoom('pbr')" style="cursor:pointer">
+              <rect x="493" y="203" width="117" height="153" fill="rgba(115,127,115,0.07)" rx="1"/>
+              <rect x="493" y="203" width="117" height="153" fill="none" stroke="rgba(115,127,115,0.2)" stroke-width="0.8" rx="1"/>
+              <text x="551" y="264" font-family="DM Sans,sans-serif" font-size="9" fill="rgba(30,40,30,0.65)" text-anchor="middle" font-weight="600">PRIMARY</text>
+              <text x="551" y="276" font-family="DM Sans,sans-serif" font-size="9" fill="rgba(30,40,30,0.65)" text-anchor="middle" font-weight="600">BEDROOM</text>
+              <text x="551" y="290" font-family="DM Sans,sans-serif" font-size="7" fill="rgba(115,127,115,0.5)" text-anchor="middle">13&apos;6" &times; 11&apos;8"</text>
+            </g>
+
+            <!-- DOOR SWINGS (subtle arcs) -->
+            <path d="M160 197 Q142 180 160 163" fill="none" stroke="rgba(0,0,0,0.12)" stroke-width="0.8"/>
+            <path d="M223 280 Q205 262 223 244" fill="none" stroke="rgba(0,0,0,0.1)" stroke-width="0.8"/>
+            <path d="M290 280 Q272 262 290 244" fill="none" stroke="rgba(0,0,0,0.1)" stroke-width="0.8"/>
+            <path d="M420 280 Q402 262 420 244" fill="none" stroke="rgba(0,0,0,0.1)" stroke-width="0.8"/>
+
+            <!-- NORTH ARROW + SCALE -->
+            <g transform="translate(84,374)">
+              <text font-family="DM Sans,sans-serif" font-size="7" fill="rgba(0,0,0,0.25)">Scale 1/4"=1&apos;</text>
+            </g>
+            <g transform="translate(654,370)">
+              <circle cx="12" cy="12" r="10" fill="rgba(44,49,44,0.06)" stroke="rgba(44,49,44,0.15)" stroke-width="0.8"/>
+              <text x="12" y="16" font-family="DM Sans,sans-serif" font-size="8" font-weight="700" fill="rgba(44,49,44,0.5)" text-anchor="middle">N</text>
+              <line x1="12" y1="5" x2="12" y2="10" stroke="rgba(44,49,44,0.4)" stroke-width="1.2"/>
+            </g>
+
+            <!-- ADU SECTION below -->
+            <text x="84" y="398" font-family="DM Sans,sans-serif" font-size="8" fill="rgba(115,127,115,0.5)" font-style="italic">ADU / detached garage — 405 SF · see ADU tab</text>
+          </svg>
+        </div>
+
+        <!-- DESIGN LAYOUT (Ebru Option B - hidden by default) -->
+        <div id="fp-design" style="padding:18px 20px 14px;display:none;opacity:0;transition:opacity .4s">
+          <div style="position:relative">
+            <svg id="fp-svg-design" viewBox="0 0 760 420" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block">
+              <defs>
+                <pattern id="fpgrid2" width="14" height="14" patternUnits="userSpaceOnUse">
+                  <path d="M14 0L0 0 0 14" fill="none" stroke="rgba(0,0,0,0.02)" stroke-width="0.5"/>
+                </pattern>
+              </defs>
+              <rect width="760" height="420" fill="url(#fpgrid2)"/>
+
+              <!-- Same walls as original but with design overlay -->
+              <rect x="80" y="30" width="530" height="4" fill="#2C312C" rx="1" opacity="0.6"/>
+              <rect x="80" y="30" width="4" height="330" fill="#2C312C" rx="1" opacity="0.6"/>
+              <rect x="610" y="30" width="4" height="240" fill="#2C312C" rx="1" opacity="0.6"/>
+              <rect x="80" y="356" width="530" height="4" fill="#2C312C" rx="1" opacity="0.6"/>
+              <rect x="610" y="200" width="4" height="160" fill="#2C312C" rx="1" opacity="0.6"/>
+              <rect x="160" y="34" width="3" height="200" fill="#4A4A4A" rx="0.5" opacity="0.5"/>
+              <rect x="342" y="34" width="3" height="150" fill="#4A4A4A" rx="0.5" opacity="0.5"/>
+              <rect x="83" y="200" width="530" height="3" fill="#4A4A4A" rx="0.5" opacity="0.5"/>
+              <rect x="220" y="203" width="3" height="153" fill="#4A4A4A" rx="0.5" opacity="0.5"/>
+              <rect x="290" y="203" width="3" height="153" fill="#4A4A4A" rx="0.5" opacity="0.5"/>
+              <rect x="420" y="203" width="3" height="153" fill="#4A4A4A" rx="0.5" opacity="0.5"/>
+              <rect x="490" y="203" width="3" height="153" fill="#4A4A4A" rx="0.5" opacity="0.5"/>
+              <rect x="342" y="160" width="90" height="3" fill="#4A4A4A" rx="0.5" opacity="0.5"/>
+
+              <!-- DESIGN OVERLAYS - furniture + lighting from Ebru plan -->
+              <!-- Living room window (5'x7') -->
+              <rect x="209" y="30" width="62" height="4" fill="#D5DC99" opacity="0.8" rx="1"/>
+              <text x="240" y="25" font-family="DM Sans,sans-serif" font-size="7" fill="rgba(90,110,20,0.8)" text-anchor="middle">Living Rm Window 5&apos;&times;7&apos;</text>
+
+              <!-- Window pop-outs (3) on west wall -->
+              <rect x="80" y="52" width="4" height="32" fill="#D5DC99" opacity="0.7" rx="1"/>
+              <rect x="80" y="97" width="4" height="32" fill="#D5DC99" opacity="0.7" rx="1"/>
+              <rect x="80" y="142" width="4" height="32" fill="#D5DC99" opacity="0.7" rx="1"/>
+              <text x="57" y="72" font-family="DM Sans,sans-serif" font-size="6.5" fill="rgba(90,110,20,0.8)" text-anchor="middle">3&apos;&times;7&apos;</text>
+              <text x="57" y="82" font-family="DM Sans,sans-serif" font-size="6.5" fill="rgba(90,110,20,0.8)" text-anchor="middle">pop-outs</text>
+
+              <!-- Kitchen doors (3-panel) -->
+              <rect x="607" y="55" width="3" height="75" fill="#D5DC99" opacity="0.8" rx="1"/>
+              <text x="660" y="78" font-family="DM Sans,sans-serif" font-size="6.5" fill="rgba(90,110,20,0.8)" text-anchor="start">Kitchen doors</text>
+              <text x="660" y="88" font-family="DM Sans,sans-serif" font-size="6.5" fill="rgba(90,110,20,0.8)" text-anchor="start">3-panel 13&apos;6"</text>
+
+              <!-- Furniture: sofa + chairs in living room (schematic) -->
+              <rect x="172" y="70" width="70" height="40" fill="none" stroke="rgba(74,155,111,0.3)" stroke-width="0.8" rx="3"/>
+              <text x="207" y="94" font-family="DM Sans,sans-serif" font-size="6" fill="rgba(74,155,111,0.5)" text-anchor="middle">SOFA</text>
+              <rect x="172" y="120" width="28" height="28" fill="none" stroke="rgba(74,155,111,0.25)" stroke-width="0.7" rx="14"/>
+              <rect x="208" y="120" width="28" height="28" fill="none" stroke="rgba(74,155,111,0.25)" stroke-width="0.7" rx="14"/>
+
+              <!-- Dining table -->
+              <rect x="362" y="170" width="72" height="38" fill="none" stroke="rgba(74,155,111,0.3)" stroke-width="0.8" rx="2"/>
+              <text x="398" y="193" font-family="DM Sans,sans-serif" font-size="6" fill="rgba(74,155,111,0.5)" text-anchor="middle">TABLE</text>
+
+              <!-- Lighting circuits (wavy lines schematic) -->
+              <path d="M180 55 Q210 62 240 55 Q270 48 300 55" fill="none" stroke="rgba(213,220,153,0.5)" stroke-width="1" stroke-dasharray="3,2"/>
+              <path d="M360 55 Q390 62 420 55 Q450 48 475 55" fill="none" stroke="rgba(213,220,153,0.5)" stroke-width="1" stroke-dasharray="3,2"/>
+
+              <!-- Light fixture symbols -->
+              <circle cx="251" cy="100" r="5" fill="none" stroke="rgba(213,220,153,0.6)" stroke-width="1"/>
+              <line x1="251" y1="94" x2="251" y2="106" stroke="rgba(213,220,153,0.5)" stroke-width="0.8"/>
+              <line x1="245" y1="100" x2="257" y2="100" stroke="rgba(213,220,153,0.5)" stroke-width="0.8"/>
+              <circle cx="417" cy="78" r="5" fill="none" stroke="rgba(213,220,153,0.6)" stroke-width="1"/>
+              <line x1="417" y1="72" x2="417" y2="84" stroke="rgba(213,220,153,0.5)" stroke-width="0.8"/>
+              <line x1="411" y1="78" x2="423" y2="78" stroke="rgba(213,220,153,0.5)" stroke-width="0.8"/>
+
+              <!-- Master bedroom window + door specs -->
+              <rect x="80" y="218" width="4" height="48" fill="#D5DC99" opacity="0.7" rx="1"/>
+              <text x="56" y="237" font-family="DM Sans,sans-serif" font-size="6.5" fill="rgba(90,110,20,0.8)" text-anchor="middle">MBed</text>
+              <text x="56" y="247" font-family="DM Sans,sans-serif" font-size="6.5" fill="rgba(90,110,20,0.8)" text-anchor="middle">4&apos;&times;4&apos;6"</text>
+
+              <!-- MBath window -->
+              <text x="455" y="370" font-family="DM Sans,sans-serif" font-size="6.5" fill="rgba(90,110,20,0.8)" text-anchor="middle">4&apos;6"&times;7&apos;</text>
+
+              <!-- J&J window -->
+              <rect x="240" y="356" width="42" height="4" fill="#D5DC99" opacity="0.7" rx="1"/>
+              <text x="261" y="370" font-family="DM Sans,sans-serif" font-size="6.5" fill="rgba(90,110,20,0.8)" text-anchor="middle">5&apos;&times;4&apos;</text>
+
+              <!-- Bed2 window -->
+              <rect x="530" y="356" width="60" height="4" fill="#D5DC99" opacity="0.7" rx="1"/>
+              <text x="560" y="370" font-family="DM Sans,sans-serif" font-size="6.5" fill="rgba(90,110,20,0.8)" text-anchor="middle">8&apos;&times;4&apos;</text>
+
+              <!-- Room labels (same as original but lighter) -->
+              <text x="251" y="112" font-family="DM Sans,sans-serif" font-size="9" fill="rgba(30,40,30,0.5)" text-anchor="middle" font-weight="600">LIVING ROOM</text>
+              <text x="417" y="66" font-family="DM Sans,sans-serif" font-size="9" fill="rgba(30,30,20,0.5)" text-anchor="middle" font-weight="600">KITCHEN</text>
+              <text x="150" y="272" font-family="DM Sans,sans-serif" font-size="8.5" fill="rgba(30,40,30,0.5)" text-anchor="middle" font-weight="600">BEDROOM 3</text>
+              <text x="255" y="272" font-family="DM Sans,sans-serif" font-size="8" fill="rgba(80,90,20,0.7)" text-anchor="middle" font-weight="600">MASTER BATH</text>
+              <text x="355" y="272" font-family="DM Sans,sans-serif" font-size="8.5" fill="rgba(30,40,30,0.5)" text-anchor="middle" font-weight="600">BEDROOM 1 / Leo</text>
+              <text x="455" y="272" font-family="DM Sans,sans-serif" font-size="8" fill="rgba(160,50,30,0.7)" text-anchor="middle" font-weight="600">P. BATH</text>
+              <text x="551" y="264" font-family="DM Sans,sans-serif" font-size="9" fill="rgba(30,40,30,0.5)" text-anchor="middle" font-weight="600">PRIMARY</text>
+              <text x="551" y="276" font-family="DM Sans,sans-serif" font-size="9" fill="rgba(30,40,30,0.5)" text-anchor="middle" font-weight="600">BEDROOM</text>
+
+              <!-- Design tag -->
+              <rect x="84" y="374" width="130" height="16" fill="rgba(213,220,153,0.12)" rx="3"/>
+              <text x="91" y="385" font-family="DM Sans,sans-serif" font-size="7.5" fill="rgba(90,110,20,0.8)" font-weight="600">Ebru Kuyak Option B &middot; Oct 2025</text>
+
+              <!-- Window/door legend -->
+              <rect x="560" y="374" width="12" height="6" fill="#D5DC99" opacity="0.7" rx="1"/>
+              <text x="576" y="381" font-family="DM Sans,sans-serif" font-size="7" fill="rgba(90,110,20,0.7)">Windows &amp; doors</text>
+              <circle cx="564" cy="394" r="4" fill="none" stroke="rgba(213,220,153,0.6)" stroke-width="1"/>
+              <text x="572" y="397" font-family="DM Sans,sans-serif" font-size="7" fill="rgba(90,110,20,0.7)">Light fixture</text>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Status legend -->
+        <div style="padding:10px 20px;border-top:0.5px solid var(--border);display:flex;gap:14px;flex-wrap:wrap;align-items:center">
+          <div style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text3)"><div style="width:7px;height:7px;border-radius:50%;background:#E8735A"></div>Delayed</div>
+          <div style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text3)"><div style="width:7px;height:7px;border-radius:50%;background:#C9A84C"></div>Active</div>
+          <div style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text3)"><div style="width:7px;height:7px;border-radius:50%;background:#4A9B6F"></div>Complete</div>
+          <div style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text3)"><div style="width:7px;height:7px;border-radius:2px;background:rgba(213,220,153,0.5);border:0.5px solid rgba(213,220,153,0.8)"></div>New crew</div>
+          <div style="margin-left:auto;font-size:10px;color:var(--text3)">Tap any room to open details</div>
+        </div>
       </div>
     </div>
-    <div id="room-detail" style="display:none"><div class="detail-panel"><div class="detail-hd"><button class="btn btn-sm" onclick="closeRoom()"><i class="ti ti-arrow-left" style="font-size:13px"></i> Rooms</button><span id="room-title" style="font-size:15px;font-weight:600"></span></div><div class="cat-strip" id="cat-strip"></div><div class="item-list" id="item-list"></div></div></div>
-  </div>
 
+    <!-- Room detail view -->
+    <div id="room-detail" style="display:none">
+      <div class="detail-panel">
+        <div class="detail-hd">
+          <button class="btn btn-sm" onclick="closeRoom()"><i class="ti ti-arrow-left" style="font-size:13px"></i> Floor plan</button>
+          <span id="room-title" style="font-size:15px;font-weight:600;color:var(--text)"></span>
+        </div>
+        <div class="cat-strip" id="cat-strip"></div>
+        <div class="item-list" id="item-list"></div>
+      </div>
+    </div>
+  </div>
   <!-- ADU -->
   <div id="tab-adu" style="display:none">
     <div id="adu-list">
-      <div style="font-size:12px;color:var(--text2);margin-bottom:14px">Detached garage conversion &mdash; 405 SF &middot; Designer: Ebru Kuyak &middot; ADU plan dated Dec 8, 2025</div>
-      <div class="room-grid">
-        <div class="room-card" onclick="openAdu('adu-bath')"><div class="card-icon"><i class="ti ti-bath"></i></div><div class="card-name">ADU bath</div><div class="card-pills"><span class="pill p-green">Complete ✓</span></div></div>
-        <div class="room-card" onclick="openAdu('adu-br')"><div class="card-icon"><i class="ti ti-bed"></i></div><div class="card-name">ADU bedroom / studio</div><div class="card-pills"><span class="pill p-amber">2 pending</span><span class="pill p-green">1 approved</span></div></div>
-        <div class="room-card" onclick="openAdu('adu-structure')"><div class="card-icon"><i class="ti ti-building"></i></div><div class="card-name">ADU structure / MEP</div><div class="card-pills"><span class="pill p-blue">In progress</span></div></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+        <div style="font-size:12px;color:var(--text2)">Garage conversion &mdash; 405 SF &middot; Ebru Kuyak &middot; Dec 8, 2025 &middot; <span style="color:var(--text3)">tap any zone</span></div>
+        <span style="font-size:11px;background:var(--green-bg);color:var(--green-text);padding:3px 10px;border-radius:20px;font-weight:500">Bath complete ✓ &middot; Studio active</span>
+      </div>
+
+      <!-- ADU ARCHITECTURAL FLOOR PLAN -->
+      <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:16px">
+        <svg viewBox="0 0 620 340" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;padding:16px 20px">
+
+          <defs>
+            <pattern id="adugrid" width="12" height="12" patternUnits="userSpaceOnUse">
+              <path d="M12 0L0 0 0 12" fill="none" stroke="rgba(0,0,0,0.025)" stroke-width="0.5"/>
+            </pattern>
+          </defs>
+          <rect x="0" y="0" width="620" height="340" fill="url(#adugrid)"/>
+
+          <!-- ═══ ADU OUTER WALLS ═══ -->
+          <!-- Total footprint approx 19'5" x 19'7" per original plans -->
+          <!-- Scaled: ~480px wide x ~280px tall -->
+          <rect x="70" y="30" width="480" height="4" fill="#2C312C" rx="1"/>
+          <rect x="70" y="30" width="4" height="280" fill="#2C312C" rx="1"/>
+          <rect x="546" y="30" width="4" height="280" fill="#2C312C" rx="1"/>
+          <rect x="70" y="306" width="480" height="4" fill="#2C312C" rx="1"/>
+
+          <!-- ═══ BATHROOM PARTITION WALL ═══ -->
+          <!-- Bath pod in upper-left corner per Ebru plan -->
+          <!-- Bath width ~80" = ~168px, bath depth ~80" = ~168px -->
+          <rect x="74" y="34" width="168" height="3" fill="#4A4A4A" rx="0.5"/>
+          <rect x="238" y="34" width="3" height="168" fill="#4A4A4A" rx="0.5"/>
+          <!-- Door opening in bath wall (leave gap ~28" = ~58px) -->
+          <rect x="74" y="130" width="3" height="72" fill="rgba(74,155,111,0)" rx="0.5"/>
+
+          <!-- ═══ BATHROOM ZONE - COMPLETE ✓ ═══ -->
+          <g onclick="openAdu('adu-bath')" style="cursor:pointer">
+            <rect x="74" y="34" width="164" height="168" fill="rgba(74,155,111,0.1)" rx="1"/>
+            <rect x="74" y="34" width="164" height="168" fill="none" stroke="rgba(74,155,111,0.35)" stroke-width="1" rx="1"/>
+
+            <!-- Toilet (upper left) -->
+            <rect x="82" y="42" width="36" height="42" fill="none" stroke="rgba(74,155,111,0.3)" stroke-width="0.8" rx="2"/>
+            <rect x="86" y="46" width="28" height="18" fill="none" stroke="rgba(74,155,111,0.2)" stroke-width="0.7" rx="1"/>
+            <text x="100" y="72" font-family="DM Sans,sans-serif" font-size="6" fill="rgba(74,155,111,0.5)" text-anchor="middle">WC</text>
+
+            <!-- Sink/vanity (upper area) -->
+            <rect x="128" y="42" width="42" height="32" fill="none" stroke="rgba(74,155,111,0.3)" stroke-width="0.8" rx="2"/>
+            <circle cx="149" cy="56" r="8" fill="none" stroke="rgba(74,155,111,0.25)" stroke-width="0.7"/>
+            <text x="149" y="60" font-family="DM Sans,sans-serif" font-size="6" fill="rgba(74,155,111,0.5)" text-anchor="middle">SINK</text>
+
+            <!-- Shower (lower area) -->
+            <rect x="82" y="110" width="90" height="80" fill="rgba(74,155,111,0.06)" stroke="rgba(74,155,111,0.25)" stroke-width="0.8" rx="2"/>
+            <text x="127" y="155" font-family="DM Sans,sans-serif" font-size="7" fill="rgba(74,155,111,0.6)" text-anchor="middle">SHOWER</text>
+            <!-- shower door swing -->
+            <path d="M172 110 Q172 140 142 140" fill="none" stroke="rgba(74,155,111,0.2)" stroke-width="0.7"/>
+
+            <!-- Door to main space -->
+            <path d="M74 130 Q100 130 100 158" fill="none" stroke="rgba(0,0,0,0.1)" stroke-width="0.7"/>
+
+            <!-- Labels -->
+            <text x="156" y="150" font-family="DM Sans,sans-serif" font-size="8.5" fill="rgba(30,40,30,0.65)" text-anchor="middle" font-weight="600">ADU</text>
+            <text x="156" y="162" font-family="DM Sans,sans-serif" font-size="8.5" fill="rgba(30,40,30,0.65)" text-anchor="middle" font-weight="600">BATH</text>
+
+            <!-- Complete badge -->
+            <rect x="82" y="192" width="80" height="14" fill="rgba(74,155,111,0.15)" rx="3"/>
+            <text x="122" y="202" font-family="DM Sans,sans-serif" font-size="7" fill="rgba(74,155,111,0.9)" text-anchor="middle" font-weight="600">Complete ✓</text>
+          </g>
+
+          <!-- ═══ MAIN STUDIO / BEDROOM - ACTIVE ═══ -->
+          <g onclick="openAdu('adu-br')" style="cursor:pointer">
+            <rect x="241" y="34" width="305" height="272" fill="rgba(201,168,76,0.07)" rx="1"/>
+            <rect x="241" y="34" width="305" height="272" fill="none" stroke="rgba(201,168,76,0.25)" stroke-width="1" rx="1"/>
+
+            <!-- Bed schematic -->
+            <rect x="258" y="46" width="80" height="56" fill="none" stroke="rgba(201,168,76,0.2)" stroke-width="0.7" rx="3"/>
+            <text x="298" y="77" font-family="DM Sans,sans-serif" font-size="6.5" fill="rgba(201,168,76,0.5)" text-anchor="middle">BED</text>
+
+            <!-- Cabinet/wardrobe area (right wall per plan) -->
+            <rect x="484" y="42" width="55" height="130" fill="rgba(201,168,76,0.08)" stroke="rgba(201,168,76,0.2)" stroke-width="0.7" rx="1"/>
+            <line x1="484" y1="60" x2="539" y2="60" stroke="rgba(201,168,76,0.15)" stroke-width="0.5"/>
+            <line x1="484" y1="80" x2="539" y2="80" stroke="rgba(201,168,76,0.15)" stroke-width="0.5"/>
+            <line x1="484" y1="100" x2="539" y2="100" stroke="rgba(201,168,76,0.15)" stroke-width="0.5"/>
+            <line x1="484" y1="120" x2="539" y2="120" stroke="rgba(201,168,76,0.15)" stroke-width="0.5"/>
+            <text x="511" y="108" font-family="DM Sans,sans-serif" font-size="7" fill="rgba(201,168,76,0.5)" text-anchor="middle">CABS</text>
+
+            <!-- Door opening south wall (8'x7' per plans) -->
+            <rect x="310" y="306" width="120" height="4" fill="rgba(255,255,255,0.8)" rx="1"/>
+            <path d="M310 306 Q310 270 370 270" fill="none" stroke="rgba(0,0,0,0.1)" stroke-width="0.7"/>
+            <text x="370" y="295" font-family="DM Sans,sans-serif" font-size="6.5" fill="rgba(0,0,0,0.25)" text-anchor="middle">8&apos; door</text>
+
+            <!-- Ceiling speaker locations (from electrical plan) -->
+            <circle cx="310" cy="130" r="6" fill="none" stroke="rgba(201,168,76,0.4)" stroke-width="1"/>
+            <line x1="310" y1="124" x2="310" y2="136" stroke="rgba(201,168,76,0.35)" stroke-width="0.8"/>
+            <line x1="304" y1="130" x2="316" y2="130" stroke="rgba(201,168,76,0.35)" stroke-width="0.8"/>
+            <text x="310" y="148" font-family="DM Sans,sans-serif" font-size="6" fill="rgba(201,168,76,0.5)" text-anchor="middle">SPK</text>
+
+            <circle cx="440" cy="130" r="6" fill="none" stroke="rgba(201,168,76,0.4)" stroke-width="1"/>
+            <line x1="440" y1="124" x2="440" y2="136" stroke="rgba(201,168,76,0.35)" stroke-width="0.8"/>
+            <line x1="434" y1="130" x2="446" y2="130" stroke="rgba(201,168,76,0.35)" stroke-width="0.8"/>
+            <text x="440" y="148" font-family="DM Sans,sans-serif" font-size="6" fill="rgba(201,168,76,0.5)" text-anchor="middle">SPK</text>
+
+            <!-- Mirror box location (from Ebru note) -->
+            <rect x="258" y="130" width="14" height="14" fill="rgba(201,168,76,0.12)" stroke="rgba(201,168,76,0.4)" stroke-width="0.8" rx="1"/>
+            <text x="265" y="141" font-family="DM Sans,sans-serif" font-size="5.5" fill="rgba(201,168,76,0.7)" text-anchor="middle">MIR</text>
+            <text x="278" y="141" font-family="DM Sans,sans-serif" font-size="5.5" fill="rgba(201,168,76,0.5)" text-anchor="start">box</text>
+
+            <!-- Mini-split location (AC) -->
+            <rect x="350" y="34" width="80" height="12" fill="rgba(201,168,76,0.1)" stroke="rgba(201,168,76,0.25)" stroke-width="0.7" rx="1"/>
+            <text x="390" y="43" font-family="DM Sans,sans-serif" font-size="6.5" fill="rgba(201,168,76,0.6)" text-anchor="middle">MINI-SPLIT A/C</text>
+
+            <!-- Labels -->
+            <text x="390" y="220" font-family="DM Sans,sans-serif" font-size="10" fill="rgba(30,30,20,0.6)" text-anchor="middle" font-weight="600">ADU BEDROOM / STUDIO</text>
+            <text x="390" y="234" font-family="DM Sans,sans-serif" font-size="7.5" fill="rgba(201,168,76,0.7)" text-anchor="middle">Cabinets, speakers, A/C, electrical active</text>
+
+            <!-- Active badge -->
+            <rect x="348" y="248" width="82" height="14" fill="rgba(201,168,76,0.12)" rx="3"/>
+            <text x="389" y="258" font-family="DM Sans,sans-serif" font-size="7" fill="rgba(201,168,76,0.9)" text-anchor="middle" font-weight="600">Active — in progress</text>
+          </g>
+
+          <!-- ═══ BATHROOM LOWER ZONE (extends below bath partition) ═══ -->
+          <g onclick="openAdu('adu-bath')" style="cursor:pointer">
+            <rect x="74" y="202" width="164" height="104" fill="rgba(74,155,111,0.06)" rx="1"/>
+            <rect x="74" y="202" width="164" height="104" fill="none" stroke="rgba(74,155,111,0.18)" stroke-width="0.5" rx="1"/>
+            <text x="156" y="255" font-family="DM Sans,sans-serif" font-size="7.5" fill="rgba(74,155,111,0.5)" text-anchor="middle">storage /</text>
+            <text x="156" y="267" font-family="DM Sans,sans-serif" font-size="7.5" fill="rgba(74,155,111,0.5)" text-anchor="middle">laundry area</text>
+          </g>
+
+          <!-- ═══ DIMENSIONS ═══ -->
+          <text x="308" y="326" font-family="DM Sans,sans-serif" font-size="7.5" fill="rgba(0,0,0,0.25)" text-anchor="middle">405 SF total &middot; 19&apos;5" &times; 19&apos;7" &middot; Scale 1/4"=1&apos;</text>
+
+          <!-- ADU door on south wall callout -->
+          <text x="370" y="320" font-family="DM Sans,sans-serif" font-size="6.5" fill="rgba(90,110,20,0.6)" text-anchor="middle">ADU Doors 8&apos;&times;7&apos;&times;4&apos;-5/8"</text>
+
+          <!-- Compass -->
+          <g transform="translate(556,288)">
+            <circle cx="12" cy="12" r="10" fill="rgba(44,49,44,0.06)" stroke="rgba(44,49,44,0.12)" stroke-width="0.8"/>
+            <text x="12" y="16" font-family="DM Sans,sans-serif" font-size="8" font-weight="700" fill="rgba(44,49,44,0.4)" text-anchor="middle">N</text>
+            <line x1="12" y1="5" x2="12" y2="10" stroke="rgba(44,49,44,0.35)" stroke-width="1.2"/>
+          </g>
+        </svg>
+
+        <!-- Legend -->
+        <div style="padding:10px 20px;border-top:0.5px solid var(--border);display:flex;gap:14px;flex-wrap:wrap;align-items:center">
+          <div style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text3)"><div style="width:7px;height:7px;border-radius:50%;background:#4A9B6F"></div>Complete</div>
+          <div style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text3)"><div style="width:7px;height:7px;border-radius:50%;background:#C9A84C"></div>Active</div>
+          <div style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text3)">
+            <circle cx="4" cy="4" r="4" style="display:inline-block;width:8px;height:8px;border-radius:50%;border:1px solid rgba(201,168,76,0.6);background:none"></circle>
+            Light / speaker fixture
+          </div>
+          <div style="margin-left:auto;font-size:10px;color:var(--text3)">Ebru Kuyak &middot; Dec 8, 2025</div>
+        </div>
       </div>
     </div>
-    <div id="adu-detail" style="display:none"><div class="detail-panel"><div class="detail-hd"><button class="btn btn-sm" onclick="closeAdu()"><i class="ti ti-arrow-left" style="font-size:13px"></i> ADU</button><span id="adu-title" style="font-size:15px;font-weight:600"></span></div><div class="cat-strip" id="adu-cat-strip"></div><div class="item-list" id="adu-item-list"></div></div></div>
-  </div>
 
+    <!-- ADU room detail view -->
+    <div id="adu-detail" style="display:none">
+      <div class="detail-panel">
+        <div class="detail-hd">
+          <button class="btn btn-sm" onclick="closeAdu()"><i class="ti ti-arrow-left" style="font-size:13px"></i> ADU floor plan</button>
+          <span id="adu-title" style="font-size:15px;font-weight:600;color:var(--text)"></span>
+        </div>
+        <div class="cat-strip" id="adu-cat-strip"></div>
+        <div class="item-list" id="adu-item-list"></div>
+      </div>
+    </div>
+  </div>
   <!-- LANDSCAPE -->
   <div id="tab-landscape" style="display:none">
     <div id="zone-list">
@@ -372,6 +851,9 @@ body{font-family:"DM Sans",sans-serif;background:var(--offwhite);color:var(--tex
         <div class="log-row"><div class="log-dot" style="background:var(--red)"></div><div><div class="log-text">Freestanding tub drain location &mdash; not yet confirmed. Plumber blocked.</div><div class="log-meta">Primary bath &middot; Plumbing &middot; Blocked &middot; Needs Ebru confirmation</div></div></div>
         <div class="log-row"><div class="log-dot" style="background:var(--red)"></div><div><div class="log-text">Wall-mount faucet rough height &mdash; pending vanity dimensions from Ebru</div><div class="log-meta">Primary bath &middot; Plumbing &middot; Blocked</div></div></div>
         <div class="log-row"><div class="log-dot" style="background:var(--amber)"></div><div><div class="log-text">Option B window &mdash; framer needs confirmed opening size + structural header</div><div class="log-meta">Living room &middot; Structural &middot; Pending</div></div></div>
+        <div class="log-row"><div class="log-dot" style="background:var(--green)"></div><div><div class="log-text">ADU photo update — mini-split installed, 4 can lights in, speaker locations roughed, shelving framework done (no doors), 3-panel + south sliding doors installed, concrete floor complete, LaHabra patching ongoing</div><div class="log-meta">ADU bedroom/studio &middot; Photo documentation &middot; June 11, 2026</div></div></div>
+        <div class="log-row"><div class="log-dot" style="background:var(--red)"></div><div><div class="log-text">Front door — not yet purchased or installed. Must measure opening, select, and order. Blocks final project close.</div><div class="log-meta">Entry &middot; Purchase needed &middot; June 11, 2026</div></div></div>
+        <div class="log-row"><div class="log-dot" style="background:var(--green)"></div><div><div class="log-text">June 11 — Goal: first night sleeping in master bedroom. Mirror install top priority. Lance + full team on site.</div><div class="log-meta">Master bedroom &middot; Site status &middot; June 11, 2026</div></div></div>
         <div class="log-row"><div class="log-dot" style="background:var(--red)"></div><div><div class="log-text">Dryer installation error — shuts off in 5 seconds. Electrician to investigate wiring / 240V connection.</div><div class="log-meta">Laundry &middot; Electrical &middot; Issue logged &middot; June 10, 2026</div></div></div>
         <div class="log-row"><div class="log-dot" style="background:var(--red)"></div><div><div class="log-text">Fireplace incomplete — heater unit not installed, top finish unresolved. Lance to assess scope vs contract.</div><div class="log-meta">Living room &middot; GC &middot; Issue logged &middot; June 10, 2026</div></div></div>
         <div class="log-row"><div class="log-dot" style="background:var(--amber)"></div><div><div class="log-text">Master bath hot water not exceeding 90°F — plumber to check water heater temp + thermostatic cartridge.</div><div class="log-meta">Master bath &middot; Plumbing &middot; Issue logged &middot; June 10, 2026</div></div></div>
@@ -841,15 +1323,30 @@ const rooms={
   ]},
 };
 const aduRooms={
-  "adu-bath":{title:"ADU bath",cats:["All","Plumbing","Tile"],items:[
-    {cat:"Plumbing",name:"Vanity + sink",status:"pending",sl:"Pending",fields:{Type:"Single vanity per Ebru Dec 2025 plan",Faucet:"TBD",Vendor:"TBD"},alert:{t:"warn",m:"Vanity selection needed — single sink per Dec 8, 2025 plan."}},
-    {cat:"Plumbing",name:"Toilet",status:"pending",sl:"Pending",fields:{Type:"Standard or wall-hung TBD",Rough:"12in standard"},alert:null},
-    {cat:"Tile",name:"Bath tile — floor + walls",status:"pending",sl:"Pending",fields:{Material:"TBD — Ebru to spec",Layout:"TBD"},alert:{t:"warn",m:"Tile selection needed before ADU bath tile crew schedules."}},
+  "adu-bath":{title:"ADU bath",cats:["All","Plumbing","Tile","Electrical"],items:[
+    {cat:"Tile",name:"Tile walls + floor — complete",status:"installed",sl:"Complete ✓",fields:{Status:"Fully tiled as of June 9",Grout:"Done"},alert:null},
+    {cat:"Plumbing",name:"Vanity + faucet — installed",status:"installed",sl:"Installed ✓",fields:{Status:"Installed June 9"},alert:null},
+    {cat:"Plumbing",name:"Toilet — installed",status:"installed",sl:"Installed ✓",fields:{Status:"Installed June 9"},alert:null},
+    {cat:"Plumbing",name:"Shower head — installed",status:"installed",sl:"Installed ✓",fields:{Status:"Installed June 9"},alert:null},
+    {cat:"Plumbing",name:"Wall-mount rough plumbing — installed",status:"installed",sl:"Installed ✓",fields:{Status:"Installed after tile crew removed 3 tiles June 6"},alert:null},
+    {cat:"Electrical",name:"Outlet boxes — moving flush to tile face",status:"pending",sl:"In progress",fields:{Status:"Being corrected — boxes not yet flush"},alert:{t:"warn",m:"Outlet boxes need to be flush with tile face. In progress as of June 9."}},
+    {cat:"Electrical",name:"Lights — install",status:"pending",sl:"Pending",fields:{Type:"Recessed + exhaust fan"},alert:null},
+    {cat:"Electrical",name:"Glass shower — order pending",status:"pending",sl:"Pending Ebru",fields:{Status:"Ready to order — confirm dimensions with Ebru first"},alert:{t:"warn",m:"Call Ebru to confirm glass dimensions before placing order. One conversation away."}},
   ]},
-  "adu-br":{title:"ADU bedroom / studio",cats:["All","Electrical"],items:[
-    {cat:"Electrical",name:"Mirror box electrical rough",status:"pending",sl:"Pending — confirm with Ebru",fields:{Location:"Per Ebru Dec 2025 plan — exact TBD",Note:"Callout: box for the mirror"},note:"Ebru Dec 8 2025 plan callout: box for the mirror. Exact location must be confirmed before drywall.",alert:{t:"warn",m:"DECISION NEEDED: Confirm exact mirror box location with Ebru Kuyak. Note appears on Dec 8, 2025 ADU plan."}},
-    {cat:"Electrical",name:"ADU bedroom lighting",status:"pending",sl:"Pending",fields:{Type:"Recessed — 2 cans per plan",Dimmer:"Yes"},alert:null},
-    {cat:"Electrical",name:"Exterior entry light",status:"approved",sl:"Approved",fields:{Type:"Wall mount at ADU entry",GFCI:"Yes"},alert:null},
+  "adu-br":{title:"ADU bedroom / studio",cats:["All","Electrical","Structure","Remaining"],items:[
+    {cat:"Structure",name:"Mini-split cassette — installed",status:"installed",sl:"Installed ✓",fields:{Type:"Cassette ceiling mount",Brand:"Mitsubishi",Status:"Installed — tape still on, not yet commissioned",Photo:"June 11 2026"},alert:{t:"blue",m:"Tape still on unit. Commission and test before use."}},
+    {cat:"Structure",name:"Recessed can lights — installed",status:"installed",sl:"Installed ✓",fields:{Qty:"4 visible in photos",Trims:"Not all on yet",Status:"Installed"},alert:null},
+    {cat:"Electrical",name:"Ceiling speakers — roughed in",status:"pending",sl:"Covers needed",fields:{Qty:"3 locations visible in photos",Covers:"White speaker covers not yet installed",Amp:"Label wires + connect Sonos"},note:"Speaker wire locations visible in ceiling. Covers not installed. Amp labeling required before connecting.",alert:{t:"warn",m:"LABEL ALL WIRES before connecting Sonos amp. Map each amp to its speaker zone."}},
+    {cat:"Structure",name:"Built-in shelving — framework complete",status:"pending",sl:"No doors yet",fields:{Status:"Framework installed — visible in photos",Doors:"Not installed",Inside:"Layout may need corrections per notes"},alert:{t:"warn",m:"Shelving framework complete. Doors needed. Confirm inside layout with client before ordering doors."}},
+    {cat:"Electrical",name:"Outlet boxes — flush to tile face",status:"pending",sl:"In progress",fields:{Status:"Being moved flush to tile per June 9 update"},alert:null},
+    {cat:"Electrical",name:"Lights — trims + connection",status:"pending",sl:"Pending",fields:{Status:"Cans installed, trims not all on"},alert:null},
+    {cat:"Electrical",name:"Exhaust fan — install",status:"pending",sl:"Pending",fields:{Location:"Bathroom"},alert:null},
+    {cat:"Remaining",name:"LaHabra stucco patching — floor material present",status:"pending",sl:"In progress",fields:{Note:"LaHabra bags visible on floor — patching ongoing"},alert:null},
+    {cat:"Remaining",name:"Floor — concrete slab clean finish",status:"installed",sl:"Complete ✓",fields:{Type:"Concrete slab",Finish:"Machine finish — clean"},alert:null},
+    {cat:"Remaining",name:"Large sliding door — 3-panel installed",status:"installed",sl:"Installed ✓",fields:{Size:"8x7 per Ebru ADU plan",Frame:"Black aluminum",Status:"Installed and operational"},alert:null},
+    {cat:"Remaining",name:"South-facing sliding door — installed",status:"installed",sl:"Installed ✓",fields:{Frame:"Black aluminum",Status:"Installed — backyard faces this"},alert:null},
+    {cat:"Remaining",name:"West wall window — installed",status:"installed",sl:"Installed ✓",fields:{Type:"Fixed square window",Frame:"Black"},alert:null},
+    {cat:"Electrical",name:"Mirror box electrical rough",status:"pending",sl:"Pending — confirm with Ebru",fields:{Location:"Per Ebru Dec 2025 plan — exact TBD",Note:"Box for the mirror callout on plan"},alert:{t:"warn",m:"Confirm exact mirror box location with Ebru before drywall."}},
   ]},
   "adu-structure":{title:"ADU structure / MEP",cats:["All","Structural","Plumbing","Electrical"],items:[
     {cat:"Structural",name:"Garage conversion framing",status:"pending",sl:"In progress",fields:{Scope:"Garage to ADU conversion",Plan:"Ebru Kuyak Dec 8 2025",Permits:"Coordinate with Lance"},alert:{t:"blue",m:"Confirm permit status for ADU conversion with Lance before framing begins."}},
@@ -899,8 +1396,9 @@ let curRoom=null,curCat="All",curAdu=null,curAduCat="All",curZone=null,curZoneCa
 function showTab(t){
   ["dashboard","rooms","adu","landscape","log","outdoor-log","docs","team","products","finance","progress","materials","punch","sitenotes"].forEach(x=>{const e=document.getElementById("tab-"+x);if(e)e.style.display="none";});
   document.getElementById("tab-"+t).style.display="block";
-  const titles={dashboard:"Dashboard",rooms:"Rooms",adu:"ADU — Garage conversion",landscape:"Landscape zones",log:"Decision log","outdoor-log":"Outdoor decisions",docs:"Documents",team:"Team & trades",products:"Products",finance:"Financials",progress:"Progress tracker",materials:"Material inventory",punch:"Punch list",sitenotes:"Site notes"};
-  document.getElementById("page-title").textContent=titles[t]||t;
+  const titles={dashboard:"Dashboard",rooms:"Floor plan · Rooms",adu:"ADU — Garage conversion",landscape:"Landscape zones",log:"Decision log","outdoor-log":"Outdoor decisions",docs:"Documents",team:"Team & trades",products:"Products",finance:"Financials",progress:"Progress tracker",materials:"Material inventory",punch:"Punch list",sitenotes:"Site notes · AI"};
+  const el=document.getElementById("page-title");
+  if(el)el.textContent=titles[t]||t;
   closeSidebar();
 }
 function setNav(el){document.querySelectorAll(".nav-item").forEach(n=>n.classList.remove("active"));el.classList.add("active");}
@@ -911,6 +1409,32 @@ function renderCatStrip(id,cats,active,fn){
 }
 function renderItemList(listId,items,cat,approveFn){
   const list=cat==="All"?items:items.filter(i=>i.cat===cat);
+  // Room-level stats
+  const total=items.length;
+  const approved=items.filter(i=>i.status==="approved"||i.status==="installed").length;
+  const blocked=items.filter(i=>i.status==="blocked").length;
+  const pct=total>0?Math.round(approved/total*100):0;
+  const statsHtml=`<div style="padding:10px 16px;border-bottom:0.5px solid var(--border);background:var(--offwhite);display:flex;align-items:center;gap:12px">
+    <div style="flex:1">
+      <div style="height:4px;background:rgba(0,0,0,0.06);border-radius:2px;overflow:hidden;margin-bottom:5px">
+        <div style="height:100%;width:${pct}%;background:#4A9B6F;border-radius:2px;transition:width .6s ease"></div>
+      </div>
+      <div style="display:flex;gap:10px">
+        <span style="font-size:10px;color:var(--text3)">${approved}/${total} approved</span>
+        ${blocked>0?`<span style="font-size:10px;color:var(--red-text)">${blocked} delayed</span>`:""}
+      </div>
+    </div>
+    <div style="font-size:18px;font-weight:600;color:${pct===100?"#4A9B6F":pct>50?"#C9A84C":"var(--text3)"};">${pct}%</div>
+  </div>`;
+  const existingStats = document.getElementById(listId+'_stats');
+  if(!existingStats){
+    const statsDiv = document.createElement('div');
+    statsDiv.id = listId+'_stats';
+    statsDiv.innerHTML = statsHtml;
+    document.getElementById(listId).parentNode.insertBefore(statsDiv, document.getElementById(listId));
+  } else {
+    existingStats.innerHTML = statsHtml;
+  }
   document.getElementById(listId).innerHTML=list.map((item,idx)=>{
     const al=item.alert?`<div class="alert-box alert-${item.alert.t==="red"?"red":item.alert.t==="blue"?"blue":"warn"}"><i class="ti ti-${item.alert.t==="red"?"alert-circle":item.alert.t==="blue"?"info-circle":"alert-triangle"}" style="font-size:15px;flex-shrink:0;margin-top:1px"></i><span>${item.alert.m}</span></div>`:"";
     const nt=item.note?`<div class="install-note"><i class="ti ti-tool" style="margin-right:4px;font-size:13px"></i>${item.note}</div>`:"";
@@ -969,6 +1493,7 @@ const progressSections = [
     {name:"ADU — new 12in ceiling joist, 10ft door opening, new beam",status:"complete"},
     {name:"ADU — new door opening back, new window west side, bathroom walls",status:"complete"},
     {name:"ADU — new slab poured with rebar + machine finish",status:"complete"},
+    {name:"ADU — mini-split installed (needs commissioning + tape removal)",status:"in-progress"},
     {name:"Wood flooring installed throughout main house",status:"complete"},
   ]},
   {title:"MEP rough-in",status:"complete",items:[
@@ -1121,8 +1646,8 @@ const punchSections = [
     {text:"Master bedroom: finishing cabinets",status:"open",note:""},
     {text:"Master bath vanity drawers: adjust alignment",status:"open",note:""},
   ]},
-  {title:"Personal — coordinate",trade:"Ben",urgency:"this-week",items:[
-    {text:"Buy: dark/black Legrand outlet + wall plate (confirm qty with electrician first)",status:"open",note:""},
+  {title:"Personal — coordinate",trade:"Ben",urgency:"today",items:[
+    {text:"PURCHASE: Front door — measure opening, select style, order ASAP",status:"open",note:"Opening: per Lance Remodel 6 scope. Coordinate with Lance on spec before ordering. This is a remaining open item blocking final close."},
     {text:"Coordinate outdoor living scope",status:"open",note:""},
     {text:"Appraisal — coordinate with Charmel forbearance",status:"open",note:""},
     {text:"Call Ebru: shower glass dimensions + towel warmer location",status:"open",note:"Two items to cover in one call"},
@@ -1174,6 +1699,60 @@ function togglePunchItem(si,ii){
 renderPunch();
 
 
+function setAduMode(mode){
+  const fp = document.getElementById('adu-fp-original');
+  const el = document.getElementById('adu-fp-electrical');
+  const btnF = document.getElementById('adu-btn-original');
+  const btnE = document.getElementById('adu-btn-electrical');
+  if(mode === 'electrical'){
+    fp.style.opacity = '0';
+    setTimeout(function(){
+      fp.style.display = 'none';
+      el.style.display = 'block';
+      setTimeout(function(){ el.style.opacity = '1'; }, 20);
+    }, 300);
+    btnE.style.background = 'var(--forest)'; btnE.style.color = '#F7F7EB';
+    btnF.style.background = 'none'; btnF.style.color = 'var(--text2)';
+  } else {
+    el.style.opacity = '0';
+    setTimeout(function(){
+      el.style.display = 'none';
+      fp.style.display = 'block';
+      setTimeout(function(){ fp.style.opacity = '1'; }, 20);
+    }, 300);
+    btnF.style.background = 'var(--forest)'; btnF.style.color = '#F7F7EB';
+    btnE.style.background = 'none'; btnE.style.color = 'var(--text2)';
+  }
+}
+function setFpMode(mode){
+  const orig = document.getElementById('fp-original');
+  const des = document.getElementById('fp-design');
+  const btnO = document.getElementById('fp-btn-original');
+  const btnD = document.getElementById('fp-btn-design');
+  if(mode === 'design'){
+    orig.style.opacity = '0';
+    setTimeout(function(){
+      orig.style.display = 'none';
+      des.style.display = 'block';
+      setTimeout(function(){ des.style.opacity = '1'; }, 20);
+    }, 300);
+    btnD.style.background = 'var(--forest)';
+    btnD.style.color = '#F7F7EB';
+    btnO.style.background = 'none';
+    btnO.style.color = 'var(--text2)';
+  } else {
+    des.style.opacity = '0';
+    setTimeout(function(){
+      des.style.display = 'none';
+      orig.style.display = 'block';
+      setTimeout(function(){ orig.style.opacity = '1'; }, 20);
+    }, 300);
+    btnO.style.background = 'var(--forest)';
+    btnO.style.color = '#F7F7EB';
+    btnD.style.background = 'none';
+    btnD.style.color = 'var(--text2)';
+  }
+}
 function openSidebar(){document.getElementById("sidebar").classList.add("open");document.getElementById("overlay").classList.add("open");}
 
 // ── SITE NOTES / AI WALKTHROUGH ──
