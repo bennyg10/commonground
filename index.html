@@ -1630,7 +1630,14 @@ function renderCats(catId, cats, listId, items, approveFn, parentId) {
   var strip = document.getElementById(catId);
   var allCats = ['All'].concat(cats);
   strip.innerHTML = allCats.map(function(c, i) {
-    return '<button class="cat-btn' + (i===0?' on':'') + '" onclick="filterCat('' + catId + '','' + listId + '','' + c + '',this,'' + approveFn + '','' + parentId + '')">' + c + '</button>';
+    var cls = 'cat-btn' + (i === 0 ? ' on' : '');
+    var onclick = 'filterCat(' +
+      JSON.stringify(catId) + ',' +
+      JSON.stringify(listId) + ',' +
+      JSON.stringify(c) + ',this,' +
+      JSON.stringify(approveFn) + ',' +
+      JSON.stringify(parentId) + ')';
+    return '<button class="' + cls + '" onclick="' + onclick + '">' + c + '</button>';
   }).join('');
   renderItems(listId, items, 'All', approveFn, parentId);
 }
@@ -1647,24 +1654,31 @@ function renderItems(listId, items, cat, approveFn, parentId) {
   var el = document.getElementById(listId);
   if (!el) return;
   el.innerHTML = list.map(function(item, idx) {
-    var statusColor = item.status === 'approved' || item.status === 'installed' ? 'var(--ok)' :
-      item.status === 'blocked' || item.status === 'delayed' ? 'var(--del)' :
-      item.status === 'in-progress' ? 'var(--amb)' : 'var(--w30)';
-    var statusLabel = {approved:'Approved',installed:'Installed',blocked:'Delayed',
-      delayed:'Delayed','in-progress':'In progress',pending:'Pending',
-      'not-started':'Not started'}[item.status] || item.status;
-    return '<div class="item"><div class="item-hd" onclick="toggleItem(this)">' +
+    var statusColor = (item.status === 'approved' || item.status === 'installed') ? 'var(--ok)' :
+      (item.status === 'blocked' || item.status === 'delayed') ? 'var(--del)' :
+      (item.status === 'in-progress') ? 'var(--amb)' : 'var(--w30)';
+    var statusLabel = {
+      approved:'Approved', installed:'Installed', blocked:'Delayed',
+      delayed:'Delayed', 'in-progress':'In progress', pending:'Pending',
+      'not-started':'Not started'
+    }[item.status] || item.status;
+    var approveonclick = approveFn + '(' + JSON.stringify(parentId) + ',' + idx + ',this)';
+    return '<div class="item">' +
+      '<div class="item-hd" onclick="toggleItem(this)">' +
       '<span class="pill" style="background:' + statusColor + '20;color:' + statusColor + ';font-size:9px;padding:1px 6px;margin-right:2px">' + statusLabel + '</span>' +
-      '<span class="item-name">' + item.name + '</span>' +
+      '<span class="item-name">' + (item.name || '') + '</span>' +
       '<i class="ti ti-chevron-down" style="font-size:12px;color:var(--w30);transition:transform .2s"></i>' +
-      '</div><div class="item-body">' +
+      '</div>' +
+      '<div class="item-body">' +
       (item.trade ? '<div class="field-grid"><div><div class="fl">Trade</div><div class="fv">' + item.trade + '</div></div>' +
-      (item.scheduled ? '<div><div class="fl">Scheduled</div><div class="fv">' + item.scheduled + '</div></div>' : '') + '</div>' : '') +
+      (item.scheduled ? '<div><div class="fl">Scheduled</div><div class="fv">' + item.scheduled + '</div></div>' : '<div></div>') + '</div>' : '') +
       (item.note ? '<div class="alert alert-w"><i class="ti ti-info-circle" style="font-size:13px;flex-shrink:0;margin-top:1px"></i>' + item.note + '</div>' : '') +
       (item.install_note ? '<div class="alert alert-i"><i class="ti ti-tools" style="font-size:13px;flex-shrink:0;margin-top:1px"></i>' + item.install_note + '</div>' : '') +
-      (item.status !== 'approved' && item.status !== 'installed' ?
-        '<div class="action-row"><button class="btn btn-sm btn-primary" onclick="' + approveFn + '('' + parentId + '',' + idx + ',this)">Approve ✓</button>' +
-        '<button class="btn btn-sm" onclick="alert('Opens chat thread for this item')">Discuss</button></div>' : '') +
+      ((item.status !== 'approved' && item.status !== 'installed') ?
+        '<div class="action-row">' +
+        '<button class="btn btn-sm btn-primary" onclick="' + approveonclick + '">Approve</button>' +
+        '<button class="btn btn-sm" onclick="openDiscuss()">Discuss</button>' +
+        '</div>' : '') +
       '</div></div>';
   }).join('');
 }
@@ -1935,7 +1949,7 @@ function renderZones() {
   el.innerHTML = Object.keys(zones).map(function(id) {
     var z = zones[id];
     var pct = z.items ? Math.round(z.items.filter(function(i) { return i.status==='approved'||i.status==='installed'; }).length / z.items.length * 100) : 0;
-    return '<div class="zone-card" onclick="openZone('' + id + '')">' +
+    return '<div class="zone-card" onclick="openZone(' + JSON.stringify(id) + ')">' +
       '<div class="zc-icon"><i class="ti ' + (z.icon || 'ti-plant-2') + '"></i></div>' +
       '<div class="zc-name">' + z.name + '</div>' +
       '<div class="zc-pills"><span class="pill ' + (pct===100?'p-ok':pct>50?'p-am':'p-dim') + '">' + pct + '% done</span></div></div>';
@@ -1958,7 +1972,7 @@ function renderRoomGrid() {
     var badge = issues > 0 ? '<span class="pill p-dl">' + issues + ' delayed</span>' :
       active > 0 ? '<span class="pill p-am">' + active + ' active</span>' :
       '<span class="pill p-ok">' + done + ' done</span>';
-    return '<div class="room-card" onclick="openRoom('' + id + '');goScreen('rooms-detail')">' +
+    return '<div class="room-card" onclick="openRoom(' + JSON.stringify(id) + ')">' +
       '<div class="rc-icon"><i class="ti ' + (r.icon||'ti-home') + '"></i></div>' +
       '<div class="rc-name">' + r.name + '</div>' +
       '<div class="rc-pills">' + badge + '</div></div>';
@@ -2033,6 +2047,8 @@ function openModal(id) {
 function closeModal() {
   document.getElementById('modal-wrap').classList.remove('on');
 }
+
+function openDiscuss() { alert('Opens chat thread for this item'); }
 
 // ── INIT ──
 document.addEventListener('DOMContentLoaded', function() {
