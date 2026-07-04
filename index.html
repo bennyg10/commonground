@@ -831,195 +831,79 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;
 
   <!-- SCREEN: PROGRESS -->
   <div class="screen on" id="sc-progress">
-    <!-- MORNING BRIEF — top of progress screen, default greeting on load -->
-    <div style="flex-shrink:0;background:var(--d1);border-bottom:1px solid var(--w08)">
-      <div id="brief-greeting-bar" onclick="toggleBrief()" style="padding:12px 16px 10px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:background .15s">
-        <div style="flex:1">
-          <div id="brief-good-morning" style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--white);letter-spacing:-.02em">Good morning, Ben.</div>
-          <div id="brief-date-line" style="font-size:10px;color:var(--sage);margin-top:1px">Wednesday · July 1, 2026</div>
-        </div>
-        <span style="font-size:9px;font-weight:600;color:var(--amb);background:var(--am15);padding:2px 8px;border-radius:20px;flex-shrink:0">Final finishing</span>
-        <span id="brief-chev" style="color:var(--w30);font-size:16px;transition:transform .2s;flex-shrink:0">⌄</span>
-      </div>
-      <div id="brief-expanded" style="display:block;padding:0 16px 12px;border-top:1px solid var(--w08)">
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0 9px">
-          <div style="background:var(--d3);border:1px solid var(--w08);border-radius:var(--r);padding:8px 10px"><div style="font-family:'Syne',sans-serif;font-size:17px;font-weight:700;letter-spacing:-.04em;line-height:1;color:var(--ora)">3</div><div style="font-size:9px;color:var(--w50);margin-top:1px;text-transform:uppercase;letter-spacing:.04em">Corrections</div></div>
-          <div style="background:var(--d3);border:1px solid var(--w08);border-radius:var(--r);padding:8px 10px"><div style="font-family:'Syne',sans-serif;font-size:17px;font-weight:700;letter-spacing:-.04em;line-height:1;color:var(--amb)">5</div><div style="font-size:9px;color:var(--w50);margin-top:1px;text-transform:uppercase;letter-spacing:.04em">Active</div></div>
-          <div style="background:var(--d3);border:1px solid var(--w08);border-radius:var(--r);padding:8px 10px"><div style="font-family:'Syne',sans-serif;font-size:17px;font-weight:700;letter-spacing:-.04em;line-height:1;color:var(--lime)">1</div><div style="font-size:9px;color:var(--w50);margin-top:1px;text-transform:uppercase;letter-spacing:.04em">Decision</div></div>
-          <div style="background:var(--d3);border:1px solid var(--w08);border-radius:var(--r);padding:8px 10px"><div style="font-family:'Syne',sans-serif;font-size:17px;font-weight:700;letter-spacing:-.04em;line-height:1;color:var(--ok)">42</div><div style="font-size:9px;color:var(--w50);margin-top:1px;text-transform:uppercase;letter-spacing:.04em">Done</div></div>
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:9px">
-          <div><div style="font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--ora);margin-bottom:5px">Corrections</div>
-            <div style="font-size:11px;color:var(--w50);display:flex;gap:5px;margin-bottom:3px;line-height:1.45"><div style="flex-shrink:0;margin-top:4px;width:5px;height:5px;border-radius:50%;background:var(--ora)"></div>Mila cabinet wrong color — reinstall</div>
-            <div style="font-size:11px;color:var(--w50);display:flex;gap:5px;margin-bottom:3px;line-height:1.45"><div style="flex-shrink:0;margin-top:4px;width:5px;height:5px;border-radius:50%;background:var(--ora)"></div>J&amp;J tub knobs gap from wall</div>
-            <div style="font-size:11px;color:var(--w50);display:flex;gap:5px;margin-bottom:3px;line-height:1.45"><div style="flex-shrink:0;margin-top:4px;width:5px;height:5px;border-radius:50%;background:var(--ora)"></div>Fireplace registers missing (p.4)</div>
-          </div>
-          <div><div style="font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--amb);margin-bottom:5px">Active today</div>
-            <div style="font-size:11px;color:var(--w50);display:flex;gap:5px;margin-bottom:3px;line-height:1.45"><div style="flex-shrink:0;margin-top:4px;width:5px;height:5px;border-radius:50%;background:var(--amb)"></div>ADU south wall cabinet crew</div>
-            <div style="font-size:11px;color:var(--w50);display:flex;gap:5px;margin-bottom:3px;line-height:1.45"><div style="flex-shrink:0;margin-top:4px;width:5px;height:5px;border-radius:50%;background:var(--amb)"></div>Fog film connections — Friday</div>
-            <div style="font-size:11px;color:var(--w50);display:flex;gap:5px;margin-bottom:3px;line-height:1.45"><div style="flex-shrink:0;margin-top:4px;width:5px;height:5px;border-radius:50%;background:var(--amb)"></div>Sonos — LABEL ALL WIRES</div>
-          </div>
-          <div><div style="font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--ok);margin-bottom:5px">Completed</div>
-            <div style="font-size:11px;color:var(--w50);display:flex;gap:5px;margin-bottom:3px;line-height:1.45"><div style="flex-shrink:0;margin-top:4px;width:5px;height:5px;border-radius:50%;background:var(--ok)"></div>Shower glass all baths ✓</div>
-            <div style="font-size:11px;color:var(--w50);display:flex;gap:5px;margin-bottom:3px;line-height:1.45"><div style="flex-shrink:0;margin-top:4px;width:5px;height:5px;border-radius:50%;background:var(--ok)"></div>Towel warmers installed ✓</div>
-            <div style="font-size:11px;color:var(--w50);display:flex;gap:5px;margin-bottom:3px;line-height:1.45"><div style="flex-shrink:0;margin-top:4px;width:5px;height:5px;border-radius:50%;background:var(--ok)"></div>J&amp;J mirror + transformer ✓</div>
-          </div>
-        </div>
-        <div style="display:flex;gap:6px">
-          <textarea id="blast-ta" rows="1" placeholder="Blast a note — AI routes to right room + trade…" style="flex:1;background:var(--d3);border:1px solid var(--w08);border-radius:var(--sm);padding:7px 9px;font-size:11px;color:var(--white);resize:none;outline:none;min-height:32px;max-height:60px;line-height:1.55;transition:border-color .15s;font-family:inherit"></textarea>
-          <button class="btn-lime" style="font-size:10px;padding:5px 10px;white-space:nowrap" onclick="sendBlast()">✨ AI sort</button>
-          <button class="btn-ghost" style="font-size:10px;padding:5px 10px;white-space:nowrap" onclick="startWalkthrough()">🚶</button>
-        </div>
-      </div>
-    </div>
+    <div class="scrl" style="padding:16px">
 
-    <!-- DAILY TRACKER — 4 tabs below morning brief -->
-    <div style="flex-shrink:0;border-bottom:1px solid var(--w08)">
-      <div style="display:flex;background:var(--d3);margin:10px 16px 0;border-radius:8px;padding:3px;gap:2px">
-        <button class="ttab on" id="tt-blast" onclick="setTrackerTab(this,'tblast')">⚡ Blast</button>
-        <button class="ttab" id="tt-punch" onclick="setTrackerTab(this,'tpunch')">✅ Punch</button>
-        <button class="ttab" id="tt-product" onclick="setTrackerTab(this,'tproduct')">📦 Product</button>
-        <button class="ttab" id="tt-log" onclick="setTrackerTab(this,'tlog')">📋 Today</button>
-      </div>
-      <div class="tracker-panel on" id="tblast" style="padding:10px 16px 12px">
-        <div style="margin-bottom:8px">
-          <select id="tb-room" style="width:100%;background:var(--d3);border:1px solid var(--w08);border-radius:var(--sm);padding:7px 9px;font-size:11px;color:var(--white);outline:none;appearance:none;margin-bottom:7px">
-            <option value="">Room (optional)</option>
-            <option>Entry</option><option>Living room</option><option>Kitchen</option><option>Master bedroom</option>
-            <option>J&amp;J bath</option><option>Bedroom 1 — Leo</option><option>Primary bath</option>
-            <option>Bedroom 3 — Mila</option><option>ADU bath</option><option>ADU studio</option><option>Landscape</option>
-          </select>
-          <textarea id="tb-text" rows="2" placeholder="What's happening…" style="width:100%;background:var(--d3);border:1px solid var(--w08);border-radius:var(--sm);padding:7px 9px;font-size:11px;color:var(--white);resize:none;outline:none;line-height:1.55;font-family:inherit;transition:border-color .15s"></textarea>
+      <!-- ROW 1: Brief + Circle -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+        <div style="background:var(--d3);border:1px solid var(--w08);border-radius:var(--r);padding:18px 20px">
+          <div id="pg-date" style="font-size:11px;font-weight:600;color:var(--sage);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Friday · July 3, 2026 · 2 trades on site today</div>
+          <div id="pg-greeting" style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:rgba(253,255,254,.95);letter-spacing:-.03em;margin-bottom:10px">Good morning, Ben.</div>
+          <div style="font-size:12px;color:var(--w50);line-height:1.75">Remaining items can be batched once parts arrive. Sewer gas smell needs GC inspection before next plumbing visit. Deck and gutter quotes requested.</div>
         </div>
-        <div style="display:flex;align-items:center;gap:8px">
-          <button onclick="saveTrackerBlast()" style="background:var(--lime);color:var(--black);border:none;border-radius:var(--sm);padding:7px 14px;font-size:11px;font-weight:700;display:flex;align-items:center;gap:5px;transition:background .15s;font-family:inherit;cursor:pointer">⚡ Save note</button>
-          <span id="tb-status" style="font-size:10px;color:var(--ok);display:none;align-items:center;gap:4px">✓ Saved</span>
+        <div style="background:var(--d3);border:1px solid var(--w08);border-radius:var(--r);padding:18px 20px;display:flex;align-items:center;gap:18px">
+          <div style="flex-shrink:0;position:relative;width:120px;height:120px">
+            <svg width="120" height="120" viewBox="0 0 120 120">
+              <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(253,255,254,.06)" stroke-width="10"/>
+              <circle cx="60" cy="60" r="50" fill="none" stroke="#D5DC99" stroke-width="10" stroke-dasharray="314" stroke-dashoffset="47" stroke-linecap="round" transform="rotate(-90 60 60)"/>
+            </svg>
+            <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none">
+              <div style="font-family:'Syne',sans-serif;font-size:26px;font-weight:800;color:var(--lime);line-height:1">85%</div>
+              <div style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--sage);margin-top:2px">complete</div>
+            </div>
+          </div>
+          <div style="flex:1;display:flex;flex-direction:column;gap:7px" id="pg-trade-pills"></div>
         </div>
       </div>
-      <div class="tracker-panel" id="tpunch" style="padding:10px 16px 12px;display:none">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:7px">
-          <select id="tp-room" style="background:var(--d3);border:1px solid var(--w08);border-radius:var(--sm);padding:7px 9px;font-size:11px;color:var(--white);outline:none;appearance:none">
-            <option value="">Room</option>
-            <option>Entry</option><option>Living room</option><option>Kitchen</option><option>Master bedroom</option>
-            <option>J&amp;J bath</option><option>Bedroom 1 — Leo</option><option>Primary bath</option>
-            <option>Bedroom 3 — Mila</option><option>ADU bath</option><option>ADU studio</option>
-          </select>
-          <select id="tp-urgency" style="background:var(--d3);border:1px solid var(--w08);border-radius:var(--sm);padding:7px 9px;font-size:11px;color:var(--white);outline:none;appearance:none">
-            <option value="today">Today</option><option value="this-week">This week</option><option value="fyi">FYI</option>
-          </select>
-        </div>
-        <input id="tp-trade" placeholder="Trade responsible" style="width:100%;background:var(--d3);border:1px solid var(--w08);border-radius:var(--sm);padding:7px 9px;font-size:11px;color:var(--white);outline:none;margin-bottom:7px;font-family:inherit">
-        <textarea id="tp-text" rows="2" placeholder="What needs to happen…" style="width:100%;background:var(--d3);border:1px solid var(--w08);border-radius:var(--sm);padding:7px 9px;font-size:11px;color:var(--white);resize:none;outline:none;line-height:1.55;font-family:inherit;margin-bottom:7px"></textarea>
-        <div style="display:flex;align-items:center;gap:8px">
-          <button onclick="saveTrackerPunch()" style="background:var(--lime);color:var(--black);border:none;border-radius:var(--sm);padding:7px 14px;font-size:11px;font-weight:700;font-family:inherit;cursor:pointer">✅ Add to punch list</button>
-          <span id="tp-status" style="font-size:10px;color:var(--ok);display:none">✓ Added</span>
-        </div>
-      </div>
-      <div class="tracker-panel" id="tproduct" style="padding:10px 16px 12px;display:none">
-        <div style="display:flex;gap:5px;margin-bottom:8px">
-          <button id="tpr-url-btn" onclick="setProductTabMode(0)" style="font-size:10px;padding:4px 10px;border-radius:20px;border:1px solid var(--lime);background:var(--lime);color:var(--black);font-weight:600;cursor:pointer;font-family:inherit">Have a URL</button>
-          <button id="tpr-man-btn" onclick="setProductTabMode(1)" style="font-size:10px;padding:4px 10px;border-radius:20px;border:1px solid var(--w08);background:var(--d3);color:var(--w50);font-weight:600;cursor:pointer;font-family:inherit">Enter manually</button>
-        </div>
-        <div id="tpr-url-f"><input id="tpr-url" placeholder="https://…" style="width:100%;background:var(--d3);border:1px solid var(--w08);border-radius:var(--sm);padding:7px 9px;font-size:11px;color:var(--white);outline:none;margin-bottom:7px;font-family:inherit"></div>
-        <div id="tpr-man-f" style="display:none"><div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:7px"><input id="tpr-name" placeholder="Product name" style="background:var(--d3);border:1px solid var(--w08);border-radius:var(--sm);padding:7px 9px;font-size:11px;color:var(--white);outline:none;font-family:inherit"><input id="tpr-brand" placeholder="Brand" style="background:var(--d3);border:1px solid var(--w08);border-radius:var(--sm);padding:7px 9px;font-size:11px;color:var(--white);outline:none;font-family:inherit"></div></div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:7px">
-          <select id="tpr-room" style="background:var(--d3);border:1px solid var(--w08);border-radius:var(--sm);padding:7px 9px;font-size:11px;color:var(--white);outline:none;appearance:none"><option value="">Room</option><option>Kitchen</option><option>Master bedroom</option><option>J&amp;J bath</option><option>Primary bath</option><option>Bedroom 3 — Mila</option><option>ADU</option></select>
-          <input id="tpr-trade" placeholder="Trade installing" style="background:var(--d3);border:1px solid var(--w08);border-radius:var(--sm);padding:7px 9px;font-size:11px;color:var(--white);outline:none;font-family:inherit">
-        </div>
-        <div style="display:flex;align-items:center;gap:8px">
-          <button onclick="saveTrackerProduct()" style="background:var(--lime);color:var(--black);border:none;border-radius:var(--sm);padding:7px 14px;font-size:11px;font-weight:700;font-family:inherit;cursor:pointer">📦 Save product</button>
-          <span id="tpr-status" style="font-size:10px;color:var(--ok);display:none">✓ Saved</span>
-        </div>
-      </div>
-      <div class="tracker-panel" id="tlog" style="padding:10px 16px 12px;display:none">
-        <div id="tlog-content" style="max-height:130px;overflow-y:auto">
-          <div style="text-align:center;padding:16px 10px;color:var(--w30);font-size:11px">No entries yet — use the tabs above</div>
-        </div>
-      </div>
-    </div>
 
-    <!-- QUICK FIND -->
-    <div style="padding:10px 16px 0;flex-shrink:0;position:relative">
-      <div style="position:relative">
-        <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--sage);font-size:14px;pointer-events:none">🔍</span>
-        <input id="qfind-input" placeholder="Quick find — toilet installation, mirror manual, clearance specs…" oninput="handleQFind(this.value)" onblur="setTimeout(function(){closeQFind()},200)" style="width:100%;background:var(--d3);border:1px solid var(--w08);border-radius:20px;padding:8px 14px 8px 36px;font-size:11px;color:var(--white);outline:none;transition:border-color .15s;font-family:inherit">
-        <div id="qfind-popup" style="display:none;position:absolute;top:calc(100% + 6px);left:0;right:0;background:var(--d1);border:1px solid var(--w08);border-radius:var(--r);padding:8px;z-index:50;box-shadow:0 4px 20px rgba(0,0,0,.4)"></div>
-      </div>
-    </div>
-
-    <!-- PROGRESS SCROLL CONTENT -->
-    <div class="scrl" style="padding-top:14px">
-      <!-- Timeline infographic -->
-      <div style="background:var(--d3);border:1px solid var(--w08);border-radius:var(--r);padding:14px 16px;margin-bottom:12px" class="fu1">
-        <div style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--sage);margin-bottom:12px;display:flex;justify-content:space-between"><span>Project timeline</span><span style="color:var(--lime);font-weight:600">Phase 4 of 7</span></div>
-        <div style="display:flex;align-items:flex-start;position:relative">
-          <div style="flex:1;display:flex;flex-direction:column;align-items:center;cursor:pointer" onclick="goScreen('progress')">
-            <div style="position:relative;width:100%;display:flex;align-items:center;justify-content:center">
-              <div style="position:absolute;top:10px;left:50%;right:-50%;height:2px;background:var(--ok);z-index:0"></div>
-              <div style="width:22px;height:22px;border-radius:50%;background:var(--ok);color:var(--black);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;z-index:1">✓</div>
+      <!-- ROW 2: Timeline -->
+      <div style="background:var(--d3);border:1px solid var(--w08);border-radius:var(--r);padding:20px;margin-bottom:12px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+          <div style="font-family:'Syne',sans-serif;font-size:15px;font-weight:800;color:rgba(253,255,254,.9);letter-spacing:-.01em;text-transform:uppercase">Project timeline</div>
+          <div style="font-size:12px;font-weight:700;color:var(--lime);letter-spacing:-.01em" id="pg-phase-lbl">Phase 6 of 7</div>
+        </div>
+        <div style="display:flex;align-items:flex-start;margin-bottom:0" id="pg-tl-nodes"></div>
+        <div id="pg-phase-detail" style="display:none;border-top:1px solid var(--w08);padding-top:16px;margin-top:16px"></div>
+        <div id="pg-passport-strip" style="display:none;border-top:1px solid var(--w08);padding-top:16px;margin-top:16px">
+          <div style="display:flex;gap:14px;align-items:flex-start">
+            <div style="font-size:26px;flex-shrink:0;line-height:1">🏠</div>
+            <div style="flex:1">
+              <div style="font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--lime);margin-bottom:4px">Home Completion Passport</div>
+              <div style="font-size:11px;color:var(--w50);line-height:1.65;margin-bottom:10px">Generated at project close — every product, warranty, manual, photo, and spec. Everything in one place, forever.</div>
+              <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:12px">
+                <span style="font-size:9px;background:var(--l10);color:rgba(213,220,153,.8);padding:2px 8px;border-radius:20px;border:1px solid var(--l20)">Before/after gallery</span>
+                <span style="font-size:9px;background:var(--l10);color:rgba(213,220,153,.8);padding:2px 8px;border-radius:20px;border:1px solid var(--l20)">All products + specs</span>
+                <span style="font-size:9px;background:var(--l10);color:rgba(213,220,153,.8);padding:2px 8px;border-radius:20px;border:1px solid var(--l20)">Installation guides</span>
+                <span style="font-size:9px;background:var(--l10);color:rgba(213,220,153,.8);padding:2px 8px;border-radius:20px;border:1px solid var(--l20)">Trade directory</span>
+                <span style="font-size:9px;background:var(--l10);color:rgba(213,220,153,.8);padding:2px 8px;border-radius:20px;border:1px solid var(--l20)">Architectural plans</span>
+                <span style="font-size:9px;background:var(--l10);color:rgba(213,220,153,.8);padding:2px 8px;border-radius:20px;border:1px solid var(--l20)">Total investment</span>
+                <span style="font-size:9px;background:var(--l10);color:rgba(213,220,153,.8);padding:2px 8px;border-radius:20px;border:1px solid var(--l20)">Full timeline</span>
+                <span style="font-size:9px;background:var(--l10);color:rgba(213,220,153,.8);padding:2px 8px;border-radius:20px;border:1px solid var(--l20)">Service contacts</span>
+              </div>
+              <div style="display:flex;gap:8px">
+                <button onclick="openModal('passport-preview')" style="display:inline-flex;align-items:center;gap:5px;padding:8px 14px;border-radius:8px;font-size:11px;font-weight:600;border:none;cursor:pointer;font-family:inherit;background:var(--lime);color:var(--black);transition:background .15s">📋 Preview passport</button>
+                <button onclick="openModal('upload-photos')" style="display:inline-flex;align-items:center;gap:5px;padding:8px 14px;border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;background:var(--d4);color:var(--w70);border:1px solid var(--w15);transition:all .15s">📸 Add photos</button>
+              </div>
             </div>
-            <div style="font-size:7.5px;color:rgba(74,155,111,.8);margin-top:5px;text-align:center;line-height:1.3">Planning</div>
-          </div>
-          <div style="flex:1;display:flex;flex-direction:column;align-items:center;cursor:pointer">
-            <div style="position:relative;width:100%;display:flex;align-items:center;justify-content:center">
-              <div style="position:absolute;top:10px;left:50%;right:-50%;height:2px;background:var(--ok);z-index:0"></div>
-              <div style="width:22px;height:22px;border-radius:50%;background:var(--ok);color:var(--black);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;z-index:1">✓</div>
-            </div>
-            <div style="font-size:7.5px;color:rgba(74,155,111,.8);margin-top:5px;text-align:center;line-height:1.3">Demo + Frame</div>
-          </div>
-          <div style="flex:1;display:flex;flex-direction:column;align-items:center;cursor:pointer">
-            <div style="position:relative;width:100%;display:flex;align-items:center;justify-content:center">
-              <div style="position:absolute;top:10px;left:50%;right:-50%;height:2px;background:var(--ok);z-index:0"></div>
-              <div style="width:22px;height:22px;border-radius:50%;background:var(--ok);color:var(--black);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;z-index:1">✓</div>
-            </div>
-            <div style="font-size:7.5px;color:rgba(74,155,111,.8);margin-top:5px;text-align:center;line-height:1.3">MEP + Drywall</div>
-          </div>
-          <div style="flex:1;display:flex;flex-direction:column;align-items:center;cursor:pointer">
-            <div style="position:relative;width:100%;display:flex;align-items:center;justify-content:center">
-              <div style="position:absolute;top:10px;left:-50%;right:-50%;height:2px;background:linear-gradient(90deg,var(--ok),var(--amb));z-index:0"></div>
-              <div style="width:22px;height:22px;border-radius:50%;background:var(--amb);color:var(--black);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;z-index:1;animation:pulse-ring 2s infinite">●</div>
-            </div>
-            <div style="font-size:7.5px;color:var(--amb);font-weight:600;margin-top:5px;text-align:center;line-height:1.3">Tile + Finish ← now</div>
-          </div>
-          <div style="flex:1;display:flex;flex-direction:column;align-items:center;cursor:pointer">
-            <div style="position:relative;width:100%;display:flex;align-items:center;justify-content:center">
-              <div style="position:absolute;top:10px;left:-50%;right:-50%;height:2px;background:linear-gradient(90deg,var(--amb),var(--w08));z-index:0"></div>
-              <div style="width:22px;height:22px;border-radius:50%;background:var(--amb);color:var(--black);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;z-index:1;animation:pulse-ring 2.3s infinite">●</div>
-            </div>
-            <div style="font-size:7.5px;color:var(--amb);font-weight:600;margin-top:5px;text-align:center;line-height:1.3">Fixtures + Final</div>
-          </div>
-          <div style="flex:1;display:flex;flex-direction:column;align-items:center;cursor:pointer">
-            <div style="position:relative;width:100%;display:flex;align-items:center;justify-content:center">
-              <div style="position:absolute;top:10px;left:-50%;right:-50%;height:2px;background:var(--w08);z-index:0"></div>
-              <div style="width:22px;height:22px;border-radius:50%;background:var(--d5);color:var(--w30);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;z-index:1;border:1px solid var(--w08)">6</div>
-            </div>
-            <div style="font-size:7.5px;color:var(--w30);margin-top:5px;text-align:center;line-height:1.3">Punch + Walkthru</div>
-          </div>
-          <div style="flex:1;display:flex;flex-direction:column;align-items:center;cursor:pointer" onclick="openModal('passport-preview')">
-            <div style="position:relative;width:100%;display:flex;align-items:center;justify-content:center">
-              <div style="width:22px;height:22px;border-radius:50%;background:var(--l10);color:var(--lime);display:flex;align-items:center;justify-content:center;font-size:11px;z-index:1;border:1.5px solid var(--lime)">🏠</div>
-            </div>
-            <div style="font-size:7.5px;color:var(--lime);font-weight:600;margin-top:5px;text-align:center;line-height:1.3">Home Passport</div>
           </div>
         </div>
       </div>
 
-      <!-- Passport teaser -->
-      <div style="background:var(--d3);border:1px solid var(--l20);border-radius:var(--r);padding:14px 16px;margin-bottom:12px;position:relative;overflow:hidden" class="fu2">
-        <div style="font-size:20px;margin-bottom:5px">🏠</div>
-        <div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--lime);letter-spacing:-.01em;margin-bottom:3px">Home Completion Passport</div>
-        <div style="font-size:11px;color:var(--w50);line-height:1.65;margin-bottom:10px">Generated at project close — before/after photos, all products + specs, trade directory, warranties, installation guides, plans, and total investment. Everything in one place, forever.</div>
-        <div style="display:flex;gap:7px;flex-wrap:wrap">
-          <button onclick="openModal('passport-preview')" class="btn-ghost" style="font-size:10px;padding:5px 10px">📋 Preview passport</button>
-          <button onclick="openModal('upload-photos')" class="btn-ghost" style="font-size:10px;padding:5px 10px">📸 Add project photos</button>
+      <!-- ROW 3: Trade punch list -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div style="background:var(--d3);border:1px solid var(--w08);border-radius:var(--r);padding:16px">
+          <div style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--sage);margin-bottom:10px">Tap to view trade specific punch list</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px" id="pg-trade-btns"></div>
+        </div>
+        <div style="background:var(--d3);border:1px solid var(--w08);border-radius:var(--r);padding:16px">
+          <div id="pg-tasks-hd" style="display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap">
+            <div style="color:var(--w30);font-size:11px">Select a trade to view tasks</div>
+          </div>
+          <div id="pg-tasks-body"><div style="padding:24px;text-align:center;color:var(--w30);font-size:11px">Select a trade on the left</div></div>
         </div>
       </div>
 
-      <div class="sh fu2" style="margin-top:4px"><span class="sh-title">Phase details</span></div>
-      <div id="phases-list" class="fu3"></div>
     </div>
   </div>
-
   <!-- SCREEN: PUNCH LIST -->
   <div class="screen" id="sc-punch">
     <div class="scrl">
@@ -1750,7 +1634,13 @@ document.addEventListener('DOMContentLoaded',function(){
   if(fp)fp.click();
   highlightQuickRef();
   setGreeting();
-  console.log('Common Ground v9 — init OK');
+  pgInit();
+  pgRenderPills();
+  pgRenderTimeline();
+  pgRenderTradeBtns();
+  pgSelectPhase(5);
+  pgSelectTrade('Plumber');
+  console.log('Common Ground v11 — init OK');
 });
 
 function highlightQuickRef(){
@@ -1909,6 +1799,190 @@ function getTS(trade){
   var keys=Object.keys(tradeStyleMap);
   for(var i=0;i<keys.length;i++){if(t.indexOf(keys[i])!==-1)return tradeStyleMap[keys[i]];}
   return {color:'var(--sage)',icon:'🔨',bar:'rgba(115,127,115,.6)'};
+}
+
+
+/* ── PROGRESS PAGE (v11) ── */
+var PG_ONSITE = ['Plumber','GC'];
+
+var PG_PHASES = [
+  {lbl:'Planning',state:'done',items:[{n:'Design development — Ebru Kuyak',s:'done'},{n:'Permits issued — main house + ADU',s:'done'},{n:'GC selection — Lance Todd',s:'done'},{n:'Budget finalized',s:'done'}]},
+  {lbl:'Demo + Frame',state:'done',items:[{n:'Demo all three bathrooms',s:'done'},{n:'Demo kitchen + floors + exterior wall',s:'done'},{n:'New PSL beam + ceiling joists + rafters',s:'done'},{n:'ADU — new slab + framing',s:'done'},{n:'Wood flooring installed throughout',s:'done'}]},
+  {lbl:'MEP + Drywall',state:'done',items:[{n:'Rough plumbing + electrical — main house',s:'done'},{n:'ADU plumbing + rough electrical',s:'done'},{n:'Pre-wire speakers, cameras, ethernet',s:'done'},{n:'AC rough + ducting — main + ADU',s:'done'},{n:'Drywall all new work — main + ADU',s:'done'}]},
+  {lbl:'Tile + Fixtures',state:'done',items:[{n:'Master bath — tile complete',s:'done'},{n:'J&J bath — tile complete ✓',s:'done'},{n:'ADU bath — tile complete',s:'done'},{n:'Shower glass — all baths',s:'done'},{n:'Towel warmers + mirrors installed',s:'done'},{n:'Cabinets — all rooms installed',s:'done'}]},
+  {lbl:'Paint + Detail',state:'done',items:[{n:'Interior paint — main house + ADU',s:'done'},{n:'Fog film — smart glass',s:'done'},{n:'Exterior paint complete',s:'done'},{n:'Moved in ✓',s:'done'}]},
+  {lbl:'Final punch',state:'active',items:[
+    {n:'Sewer gas — inspect lines under house',s:'urgent'},{n:'Washer + dryer drain/outlet check',s:'rem'},
+    {n:'Water pressure — master bath',s:'rem'},{n:'Ethernet ports install',s:'rem'},
+    {n:'Kitchen door switch → Legrand dimmer',s:'rem'},{n:'Kids tub filler (awaiting delivery)',s:'rem'},
+    {n:'Kids bath shower trim (awaiting tile)',s:'rem'},{n:'Pocket door — thinner replacement',s:'rem'},
+    {n:'Front door — purchase + install',s:'rem'},{n:'Cabinet above washer/dryer',s:'rem'},
+    {n:'Final drywall patch + paint touchups',s:'rem'},{n:'Primary bath vanity shelf — secure',s:'rem'},
+    {n:'Bathroom accessories — install all',s:'rem'},{n:'ADU mirrored cabinet — install',s:'rem'},
+    {n:'Ipe deck quote — D1 + D2',s:'rem'},{n:'Gutter + drain quote',s:'rem'}
+  ]},
+  {lbl:'Home Passport',state:'passport',items:[]}
+];
+
+var PG_TRADES = {
+  Plumber:{done:['Rough plumbing main house','ADU plumbing rough-in','Moen Flo valve + pressure regulator','Shower heads — all baths','All toilets installed'],prog:['Sewer gas — inspect lines under house'],rem:['Increase water pressure — master bath','Kids tub filler faucet (awaiting delivery)','Kids bath shower trim (awaiting tile piece)','Washer + dryer drain/outlet check']},
+  Electrician:{done:['200 amp main panel','Rough wiring main house','ADU rough electrical','Pre-wire speakers + cameras','Legrand switches installed','Outlet covers installed'],prog:[],rem:['Ethernet ports — install','Kitchen sliding door switch → Legrand dimmer']},
+  GC:{done:['Full demo + framing','Drywall + insulation','Exterior paint','Interior doors + baseboards','All tile work','Cabinets — all rooms','Moved in ✓'],prog:['Sewer gas — inspect under house'],rem:['Cabinet above washer + dryer','Final drywall patch + paint','Bathroom ceiling paint','Pocket door — order thinner replacement','Front door — purchase + install','Ipe deck quote D1 + D2','Gutter + drain quote']},
+  Vanity:{done:['Vanity install — all baths'],prog:[],rem:['Primary bath vanity bottom shelf — secure','Vanity drawer mechanism — adjust','Bathroom accessories install','ADU mirrored cabinet install']},
+  Windows:{done:['All windows installed','ADU exterior doors'],prog:['Front door color decision w/ Max'],rem:['Front door — purchase + install','Pocket door — source thinner replacement']},
+  Landscape:{done:['Phase I proposal received'],prog:['Awaiting signed contract'],rem:['Ipe deck quote — D1 + D2','Gutter + drain quote','Phase I — CMU wall, Cumaru deck, pergola']}
+};
+
+function pgInit(){
+  var now = new Date();
+  var h = now.getHours();
+  var g = h<12?'Good morning, Ben.':h<17?'Good afternoon, Ben.':'Good evening, Ben.';
+  var el = document.getElementById('pg-greeting'); if(el) el.textContent = g;
+  var days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  var months=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  var dl = document.getElementById('pg-date');
+  if(dl) dl.textContent = days[now.getDay()]+' · '+months[now.getMonth()]+' '+now.getDate()+', '+now.getFullYear()+' · '+PG_ONSITE.length+' trades on site today';
+}
+
+function pgRenderPills(){
+  var el = document.getElementById('pg-trade-pills'); if(!el) return;
+  var list = [{n:'Plumber',pct:68},{n:'Electrician',pct:92},{n:'GC',pct:85}];
+  el.innerHTML = list.map(function(t){
+    var live = PG_ONSITE.indexOf(t.n)!==-1;
+    var bc = live?'var(--ok30)':'var(--w08)';
+    var tc = live?'rgba(253,255,254,.9)':'var(--w70)';
+    var dotC = live?'background:var(--ok);animation:blink 1.8s ease infinite':'background:rgba(253,255,254,.15)';
+    return '<div style="display:flex;align-items:center;gap:8px;padding:8px 11px;border-radius:8px;background:var(--d2);border:1px solid '+bc+';font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:'+tc+'">'+
+      '<div style="width:7px;height:7px;border-radius:50%;flex-shrink:0;'+dotC+'"></div>'+
+      '<span style="flex:1">'+t.n+'</span>'+
+      '<div style="flex:1;height:3px;background:var(--w08);border-radius:2px;overflow:hidden">'+
+        '<div style="height:100%;border-radius:2px;background:var(--ok);width:'+t.pct+'%"></div>'+
+      '</div></div>';
+  }).join('');
+}
+
+function pgRenderTimeline(){
+  var el = document.getElementById('pg-tl-nodes'); if(!el) return;
+  el.innerHTML = PG_PHASES.map(function(p,i){
+    var icon = p.state==='done'?'✓':p.state==='passport'?'🏠':p.state==='active'?'●':String(i+1);
+    var ds='width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;z-index:1;cursor:pointer;transition:transform .2s;';
+    if(p.state==='done') ds+='background:var(--ok);color:var(--black)';
+    else if(p.state==='active') ds+='background:var(--amb);color:var(--black)';
+    else if(p.state==='passport') ds+='background:var(--l10);color:var(--lime);border:2px solid var(--lime)';
+    else ds+='background:var(--d4);color:var(--w30);border:2px solid var(--w08)';
+    var lc = p.state==='done'?'var(--ok)':p.state==='active'?'var(--amb)':'var(--w08)';
+    var tc = p.state==='done'?'rgba(74,155,111,.8)':p.state==='active'?'var(--amb)':p.state==='passport'?'var(--lime)':'var(--w30)';
+    var fw = (p.state==='active'||p.state==='passport')?'600':'400';
+    return '<div style="flex:1;display:flex;flex-direction:column;align-items:center;cursor:pointer" id="pg-tln-'+i+'" onclick="pgSelectPhase('+i+')" role="button" tabindex="0">'+
+      '<div style="position:relative;width:100%;display:flex;align-items:center;justify-content:center">'+
+        (i<PG_PHASES.length-1?'<div style="position:absolute;top:16px;left:50%;right:-50%;height:2px;z-index:0;background:'+lc+'"></div>':'')+
+        '<div style="'+ds+'" id="pg-dot-'+i+'">'+icon+'</div>'+
+      '</div>'+
+      '<div style="font-size:10px;text-align:center;line-height:1.35;max-width:80px;margin-top:7px;color:'+tc+';font-weight:'+fw+'">'+p.lbl+'</div>'+
+    '</div>';
+  }).join('');
+}
+
+function pgSelectPhase(i){
+  for(var j=0;j<PG_PHASES.length;j++){
+    var d=document.getElementById('pg-dot-'+j);
+    if(d) d.style.outline='none';
+  }
+  var dot=document.getElementById('pg-dot-'+i);
+  if(dot){dot.style.outline='3px solid rgba(213,220,153,.5)';dot.style.outlineOffset='3px';}
+
+  var p=PG_PHASES[i];
+  var detail=document.getElementById('pg-phase-detail');
+  var passport=document.getElementById('pg-passport-strip');
+  if(!detail||!passport) return;
+
+  if(p.state==='passport'){detail.style.display='none';passport.style.display='block';return;}
+  passport.style.display='none';
+
+  var sl={done:'Done',active:'Active',future:'Upcoming',prog:'In progress',rem:'Remaining',urgent:'Urgent'};
+  var sc={done:'var(--ok)',active:'var(--amb)',future:'var(--w30)',prog:'var(--amb)',rem:'var(--ora)',urgent:'var(--ora)'};
+  var bg={done:'var(--ok15)',active:'var(--am15)',future:'var(--w04)'};
+
+  detail.innerHTML =
+    '<div style="font-family:Syne,sans-serif;font-size:13px;font-weight:700;color:var(--lime);margin-bottom:10px;display:flex;align-items:center;gap:8px">'+
+      '<span>'+p.lbl+'</span>'+
+      '<span style="font-size:9px;padding:2px 8px;border-radius:20px;background:'+(bg[p.state]||'var(--w04)')+';color:'+sc[p.state]+';font-weight:700;text-transform:uppercase;letter-spacing:.04em">'+sl[p.state]+'</span>'+
+    '</div>'+
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px">'+
+    p.items.map(function(item){
+      var c=item.s==='done'?'var(--ok)':item.s==='prog'?'var(--amb)':'var(--ora)';
+      var anim=(item.s==='prog'||item.s==='urgent')?';animation:blink 1.8s infinite':'';
+      var badge=item.s!=='done'?'<span style="font-size:8px;font-weight:700;padding:1px 5px;border-radius:20px;flex-shrink:0;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap;background:'+(item.s==='prog'?'var(--am15)':'var(--or15)')+';color:'+(item.s==='prog'?'var(--amb)':'var(--ora)')+'">'+sl[item.s]+'</span>':'';
+      return '<div style="display:flex;align-items:flex-start;gap:7px;padding:5px 0;font-size:11px;border-bottom:1px solid var(--w08)">'+
+        '<div style="width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:3px;background:'+c+anim+'"></div>'+
+        '<span style="color:var(--w70);flex:1;line-height:1.45">'+item.n+'</span>'+badge+
+      '</div>';
+    }).join('')+
+    '</div>';
+  detail.style.display='block';
+}
+
+function pgRenderTradeBtns(){
+  var el=document.getElementById('pg-trade-btns'); if(!el) return;
+  var order=['Plumber','Electrician','GC','Vanity','Windows','Landscape'];
+  el.innerHTML=order.map(function(t){
+    var live=PG_ONSITE.indexOf(t)!==-1;
+    var bc=live?'rgba(74,155,111,.3)':'rgba(253,255,254,.08)';
+    var tc=live?'rgba(253,255,254,.85)':'rgba(253,255,254,.5)';
+    var dot=live?'<span style="position:absolute;top:5px;right:5px;width:6px;height:6px;border-radius:50%;background:var(--ok);animation:blink 1.8s ease infinite" aria-hidden="true"></span>':'';
+    return '<button style="padding:10px 6px;border-radius:8px;border:1.5px solid '+bc+';background:var(--d2);font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:'+tc+';cursor:pointer;position:relative;text-align:center;transition:all .18s;font-family:inherit;line-height:1.2" id="pg-tbtn-'+t+'" onclick="pgSelectTrade('+JSON.stringify(t)+')">'+t+dot+'</button>';
+  }).join('');
+}
+
+function pgSelectTrade(name){
+  var order=['Plumber','Electrician','GC','Vanity','Windows','Landscape'];
+  order.forEach(function(t){
+    var b=document.getElementById('pg-tbtn-'+t); if(!b) return;
+    var live=PG_ONSITE.indexOf(t)!==-1;
+    b.style.background='var(--d2)';
+    b.style.color=live?'rgba(253,255,254,.85)':'rgba(253,255,254,.5)';
+    b.style.borderColor=live?'rgba(74,155,111,.3)':'rgba(253,255,254,.08)';
+  });
+  var sel=document.getElementById('pg-tbtn-'+name);
+  if(sel){sel.style.background='var(--lime)';sel.style.color='var(--black)';sel.style.borderColor='var(--lime)';}
+
+  var data=PG_TRADES[name];
+  var live=PG_ONSITE.indexOf(name)!==-1;
+  var hd=document.getElementById('pg-tasks-hd');
+  if(hd) hd.innerHTML=
+    '<div style="font-family:Syne,sans-serif;font-size:15px;font-weight:700;color:rgba(253,255,254,.9);letter-spacing:-.01em">'+name+'</div>'+
+    (live?'<div style="display:flex;align-items:center;gap:4px;background:var(--ok15);border:1px solid var(--ok30);border-radius:20px;padding:2px 8px;font-size:9px;font-weight:600;color:var(--ok)"><div style="width:5px;height:5px;border-radius:50%;background:var(--ok);animation:blink 1.5s infinite"></div>On site today</div>':'<span style="font-size:9px;color:var(--w30)">Scheduling</span>');
+
+  var tasks=[];
+  (data.done||[]).forEach(function(t){tasks.push({n:t,s:'done'});});
+  (data.prog||[]).forEach(function(t){tasks.push({n:t,s:'prog'});});
+  (data.rem||[]).forEach(function(t){tasks.push({n:t,s:'rem'});});
+
+  var body=document.getElementById('pg-tasks-body');
+  if(!body) return;
+  var addOc='pgAddTask('+JSON.stringify(name)+')';
+  body.innerHTML='<div style="display:grid;grid-template-columns:1fr 1fr;gap:5px">'+
+    tasks.map(function(t){
+      var urgent=t.s==='prog'&&t.n.toLowerCase().indexOf('sewer')!==-1;
+      var s=urgent?'urgent':t.s;
+      var dc=s==='done'?'var(--ok)':s==='prog'||s==='urgent'?'var(--amb)':'var(--ora)';
+      var da=(s==='prog'||s==='urgent')?';animation:blink 2s infinite':'';
+      var bc=s==='urgent'?'var(--or30)':'var(--w08)';
+      var op=s==='done'?'opacity:.65;':'';
+      var tc=s==='done'?'var(--w50)':'var(--w70)';
+      return '<div style="'+op+'display:flex;align-items:flex-start;gap:6px;padding:7px 9px;border-radius:7px;border:1px solid '+bc+';background:var(--d2);font-size:10px;line-height:1.4">'+
+        '<div style="width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:2px;background:'+dc+da+'"></div>'+
+        '<span style="color:'+tc+';flex:1">'+t.n+'</span></div>';
+    }).join('')+
+    '<button onclick="'+addOc+'" style="grid-column:1/-1;display:flex;align-items:center;justify-content:center;gap:5px;padding:9px;border-radius:7px;border:1.5px dashed rgba(213,220,153,.2);background:none;color:var(--lime);font-size:10px;font-weight:700;cursor:pointer;font-family:inherit">+ ADD+</button>'+
+  '</div>';
+}
+
+function pgAddTask(trade){
+  var v=prompt('New task for '+trade+':');
+  if(!v||!v.trim()) return;
+  PG_TRADES[trade].rem.push(v.trim());
+  pgSelectTrade(trade);
 }
 
 </script>
