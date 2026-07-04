@@ -1930,7 +1930,8 @@ function pgRenderTradeBtns(){
     var bc=live?'rgba(74,155,111,.3)':'rgba(253,255,254,.08)';
     var tc=live?'rgba(253,255,254,.85)':'rgba(253,255,254,.5)';
     var dot=live?'<span style="position:absolute;top:5px;right:5px;width:6px;height:6px;border-radius:50%;background:var(--ok);animation:blink 1.8s ease infinite" aria-hidden="true"></span>':'';
-    return '<button style="padding:10px 6px;border-radius:8px;border:1.5px solid '+bc+';background:var(--d2);font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:'+tc+';cursor:pointer;position:relative;text-align:center;transition:all .18s;font-family:inherit;line-height:1.2" id="pg-tbtn-'+t+'" onclick="pgSelectTrade('+JSON.stringify(t)+')">'+t+dot+'</button>';
+    var oc="pgSelectTrade('"+t+"')";
+    return '<button style="padding:10px 6px;border-radius:8px;border:1.5px solid '+bc+';background:var(--d2);font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:'+tc+';cursor:pointer;position:relative;text-align:center;transition:all .18s;font-family:inherit;line-height:1.2" id="pg-tbtn-'+t+'" onclick="'+oc+'">'+t+dot+'</button>';
   }).join('');
 }
 
@@ -1960,7 +1961,7 @@ function pgSelectTrade(name){
 
   var body=document.getElementById('pg-tasks-body');
   if(!body) return;
-  var addOc='pgAddTask('+JSON.stringify(name)+')';
+  var addOc="pgAddTask('"+name+"')";
   body.innerHTML='<div style="display:grid;grid-template-columns:1fr 1fr;gap:5px">'+
     tasks.map(function(t){
       var urgent=t.s==='prog'&&t.n.toLowerCase().indexOf('sewer')!==-1;
