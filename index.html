@@ -621,214 +621,435 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;
 
   <!-- SCREEN: FLOOR PLAN — daily brief ON TOP, floor plan fills below -->
   <div class="screen" id="sc-fp">
-    <!-- Daily brief — collapsible container sitting on top of the floor plan -->
-    <div class="brief-banner">
-      <div class="brief-bar" onclick="toggleBrief()">
-        <span class="bb-date">Thu June 26 · 2026</span>
-        <span class="bb-sum">Cabinet crew on ADU · Fog film Friday · Sonos wires still need labeling</span>
-        <span class="bb-phase">Phase 4–5 · Final finishing</span>
-        <i class="ti ti-chevron-down bb-chev" id="brief-chev"></i>
+    <!-- TOPBAR: Floor Plan header with Demo CTA -->
+    <div style="flex-shrink:0;background:var(--d1);border-bottom:1px solid var(--w08);padding:10px 16px;display:flex;align-items:center;gap:10px">
+      <div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--white);letter-spacing:-.01em">Floor Plan</div>
+      <span style="font-size:9px;font-weight:700;background:var(--am15);color:var(--amb);border:1px solid var(--am30);border-radius:20px;padding:2px 8px;letter-spacing:.04em;text-transform:uppercase">Draft</span>
+      <div style="flex:1"></div>
+      <span style="font-size:10px;color:var(--sage)">Scale approx. 1in = 4ft</span>
+      <button onclick="fpToggleLegend()" style="background:var(--w08);border:1px solid var(--w08);border-radius:6px;padding:4px 10px;font-size:10px;color:var(--w50);cursor:pointer;font-family:inherit">Legend</button>
+      <button onclick="fpResetSelection()" style="background:var(--w08);border:1px solid var(--w08);border-radius:6px;padding:4px 10px;font-size:10px;color:var(--w50);cursor:pointer;font-family:inherit">Clear</button>
+      <!-- DEMO CTA -->
+      <button onclick="openOnboardingDemo()" style="background:var(--lime);color:var(--black);border:none;border-radius:7px;padding:6px 14px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:6px;letter-spacing:.01em">
+        ✦ Demo — Draft a floor plan
+      </button>
+    </div>
+
+    <!-- BODY: Floor plan SVG + detail panel -->
+    <div style="flex:1;display:grid;grid-template-columns:1fr 260px;overflow:hidden;min-height:0">
+
+      <!-- SVG CANVAS -->
+      <div style="background:var(--d1);overflow:auto;padding:16px;display:flex;align-items:flex-start;justify-content:center">
+        <svg viewBox="0 0 860 680" width="860" height="680" xmlns="http://www.w3.org/2000/svg" id="fp-main-svg" style="cursor:default">
+          <defs>
+            <pattern id="fpgrid" width="20" height="20" patternUnits="userSpaceOnUse">
+              <path d="M20 0L0 0 0 20" fill="none" stroke="rgba(253,255,254,.025)" stroke-width=".5"/>
+            </pattern>
+            <style>
+              .fp-rl{font-family:"DM Sans",sans-serif;font-size:8.5px;font-weight:600;fill:rgba(253,255,254,.55);text-anchor:middle;pointer-events:none;letter-spacing:.04em}
+              .fp-rs{font-family:"DM Sans",sans-serif;font-size:7px;fill:rgba(253,255,254,.28);text-anchor:middle;pointer-events:none}
+              .fp-dim{stroke:rgba(115,127,115,.45);stroke-width:.6;fill:none}
+              .fp-dt{font-family:"DM Sans",sans-serif;font-size:6.5px;fill:rgba(115,127,115,.6);text-anchor:middle}
+              .fp-gr{font-family:"DM Sans",sans-serif;font-size:8px;fill:rgba(115,127,115,.45);text-anchor:middle;font-weight:600}
+              .fp-we{fill:#2C312E;stroke:#4A5147;stroke-width:.5}
+              .fp-wi{fill:#232826;stroke:#3A3F3C;stroke-width:.4}
+              .fp-rm{transition:fill .15s,stroke .15s;cursor:pointer}
+              .fp-rg:hover .fp-rm{fill:rgba(213,220,153,.13)!important;stroke:rgba(213,220,153,.7)!important;stroke-width:1.5!important}
+              .fp-rg.fp-sel .fp-rm{fill:rgba(213,220,153,.2)!important;stroke:rgba(213,220,153,1)!important;stroke-width:2!important}
+              .fp-rg.fp-ok .fp-rm{fill:rgba(74,155,111,.07)!important}
+              .fp-rg.fp-err .fp-rm{fill:rgba(224,122,95,.07)!important}
+            </style>
+          </defs>
+
+          <!-- Grid bg -->
+          <rect width="860" height="680" fill="url(#fpgrid)"/>
+
+          <!-- Grid ref lines -->
+          <line x1="55" y1="28" x2="55" y2="640" stroke="rgba(115,127,115,.1)" stroke-width=".5" stroke-dasharray="4,4"/>
+          <line x1="230" y1="28" x2="230" y2="640" stroke="rgba(115,127,115,.1)" stroke-width=".5" stroke-dasharray="4,4"/>
+          <line x1="430" y1="28" x2="430" y2="640" stroke="rgba(115,127,115,.1)" stroke-width=".5" stroke-dasharray="4,4"/>
+          <line x1="625" y1="28" x2="625" y2="640" stroke="rgba(115,127,115,.1)" stroke-width=".5" stroke-dasharray="4,4"/>
+          <line x1="800" y1="28" x2="800" y2="640" stroke="rgba(115,127,115,.1)" stroke-width=".5" stroke-dasharray="4,4"/>
+          <line x1="28" y1="55" x2="840" y2="55" stroke="rgba(115,127,115,.1)" stroke-width=".5" stroke-dasharray="4,4"/>
+          <line x1="28" y1="200" x2="840" y2="200" stroke="rgba(115,127,115,.1)" stroke-width=".5" stroke-dasharray="4,4"/>
+          <line x1="28" y1="410" x2="840" y2="410" stroke="rgba(115,127,115,.1)" stroke-width=".5" stroke-dasharray="4,4"/>
+          <line x1="28" y1="570" x2="840" y2="570" stroke="rgba(115,127,115,.1)" stroke-width=".5" stroke-dasharray="4,4"/>
+
+          <!-- Grid labels -->
+          <circle cx="55" cy="40" r="7" fill="none" stroke="rgba(115,127,115,.3)" stroke-width=".7"/><text x="55" y="43" class="fp-gr">01</text>
+          <circle cx="230" cy="40" r="7" fill="none" stroke="rgba(115,127,115,.3)" stroke-width=".7"/><text x="230" y="43" class="fp-gr">02</text>
+          <circle cx="430" cy="40" r="7" fill="none" stroke="rgba(115,127,115,.3)" stroke-width=".7"/><text x="430" y="43" class="fp-gr">03</text>
+          <circle cx="625" cy="40" r="7" fill="none" stroke="rgba(115,127,115,.3)" stroke-width=".7"/><text x="625" y="43" class="fp-gr">04</text>
+          <circle cx="800" cy="40" r="7" fill="none" stroke="rgba(115,127,115,.3)" stroke-width=".7"/><text x="800" y="43" class="fp-gr">05</text>
+          <text x="38" y="58" class="fp-gr">A</text>
+          <text x="38" y="203" class="fp-gr">B</text>
+          <text x="38" y="413" class="fp-gr">C</text>
+          <text x="38" y="573" class="fp-gr">D</text>
+
+          <!-- Dimension lines -->
+          <line x1="57" y1="66" x2="798" y2="66" class="fp-dim"/>
+          <line x1="57" y1="62" x2="57" y2="70" class="fp-dim"/>
+          <line x1="798" y1="62" x2="798" y2="70" class="fp-dim"/>
+          <text x="427" y="64" class="fp-dt">12.85 m  (42ft  overall)</text>
+          <line x1="36" y1="78" x2="36" y2="568" class="fp-dim"/>
+          <line x1="32" y1="78" x2="40" y2="78" class="fp-dim"/>
+          <line x1="32" y1="568" x2="40" y2="568" class="fp-dim"/>
+          <text x="30" y="325" class="fp-dt" transform="rotate(-90 30 325)">12.05 m  (39ft)</text>
+          <text x="143" y="77" class="fp-dt">4.20</text>
+          <text x="330" y="77" class="fp-dt">4.20</text>
+          <text x="527" y="77" class="fp-dt">4.20</text>
+
+          <!-- ═══ EXTERIOR PERIMETER ═══ -->
+          <rect x="57" y="78" width="741" height="490" class="fp-we"/>
+          <rect x="68" y="89" width="719" height="468" fill="#1C201D"/>
+
+          <!-- ═══ ENTRY ═══ -->
+          <g class="fp-rg" id="fpr-entry" onclick="fpSelect('entry')">
+            <rect class="fp-rm" x="68" y="89" width="112" height="140" fill="rgba(253,255,254,.02)" stroke="rgba(253,255,254,.07)" stroke-width=".5"/>
+            <!-- Door swing -->
+            <path d="M124 229 L124 203 A26,26 0 0,1 150 229" fill="none" stroke="rgba(253,255,254,.2)" stroke-width=".7"/>
+            <line x1="124" y1="229" x2="150" y2="229" stroke="rgba(253,255,254,.18)" stroke-width=".7"/>
+            <rect x="68" y="224" width="112" height="5" class="fp-wi"/>
+            <text x="124" y="148" class="fp-rl">Entry</text>
+            <text x="124" y="160" class="fp-rs">6ftx12ft</text>
+            <circle cx="80" cy="100" r="6.5" fill="rgba(253,255,254,.05)" stroke="rgba(253,255,254,.1)" stroke-width=".5"/>
+            <text x="80" y="103" style="font-family:'DM Sans',sans-serif;font-size:6.5px;fill:rgba(253,255,254,.35);text-anchor:middle">01</text>
+          </g>
+
+          <!-- ═══ LIVING ROOM ═══ -->
+          <g class="fp-rg fp-ok" id="fpr-living" onclick="fpSelect('living')">
+            <rect class="fp-rm" x="68" y="229" width="290" height="181" fill="rgba(74,155,111,.04)" stroke="rgba(74,155,111,.15)" stroke-width=".5"/>
+            <!-- Sofa -->
+            <rect x="82" y="270" width="88" height="38" rx="3" fill="rgba(253,255,254,.05)" stroke="rgba(253,255,254,.13)" stroke-width=".6"/>
+            <rect x="82" y="270" width="88" height="11" rx="2" fill="rgba(253,255,254,.07)"/>
+            <rect x="170" y="270" width="11" height="38" rx="2" fill="rgba(253,255,254,.06)" stroke="rgba(253,255,254,.1)" stroke-width=".4"/>
+            <rect x="82" y="308" width="11" height="32" rx="2" fill="rgba(253,255,254,.06)" stroke="rgba(253,255,254,.1)" stroke-width=".4"/>
+            <!-- Coffee table -->
+            <rect x="106" y="316" width="46" height="26" rx="2" fill="rgba(253,255,254,.04)" stroke="rgba(253,255,254,.1)" stroke-width=".5"/>
+            <!-- TV wall -->
+            <rect x="68" y="234" width="55" height="5" rx="1" fill="rgba(213,220,153,.14)"/>
+            <text x="95" y="239" style="font-family:'DM Sans',sans-serif;font-size:5.5px;fill:rgba(213,220,153,.45);text-anchor:middle">TV WALL</text>
+            <text x="180" y="385" class="fp-rl" style="font-size:9px">Living Room</text>
+            <text x="180" y="397" class="fp-rs">Open plan · 18ftx15ft</text>
+            <circle cx="80" cy="240" r="6.5" fill="rgba(253,255,254,.05)" stroke="rgba(253,255,254,.1)" stroke-width=".5"/>
+            <text x="80" y="243" style="font-family:'DM Sans',sans-serif;font-size:6.5px;fill:rgba(253,255,254,.35);text-anchor:middle">02</text>
+          </g>
+
+          <!-- ═══ KITCHEN ═══ -->
+          <g class="fp-rg" id="fpr-kitchen" onclick="fpSelect('kitchen')">
+            <rect class="fp-rm" x="180" y="89" width="250" height="140" fill="rgba(201,168,76,.03)" stroke="rgba(201,168,76,.12)" stroke-width=".5"/>
+            <!-- Counter top wall -->
+            <rect x="186" y="95" width="238" height="20" rx="1" fill="rgba(253,255,254,.05)" stroke="rgba(253,255,254,.1)" stroke-width=".5"/>
+            <!-- Sink -->
+            <rect x="306" y="97" width="28" height="16" rx="2" fill="rgba(253,255,254,.04)" stroke="rgba(253,255,254,.18)" stroke-width=".5"/>
+            <ellipse cx="320" cy="105" rx="9" ry="6" fill="none" stroke="rgba(253,255,254,.18)" stroke-width=".5"/>
+            <!-- Range -->
+            <rect x="368" y="97" width="32" height="16" rx="1" fill="rgba(253,255,254,.04)" stroke="rgba(253,255,254,.13)" stroke-width=".5"/>
+            <circle cx="375" cy="101" r="2.5" fill="none" stroke="rgba(253,255,254,.22)" stroke-width=".6"/>
+            <circle cx="384" cy="101" r="2.5" fill="none" stroke="rgba(253,255,254,.22)" stroke-width=".6"/>
+            <circle cx="375" cy="109" r="2.5" fill="none" stroke="rgba(253,255,254,.22)" stroke-width=".6"/>
+            <circle cx="384" cy="109" r="2.5" fill="none" stroke="rgba(253,255,254,.22)" stroke-width=".6"/>
+            <!-- Fridge -->
+            <rect x="186" y="116" width="24" height="20" rx="2" fill="rgba(253,255,254,.06)" stroke="rgba(253,255,254,.16)" stroke-width=".6"/>
+            <line x1="198" y1="118" x2="198" y2="134" stroke="rgba(253,255,254,.13)" stroke-width=".4"/>
+            <!-- Island -->
+            <rect x="248" y="142" width="110" height="46" rx="3" fill="rgba(253,255,254,.04)" stroke="rgba(253,255,254,.13)" stroke-width=".7"/>
+            <text x="303" y="169" style="font-family:'DM Sans',sans-serif;font-size:6.5px;fill:rgba(253,255,254,.28);text-anchor:middle">ISLAND</text>
+            <text x="303" y="209" class="fp-rl">Kitchen</text>
+            <text x="303" y="221" class="fp-rs">Open plan · 21ftx12ft</text>
+            <circle cx="192" cy="100" r="6.5" fill="rgba(253,255,254,.05)" stroke="rgba(253,255,254,.1)" stroke-width=".5"/>
+            <text x="192" y="103" style="font-family:'DM Sans',sans-serif;font-size:6.5px;fill:rgba(253,255,254,.35);text-anchor:middle">03</text>
+          </g>
+
+          <!-- ═══ DINING ═══ -->
+          <g class="fp-rg fp-ok" id="fpr-dining" onclick="fpSelect('dining')">
+            <rect class="fp-rm" x="358" y="229" width="172" height="181" fill="rgba(253,255,254,.02)" stroke="rgba(253,255,254,.05)" stroke-width=".5" stroke-dasharray="4,3"/>
+            <!-- Dining table -->
+            <rect x="385" y="268" width="82" height="50" rx="3" fill="rgba(253,255,254,.04)" stroke="rgba(253,255,254,.13)" stroke-width=".6"/>
+            <!-- Chairs -->
+            <rect x="393" y="258" width="18" height="9" rx="2" fill="rgba(253,255,254,.05)" stroke="rgba(253,255,254,.1)" stroke-width=".4"/>
+            <rect x="421" y="258" width="18" height="9" rx="2" fill="rgba(253,255,254,.05)" stroke="rgba(253,255,254,.1)" stroke-width=".4"/>
+            <rect x="393" y="319" width="18" height="9" rx="2" fill="rgba(253,255,254,.05)" stroke="rgba(253,255,254,.1)" stroke-width=".4"/>
+            <rect x="421" y="319" width="18" height="9" rx="2" fill="rgba(253,255,254,.05)" stroke="rgba(253,255,254,.1)" stroke-width=".4"/>
+            <rect x="374" y="277" width="11" height="18" rx="2" fill="rgba(253,255,254,.05)" stroke="rgba(253,255,254,.1)" stroke-width=".4"/>
+            <rect x="467" y="277" width="11" height="18" rx="2" fill="rgba(253,255,254,.05)" stroke="rgba(253,255,254,.1)" stroke-width=".4"/>
+            <text x="444" y="376" class="fp-rl">Dining</text>
+            <text x="444" y="388" class="fp-rs">Open plan · 14ftx15ft</text>
+            <circle cx="370" cy="240" r="6.5" fill="rgba(253,255,254,.05)" stroke="rgba(253,255,254,.1)" stroke-width=".5"/>
+            <text x="370" y="243" style="font-family:'DM Sans',sans-serif;font-size:6.5px;fill:rgba(253,255,254,.35);text-anchor:middle">04</text>
+          </g>
+
+          <!-- ═══ WOODEN DECK (Phase II) ═══ -->
+          <g class="fp-rg" id="fpr-deck" onclick="fpSelect('deck')">
+            <rect class="fp-rm" x="530" y="89" width="257" height="140" fill="rgba(115,127,115,.03)" stroke="rgba(115,127,115,.18)" stroke-width=".8" stroke-dasharray="6,3"/>
+            <line x1="530" y1="108" x2="787" y2="108" stroke="rgba(115,127,115,.07)" stroke-width=".4"/>
+            <line x1="530" y1="127" x2="787" y2="127" stroke="rgba(115,127,115,.07)" stroke-width=".4"/>
+            <line x1="530" y1="146" x2="787" y2="146" stroke="rgba(115,127,115,.07)" stroke-width=".4"/>
+            <line x1="530" y1="165" x2="787" y2="165" stroke="rgba(115,127,115,.07)" stroke-width=".4"/>
+            <line x1="530" y1="184" x2="787" y2="184" stroke="rgba(115,127,115,.07)" stroke-width=".4"/>
+            <text x="658" y="148" class="fp-rl" style="fill:rgba(115,127,115,.6)">Wooden Deck</text>
+            <text x="658" y="160" class="fp-rs" style="fill:rgba(115,127,115,.38)">Phase II · 21ftx12ft · Ipe wood pending</text>
+            <circle cx="542" cy="100" r="6.5" fill="rgba(253,255,254,.04)" stroke="rgba(115,127,115,.22)" stroke-width=".5"/>
+            <text x="542" y="103" style="font-family:'DM Sans',sans-serif;font-size:6.5px;fill:rgba(115,127,115,.45);text-anchor:middle">05</text>
+          </g>
+
+          <!-- Interior wall separators -->
+          <rect x="68" y="410" width="719" height="7" class="fp-wi"/>
+          <rect x="170" y="89" width="10" height="321" class="fp-wi"/>
+          <rect x="520" y="89" width="10" height="321" class="fp-wi"/>
+          <rect x="348" y="229" width="10" height="321" class="fp-wi"/>
+          <rect x="680" y="417" width="10" height="140" class="fp-wi"/>
+
+          <!-- ═══ MASTER BEDROOM ═══ -->
+          <g class="fp-rg" id="fpr-master" onclick="fpSelect('master')">
+            <rect class="fp-rm" x="530" y="229" width="257" height="188" fill="rgba(253,255,254,.02)" stroke="rgba(253,255,254,.07)" stroke-width=".5"/>
+            <!-- King bed -->
+            <rect x="566" y="250" width="86" height="105" rx="3" fill="rgba(253,255,254,.04)" stroke="rgba(253,255,254,.13)" stroke-width=".7"/>
+            <rect x="566" y="250" width="86" height="15" rx="2" fill="rgba(253,255,254,.07)"/>
+            <rect x="573" y="257" width="25" height="14" rx="2" fill="rgba(253,255,254,.06)" stroke="rgba(253,255,254,.1)" stroke-width=".3"/>
+            <rect x="618" y="257" width="25" height="14" rx="2" fill="rgba(253,255,254,.06)" stroke="rgba(253,255,254,.1)" stroke-width=".3"/>
+            <rect x="552" y="258" width="13" height="13" rx="2" fill="rgba(253,255,254,.05)" stroke="rgba(253,255,254,.1)" stroke-width=".4"/>
+            <rect x="653" y="258" width="13" height="13" rx="2" fill="rgba(253,255,254,.05)" stroke="rgba(253,255,254,.1)" stroke-width=".4"/>
+            <!-- Door -->
+            <path d="M530 370 L530 344 A26,26 0 0,0 556 370" fill="none" stroke="rgba(253,255,254,.22)" stroke-width=".7"/>
+            <line x1="530" y1="370" x2="556" y2="370" stroke="rgba(253,255,254,.18)" stroke-width=".7"/>
+            <!-- Cabinet banner -->
+            <rect x="672" y="234" width="108" height="20" rx="2" fill="rgba(201,168,76,.06)" stroke="rgba(201,168,76,.18)" stroke-width=".5"/>
+            <text x="726" y="247" style="font-family:'DM Sans',sans-serif;font-size:6px;fill:rgba(201,168,76,.48);text-anchor:middle">CABINETS IN PROGRESS</text>
+            <text x="658" y="377" class="fp-rl" style="font-size:9px">Master Bedroom</text>
+            <text x="658" y="389" class="fp-rs">Leo · Primary · 21ftx15ft</text>
+            <circle cx="658" cy="400" r="3" fill="#C9A84C" style="animation:blink 2s infinite"/>
+            <circle cx="542" cy="240" r="6.5" fill="rgba(253,255,254,.05)" stroke="rgba(253,255,254,.1)" stroke-width=".5"/>
+            <text x="542" y="243" style="font-family:'DM Sans',sans-serif;font-size:6.5px;fill:rgba(253,255,254,.35);text-anchor:middle">06</text>
+          </g>
+
+          <!-- ═══ PRIMARY BATH ═══ -->
+          <g class="fp-rg fp-ok" id="fpr-pbath" onclick="fpSelect('pbath')">
+            <rect class="fp-rm" x="530" y="417" width="150" height="140" fill="rgba(74,155,111,.06)" stroke="rgba(74,155,111,.28)" stroke-width=".7"/>
+            <!-- Shower -->
+            <rect x="538" y="425" width="50" height="46" rx="2" fill="rgba(253,255,254,.03)" stroke="rgba(253,255,254,.12)" stroke-width=".6"/>
+            <line x1="538" y1="425" x2="588" y2="471" stroke="rgba(253,255,254,.06)" stroke-width=".3"/>
+            <line x1="588" y1="425" x2="538" y2="471" stroke="rgba(253,255,254,.06)" stroke-width=".3"/>
+            <circle cx="563" cy="448" r="3.5" fill="none" stroke="rgba(253,255,254,.18)" stroke-width=".5"/>
+            <!-- Double vanity -->
+            <rect x="596" y="425" width="76" height="24" rx="2" fill="rgba(253,255,254,.05)" stroke="rgba(253,255,254,.13)" stroke-width=".5"/>
+            <circle cx="614" cy="437" r="6.5" fill="none" stroke="rgba(253,255,254,.18)" stroke-width=".5"/>
+            <circle cx="646" cy="437" r="6.5" fill="none" stroke="rgba(253,255,254,.18)" stroke-width=".5"/>
+            <!-- Toilet -->
+            <rect x="538" y="479" width="22" height="30" rx="3" fill="rgba(253,255,254,.04)" stroke="rgba(253,255,254,.13)" stroke-width=".5"/>
+            <ellipse cx="549" cy="496" rx="9" ry="11" fill="none" stroke="rgba(253,255,254,.13)" stroke-width=".5"/>
+            <!-- Tub -->
+            <rect x="568" y="481" width="104" height="50" rx="4" fill="rgba(253,255,254,.03)" stroke="rgba(253,255,254,.13)" stroke-width=".6"/>
+            <rect x="575" y="488" width="90" height="36" rx="3" fill="rgba(253,255,254,.02)" stroke="rgba(253,255,254,.08)" stroke-width=".4"/>
+            <!-- Door -->
+            <path d="M530 460 L530 437 A23,23 0 0,1 553 460" fill="none" stroke="rgba(253,255,254,.22)" stroke-width=".7"/>
+            <line x1="530" y1="460" x2="553" y2="460" stroke="rgba(253,255,254,.18)" stroke-width=".7"/>
+            <text x="605" y="525" class="fp-rl" style="fill:rgba(74,155,111,.75)">Primary Bath</text>
+            <text x="605" y="537" class="fp-rs" style="fill:rgba(74,155,111,.5)">Complete ✓</text>
+            <circle cx="542" cy="428" r="6.5" fill="rgba(74,155,111,.1)" stroke="rgba(74,155,111,.28)" stroke-width=".5"/>
+            <text x="542" y="431" style="font-family:'DM Sans',sans-serif;font-size:6.5px;fill:rgba(74,155,111,.55);text-anchor:middle">07</text>
+          </g>
+
+          <!-- ═══ J&J BATH ═══ -->
+          <g class="fp-rg fp-ok" id="fpr-jjbath" onclick="fpSelect('jjbath')">
+            <rect class="fp-rm" x="180" y="417" width="168" height="140" fill="rgba(74,155,111,.06)" stroke="rgba(74,155,111,.28)" stroke-width=".7"/>
+            <!-- Shower/tub -->
+            <rect x="188" y="425" width="56" height="50" rx="2" fill="rgba(253,255,254,.03)" stroke="rgba(253,255,254,.12)" stroke-width=".6"/>
+            <line x1="188" y1="425" x2="244" y2="475" stroke="rgba(253,255,254,.06)" stroke-width=".3"/>
+            <line x1="244" y1="425" x2="188" y2="475" stroke="rgba(253,255,254,.06)" stroke-width=".3"/>
+            <!-- Double vanity -->
+            <rect x="252" y="425" width="88" height="24" rx="2" fill="rgba(253,255,254,.05)" stroke="rgba(253,255,254,.13)" stroke-width=".5"/>
+            <circle cx="270" cy="437" r="6.5" fill="none" stroke="rgba(253,255,254,.18)" stroke-width=".5"/>
+            <circle cx="305" cy="437" r="6.5" fill="none" stroke="rgba(253,255,254,.18)" stroke-width=".5"/>
+            <!-- 2x Toilet -->
+            <rect x="188" y="484" width="22" height="28" rx="3" fill="rgba(253,255,254,.04)" stroke="rgba(253,255,254,.13)" stroke-width=".5"/>
+            <ellipse cx="199" cy="500" rx="8.5" ry="10" fill="none" stroke="rgba(253,255,254,.12)" stroke-width=".5"/>
+            <rect x="218" y="484" width="22" height="28" rx="3" fill="rgba(253,255,254,.04)" stroke="rgba(253,255,254,.13)" stroke-width=".5"/>
+            <ellipse cx="229" cy="500" rx="8.5" ry="10" fill="none" stroke="rgba(253,255,254,.12)" stroke-width=".5"/>
+            <!-- Door -->
+            <path d="M290 417 L290 440 A23,23 0 0,0 313 417" fill="none" stroke="rgba(253,255,254,.22)" stroke-width=".7"/>
+            <line x1="290" y1="417" x2="313" y2="417" stroke="rgba(253,255,254,.18)" stroke-width=".7"/>
+            <text x="264" y="527" class="fp-rl" style="fill:rgba(74,155,111,.75)">J&amp;J Bath</text>
+            <text x="264" y="539" class="fp-rs" style="fill:rgba(74,155,111,.5)">Complete ✓ · ★★★★★</text>
+            <circle cx="193" cy="428" r="6.5" fill="rgba(74,155,111,.1)" stroke="rgba(74,155,111,.28)" stroke-width=".5"/>
+            <text x="193" y="431" style="font-family:'DM Sans',sans-serif;font-size:6.5px;fill:rgba(74,155,111,.55);text-anchor:middle">08</text>
+          </g>
+
+          <!-- ═══ BEDROOM 1 — Leo ═══ -->
+          <g class="fp-rg" id="fpr-br1" onclick="fpSelect('br1')">
+            <rect class="fp-rm" x="68" y="417" width="112" height="140" fill="rgba(253,255,254,.02)" stroke="rgba(253,255,254,.07)" stroke-width=".5"/>
+            <rect x="78" y="430" width="52" height="74" rx="3" fill="rgba(253,255,254,.04)" stroke="rgba(253,255,254,.12)" stroke-width=".6"/>
+            <rect x="78" y="430" width="52" height="11" rx="2" fill="rgba(253,255,254,.06)"/>
+            <rect x="88" y="435" width="30" height="9" rx="2" fill="rgba(253,255,254,.05)" stroke="rgba(253,255,254,.1)" stroke-width=".3"/>
+            <!-- Door -->
+            <path d="M155" y="518 L155 494 A24,24 0 0,0 179 518" fill="none" stroke="rgba(253,255,254,.22)" stroke-width=".7"/>
+            <line x1="155" y1="518" x2="179" y2="518" stroke="rgba(253,255,254,.18)" stroke-width=".7"/>
+            <text x="124" y="523" class="fp-rl">Bedroom 1</text>
+            <text x="124" y="535" class="fp-rs">Leo · 9ftx12ft</text>
+            <circle cx="80" cy="428" r="6.5" fill="rgba(253,255,254,.05)" stroke="rgba(253,255,254,.1)" stroke-width=".5"/>
+            <text x="80" y="431" style="font-family:'DM Sans',sans-serif;font-size:6.5px;fill:rgba(253,255,254,.35);text-anchor:middle">09</text>
+          </g>
+
+          <!-- ═══ BEDROOM 3 — Mila ═══ -->
+          <g class="fp-rg fp-err" id="fpr-mila" onclick="fpSelect('mila')">
+            <rect class="fp-rm" x="348" y="417" width="182" height="140" fill="rgba(224,122,95,.05)" stroke="rgba(224,122,95,.28)" stroke-width=".7"/>
+            <!-- Bed -->
+            <rect x="380" y="434" width="76" height="88" rx="3" fill="rgba(253,255,254,.04)" stroke="rgba(253,255,254,.12)" stroke-width=".6"/>
+            <rect x="380" y="434" width="76" height="13" rx="2" fill="rgba(253,255,254,.07)"/>
+            <rect x="387" y="440" width="25" height="11" rx="2" fill="rgba(253,255,254,.05)" stroke="rgba(253,255,254,.09)" stroke-width=".3"/>
+            <rect x="421" y="440" width="25" height="11" rx="2" fill="rgba(253,255,254,.05)" stroke="rgba(253,255,254,.09)" stroke-width=".3"/>
+            <!-- Cabinet issue flag -->
+            <rect x="462" y="422" width="62" height="20" rx="2" fill="rgba(224,122,95,.08)" stroke="rgba(224,122,95,.28)" stroke-width=".5"/>
+            <text x="493" y="435" style="font-family:'DM Sans',sans-serif;font-size:5.5px;fill:rgba(224,122,95,.6);text-anchor:middle">CABINET ✗ COLOR</text>
+            <!-- Door -->
+            <path d="M348 490 L348 466 A24,24 0 0,1 372 490" fill="none" stroke="rgba(253,255,254,.22)" stroke-width=".7"/>
+            <line x1="348" y1="490" x2="372" y2="490" stroke="rgba(253,255,254,.18)" stroke-width=".7"/>
+            <circle cx="436" cy="510" r="3" fill="#E07A5F" style="animation:blink 2s infinite"/>
+            <text x="436" y="524" class="fp-rl" style="fill:rgba(224,122,95,.78)">Bedroom 3 — Mila</text>
+            <text x="436" y="536" class="fp-rs" style="fill:rgba(224,122,95,.5)">Cabinet reinstall needed · 15ftx12ft</text>
+            <circle cx="360" cy="428" r="6.5" fill="rgba(224,122,95,.1)" stroke="rgba(224,122,95,.28)" stroke-width=".5"/>
+            <text x="360" y="431" style="font-family:'DM Sans',sans-serif;font-size:6.5px;fill:rgba(224,122,95,.5);text-anchor:middle">10</text>
+          </g>
+
+          <!-- ═══ LAUNDRY ═══ -->
+          <g class="fp-rg" id="fpr-laundry" onclick="fpSelect('laundry')">
+            <rect class="fp-rm" x="680" y="417" width="107" height="140" fill="rgba(253,255,254,.02)" stroke="rgba(253,255,254,.07)" stroke-width=".5"/>
+            <!-- Washer -->
+            <rect x="688" y="429" width="38" height="38" rx="3" fill="rgba(253,255,254,.04)" stroke="rgba(253,255,254,.12)" stroke-width=".6"/>
+            <circle cx="707" cy="448" r="13" fill="none" stroke="rgba(253,255,254,.14)" stroke-width=".7"/>
+            <circle cx="707" cy="448" r="7" fill="none" stroke="rgba(253,255,254,.09)" stroke-width=".4"/>
+            <!-- Dryer -->
+            <rect x="729" y="429" width="38" height="38" rx="3" fill="rgba(253,255,254,.04)" stroke="rgba(253,255,254,.12)" stroke-width=".6"/>
+            <circle cx="748" cy="448" r="13" fill="none" stroke="rgba(253,255,254,.14)" stroke-width=".7"/>
+            <circle cx="748" cy="448" r="7" fill="none" stroke="rgba(253,255,254,.09)" stroke-width=".4"/>
+            <!-- Door -->
+            <path d="M680 498 L680 474 A24,24 0 0,1 704 498" fill="none" stroke="rgba(253,255,254,.22)" stroke-width=".7"/>
+            <line x1="680" y1="498" x2="704" y2="498" stroke="rgba(253,255,254,.18)" stroke-width=".7"/>
+            <text x="733" y="516" class="fp-rl">Laundry</text>
+            <text x="733" y="528" class="fp-rs">W/D · check drains</text>
+            <circle cx="692" cy="428" r="6.5" fill="rgba(253,255,254,.05)" stroke="rgba(253,255,254,.1)" stroke-width=".5"/>
+            <text x="692" y="431" style="font-family:'DM Sans',sans-serif;font-size:6.5px;fill:rgba(253,255,254,.35);text-anchor:middle">11</text>
+          </g>
+
+          <!-- ═══ ADU SEPARATOR ═══ -->
+          <line x1="57" y1="580" x2="640" y2="580" stroke="rgba(213,220,153,.08)" stroke-width=".7" stroke-dasharray="5,3"/>
+          <text x="348" y="588" style="font-family:'DM Sans',sans-serif;font-size:7px;fill:rgba(213,220,153,.2);text-anchor:middle;letter-spacing:.14em">— —  DETACHED ADU  — —</text>
+
+          <!-- ADU exterior -->
+          <rect x="57" y="593" width="540" height="85" class="fp-we"/>
+          <rect x="68" y="601" width="518" height="69" fill="#1C201D"/>
+          <rect x="205" y="601" width="7" height="69" class="fp-wi"/>
+
+          <!-- ADU Bath -->
+          <g class="fp-rg fp-ok" id="fpr-adubath" onclick="fpSelect('adubath')">
+            <rect class="fp-rm" x="68" y="601" width="137" height="69" fill="rgba(74,155,111,.06)" stroke="rgba(74,155,111,.25)" stroke-width=".6"/>
+            <rect x="75" y="607" width="36" height="32" rx="2" fill="rgba(253,255,254,.03)" stroke="rgba(253,255,254,.1)" stroke-width=".5"/>
+            <line x1="75" y1="607" x2="111" y2="639" stroke="rgba(253,255,254,.04)" stroke-width=".3"/>
+            <rect x="117" y="607" width="16" height="22" rx="3" fill="rgba(253,255,254,.04)" stroke="rgba(253,255,254,.1)" stroke-width=".4"/>
+            <ellipse cx="125" cy="619" rx="6" ry="8" fill="none" stroke="rgba(253,255,254,.1)" stroke-width=".4"/>
+            <rect x="76" y="648" width="56" height="14" rx="2" fill="rgba(253,255,254,.04)" stroke="rgba(253,255,254,.1)" stroke-width=".4"/>
+            <circle cx="104" cy="655" r="5" fill="none" stroke="rgba(253,255,254,.16)" stroke-width=".4"/>
+            <text x="136" y="648" style="font-family:'DM Sans',sans-serif;font-size:7px;font-weight:600;fill:rgba(74,155,111,.65);text-anchor:middle">ADU Bath</text>
+            <text x="136" y="659" style="font-family:'DM Sans',sans-serif;font-size:6.5px;fill:rgba(74,155,111,.42);text-anchor:middle">Complete ✓</text>
+          </g>
+
+          <!-- ADU Studio -->
+          <g class="fp-rg" id="fpr-adustudio" onclick="fpSelect('adustudio')">
+            <rect class="fp-rm" x="212" y="601" width="374" height="69" fill="rgba(201,168,76,.04)" stroke="rgba(201,168,76,.18)" stroke-width=".6"/>
+            <rect x="222" y="609" width="72" height="44" rx="3" fill="rgba(253,255,254,.04)" stroke="rgba(253,255,254,.1)" stroke-width=".5"/>
+            <rect x="222" y="609" width="72" height="11" rx="2" fill="rgba(253,255,254,.06)"/>
+            <rect x="492" y="607" width="84" height="18" rx="2" fill="rgba(253,255,254,.04)" stroke="rgba(253,255,254,.1)" stroke-width=".4"/>
+            <circle cx="506" cy="616" r="3.5" fill="none" stroke="rgba(253,255,254,.18)" stroke-width=".4"/>
+            <circle cx="518" cy="616" r="3.5" fill="none" stroke="rgba(253,255,254,.18)" stroke-width=".4"/>
+            <rect x="316" y="601" width="160" height="12" rx="1" fill="rgba(201,168,76,.05)" stroke="rgba(201,168,76,.16)" stroke-width=".4"/>
+            <text x="396" y="610" style="font-family:'DM Sans',sans-serif;font-size:5.5px;fill:rgba(201,168,76,.42);text-anchor:middle">CABINETS IN PROGRESS</text>
+            <text x="396" y="648" style="font-family:'DM Sans',sans-serif;font-size:7.5px;font-weight:600;fill:rgba(201,168,76,.7);text-anchor:middle;letter-spacing:.04em">ADU STUDIO / BEDROOM</text>
+            <text x="396" y="659" style="font-family:'DM Sans',sans-serif;font-size:6.5px;fill:rgba(201,168,76,.38);text-anchor:middle">405 SF · Cabinets in progress · Sonos + A/C pending</text>
+          </g>
+
+          <!-- Compass -->
+          <g transform="translate(818,94)">
+            <circle cx="11" cy="11" r="10" fill="rgba(253,255,254,.04)" stroke="rgba(253,255,254,.1)" stroke-width=".6"/>
+            <text x="11" y="15" style="font-family:'DM Sans',sans-serif;font-size:8px;font-weight:700;fill:rgba(253,255,254,.3);text-anchor:middle">N</text>
+            <line x1="11" y1="4" x2="11" y2="7" stroke="rgba(253,255,254,.28)" stroke-width="1"/>
+          </g>
+
+          <!-- Scale bar -->
+          <g transform="translate(68,578)">
+            <line x1="0" y1="4" x2="96" y2="4" stroke="rgba(115,127,115,.45)" stroke-width=".8"/>
+            <line x1="0" y1="1" x2="0" y2="7" stroke="rgba(115,127,115,.45)" stroke-width=".8"/>
+            <line x1="48" y1="1" x2="48" y2="7" stroke="rgba(115,127,115,.45)" stroke-width=".8"/>
+            <line x1="96" y1="1" x2="96" y2="7" stroke="rgba(115,127,115,.45)" stroke-width=".8"/>
+            <text x="0" y="13" style="font-family:'DM Sans',sans-serif;font-size:6px;fill:rgba(115,127,115,.5)">0</text>
+            <text x="44" y="13" style="font-family:'DM Sans',sans-serif;font-size:6px;fill:rgba(115,127,115,.5)">10ft</text>
+            <text x="88" y="13" style="font-family:'DM Sans',sans-serif;font-size:6px;fill:rgba(115,127,115,.5)">20ft</text>
+          </g>
+
+          <text x="430" y="672" style="font-family:'DM Sans',sans-serif;font-size:7px;fill:rgba(253,255,254,.12);text-anchor:middle">2560 Coolidge Ave · Santa Monica CA · Common Ground DRAFT · Ebru Kuyak Design</text>
+        </svg>
       </div>
-      <div class="brief-body" id="brief-body">
-        <div class="brief-stats">
-          <div class="bstat"><div class="bstat-n" style="color:var(--del)">3</div><div class="bstat-l">Corrections</div></div>
-          <div class="bstat"><div class="bstat-n" style="color:var(--amb)">5</div><div class="bstat-l">Active</div></div>
-          <div class="bstat"><div class="bstat-n" style="color:var(--lime)">1</div><div class="bstat-l">Decision</div></div>
-          <div class="bstat"><div class="bstat-n" style="color:var(--ok)">42</div><div class="bstat-l">Done</div></div>
+
+      <!-- FP DETAIL PANEL -->
+      <div style="background:var(--d2);border-left:1px solid var(--w08);display:flex;flex-direction:column;overflow:hidden">
+        <div style="padding:14px 16px;border-bottom:1px solid var(--w08);flex-shrink:0">
+          <div style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--sage);margin-bottom:2px">Floor plan</div>
+          <div style="font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--white);letter-spacing:-.02em">2560 Coolidge Ave</div>
+          <div style="font-size:10px;color:var(--w30);margin-top:1px">Tap any room to inspect</div>
         </div>
-        <div class="brief-3col">
-          <div>
-            <div class="b3-head" style="color:var(--del)">Corrections</div>
-            <div class="b3-item"><div class="b3-dot" style="background:var(--del)"></div>Mila cabinet wrong color — full reinstall</div>
-            <div class="b3-item"><div class="b3-dot" style="background:var(--del)"></div>J&J tub knobs too far from wall</div>
-            <div class="b3-item"><div class="b3-dot" style="background:var(--del)"></div>Fireplace registers not installed (p.4)</div>
-          </div>
-          <div>
-            <div class="b3-head" style="color:var(--amb)">Active today</div>
-            <div class="b3-item"><div class="b3-dot" style="background:var(--amb)"></div>ADU south wall cabinet crew</div>
-            <div class="b3-item"><div class="b3-dot" style="background:var(--amb)"></div>Fog film connections — Friday</div>
-            <div class="b3-item"><div class="b3-dot" style="background:var(--amb)"></div>Sonos — LABEL ALL WIRES first</div>
-          </div>
-          <div>
-            <div class="b3-head" style="color:var(--ok)">Completed</div>
-            <div class="b3-item"><div class="b3-dot" style="background:var(--ok)"></div>Shower glass all baths ✓</div>
-            <div class="b3-item"><div class="b3-dot" style="background:var(--ok)"></div>Towel warmers installed ✓</div>
-            <div class="b3-item"><div class="b3-dot" style="background:var(--ok)"></div>CO detectors (3 total) ✓</div>
-            <div class="b3-item"><div class="b3-dot" style="background:var(--ok)"></div>J&J mirror + transformer ✓</div>
-          </div>
+        <div id="fp-panel-idle" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;color:var(--w30);font-size:11px;line-height:1.7">
+          <div style="font-size:28px;margin-bottom:10px;opacity:.25">📐</div>
+          Tap any room to see status, trades, and notes.
         </div>
-        <div class="brief-note-row">
-          <textarea class="blast-ta" id="blast-ta" rows="1" placeholder="Blast a note — AI routes it to the right room + trade…"></textarea>
-          <button class="btn-lime" style="font-size:10px;padding:5px 10px" onclick="sendBlast()"><i class="ti ti-sparkles" style="font-size:11px"></i>AI sort</button>
-          <button class="btn-ghost" style="font-size:10px;padding:5px 10px" onclick="startWalkthrough()"><i class="ti ti-walk" style="font-size:11px"></i>Walkthrough</button>
+        <div id="fp-panel-content" style="flex:1;overflow-y:auto;padding:16px;display:none">
+          <div id="fpc-name" style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--white);letter-spacing:-.02em;margin-bottom:2px"></div>
+          <div id="fpc-size" style="font-size:11px;color:var(--sage);margin-bottom:10px"></div>
+          <div id="fpc-status" style="margin-bottom:12px"></div>
+          <div id="fpc-trades-lbl" style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--sage);margin-bottom:7px">Trades</div>
+          <div id="fpc-trades"></div>
+          <div id="fpc-notes"></div>
+          <button onclick="fpAddNote()" style="width:100%;margin-top:10px;padding:8px;background:none;border:1.5px dashed var(--l20);border-radius:7px;color:var(--lime);font-size:10px;font-weight:600;cursor:pointer;font-family:inherit">+ Add note</button>
+        </div>
+        <!-- Legend (toggleable) -->
+        <div id="fp-legend" style="display:none;padding:14px 16px;border-top:1px solid var(--w08);flex-shrink:0">
+          <div style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--sage);margin-bottom:8px">Status legend</div>
+          <div style="display:flex;align-items:center;gap:7px;margin-bottom:5px;font-size:10px;color:var(--w50)"><div style="width:13px;height:13px;border-radius:3px;background:rgba(74,155,111,.25);border:1px solid rgba(74,155,111,.4);flex-shrink:0"></div>Complete</div>
+          <div style="display:flex;align-items:center;gap:7px;margin-bottom:5px;font-size:10px;color:var(--w50)"><div style="width:13px;height:13px;border-radius:3px;background:rgba(201,168,76,.2);border:1px solid rgba(201,168,76,.4);flex-shrink:0"></div>In progress</div>
+          <div style="display:flex;align-items:center;gap:7px;margin-bottom:5px;font-size:10px;color:var(--w50)"><div style="width:13px;height:13px;border-radius:3px;background:rgba(224,122,95,.2);border:1px solid rgba(224,122,95,.4);flex-shrink:0"></div>Issue / correction needed</div>
+          <div style="display:flex;align-items:center;gap:7px;font-size:10px;color:var(--w50)"><div style="width:13px;height:1px;border-top:1.5px dashed rgba(115,127,115,.35);flex-shrink:0"></div>Exterior / Phase II</div>
         </div>
       </div>
     </div>
 
-    <!-- Floor plan canvas — corrected room labels, open plan, lime highlight on select -->
-    <div class="fp-wrap" id="fp-wrap">
-      <div class="onsite-bar">
-        <div class="onsite-chip"><div class="onsite-dot"></div>Cabinet crew · ADU</div>
-        <div class="onsite-chip" style="color:var(--w30)"><div style="width:5px;height:5px;border-radius:50%;background:var(--w30);flex-shrink:0"></div>Fog film · Friday</div>
-      </div>
-<svg id="main-fp-svg" viewBox="0 0 700 440" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;display:block">
-<defs>
-  <pattern id="fpgrid" width="18" height="18" patternUnits="userSpaceOnUse">
-    <path d="M18 0L0 0 0 18" fill="none" stroke="rgba(253,255,254,.022)" stroke-width=".5"/>
-  </pattern>
-  <style>
-    .fp-room{cursor:pointer}
-    .fp-room .fp-bg{transition:fill .15s}
-    .fp-room .fp-border{transition:stroke .15s,stroke-width .15s}
-    .fp-room:hover .fp-bg{filter:brightness(1.3)}
-    .fp-room.selected .fp-border{stroke:rgba(213,220,153,.95)!important;stroke-width:2.5!important}
-    .fp-room.selected .fp-bg{fill-opacity:.18!important}
-    .room-label{font-family:"DM Sans",sans-serif;font-size:9px;font-weight:600;text-anchor:middle;pointer-events:none}
-    .room-sub{font-family:"DM Sans",sans-serif;font-size:7.5px;text-anchor:middle;pointer-events:none}
-    .status-dot{animation:blink 2s infinite}
-    @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
-  </style>
-</defs>
-<rect width="700" height="440" fill="url(#fpgrid)"/>
-
-<!-- OUTER PERIMETER WALLS -->
-<rect x="28" y="26" width="548" height="310" fill="none" stroke="rgba(253,255,254,.22)" stroke-width="2.5" rx="2"/>
-
-<!-- ENTRY — enclosed porch, open to living via dashed threshold, no hard wall between -->
-<g class="fp-room" id="fp-entry" onclick="fpSelect(this,'entry','Entry','Enclosed entry — open to living room · no dividing wall')">
-  <rect class="fp-bg" x="28" y="26" width="68" height="170" fill="rgba(115,127,115,.08)" rx="1"/>
-  <rect class="fp-border" x="28" y="26" width="68" height="170" fill="none" stroke="rgba(115,127,115,.25)" stroke-width=".8" rx="1"/>
-  <!-- dashed threshold (not a wall) -->
-  <line x1="96" y1="26" x2="96" y2="196" stroke="rgba(115,127,115,.3)" stroke-width="1" stroke-dasharray="5,3"/>
-  <text class="room-label" x="62" y="108" fill="rgba(253,255,254,.55)">ENTRY</text>
-  <text class="room-sub" x="62" y="121" fill="rgba(115,127,115,.7)">open to living</text>
-</g>
-
-<!-- LIVING ROOM — open plan, no walls to kitchen or dining -->
-<g class="fp-room" id="fp-living" onclick="fpSelect(this,'living','Living Room','Open plan · no interior walls · headers elevated into attic')">
-  <rect class="fp-bg" x="96" y="26" width="178" height="170" fill="rgba(74,155,111,.09)" rx="1"/>
-  <rect class="fp-border" x="96" y="26" width="178" height="170" fill="none" stroke="rgba(74,155,111,.28)" stroke-width=".8" rx="1"/>
-  <circle class="status-dot" cx="258" cy="37" r="4" fill="rgba(74,155,111,.8)"/>
-  <text class="room-label" x="185" y="104" fill="rgba(74,155,111,.9)">LIVING ROOM</text>
-  <text class="room-sub" x="185" y="117" fill="rgba(74,155,111,.6)">18'2" · open plan · headers in attic</text>
-</g>
-
-<!-- KITCHEN — open to living + dining, NO wall between any of them -->
-<g class="fp-room" id="fp-kitchen" onclick="fpSelect(this,'kitchen','Kitchen','17'6" · open to living + dining · no interior walls')">
-  <rect class="fp-bg" x="274" y="26" width="142" height="118" fill="rgba(201,168,76,.1)" rx="1"/>
-  <rect class="fp-border" x="274" y="26" width="142" height="118" fill="none" stroke="rgba(201,168,76,.3)" stroke-width=".8" rx="1"/>
-  <!-- island dashed -->
-  <rect x="292" y="78" width="56" height="26" fill="rgba(201,168,76,.07)" stroke="rgba(201,168,76,.2)" stroke-width=".6" stroke-dasharray="3,2" rx="2"/>
-  <text x="320" y="94" font-family="DM Sans,sans-serif" font-size="6.5" fill="rgba(201,168,76,.4)" text-anchor="middle">ISLAND</text>
-  <text class="room-label" x="345" y="60" fill="rgba(201,168,76,.9)">KITCHEN</text>
-  <text class="room-sub" x="345" y="72" fill="rgba(201,168,76,.6)">17'6" · open plan</text>
-</g>
-
-<!-- DINING — open to living + kitchen, dashed lines only between zones -->
-<g class="fp-room" id="fp-dining" onclick="fpSelect(this,'dining','Dining Room','Open plan · connected to living + kitchen · no walls')">
-  <rect class="fp-bg" x="274" y="144" width="142" height="52" fill="rgba(74,155,111,.07)" rx="1"/>
-  <rect class="fp-border" x="274" y="144" width="142" height="52" fill="none" stroke="rgba(74,155,111,.18)" stroke-width=".6" stroke-dasharray="6,3" rx="1"/>
-  <text class="room-label" x="345" y="173" fill="rgba(253,255,254,.45)">DINING · 19'3"</text>
-</g>
-<!-- dashed zone dividers (NOT walls) between open-plan areas -->
-<line x1="274" y1="26" x2="274" y2="196" stroke="rgba(253,255,254,.06)" stroke-width="1" stroke-dasharray="4,4"/>
-<line x1="274" y1="144" x2="416" y2="144" stroke="rgba(253,255,254,.06)" stroke-width="1" stroke-dasharray="4,4"/>
-
-<!-- WOODEN DECK — Phase II (was covered patio, cement removed) -->
-<g class="fp-room" id="fp-deck" onclick="fpSelect(this,'deck','Wooden Deck — Phase II','Cement removed · open dirt · wooden deck coming in Phase II')">
-  <rect class="fp-bg" x="416" y="26" width="160" height="170" fill="rgba(115,127,115,.05)" rx="1"/>
-  <rect class="fp-border" x="416" y="26" width="160" height="170" fill="none" stroke="rgba(115,127,115,.2)" stroke-width=".8" stroke-dasharray="6,3" rx="1"/>
-  <text class="room-label" x="496" y="104" fill="rgba(115,127,115,.5)">WOODEN DECK</text>
-  <text class="room-sub" x="496" y="116" fill="rgba(115,127,115,.4)">Phase II · coming soon</text>
-</g>
-
-<!-- WALL separating living zone from bedroom row -->
-<rect x="28" y="196" width="548" height="2" fill="rgba(253,255,254,.15)" rx="1"/>
-
-<!-- MASTER BEDROOM — Leo (primary) was Bedroom 3 -->
-<g class="fp-room" id="fp-masterbr" onclick="fpSelect(this,'masterbr','Master Bedroom — Leo','Primary bedroom · 12' × 11'8" · cabinets in progress · dimmer fix needed')">
-  <rect class="fp-bg" x="28" y="198" width="138" height="138" fill="rgba(115,127,115,.08)" rx="1"/>
-  <rect class="fp-border" x="28" y="198" width="138" height="138" fill="none" stroke="rgba(115,127,115,.22)" stroke-width=".8" rx="1"/>
-  <text class="room-label" x="97" y="261" fill="rgba(253,255,254,.65)">MASTER BEDROOM</text>
-  <text class="room-sub" x="97" y="273" fill="rgba(115,127,115,.7)">Leo · 12' × 11'8" · primary</text>
-  <text class="room-sub" x="97" y="284" fill="rgba(201,168,76,.7)">Cabinets in progress</text>
-</g>
-
-<!-- J&J BATH — complete, new crew, excellent (was Master Bath label) -->
-<g class="fp-room" id="fp-jjbath" onclick="fpSelect(this,'jjbath','J&J Bath','Complete ✓ · new tile crew · excellent · would recommend')">
-  <rect class="fp-bg" x="166" y="198" width="62" height="138" fill="rgba(74,155,111,.12)" rx="1"/>
-  <rect class="fp-border" x="166" y="198" width="62" height="138" fill="none" stroke="rgba(74,155,111,.4)" stroke-width=".8" rx="1"/>
-  <text class="room-label" x="197" y="258" fill="rgba(74,155,111,.9)">J&J</text>
-  <text class="room-label" x="197" y="270" fill="rgba(74,155,111,.9)">BATH</text>
-  <text class="room-sub" x="197" y="283" fill="rgba(74,155,111,.65)">Complete ✓</text>
-</g>
-
-<!-- BEDROOM 1 — Leo (was Bedroom 2 / Mila) -->
-<g class="fp-room" id="fp-br1" onclick="fpSelect(this,'br1','Bedroom 1 — Leo','10'8" × 8'3" · cabinets in progress')">
-  <rect class="fp-bg" x="228" y="198" width="130" height="138" fill="rgba(115,127,115,.07)" rx="1"/>
-  <rect class="fp-border" x="228" y="198" width="130" height="138" fill="none" stroke="rgba(115,127,115,.2)" stroke-width=".8" rx="1"/>
-  <text class="room-label" x="293" y="261" fill="rgba(253,255,254,.55)">BEDROOM 1</text>
-  <text class="room-sub" x="293" y="273" fill="rgba(115,127,115,.6)">Leo · 10'8"</text>
-</g>
-
-<!-- PRIMARY / MASTER BATH — complete ✓ (was labeled J&J Bath) -->
-<g class="fp-room" id="fp-pbath" onclick="fpSelect(this,'pbath','Primary Bath','Complete ✓ · tile · plumbing · glass · fog film Friday')">
-  <rect class="fp-bg" x="358" y="198" width="78" height="138" fill="rgba(74,155,111,.13)" rx="1"/>
-  <rect class="fp-border" x="358" y="198" width="78" height="138" fill="none" stroke="rgba(74,155,111,.45)" stroke-width=".8" rx="1"/>
-  <text class="room-label" x="397" y="255" fill="rgba(74,155,111,.9)">PRIMARY</text>
-  <text class="room-label" x="397" y="267" fill="rgba(74,155,111,.9)">BATH</text>
-  <text class="room-sub" x="397" y="280" fill="rgba(74,155,111,.65)">Complete ✓</text>
-</g>
-
-<!-- BEDROOM 3 — MILA (was Primary Bedroom on right) -->
-<g class="fp-room" id="fp-br3" onclick="fpSelect(this,'br3','Bedroom 3 — Mila','13'6" × 11'8" · WRONG COLOR cabinet — full reinstall needed')">
-  <rect class="fp-bg" x="436" y="198" width="140" height="138" fill="rgba(224,122,95,.1)" rx="1"/>
-  <rect class="fp-border" x="436" y="198" width="140" height="138" fill="none" stroke="rgba(224,122,95,.35)" stroke-width=".8" rx="1"/>
-  <circle class="status-dot" cx="562" cy="210" r="4" fill="rgba(224,122,95,.85)"/>
-  <text class="room-label" x="506" y="261" fill="rgba(224,122,95,.9)">BEDROOM 3 — MILA</text>
-  <text class="room-sub" x="506" y="273" fill="rgba(224,122,95,.7)">13'6" · cabinet reinstall needed</text>
-</g>
-
-<!-- ADU — on same page, below main house -->
-<text x="352" y="352" font-family="DM Sans,sans-serif" font-size="8" fill="rgba(253,255,254,.12)" text-anchor="middle" font-style="italic">— — —  detached ADU below  — — —</text>
-<g class="fp-room" id="fp-adu" onclick="fpSelect(this,'adu','ADU — Garage Conversion','405 SF · south wall cabinets today · bath complete ✓ · speakers + A/C pending')">
-  <rect class="fp-bg" x="28" y="358" width="548" height="70" fill="rgba(201,168,76,.09)" rx="2"/>
-  <rect class="fp-border" x="28" y="358" width="548" height="70" fill="none" stroke="rgba(201,168,76,.35)" stroke-width="1" rx="2"/>
-  <!-- bath partition -->
-  <line x1="178" y1="358" x2="178" y2="428" stroke="rgba(253,255,254,.1)" stroke-width="1"/>
-  <text x="103" y="390" font-family="DM Sans,sans-serif" font-size="8" font-weight="600" fill="rgba(74,155,111,.7)" text-anchor="middle">ADU BATH</text>
-  <text x="103" y="402" font-family="DM Sans,sans-serif" font-size="7" fill="rgba(74,155,111,.5)" text-anchor="middle">Complete ✓</text>
-  <circle class="status-dot" cx="50" cy="368" r="4" fill="rgba(201,168,76,.8)"/>
-  <text class="room-label" x="375" y="388" fill="rgba(201,168,76,.85)">ADU STUDIO / BEDROOM — 405 SF</text>
-  <text class="room-sub" x="375" y="401" fill="rgba(201,168,76,.6)">South wall cabinets today · Sonos + speakers pending · A/C to check</text>
-</g>
-
-<!-- SCALE + COMPASS -->
-<text x="30" y="349" font-family="DM Sans,sans-serif" font-size="7" fill="rgba(253,255,254,.2)">Scale 1/4"=1' · 1,400 SF main house + 405 SF ADU · Ebru Kuyak design</text>
-<g transform="translate(648,34)">
-  <circle cx="10" cy="10" r="9" fill="rgba(253,255,254,.04)" stroke="rgba(253,255,254,.1)" stroke-width=".8"/>
-  <text x="10" y="14" font-family="DM Sans,sans-serif" font-size="8" font-weight="700" fill="rgba(253,255,254,.3)" text-anchor="middle">N</text>
-  <line x1="10" y1="4" x2="10" y2="8" stroke="rgba(253,255,254,.3)" stroke-width="1.2"/>
-</g>
-</svg>
-      <!-- Room detail panel — slides up on room tap -->
-      <div class="fp-panel" id="fp-panel">
-        <div class="fp-panel-head">
-          <div class="fp-panel-name" id="fp-pname">—</div>
-          <button class="fp-panel-close" onclick="closeFpPanel()">×</button>
+    <!-- ONBOARDING DEMO MODAL -->
+    <div id="fp-onboarding-overlay" style="display:none;position:absolute;inset:0;background:rgba(17,16,21,.88);z-index:200;align-items:center;justify-content:center">
+      <div id="fp-onboarding-modal" style="background:var(--d2);border:1px solid var(--l20);border-radius:16px;width:480px;max-width:90vw;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.5)">
+        <!-- Modal header -->
+        <div style="padding:20px 22px 0;display:flex;align-items:flex-start;justify-content:space-between">
+          <div>
+            <div style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--sage);margin-bottom:4px">Floor plan onboarding</div>
+            <div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:var(--white);letter-spacing:-.03em" id="ob-title">Let's draft your floor plan</div>
+            <div style="font-size:11px;color:var(--w50);margin-top:3px" id="ob-sub">Answer a few quick questions and we'll generate a draft floor plan for your project.</div>
+          </div>
+          <button onclick="closeOnboardingDemo()" style="background:var(--w08);border:none;border-radius:6px;width:28px;height:28px;cursor:pointer;color:var(--w50);font-size:14px;flex-shrink:0;margin-left:12px;font-family:inherit">✕</button>
         </div>
-        <div class="fp-trade-chips" id="fp-ptrades"></div>
-        <div class="fp-panel-btns">
-          <button class="btn-lime" style="font-size:10px;padding:5px 10px" onclick="startWalkthroughRoom(currentRoom)"><i class="ti ti-writing" style="font-size:11px"></i>Add notes</button>
-          <button class="btn-ghost" style="font-size:10px;padding:5px 10px" onclick="closeFpPanel()">Close</button>
+        <!-- Progress bar -->
+        <div style="padding:14px 22px 0">
+          <div style="height:2px;background:var(--w08);border-radius:2px;overflow:hidden">
+            <div id="ob-progress-bar" style="height:100%;background:var(--lime);border-radius:2px;transition:width .3s ease;width:11%"></div>
+          </div>
+          <div id="ob-step-label" style="font-size:9px;color:var(--sage);margin-top:4px">Step 1 of 9</div>
         </div>
-      </div>
-      <div class="wt-fab" id="wt-fab">
-        <button class="wt-fab-btn" onclick="startWalkthrough()"><i class="ti ti-walk" style="font-size:13px"></i>Start walkthrough</button>
+        <!-- Question area -->
+        <div style="padding:20px 22px 22px" id="ob-question-area"></div>
+        <!-- Footer nav -->
+        <div style="padding:0 22px 20px;display:flex;align-items:center;justify-content:space-between">
+          <button id="ob-back-btn" onclick="obBack()" style="background:var(--d3);border:1px solid var(--w08);border-radius:8px;padding:8px 16px;font-size:11px;font-weight:600;color:var(--w50);cursor:pointer;font-family:inherit;display:none">← Back</button>
+          <div style="flex:1"></div>
+          <button id="ob-next-btn" onclick="obNext()" style="background:var(--lime);border:none;border-radius:8px;padding:9px 20px;font-size:12px;font-weight:700;color:var(--black);cursor:pointer;font-family:inherit">Next →</button>
+        </div>
       </div>
     </div>
   </div>
-
   <!-- SCREEN: PROGRESS -->
   <div class="screen on" id="sc-progress">
     <div class="scrl" style="padding:16px">
@@ -935,24 +1156,82 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;
   <!-- SCREEN: FINANCE -->
   <div class="screen" id="sc-finance">
     <div class="scrl">
-      <div class="sh fu1"><span class="sh-title">Financials</span><span class="pill p-dl">$235k outstanding</span></div>
-      <div style="background:var(--d3);border:1px solid var(--w08);border-radius:var(--r);padding:12px;margin-bottom:10px" class="fu2">
-        <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:6px">
-          <div><div style="font-size:9px;color:var(--sage)">Total project</div><div style="font-family:Syne,sans-serif;font-size:20px;font-weight:700;color:var(--lime);letter-spacing:-.03em">$572,907</div></div>
-          <div style="text-align:right"><div style="font-size:9px;color:var(--sage)">Paid</div><div style="font-size:14px;font-weight:600;color:var(--ok)">$337,630</div></div>
+
+      <!-- Summary bar -->
+      <div style="background:var(--d3);border:1px solid var(--w08);border-radius:var(--r);padding:14px 16px;margin-bottom:12px" class="fu1">
+        <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:8px">
+          <div>
+            <div style="font-size:9px;color:var(--sage);text-transform:uppercase;letter-spacing:.08em">Total project</div>
+            <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:700;color:var(--lime);letter-spacing:-.03em">$572,907</div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-size:9px;color:var(--sage)">Paid</div>
+            <div style="font-size:16px;font-weight:600;color:var(--ok)">$337,630</div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-size:9px;color:var(--sage)">Outstanding</div>
+            <div style="font-size:16px;font-weight:600;color:var(--del)">$235,277</div>
+          </div>
         </div>
-        <div style="height:4px;background:var(--w08);border-radius:2px;overflow:hidden"><div style="height:100%;width:59%;background:var(--ok);border-radius:2px"></div></div>
-        <div style="font-size:9px;color:var(--sage);margin-top:3px">Outstanding: <span style="color:var(--del);font-weight:600">$235,277</span></div>
+        <div style="height:5px;background:var(--w08);border-radius:3px;overflow:hidden">
+          <div style="height:100%;width:59%;background:var(--ok);border-radius:3px"></div>
+        </div>
       </div>
-      <div class="fin-sec">Lance Todd Construction</div>
-      <div class="fin-row"><span class="fin-label">Paid (inv. 1–4)</span><span class="fin-amount" style="color:var(--ok)">$222,630</span></div>
-      <div class="fin-row"><span class="fin-label">Remodel 5 balance</span><span class="fin-amount" style="color:var(--del)">$4,540</span></div>
-      <div class="fin-row"><span class="fin-label">Remodel 6 balance</span><span class="fin-amount" style="color:var(--del)">$119,908</span></div>
-      <div class="fin-sec">Liliput Landscape</div>
-      <div class="fin-row"><span class="fin-label">Phase I (unsigned)</span><span class="fin-amount" style="color:var(--sage)">$110,829</span></div>
+
+      <!-- Finance tabs -->
+      <div style="display:flex;background:var(--d3);border-radius:8px;padding:3px;gap:2px;margin-bottom:12px" class="fu1">
+        <button class="ttab on" id="fin-tab-invoices" onclick="finTab('invoices',this)">Invoices</button>
+        <button class="ttab" id="fin-tab-purchased" onclick="finTab('purchased',this)">Purchased</button>
+        <button class="ttab" id="fin-tab-dream" onclick="finTab('dream',this)">Dream budget</button>
+      </div>
+
+      <!-- INVOICES TAB -->
+      <div id="fin-invoices" class="fu2">
+        <div style="font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--sage);margin-bottom:8px">Lance Todd Construction — Invoices</div>
+        <div id="invoice-list"></div>
+        <!-- Upload row -->
+        <div style="border:1.5px dashed var(--l20);border-radius:var(--r);padding:12px;text-align:center;margin-top:10px;cursor:pointer;transition:background .15s" onclick="alert('Document upload — PDF, PNG, XLSX accepted')" onmouseover="this.style.background='var(--l10)'" onmouseout="this.style.background='none'">
+          <i class="ti ti-upload" style="font-size:18px;color:var(--lime);margin-bottom:5px" aria-hidden="true"></i>
+          <div style="font-size:11px;font-weight:600;color:var(--lime)">Upload invoice</div>
+          <div style="font-size:10px;color:var(--w30);margin-top:2px">PDF, image, or spreadsheet</div>
+        </div>
+      </div>
+
+      <!-- PURCHASED TAB -->
+      <div id="fin-purchased" style="display:none" class="fu2">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+          <div style="font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--sage)">Purchased items</div>
+          <button onclick="addPurchasedItem()" style="display:flex;align-items:center;gap:4px;padding:5px 10px;background:var(--lime);color:var(--black);border:none;border-radius:6px;font-size:10px;font-weight:700;cursor:pointer;font-family:inherit">
+            <i class="ti ti-plus" style="font-size:11px" aria-hidden="true"></i> Add item
+          </button>
+        </div>
+        <div id="purchased-list"></div>
+        <div style="background:var(--d3);border:1px solid var(--w08);border-radius:var(--r);padding:10px 12px;margin-top:8px;display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:11px;color:var(--w50)">Total purchased</span>
+          <span style="font-size:14px;font-weight:700;color:var(--ok)" id="purchased-total">$0</span>
+        </div>
+      </div>
+
+      <!-- DREAM BUDGET TAB -->
+      <div id="fin-dream" style="display:none" class="fu2">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+          <div>
+            <div style="font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--sage)">Dream budget — to buy</div>
+            <div style="font-size:10px;color:var(--w30);margin-top:2px">Plan future purchases. Share with your designer.</div>
+          </div>
+          <button onclick="addDreamItem()" style="display:flex;align-items:center;gap:4px;padding:5px 10px;background:var(--lime);color:var(--black);border:none;border-radius:6px;font-size:10px;font-weight:700;cursor:pointer;font-family:inherit">
+            <i class="ti ti-plus" style="font-size:11px" aria-hidden="true"></i> Add item
+          </button>
+        </div>
+        <div id="dream-list"></div>
+        <div style="background:var(--d3);border:1px solid var(--w08);border-radius:var(--r);padding:10px 12px;margin-top:8px;display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:11px;color:var(--w50)">Dream budget total</span>
+          <span style="font-size:14px;font-weight:700;color:var(--lime)" id="dream-total">$0</span>
+        </div>
+      </div>
+
     </div>
   </div>
-
   <!-- SCREEN: NOTES / CHAT -->
   <div class="screen" id="sc-notes-screen">
     <div class="scrl">
@@ -979,7 +1258,12 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;
   </div>
 
   <!-- SCREEN: TEAM -->
-  <div class="screen" id="sc-team"><div class="scrl"><div class="sh fu1"><span class="sh-title">Team &amp; trades</span></div><div id="team-list" class="fu2"></div></div></div>
+  <div class="screen" id="sc-team">
+    <div class="scrl">
+      <div class="sh fu1"><span class="sh-title">Team &amp; trades</span></div>
+      <div id="team-list" class="fu2"></div>
+    </div>
+  </div>
 
   <!-- SCREEN: PRODUCTS -->
   <div class="screen" id="sc-products">
@@ -1419,21 +1703,49 @@ var teamData=[
   {name:'New tile crew',role:'Tile — J&J bath',rating:5,note:'Excellent. Complete. Would recommend. ★★★★★'},
   {name:'Liliput (Mariani Enterprises)',role:'Landscape',contact:'Brian McMorrow · 424-248-0128',rating:0,note:'Proposal #2982'},
 ];
-function renderTeam() {
+function renderTeam(){
   var el=document.getElementById('team-list');
-  if (!el) return;
-  el.innerHTML=teamData.map(function(t,ti) {
+  if(!el) return;
+  var ROLE_COLORS={
+    'GC':'background:rgba(74,155,111,.15);color:#7FC89A;border:1px solid rgba(74,155,111,.25)',
+    'Designer':'background:rgba(91,155,213,.12);color:#8BBCE0;border:1px solid rgba(91,155,213,.2)',
+    'Tile':'background:rgba(201,168,76,.15);color:#D4B96A;border:1px solid rgba(201,168,76,.25)',
+    'Landscape':'background:rgba(74,155,111,.1);color:#4A9B6F;border:1px solid rgba(74,155,111,.2)',
+    'Client':'background:rgba(213,220,153,.15);color:var(--lime);border:1px solid var(--l20)',
+  };
+  el.innerHTML=teamData.map(function(t,ti){
     var stars='';
     for(var s=1;s<=5;s++){
       var oc='rateTrade('+ti+','+s+',this.parentNode)';
-      stars+='<button class="star-btn'+(s<=t.rating?' on':'')+'" onclick="'+oc+'">&#9733;</button>';
+      stars+='<button class="star-btn'+(s<=t.rating?' on':'')+'" onclick="'+oc+'" aria-label="'+s+' stars">★</button>';
     }
-    return '<div class="team-card"><div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px">' +
-      '<div><div style="font-size:12px;font-weight:500;color:var(--white);margin-bottom:2px">'+t.name+'</div>' +
-      '<div style="font-size:10px;color:var(--sage)">'+t.role+(t.contact?' · '+t.contact:'')+'</div>' +
-      (t.note?'<div style="font-size:10px;color:var(--w50);margin-top:2px">'+t.note+'</div>':'')+'</div></div>' +
-      '<div style="display:flex;gap:2px;margin-top:7px">'+stars+'</div></div>';
+    var roleTag = t.tag||t.role.split(' ')[0];
+    var roleStyle = ROLE_COLORS[roleTag]||'background:var(--w04);color:var(--w50);border:1px solid var(--w08)';
+    var msgOc = 'openTeamMessage('+ti+')';
+    return '<div class="team-card">'+
+      '<div style="display:flex;align-items:flex-start;gap:10px">'+
+        '<div style="flex:1">'+
+          '<div style="display:flex;align-items:center;gap:7px;margin-bottom:3px;flex-wrap:wrap">'+
+            '<div style="font-size:12px;font-weight:500;color:var(--white)">'+t.name+'</div>'+
+            '<span style="font-size:9px;font-weight:600;padding:2px 8px;border-radius:20px;'+roleStyle+'">'+roleTag+'</span>'+
+          '</div>'+
+          '<div style="font-size:10px;color:var(--sage)">'+t.role+(t.contact?' · '+t.contact:'')+'</div>'+
+          (t.note?'<div style="font-size:10px;color:var(--w50);margin-top:2px">'+t.note+'</div>':'')+
+        '</div>'+
+        '<button onclick="'+msgOc+'" style="display:flex;align-items:center;gap:4px;padding:5px 10px;background:var(--d3);border:1px solid var(--w08);border-radius:6px;font-size:10px;font-weight:500;color:var(--w70);cursor:pointer;font-family:inherit;white-space:nowrap;flex-shrink:0;transition:all .15s">'+
+          '<i class="ti ti-message" style="font-size:12px" aria-hidden="true"></i> Message'+
+        '</button>'+
+      '</div>'+
+      '<div class="team-rating" style="margin-top:8px">'+stars+'</div>'+
+    '</div>';
   }).join('');
+}
+
+function openTeamMessage(ti){
+  var t=teamData[ti];
+  rpTab('chat',document.querySelectorAll('.rpt')[2]);
+  var inp=document.getElementById('rp-chat-in');
+  if(inp){inp.placeholder='Message '+t.name+'…';inp.focus();}
 }
 function rateTrade(ti,stars,container){
   teamData[ti].rating=stars;
@@ -1597,7 +1909,7 @@ function openModal(id){
   var m=modals[id];
   if(!m)return;
   var confirmAction = id==='addproduct' ? 'saveNewProduct()' : 'closeModal()';
-  document.getElementById('modal-body').innerHTML='<div class="modal-hd"><div class="modal-title">'+m.title+'</div><button class="modal-x" onclick="closeModal()">×</button></div><div style="margin-bottom:10px">'+m.body+'</div><div style="display:flex;gap:6px"><button class="btn-lime" onclick="'+confirmAction+'" style="padding:7px 14px;font-size:11px;font-weight:700">'+m.btn+'</button><button style="background:var(--w04);border:1px solid var(--w08);border-radius:var(--sm);padding:7px 11px;font-size:11px;color:var(--w70)" onclick="closeModal()">Cancel</button></div>';
+  document.getElementById('modal-body').innerHTML='<div class="modal-hd"><div class="modal-title">'+m.title+'</div><button class="modal-x" onclick="closeModal()">x</button></div><div style="margin-bottom:10px">'+m.body+'</div><div style="display:flex;gap:6px"><button class="btn-lime" onclick="'+confirmAction+'" style="padding:7px 14px;font-size:11px;font-weight:700">'+m.btn+'</button><button style="background:var(--w04);border:1px solid var(--w08);border-radius:var(--sm);padding:7px 11px;font-size:11px;color:var(--w70)" onclick="closeModal()">Cancel</button></div>';
   document.getElementById('modal-wrap').classList.add('on');
 }
 
@@ -1640,7 +1952,9 @@ document.addEventListener('DOMContentLoaded',function(){
   pgRenderTradeBtns();
   pgSelectPhase(5);
   pgSelectTrade('Plumber');
-  console.log('Common Ground v11 — init OK');
+  renderInvoices();
+  renderMoodBoard();
+  console.log('Common Ground v13 — init OK');
 });
 
 function highlightQuickRef(){
@@ -1984,6 +2298,396 @@ function pgAddTask(trade){
   if(!v||!v.trim()) return;
   PG_TRADES[trade].rem.push(v.trim());
   pgSelectTrade(trade);
+}
+
+
+/* ══════════════════════════════════════════════════
+   FLOOR PLAN — room data + interactions   (v12)
+   ══════════════════════════════════════════════════ */
+var FP_ROOMS = {
+  entry:{name:'Entry',size:"6ft x 12ft",status:'progress',statusLabel:'In progress',
+    trades:[{i:'🏗️',n:'GC — Lance Todd',s:'active',l:'Active'},{i:'⚡',n:'Electrician',s:'done',l:'Done'}],
+    notes:['Drywall patching pending','Front door purchase + install — color TBD with Max']},
+  living:{name:'Living Room',size:"Open plan · 18ft x 15ft",status:'progress',statusLabel:'In progress',
+    trades:[{i:'⚡',n:'Electrician',s:'done',l:'Done'},{i:'📺',n:'Sonos / AV',s:'issue',l:'Label wires first'},{i:'🔥',n:'Fireplace',s:'issue',l:'Registers — manual p.4'}],
+    notes:['Vapor fireplace — cooling registers required (manual p.4)','CRITICAL: Label Sonos wires before connecting']},
+  kitchen:{name:'Kitchen',size:"Open plan · 21ft x 12ft",status:'progress',statusLabel:'In progress',
+    trades:[{i:'🔧',n:'Plumber',s:'done',l:'Done'},{i:'⚡',n:'Electrician',s:'done',l:'Done'},{i:'🏠',n:'Appliance',s:'active',l:'Active'}],
+    notes:['Refrigerator clearance — verify 4in side clearance (AI Scanner flag)']},
+  dining:{name:'Dining Room',size:"Open plan · 14ft x 15ft",status:'done',statusLabel:'Complete',
+    trades:[{i:'🏗️',n:'GC',s:'done',l:'Done'}],notes:[]},
+  deck:{name:'Wooden Deck',size:"Phase II · 21ft x 12ft",status:'pending',statusLabel:'Phase II — Pending',
+    trades:[{i:'🌿',n:'Landscape — Liliput',s:'pending',l:'Quote pending'}],
+    notes:['Cement removed — open dirt','Ipe deck quote requested: D1 21ftx14 + D2 17ftx14']},
+  master:{name:'Master Bedroom',size:"Leo · Primary · 21ft x 15ft",status:'progress',statusLabel:'In progress',
+    trades:[{i:'⚡',n:'Electrician',s:'issue',l:'Fix dimmer'},{i:'🪵',n:'Cabinets',s:'active',l:'Doors + drawers pending'}],
+    notes:['Dimmer fix — master bedroom (uneven)','Cabinet doors + drawers still needed']},
+  pbath:{name:'Primary Bath',size:"9ft x 12ft",status:'done',statusLabel:'Complete ✓',
+    trades:[{i:'🔧',n:'Plumber',s:'done',l:'Done'},{i:'🪟',n:'Glass',s:'done',l:'Done'},{i:'⚡',n:'Smart glass',s:'done',l:'Done'}],
+    notes:['Fog film complete ✓','Towel warmer installed ✓','All fixtures complete ✓']},
+  jjbath:{name:'J&J Bath',size:"14ft x 12ft",status:'done',statusLabel:'Complete ✓',
+    trades:[{i:'🏗️',n:'New tile crew',s:'done',l:'★★★★★'},{i:'🔧',n:'Plumber',s:'issue',l:'Tub knob gap'},{i:'🪟',n:'Glass',s:'done',l:'Done'}],
+    notes:['Tile complete ✓ (new crew — 5 stars)','Tub filler faucet — awaiting delivery','Shower trim — awaiting tile piece']},
+  br1:{name:'Bedroom 1',size:"Leo · 9ft x 12ft",status:'progress',statusLabel:'In progress',
+    trades:[{i:'🪵',n:'Cabinets',s:'active',l:'Doors + drawers pending'}],
+    notes:['Cabinet base installed ✓','Doors + drawers still needed']},
+  mila:{name:'Bedroom 3 — Mila',size:"15ft x 12ft",status:'issue',statusLabel:'Correction needed',
+    trades:[{i:'🪵',n:'Cabinet installer',s:'issue',l:'Wrong color — reinstall'}],
+    notes:['WRONG COLOR cabinet installed — full reinstall required','Confirm correct color with supplier first']},
+  laundry:{name:'Laundry Room',size:"9ft x 12ft",status:'issue',statusLabel:'Check required',
+    trades:[{i:'🏗️',n:'GC',s:'active',l:'Inspect drains'}],
+    notes:['Washer — soap residue after cycles','Dryer — not heating (possible outlet blockage)','Cabinet build-out above W/D needed']},
+  adubath:{name:'ADU Bath',size:"8ft x 7ft",status:'done',statusLabel:'Complete ✓',
+    trades:[{i:'🏗️',n:'Tile crew',s:'done',l:'Done'},{i:'🔧',n:'Plumber',s:'done',l:'Done'}],
+    notes:['All tile + plumbing complete ✓']},
+  adustudio:{name:'ADU Studio',size:"405 SF · 30ft x 12ft",status:'progress',statusLabel:'In progress',
+    trades:[{i:'🪵',n:'Cabinet crew',s:'active',l:'South wall active'},{i:'⚡',n:'Electrician',s:'active',l:'Sonos pending'},{i:'❄️',n:'HVAC mini-split',s:'active',l:'Commissioning pending'}],
+    notes:['Cabinet framework south wall in progress','Sonos — label wires before connecting','A/C commissioning + tape removal needed']},
+};
+
+var fpSelected = null;
+
+function fpSelect(id){
+  if(fpSelected){
+    var prev = document.getElementById('fpr-'+fpSelected);
+    if(prev) prev.classList.remove('fp-sel');
+  }
+  fpSelected = id;
+  var el = document.getElementById('fpr-'+id);
+  if(el) el.classList.add('fp-sel');
+
+  var d = FP_ROOMS[id]; if(!d) return;
+  document.getElementById('fp-panel-idle').style.display = 'none';
+  var pc = document.getElementById('fp-panel-content');
+  pc.style.display = 'block';
+
+  document.getElementById('fpc-name').textContent = d.name;
+  document.getElementById('fpc-size').textContent = d.size;
+
+  var sc={done:'background:rgba(74,155,111,.15);color:#4A9B6F;border:1px solid rgba(74,155,111,.3)',
+          progress:'background:rgba(201,168,76,.15);color:#C9A84C;border:1px solid rgba(201,168,76,.3)',
+          issue:'background:rgba(224,122,95,.15);color:#E07A5F;border:1px solid rgba(224,122,95,.3)',
+          pending:'background:rgba(253,255,254,.06);color:rgba(253,255,254,.5);border:1px solid rgba(253,255,254,.1)'};
+  var dc={done:'#4A9B6F',progress:'#C9A84C',issue:'#E07A5F',pending:'rgba(253,255,254,.3)'};
+  document.getElementById('fpc-status').innerHTML =
+    '<span style="display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:600;padding:3px 9px;border-radius:20px;'+sc[d.status]+'">'+
+    '<span style="width:5px;height:5px;border-radius:50%;background:'+dc[d.status]+';animation:blink 2s infinite;flex-shrink:0"></span>'+d.statusLabel+'</span>';
+
+  var ts={done:'background:rgba(74,155,111,.12);color:#4A9B6F',active:'background:rgba(201,168,76,.12);color:#C9A84C',issue:'background:rgba(224,122,95,.12);color:#E07A5F',pending:'background:rgba(253,255,254,.06);color:rgba(253,255,254,.4)'};
+  document.getElementById('fpc-trades-lbl').style.display = d.trades.length ? 'block' : 'none';
+  document.getElementById('fpc-trades').innerHTML = d.trades.map(function(t){
+    return '<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid rgba(253,255,254,.06);font-size:11px">'+
+      '<div style="width:22px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;background:rgba(253,255,254,.05)">'+t.i+'</div>'+
+      '<span style="flex:1;color:rgba(253,255,254,.7)">'+t.n+'</span>'+
+      '<span style="font-size:9px;font-weight:600;padding:1px 6px;border-radius:20px;'+ts[t.s]+'">'+t.l+'</span></div>';
+  }).join('');
+
+  document.getElementById('fpc-notes').innerHTML = d.notes.map(function(n){
+    var u=n.toLowerCase().indexOf('critical')!==-1||n.toLowerCase().indexOf('wrong')!==-1||n.toLowerCase().indexOf('reinstall')!==-1;
+    return '<div style="background:'+(u?'rgba(224,122,95,.06)':'var(--d3)')+';border:1px solid '+(u?'rgba(224,122,95,.3)':'rgba(253,255,254,.08)')+';border-radius:8px;padding:10px 12px;font-size:11px;color:'+(u?'rgba(224,122,95,.85)':'rgba(253,255,254,.55)')+';line-height:1.65;margin-top:8px">'+n+'</div>';
+  }).join('');
+}
+
+function fpResetSelection(){
+  if(fpSelected){ var el=document.getElementById('fpr-'+fpSelected); if(el) el.classList.remove('fp-sel'); }
+  fpSelected=null;
+  document.getElementById('fp-panel-idle').style.display='flex';
+  document.getElementById('fp-panel-content').style.display='none';
+}
+
+function fpToggleLegend(){
+  var l=document.getElementById('fp-legend');
+  l.style.display=l.style.display==='none'?'block':'none';
+}
+
+function fpAddNote(){
+  if(!fpSelected) return;
+  var v=prompt('Add note for '+FP_ROOMS[fpSelected].name+':');
+  if(!v||!v.trim()) return;
+  FP_ROOMS[fpSelected].notes.push(v.trim());
+  fpSelect(fpSelected);
+}
+
+/* ══════════════════════════════════════════════════
+   FLOOR PLAN ONBOARDING DEMO   (v12)
+   ══════════════════════════════════════════════════ */
+var OB_ANSWERS = {};
+var OB_STEP = 0;
+var OB_QUESTIONS = [
+  {key:'bedrooms',q:'How many bedrooms?',type:'tap',opts:['1','2','3','4','5+'],icon:'🛏️'},
+  {key:'bathrooms',q:'How many bathrooms?',type:'tap',opts:['1','1.5','2','2.5','3','3+'],icon:'🚿'},
+  {key:'sqft',q:'Approximate square footage?',type:'tap',opts:['Under 800','800–1,200','1,200–1,800','1,800–2,500','2,500–3,500','3,500+'],icon:'📐'},
+  {key:'stories',q:'Single story or multi-level?',type:'tap',opts:['Single story','2 floors','3+ floors','Split level'],icon:'🏠'},
+  {key:'openplan',q:'Is the living area open plan?',type:'tap',opts:['Yes — fully open','Partially open','Separate rooms'],icon:'🪟'},
+  {key:'garage',q:'Do you have a garage?',type:'tap',opts:['No garage','1 car','2 car','3+ car','Carport only'],icon:'🚗'},
+  {key:'adu',q:'Any ADU or guest unit?',type:'tap',opts:['No','Attached ADU','Detached ADU','Guest room only'],icon:'🏡'},
+  {key:'special',q:'Any special rooms? (select all that apply)',type:'multi',opts:['Home office','Laundry room','Mudroom','Gym / workout','Theater','Pool house','Studio','Wine cellar'],icon:'✨'},
+  {key:'shape',q:"What's the rough shape of the footprint?",type:'tap',opts:['Rectangle','L-shape','U-shape','Square','Irregular'],icon:'🔷'},
+];
+
+function openOnboardingDemo(){
+  OB_ANSWERS = {}; OB_STEP = 0;
+  document.getElementById('fp-onboarding-overlay').style.display='flex';
+  obRender();
+}
+
+function closeOnboardingDemo(){
+  document.getElementById('fp-onboarding-overlay').style.display='none';
+}
+
+function obRender(){
+  var q = OB_QUESTIONS[OB_STEP];
+  var pct = Math.round(((OB_STEP+1)/OB_QUESTIONS.length)*100);
+  document.getElementById('ob-progress-bar').style.width = pct+'%';
+  document.getElementById('ob-step-label').textContent = 'Step '+(OB_STEP+1)+' of '+OB_QUESTIONS.length;
+  document.getElementById('ob-title').textContent = q.q;
+  document.getElementById('ob-sub').textContent = '';
+  document.getElementById('ob-back-btn').style.display = OB_STEP > 0 ? 'block' : 'none';
+  document.getElementById('ob-next-btn').textContent = OB_STEP === OB_QUESTIONS.length-1 ? 'Generate draft ✦' : 'Next →';
+
+  var cur = OB_ANSWERS[q.key] || (q.type==='multi'?[]:'');
+  var html = '<div style="text-align:center;font-size:28px;margin-bottom:14px">'+q.icon+'</div>';
+  html += '<div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center">';
+  q.opts.forEach(function(opt){
+    var sel = q.type==='multi' ? (cur.indexOf(opt)!==-1) : (cur===opt);
+    var base = 'padding:9px 16px;border-radius:8px;border:1.5px solid;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s;';
+    var style = sel
+      ? base+'background:var(--lime);border-color:var(--lime);color:var(--black)'
+      : base+'background:var(--d3);border-color:var(--w08);color:var(--w70)';
+    var oc = q.type==='multi'
+      ? 'obToggleMulti('+JSON.stringify(q.key)+','+JSON.stringify(opt)+')'
+      : 'obPickSingle('+JSON.stringify(q.key)+','+JSON.stringify(opt)+')';
+    html += '<button style="'+style+'" onclick="'+oc+'">'+opt+'</button>';
+  });
+  html += '</div>';
+  document.getElementById('ob-question-area').innerHTML = html;
+}
+
+function obPickSingle(key,val){
+  OB_ANSWERS[key]=val;
+  obRender();
+}
+
+function obToggleMulti(key,val){
+  if(!OB_ANSWERS[key]) OB_ANSWERS[key]=[];
+  var arr=OB_ANSWERS[key];
+  var i=arr.indexOf(val);
+  if(i===-1) arr.push(val); else arr.splice(i,1);
+  obRender();
+}
+
+function obNext(){
+  if(OB_STEP===OB_QUESTIONS.length-1){ obFinish(); return; }
+  OB_STEP++;
+  obRender();
+}
+
+function obBack(){
+  if(OB_STEP>0){ OB_STEP--; obRender(); }
+}
+
+function obFinish(){
+  var beds = OB_ANSWERS.bedrooms||'—';
+  var baths = OB_ANSWERS.bathrooms||'—';
+  var sqft = OB_ANSWERS.sqft||'—';
+  var stories = OB_ANSWERS.stories||'—';
+  var open = OB_ANSWERS.openplan||'—';
+  var adu = OB_ANSWERS.adu||'None';
+  var special = (OB_ANSWERS.special||[]).join(', ')||'None';
+  var shape = OB_ANSWERS.shape||'—';
+
+  document.getElementById('ob-title').textContent = 'Draft ready to generate';
+  document.getElementById('ob-step-label').textContent = 'All steps complete';
+  document.getElementById('ob-progress-bar').style.width = '100%';
+  document.getElementById('ob-back-btn').style.display = 'none';
+  document.getElementById('ob-next-btn').style.display = 'none';
+
+  document.getElementById('ob-question-area').innerHTML =
+    '<div style="text-align:center;font-size:32px;margin-bottom:12px">✦</div>'+
+    '<div style="font-family:Syne,sans-serif;font-size:14px;font-weight:700;color:var(--lime);text-align:center;margin-bottom:4px">Floor plan summary</div>'+
+    '<div style="font-size:11px;color:var(--w50);text-align:center;margin-bottom:16px">Based on your answers, Common Ground will generate a branded draft floor plan.</div>'+
+    '<div style="background:var(--d3);border:1px solid var(--w08);border-radius:10px;padding:14px;display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px">'+
+    obSummaryRow('🛏️','Bedrooms',beds)+
+    obSummaryRow('🚿','Bathrooms',baths)+
+    obSummaryRow('📐','Square footage',sqft)+
+    obSummaryRow('🏠','Stories',stories)+
+    obSummaryRow('🪟','Open plan',open)+
+    obSummaryRow('🚗','Garage',OB_ANSWERS.garage||'—')+
+    obSummaryRow('🏡','ADU',adu)+
+    obSummaryRow('🔷','Shape',shape)+
+    '</div>'+
+    (special!=='None'?'<div style="font-size:10px;color:var(--w50);margin-bottom:12px"><span style="color:var(--sage)">Special rooms:</span> '+special+'</div>':'')+
+    '<div style="display:flex;gap:8px">'+
+    '<button onclick="closeOnboardingDemo()" style="flex:1;padding:10px;background:var(--lime);color:var(--black);border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">✦ Generate draft floor plan</button>'+
+    '<button onclick="closeOnboardingDemo()" style="padding:10px 14px;background:var(--d3);color:var(--w50);border:1px solid var(--w08);border-radius:8px;font-size:11px;cursor:pointer;font-family:inherit">Close</button>'+
+    '</div>';
+}
+
+function obSummaryRow(icon,label,val){
+  return '<div style="display:flex;align-items:center;gap:7px;font-size:11px">'+
+    '<span>'+icon+'</span>'+
+    '<div>'+
+    '<div style="font-size:9px;color:var(--sage);text-transform:uppercase;letter-spacing:.05em">'+label+'</div>'+
+    '<div style="color:var(--white);font-weight:600">'+val+'</div>'+
+    '</div></div>';
+}
+
+
+/* ── FINANCE (v13) ── */
+var INVOICES = [
+  {num:'Invoice 1',contractor:'Lance Todd Construction',amount:45000,paid:45000,date:'Oct 2025',status:'paid',desc:'Demo + rough framing'},
+  {num:'Invoice 2',contractor:'Lance Todd Construction',amount:55000,paid:55000,date:'Nov 2025',status:'paid',desc:'MEP rough-in + insulation'},
+  {num:'Invoice 3',contractor:'Lance Todd Construction',amount:62630,paid:62630,date:'Dec 2025',status:'paid',desc:'Drywall + windows + doors'},
+  {num:'Invoice 4',contractor:'Lance Todd Construction',amount:60000,paid:60000,date:'Jan 2026',status:'paid',desc:'Tile work + interior paint'},
+  {num:'Invoice 5',contractor:'Lance Todd Construction',amount:120000,paid:115460,date:'Mar 2026',status:'partial',desc:'Fixtures + cabinets + finish',balance:4540},
+  {num:'Invoice 6',contractor:'Lance Todd Construction',amount:119908,paid:0,date:'Jun 2026',status:'due',desc:'Final phase — fixtures + ADU finish',balance:119908},
+];
+
+var PURCHASED = [
+  {name:'Vapor fireplace',room:'Living room',price:4800,url:'',note:'Installed ✓ — registers still needed'},
+  {name:'Sonos Era 100 x6 + amps',room:'Whole house',price:3200,url:'',note:'Awaiting wire labeling'},
+  {name:'Smart glass fog film',room:'Master bath',price:1400,url:'',note:'Connections Friday'},
+  {name:'Moen Flo water valve',room:'Main line',price:680,url:'',note:'Installed ✓'},
+  {name:'Legrand Radiant switches',room:'Throughout',price:890,url:'',note:'Installed ✓'},
+];
+
+var DREAM = [
+  {name:'Ipe wood deck — D1',room:'Kitchen exterior',price:0,url:'',note:'Quote pending — 21ftx14ft'},
+  {name:'Ipe wood deck — D2',room:'Bedroom exterior',price:0,url:'',note:'Quote pending — 17ftx14ft'},
+  {name:'Gutter + drain system',room:'Full house',price:0,url:'',note:'Quote pending from GC'},
+];
+
+function finTab(name, btn){
+  ['invoices','purchased','dream'].forEach(function(t){
+    var el=document.getElementById('fin-'+t);
+    if(el) el.style.display = t===name?'block':'none';
+  });
+  document.querySelectorAll('[id^="fin-tab-"]').forEach(function(b){b.classList.remove('on');});
+  if(btn) btn.classList.add('on');
+  if(name==='purchased') renderPurchased();
+  if(name==='dream') renderDream();
+  if(name==='invoices') renderInvoices();
+}
+
+function renderInvoices(){
+  var el=document.getElementById('invoice-list'); if(!el) return;
+  el.innerHTML=INVOICES.map(function(inv,i){
+    var sc=inv.status==='paid'?'var(--ok)':inv.status==='partial'?'var(--amb)':'var(--del)';
+    var sl=inv.status==='paid'?'Paid ✓':inv.status==='partial'?'Partial':'Due';
+    var bg=inv.status==='paid'?'var(--ok15)':inv.status==='partial'?'var(--am15)':'var(--dl15)';
+    var prevOc='previewInv('+i+')';
+    return '<div style="background:var(--d3);border:1px solid var(--w08);border-radius:var(--r);padding:12px 14px;margin-bottom:7px;display:flex;align-items:flex-start;gap:10px">'+
+      '<div style="width:36px;height:36px;border-radius:var(--r);background:'+bg+';display:flex;align-items:center;justify-content:center;flex-shrink:0">'+
+        '<i class="ti ti-file-invoice" style="font-size:16px;color:'+sc+'" aria-hidden="true"></i>'+
+      '</div>'+
+      '<div style="flex:1;min-width:0">'+
+        '<div style="display:flex;align-items:center;gap:6px;margin-bottom:2px">'+
+          '<div style="font-size:12px;font-weight:500;color:var(--white)">'+inv.num+'</div>'+
+          '<span style="font-size:9px;font-weight:600;padding:1px 6px;border-radius:20px;background:'+bg+';color:'+sc+'">'+sl+'</span>'+
+        '</div>'+
+        '<div style="font-size:10px;color:var(--sage)">'+inv.desc+' · '+inv.date+'</div>'+
+        (inv.balance?'<div style="font-size:10px;color:'+sc+';margin-top:2px">Balance: $'+inv.balance.toLocaleString()+'</div>':'')+
+      '</div>'+
+      '<div style="text-align:right;flex-shrink:0">'+
+        '<div style="font-size:13px;font-weight:600;color:var(--white)">$'+inv.amount.toLocaleString()+'</div>'+
+        '<button onclick="'+prevOc+'" style="font-size:9px;padding:2px 7px;background:var(--d2);border:1px solid var(--w08);border-radius:4px;color:var(--w50);cursor:pointer;font-family:inherit;margin-top:4px">Preview</button>'+
+      '</div>'+
+    '</div>';
+  }).join('');
+}
+
+function previewInv(i){
+  var inv=INVOICES[i];
+  alert(inv.num+' — '+inv.desc+'\nAmount: $'+inv.amount.toLocaleString()+'\nStatus: '+inv.status.charAt(0).toUpperCase()+inv.status.slice(1));
+}
+
+function renderPurchased(){
+  var el=document.getElementById('purchased-list'); if(!el) return;
+  var total=PURCHASED.reduce(function(s,i){return s+i.price;},0);
+  document.getElementById('purchased-total').textContent='$'+total.toLocaleString();
+  el.innerHTML=PURCHASED.map(function(item,i){
+    return '<div style="background:var(--d3);border:1px solid var(--w08);border-radius:var(--r);padding:10px 12px;margin-bottom:6px;display:flex;align-items:center;gap:10px">'+
+      '<div style="flex:1;min-width:0">'+
+        '<div style="font-size:11px;font-weight:500;color:var(--white);margin-bottom:1px">'+item.name+'</div>'+
+        '<div style="font-size:10px;color:var(--sage)">'+item.room+(item.note?' · '+item.note:'')+'</div>'+
+      '</div>'+
+      '<div style="text-align:right;flex-shrink:0">'+
+        (item.price?'<div style="font-size:12px;font-weight:600;color:var(--ok)">$'+item.price.toLocaleString()+'</div>':'<div style="font-size:10px;color:var(--w30)">No price</div>')+
+        (item.url?'<a href="'+item.url+'" target="_blank" style="font-size:9px;color:var(--lime)">View ↗</a>':'')+
+      '</div>'+
+    '</div>';
+  }).join('');
+}
+
+function renderDream(){
+  var el=document.getElementById('dream-list'); if(!el) return;
+  var total=DREAM.reduce(function(s,i){return s+(i.price||0);},0);
+  document.getElementById('dream-total').textContent=total>0?'$'+total.toLocaleString():'TBD';
+  el.innerHTML=DREAM.map(function(item,i){
+    return '<div style="background:var(--d3);border:1px solid var(--l20);border-radius:var(--r);padding:10px 12px;margin-bottom:6px;display:flex;align-items:center;gap:10px">'+
+      '<div style="flex:1;min-width:0">'+
+        '<div style="font-size:11px;font-weight:500;color:var(--white);margin-bottom:1px">'+item.name+'</div>'+
+        '<div style="font-size:10px;color:var(--sage)">'+item.room+(item.note?' · '+item.note:'')+'</div>'+
+      '</div>'+
+      '<div style="text-align:right;flex-shrink:0">'+
+        (item.price?'<div style="font-size:12px;font-weight:600;color:var(--lime)">$'+item.price.toLocaleString()+'</div>':'<div style="font-size:10px;color:var(--w30)">Quote TBD</div>')+
+        (item.url?'<a href="'+item.url+'" target="_blank" style="font-size:9px;color:var(--lime)">View ↗</a>':'')+
+      '</div>'+
+    '</div>';
+  }).join('');
+}
+
+function addPurchasedItem(){
+  var name=prompt('Item name:'); if(!name||!name.trim()) return;
+  var price=parseFloat(prompt('Price (or 0):'))||0;
+  var room=prompt('Room:')||'';
+  var url=prompt('URL (optional):')||'';
+  PURCHASED.push({name:name.trim(),room:room,price:price,url:url,note:''});
+  renderPurchased();
+  var total=PURCHASED.reduce(function(s,i){return s+i.price;},0);
+  document.getElementById('purchased-total').textContent='$'+total.toLocaleString();
+}
+
+function addDreamItem(){
+  var name=prompt('Item name:'); if(!name||!name.trim()) return;
+  var price=parseFloat(prompt('Estimated price (or 0 if unknown):'))||0;
+  var room=prompt('Room:')||'';
+  var url=prompt('Product URL (optional):')||'';
+  DREAM.push({name:name.trim(),room:room,price:price,url:url,note:''});
+  renderDream();
+}
+
+/* ── MOOD BOARD (v13) ── */
+var MOOD_ITEMS = [
+  {title:'Kitchen island inspiration',img:'🏠',tag:'Kitchen',src:''},
+  {title:'Master bath tile scheme',img:'🛁',tag:'Master bath',src:''},
+  {title:'Living room lighting',img:'💡',tag:'Living',src:''},
+  {title:'Deck / outdoor living',img:'🌿',tag:'Deck Phase II',src:''},
+];
+
+function renderMoodBoard(){
+  var el=document.getElementById('mood-board-grid'); if(!el) return;
+  el.innerHTML=MOOD_ITEMS.map(function(item,i){
+    return '<div style="background:var(--d3);border:1px solid var(--w08);border-radius:10px;overflow:hidden;cursor:pointer">'+
+      '<div style="height:90px;background:var(--d4);display:flex;align-items:center;justify-content:center;font-size:28px;position:relative">'+
+        item.img+
+        '<span style="position:absolute;top:5px;left:5px;font-size:8px;font-weight:600;background:var(--d2);color:var(--w50);padding:2px 6px;border-radius:20px;border:1px solid var(--w08)">'+item.tag+'</span>'+
+      '</div>'+
+      '<div style="padding:8px 10px">'+
+        '<div style="font-size:10px;font-weight:500;color:var(--white);margin-bottom:2px">'+item.title+'</div>'+
+        '<div style="font-size:9px;color:var(--w30)">Tap to open</div>'+
+      '</div>'+
+    '</div>';
+  }).join('')+
+  '<div style="background:var(--d3);border:1.5px dashed var(--l20);border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-height:130px;cursor:pointer" onclick="connectPinterest()">'+
+    '<i class="ti ti-brand-pinterest" style="font-size:22px;color:var(--lime)" aria-hidden="true"></i>'+
+    '<div style="font-size:10px;font-weight:600;color:var(--lime)">Connect Pinterest</div>'+
+    '<div style="font-size:9px;color:var(--w30);text-align:center;padding:0 10px">Link your board to sync</div>'+
+  '</div>';
+}
+
+function connectPinterest(){
+  alert('Pinterest board sync\n\nEnter your board URL:\nhttps://www.pinterest.com/yourboard/');
 }
 
 </script>
