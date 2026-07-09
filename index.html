@@ -450,6 +450,12 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;
     width:220px;z-index:100;transition:left .25s}
   .sb.on{left:0}
   .mob-btn{display:flex}
+  .top-pill{display:none !important}
+  .top-page{display:none !important}
+  .btn-ghost{display:none !important}
+  .btn-lime{display:none !important}
+  .top-avatar{display:none !important}
+  .top-right > div[style*="width:1px"]{display:none !important}
   .brief-stats{grid-template-columns:repeat(2,1fr)}
   .brief-3col{grid-template-columns:1fr}
   .work-cols{grid-template-columns:1fr}
@@ -1568,7 +1574,7 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;
 
     <!-- SCREEN: OUTDOOR LOG -->
   <div class="screen" id="sc-outdoor-log">
-    <div class="scrl" style="padding:0">
+    <div class="scrl" style="padding:0;overflow-x:hidden;max-width:100%">
 
       <!-- HEADER -->
       <div style="padding:14px 18px 12px;border-bottom:1px solid var(--w08);background:var(--d1);display:flex;align-items:center;gap:10px;flex-shrink:0">
@@ -1579,7 +1585,7 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;
         <span style="font-size:9px;font-weight:700;background:var(--am15);color:var(--amb);border:1px solid var(--am30);border-radius:20px;padding:3px 10px;letter-spacing:.05em">Decisions needed</span>
       </div>
 
-      <div class="od-padding" style="padding:16px;display:flex;flex-direction:column;gap:18px">
+      <div class="od-padding" style="padding:16px;display:flex;flex-direction:column;gap:18px;overflow-x:hidden;max-width:100%;word-break:break-word">
 
         <!-- TEAM MESSAGE -->
         <div style="background:var(--d2);border:1px solid var(--l20);border-radius:12px;padding:18px 20px;position:relative;overflow:hidden" class="fu1">
@@ -1626,7 +1632,7 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;
             <span style="font-size:12px;font-weight:600;color:var(--white)">Site plan — front yard concept</span>
             <span style="font-size:9px;font-weight:700;background:var(--am15);color:var(--amb);border:1px solid var(--am30);border-radius:20px;padding:2px 8px">Rough · not to scale</span>
           </div>
-          <img src="data:image/jpeg;base64,{plan}" style="width:100%;display:block" alt="Front yard concept plan">
+          <img src="https://cdn.jsdelivr.net/gh/bennyg10/commonground@main/assets/plan.jpg" style="width:100%;display:block" alt="Front yard concept plan">
           <div class="od-plan-img" style="padding:10px 16px;font-size:10px;color:var(--w30);border-top:1px solid var(--w08);line-height:1.65">
             House at top · Sidewalk at bottom · Red outlines = active zones · Tan (top right) = Master Bed Deck Phase II
           </div>
@@ -1679,7 +1685,7 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;
           <div style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--sage);margin-bottom:10px">Design references</div>
           <div class="od-grid-2" style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
             <div style="background:var(--d2);border:1px solid var(--w08);border-radius:10px;overflow:hidden">
-              <img src="data:image/jpeg;base64,{gate}" class="od-ref-img" style="width:100%;height:160px;object-fit:cover;display:block" alt="Entry gate reference">
+              <img src="https://cdn.jsdelivr.net/gh/bennyg10/commonground@main/assets/gate.jpg" class="od-ref-img" style="width:100%;height:160px;object-fit:cover;display:block" alt="Entry gate reference">
               <div style="padding:11px 13px">
                 <div style="font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--sage);margin-bottom:3px">Entry gate + CMU wall</div>
                 <div style="font-size:11px;font-weight:600;color:var(--white);margin-bottom:4px">Front entryway direction</div>
@@ -1687,7 +1693,7 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;
               </div>
             </div>
             <div style="background:var(--d2);border:1px solid var(--w08);border-radius:10px;overflow:hidden">
-              <img src="data:image/jpeg;base64,{wood}" class="od-ref-img" style="width:100%;height:160px;object-fit:cover;display:block" alt="Wood panel reference">
+              <img src="https://cdn.jsdelivr.net/gh/bennyg10/commonground@main/assets/wood.jpg" class="od-ref-img" style="width:100%;height:160px;object-fit:cover;display:block" alt="Wood panel reference">
               <div style="padding:11px 13px">
                 <div style="font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--sage);margin-bottom:3px">Wood panel feature</div>
                 <div style="font-size:11px;font-weight:600;color:var(--white);margin-bottom:4px">Horizontal slat privacy panel</div>
