@@ -600,7 +600,7 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;
       <button class="nav-btn on" onclick="sbNav(this,'fp')"><i class="ti ti-home"></i>Floor plan</button>
       <button class="nav-btn" onclick="sbNav(this,'progress')"><i class="ti ti-chart-line"></i>Progress</button>
       <button class="nav-btn" onclick="sbNav(this,'punch')"><i class="ti ti-clipboard-check"></i>Punch list<span class="nav-badge red">31</span></button>
-      <button class="nav-btn" onclick="sbNav(this,'finance')"><i class="ti ti-coin"></i>Financials<span class="nav-badge red role-financial">$235k</span></button>
+      <button id="nav-btn-finance-project" class="nav-btn" onclick="sbNav(this,'finance')"><i class="ti ti-coin"></i>Financials<span class="nav-badge red role-financial">$235k</span></button>
       <button id="nav-btn-design" class="nav-btn" onclick="sbNav(this,'design')"><i class="ti ti-sparkles"></i>Design mode<span class="nav-badge" style="background:var(--l10);color:var(--lime);border-color:var(--l20)">✦ Dream</span></button>
       <button class="nav-btn" onclick="sbNav(this,'team')"><i class="ti ti-users"></i>Team &amp; trades</button>
       <button class="nav-btn" onclick="sbNav(this,'products')"><i class="ti ti-package"></i>Products<span class="nav-badge">5</span></button>
@@ -2369,10 +2369,18 @@ var ROLE_CONFIG = {
     defaultScreen: 'sc-progress',
     bannerHtml: '<span class="role-banner role-banner-gc"><i class="ti ti-hard-hat" style="font-size:11px"></i> GC view</span>'
   },
+  javier: {
+    label: 'Javier',
+    tag: 'JAVIER',
+    hidden: ['nav-sec-financials','nav-btn-design','rp-tab-finance','nav-btn-finance-project'],
+    hiddenScreens: ['sc-finance','sc-design'],
+    defaultScreen: 'outdoor-log',
+    bannerHtml: '<span class="role-banner role-banner-gc"><i class="ti ti-plant-2" style="font-size:11px"></i> Landscape view</span>'
+  },
   trade: {
     label: 'Trade view',
     tag: 'TRADE',
-    hidden: ['nav-sec-financials','nav-btn-design','rp-tab-finance'],
+    hidden: ['nav-sec-financials','nav-btn-design','rp-tab-finance','nav-btn-finance-project'],
     hiddenScreens: ['sc-finance','sc-design'],
     defaultScreen: 'sc-punch',
     bannerHtml: '<span class="role-banner role-banner-trade"><i class="ti ti-tool" style="font-size:11px"></i> Trade view</span>'
@@ -2383,8 +2391,48 @@ function applyRole(role) {
   CG_ROLE = role;
   var cfg = ROLE_CONFIG[role] || ROLE_CONFIG.client;
 
+  // Javier: show ONLY the landscape section in sidebar
+  var allSections = document.querySelectorAll('.nav-sec-head, .nav-sec-items, #sec0, #sec1, #sec2, #sec3');
+  if (role === 'javier') {
+    // Hide entire sidebar sections except landscape (sec1)
+    document.querySelectorAll('#sec0, #sec2, #sec3').forEach(function(el) {
+      el.classList.add('role-hidden');
+    });
+    // Hide the section heads except landscape
+    var secHeads = document.querySelectorAll('aside .nav-sec-head');
+    secHeads.forEach(function(sh, i) {
+      if (i !== 1) sh.classList.add('role-hidden'); // i=1 is landscape
+    });
+    // Hide quick reference, progress bars etc
+    var extras = document.querySelectorAll('.sb-progress, .quick-ref, .sb-proj-header');
+    extras.forEach(function(el) { el.classList.add('role-hidden'); });
+    // Add Javier greeting to sidebar top
+    var sbProj = document.querySelector('.sb-proj-header');
+    if (sbProj && !document.getElementById('javier-greeting')) {
+      var greeting = document.createElement('div');
+      greeting.id = 'javier-greeting';
+      greeting.style.cssText = 'padding:14px 12px 10px;border-bottom:1px solid var(--w08)';
+      greeting.innerHTML = '<div style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--sage);margin-bottom:4px">Landscape contractor</div><div style="font-family:\'Syne\',sans-serif;font-size:14px;font-weight:700;color:var(--white)">Javier</div><div style="font-size:10px;color:var(--w30);margin-top:2px">2560 Coolidge Ave · Outdoor decisions</div>';
+      var sb = document.getElementById('sb');
+      if (sb) sb.insertBefore(greeting, sb.firstChild);
+    }
+  } else {
+    // Restore all sections
+    document.querySelectorAll('#sec0, #sec1, #sec2, #sec3').forEach(function(el) {
+      el.classList.remove('role-hidden');
+    });
+    document.querySelectorAll('aside .nav-sec-head').forEach(function(sh) {
+      sh.classList.remove('role-hidden');
+    });
+    document.querySelectorAll('.sb-progress, .quick-ref, .sb-proj-header').forEach(function(el) {
+      el.classList.remove('role-hidden');
+    });
+    var jg = document.getElementById('javier-greeting');
+    if (jg) jg.remove();
+  }
+
   // Show/hide nav elements
-  ['nav-sec-financials','nav-btn-design','rp-tab-finance'].forEach(function(id) {
+  ['nav-sec-financials','nav-btn-design','rp-tab-finance','nav-btn-finance-project'].forEach(function(id) {
     var el = document.getElementById(id);
     if (!el) return;
     if (cfg.hidden.indexOf(id) !== -1) {
@@ -2399,10 +2447,14 @@ function applyRole(role) {
     el.classList.toggle('role-hidden', role !== 'client');
   });
 
-  // If currently on a gated screen, redirect
-  var activeScreen = document.querySelector('.screen.on');
-  if (activeScreen && cfg.hiddenScreens.indexOf(activeScreen.id) !== -1) {
-    goScreen(cfg.defaultScreen || 'sc-progress');
+  // Always redirect to defaultScreen for javier; otherwise only if on gated screen
+  if (role === 'javier') {
+    goScreen('outdoor-log');
+  } else {
+    var activeScreen = document.querySelector('.screen.on');
+    if (activeScreen && cfg.hiddenScreens.indexOf(activeScreen.id) !== -1) {
+      goScreen(cfg.defaultScreen || 'sc-progress');
+    }
   }
 
   // Update sidebar role tag
