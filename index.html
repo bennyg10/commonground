@@ -515,6 +515,25 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;
 .dmtab{padding:4px 10px;border-radius:5px;border:none;background:none;font-size:10px;font-weight:600;color:var(--w50);cursor:pointer;font-family:inherit;transition:all .15s}
 .dmtab.on{background:var(--lime);color:var(--dk)}
 
+
+/* ── ROLE GATING ── */
+.role-hidden{display:none !important}
+.role-badge{
+  font-size:9px;font-weight:700;padding:2px 8px;border-radius:20px;
+  letter-spacing:.05em;flex-shrink:0;border:1px solid
+}
+.role-badge-client{background:var(--l10);color:var(--lime);border-color:var(--l20)}
+.role-badge-gc{background:var(--ok15);color:var(--ok);border-color:var(--ok30)}
+.role-badge-trade{background:var(--am15);color:var(--amb);border-color:var(--am30)}
+
+/* Role banner in topbar */
+.role-banner{
+  display:flex;align-items:center;gap:6px;padding:2px 10px;
+  border-radius:20px;font-size:10px;font-weight:600;
+}
+.role-banner-gc{background:var(--ok15);color:var(--ok);border:1px solid var(--ok30)}
+.role-banner-trade{background:var(--am15);color:var(--amb);border:1px solid var(--am30)}
+
 </style>
 </head>
 <body>
@@ -526,6 +545,7 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;
   <button class="mob-btn" onclick="openSb()"><i class="ti ti-menu-2"></i></button>
   <div class="top-mark"><span>CG</span></div>
   <span style="font-family:'Syne',sans-serif;font-size:12px;font-weight:700;color:var(--lime);letter-spacing:-.01em">Common Ground</span>
+  <div id="role-banner" style="display:none"></div>
   <div style="width:1px;height:12px;background:var(--w08)"></div>
   <div class="top-pill"><div class="top-dot"></div>Electricians on site · June 26</div>
   <div class="top-right">
@@ -552,7 +572,7 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;
         Final finishing · Phase 4–5
       </div>
     </div>
-    <div class="user-tag">Client</div>
+    <div class="user-tag" id="sb-role-tag">Client</div>
   </div>
 
   <!-- Progress bars — clickable → progress screen -->
@@ -580,8 +600,8 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;
       <button class="nav-btn on" onclick="sbNav(this,'fp')"><i class="ti ti-home"></i>Floor plan</button>
       <button class="nav-btn" onclick="sbNav(this,'progress')"><i class="ti ti-chart-line"></i>Progress</button>
       <button class="nav-btn" onclick="sbNav(this,'punch')"><i class="ti ti-clipboard-check"></i>Punch list<span class="nav-badge red">31</span></button>
-      <button class="nav-btn" onclick="sbNav(this,'finance')"><i class="ti ti-coin"></i>Financials<span class="nav-badge red">$235k</span></button>
-      <button class="nav-btn" onclick="sbNav(this,'design')"><i class="ti ti-sparkles"></i>Design mode<span class="nav-badge" style="background:var(--l10);color:var(--lime);border-color:var(--l20)">✦ Dream</span></button>
+      <button class="nav-btn" onclick="sbNav(this,'finance')"><i class="ti ti-coin"></i>Financials<span class="nav-badge red role-financial">$235k</span></button>
+      <button id="nav-btn-design" class="nav-btn" onclick="sbNav(this,'design')"><i class="ti ti-sparkles"></i>Design mode<span class="nav-badge" style="background:var(--l10);color:var(--lime);border-color:var(--l20)">✦ Dream</span></button>
       <button class="nav-btn" onclick="sbNav(this,'team')"><i class="ti ti-users"></i>Team &amp; trades</button>
       <button class="nav-btn" onclick="sbNav(this,'products')"><i class="ti ti-package"></i>Products<span class="nav-badge">5</span></button>
       <button class="nav-btn" onclick="sbNav(this,'scanner')"><i class="ti ti-scan"></i>Plan scanner<span class="nav-badge" style="background:var(--l10);color:var(--lime)">AI</span></button>
@@ -619,7 +639,7 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;
     </div>
 
     <!-- FINANCIALS -->
-    <div class="nav-sec-head" onclick="toggleSec(this,'sec3');goScreen('finance')">
+    <div id="nav-sec-financials" class="nav-sec-head" onclick="toggleSec(this,'sec3');goScreen('finance')">
       <div class="nav-sec-icon"><svg width="18" height="18" viewBox="0 0 73.2 60.88" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M51.23,60.87h-10.59c-1.1,0-2-.9-2-2v-4.83h-8.77v4.83c0,1.1-.9,2-2,2h-10.59c-1.1,0-2-.9-2-2v-7.33c-6.52-3.57-10.66-10.49-10.66-17.98v-1.6c0-4.13,1.23-8.12,3.55-11.52,3.82-5.61,10.15-8.96,16.93-8.96h20.01L56.01.58c.57-.57,1.43-.74,2.18-.43s1.23,1.04,1.23,1.85v12.41c3.75,2.24,6.65,5.58,8.34,9.59h3.44c1.1,0,2,.9,2,2v13.53c0,1.1-.9,2-2,2h-3.44c-2.58,6.12-8.06,10.65-14.54,12.06v5.29c0,1.1-.9,2-2,2h0ZM42.65,56.87h6.59v-4.98c0-1.01.75-1.86,1.75-1.98,6.2-.78,11.51-5.11,13.52-11.03.28-.81,1.04-1.36,1.89-1.36h2.82v-9.53h-2.82c-.86,0-1.62-.54-1.89-1.35-1.37-4.03-4.21-7.33-7.99-9.29-.66-.34-1.08-1.03-1.08-1.78V6.82l-8.08,8.08c-.38.38-.88.59-1.41.59h-20.84c-5.46,0-10.55,2.7-13.63,7.21-1.87,2.74-2.85,5.94-2.85,9.27v1.6c0,6.37,3.73,12.23,9.51,14.94.7.33,1.15,1.04,1.15,1.81v6.56h6.59v-4.83c0-1.1.9-2,2-2h12.77c1.1,0,2,.9,2,2v4.83h0Z"/>
     <path d="M9.82,23.57h-2.03c-4.3,0-7.79-3.49-7.79-7.79,0-2.08.81-4.04,2.29-5.51,1.47-1.47,3.42-2.28,5.5-2.28h1.44c1.1,0,2,.9,2,2s-.9,2-2,2h-1.44c-1.01,0-1.96.39-2.68,1.1-.72.72-1.11,1.67-1.11,2.69,0,2.09,1.7,3.79,3.79,3.79h2.03c1.1,0,2,.9,2,2s-.9,2-2,2h0Z"/>
     <path d="M51.42,31.91c-3.03,0-5.49-2.46-5.49-5.49s2.46-5.49,5.49-5.49,5.49,2.46,5.49,5.49-2.46,5.49-5.49,5.49ZM51.42,24.93c-.82,0-1.49.67-1.49,1.49s.67,1.49,1.49,1.49,1.49-.67,1.49-1.49-.67-1.49-1.49-1.49Z"/></svg></div>
@@ -1186,7 +1206,7 @@ html,body{overflow-x:hidden;max-width:100%}
   </div>
 
   <!-- SCREEN: FINANCE -->
-  <div class="screen" id="sc-finance">
+  <div class="screen" id="sc-finance" data-role-gate="client">
     <div class="scrl">
 
       <!-- Summary bar -->
@@ -1328,7 +1348,7 @@ html,body{overflow-x:hidden;max-width:100%}
 
 
   <!-- SCREEN: DESIGN MODE -->
-  <div class="screen" id="sc-design">
+  <div class="screen" id="sc-design" data-role-gate="client">
     <div class="scrl" style="padding:0">
 
       <!-- HEADER -->
@@ -1783,7 +1803,7 @@ html,body{overflow-x:hidden;max-width:100%}
       <button class="rpt on" onclick="rpTab('decisions',this)"><i class="ti ti-alert-circle"></i>Decide</button>
       <button class="rpt" onclick="rpTab('approvals',this)"><i class="ti ti-check"></i>Approve</button>
       <button class="rpt" onclick="rpTab('chat',this)"><i class="ti ti-message"></i>Chat</button>
-      <button class="rpt" onclick="rpTab('finance',this)"><i class="ti ti-coin"></i>$</button>
+      <button class="rpt" id="rp-tab-finance" onclick="rpTab('finance',this)"><i class="ti ti-coin"></i>$</button>
     </div>
   </div>
   <div class="rp-body">
@@ -2329,10 +2349,96 @@ function rpTab(name,btn){
   document.querySelectorAll('.rpt').forEach(function(b){b.classList.remove('on');});
   if(btn)btn.classList.add('on');
 }
-function setRole(btn){
-  document.querySelectorAll('.role-btn').forEach(function(b){b.classList.remove('on');});
-  btn.classList.add('on');
+/* ── ROLE SYSTEM ── */
+var CG_ROLE = 'client'; // default
+
+var ROLE_CONFIG = {
+  client: {
+    label: 'Client',
+    tag: 'CLIENT',
+    hidden: [],
+    hiddenScreens: [],
+    defaultScreen: null,
+    bannerHtml: ''
+  },
+  gc: {
+    label: 'GC view',
+    tag: 'GC',
+    hidden: ['nav-sec-financials','nav-btn-design','rp-tab-finance'],
+    hiddenScreens: ['sc-finance','sc-design'],
+    defaultScreen: 'sc-progress',
+    bannerHtml: '<span class="role-banner role-banner-gc"><i class="ti ti-hard-hat" style="font-size:11px"></i> GC view</span>'
+  },
+  trade: {
+    label: 'Trade view',
+    tag: 'TRADE',
+    hidden: ['nav-sec-financials','nav-btn-design','rp-tab-finance'],
+    hiddenScreens: ['sc-finance','sc-design'],
+    defaultScreen: 'sc-punch',
+    bannerHtml: '<span class="role-banner role-banner-trade"><i class="ti ti-tool" style="font-size:11px"></i> Trade view</span>'
+  }
+};
+
+function applyRole(role) {
+  CG_ROLE = role;
+  var cfg = ROLE_CONFIG[role] || ROLE_CONFIG.client;
+
+  // Show/hide nav elements
+  ['nav-sec-financials','nav-btn-design','rp-tab-finance'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    if (cfg.hidden.indexOf(id) !== -1) {
+      el.classList.add('role-hidden');
+    } else {
+      el.classList.remove('role-hidden');
+    }
+  });
+
+  // Hide financial badges ($235k etc)
+  document.querySelectorAll('.role-financial').forEach(function(el) {
+    el.classList.toggle('role-hidden', role !== 'client');
+  });
+
+  // If currently on a gated screen, redirect
+  var activeScreen = document.querySelector('.screen.on');
+  if (activeScreen && cfg.hiddenScreens.indexOf(activeScreen.id) !== -1) {
+    goScreen(cfg.defaultScreen || 'sc-progress');
+  }
+
+  // Update sidebar role tag
+  var tag = document.getElementById('sb-role-tag');
+  if (tag) tag.textContent = cfg.tag;
+
+  // Show role banner in topbar for non-client
+  var banner = document.getElementById('role-banner');
+  if (banner) banner.innerHTML = cfg.bannerHtml;
+
+  // Sync right-panel role buttons
+  document.querySelectorAll('.role-btn').forEach(function(b) {
+    b.classList.toggle('on', b.textContent.trim().toLowerCase() === role);
+  });
 }
+
+function setRole(btn) {
+  var role = btn.textContent.trim().toLowerCase();
+  applyRole(role);
+  // Update URL param without reload
+  var url = new URL(window.location.href);
+  if (role === 'client') {
+    url.searchParams.delete('role');
+  } else {
+    url.searchParams.set('role', role);
+  }
+  window.history.replaceState({}, '', url.toString());
+}
+
+function initRole() {
+  var params = new URLSearchParams(window.location.search);
+  var role = params.get('role') || 'client';
+  if (!ROLE_CONFIG[role]) role = 'client';
+  applyRole(role);
+}
+
 function toggleAppr(hd){
   var body=hd.closest('.appr').querySelector('.appr-body');
   if(body)body.classList.toggle('open');
@@ -2436,6 +2542,7 @@ document.addEventListener('DOMContentLoaded',function(){
   renderInvoices();
   renderMoodBoard();
   dmInit();
+  initRole();
   console.log('Common Ground v14 — init OK');
 });
 
