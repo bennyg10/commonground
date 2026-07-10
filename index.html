@@ -7,6 +7,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
 <style>
+html,body{overflow-x:hidden;max-width:100%}
+
 /* ── TOKENS ── */
 :root{
   --lime:#D5DC99;--sage:#737F73;--white:#FDFFFE;--black:#111015;
@@ -54,7 +56,7 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;
 .mob-btn{display:none;background:none;border:none;color:var(--w50);font-size:18px;padding:4px}
 
 /* ── BODY GRID ── */
-.body{display:grid;grid-template-columns:236px 1fr 264px;height:100%;overflow:hidden}
+.body{display:grid;grid-template-columns:220px 1fr clamp(240px,18vw,300px);height:100%;overflow:hidden}
 
 /* ── SIDEBAR ── */
 .sb{background:var(--d1);border-right:1px solid var(--w08);
@@ -441,6 +443,10 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;
 .fu1{animation:fadeUp .25s ease both}
 .fu2{animation:fadeUp .25s .05s ease both}
 
+@media(max-width:1024px){
+  .od-grid-zones{grid-template-columns:1fr 1fr !important}
+}
+
 @media(max-width:720px){
   .body{grid-template-columns:1fr !important;width:100vw !important;max-width:100vw !important}
   .rail,.rp{display:none}
@@ -670,6 +676,8 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;
               <path d="M20 0L0 0 0 20" fill="none" stroke="rgba(253,255,254,.025)" stroke-width=".5"/>
             </pattern>
             <style>
+html,body{overflow-x:hidden;max-width:100%}
+
               .fp-rl{font-family:"DM Sans",sans-serif;font-size:8.5px;font-weight:600;fill:rgba(253,255,254,.55);text-anchor:middle;pointer-events:none;letter-spacing:.04em}
               .fp-rs{font-family:"DM Sans",sans-serif;font-size:7px;fill:rgba(253,255,254,.28);text-anchor:middle;pointer-events:none}
               .fp-dim{stroke:rgba(115,127,115,.45);stroke-width:.6;fill:none}
@@ -1574,7 +1582,7 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;
 
     <!-- SCREEN: OUTDOOR LOG -->
   <div class="screen" id="sc-outdoor-log">
-    <div class="scrl" style="padding:0;overflow-x:hidden;max-width:100%">
+    <div class="scrl" style="padding:0;overflow-x:hidden;max-width:100%;width:100%">
 
       <!-- HEADER -->
       <div style="padding:14px 18px 12px;border-bottom:1px solid var(--w08);background:var(--d1);display:flex;align-items:center;gap:10px;flex-shrink:0">
@@ -1585,7 +1593,7 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;
         <span style="font-size:9px;font-weight:700;background:var(--am15);color:var(--amb);border:1px solid var(--am30);border-radius:20px;padding:3px 10px;letter-spacing:.05em">Decisions needed</span>
       </div>
 
-      <div class="od-padding" style="padding:16px;display:flex;flex-direction:column;gap:18px;overflow-x:hidden;max-width:100%;word-break:break-word">
+      <div class="od-padding" style="padding:16px;display:flex;flex-direction:column;gap:18px;overflow-x:hidden;width:100%;max-width:100%;word-break:break-word;box-sizing:border-box">
 
         <!-- TEAM MESSAGE -->
         <div style="background:var(--d2);border:1px solid var(--l20);border-radius:12px;padding:18px 20px;position:relative;overflow:hidden" class="fu1">
@@ -1632,7 +1640,7 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;
             <span style="font-size:12px;font-weight:600;color:var(--white)">Site plan — front yard concept</span>
             <span style="font-size:9px;font-weight:700;background:var(--am15);color:var(--amb);border:1px solid var(--am30);border-radius:20px;padding:2px 8px">Rough · not to scale</span>
           </div>
-          <img src="https://cdn.jsdelivr.net/gh/bennyg10/commonground@main/assets/plan.jpg" style="width:100%;display:block" alt="Front yard concept plan">
+          <img style="max-width:100%;display:block" src="https://cdn.jsdelivr.net/gh/bennyg10/commonground@main/assets/plan.jpg" style="width:100%;display:block" alt="Front yard concept plan">
           <div class="od-plan-img" style="padding:10px 16px;font-size:10px;color:var(--w30);border-top:1px solid var(--w08);line-height:1.65">
             House at top · Sidewalk at bottom · Red outlines = active zones · Tan (top right) = Master Bed Deck Phase II
           </div>
@@ -1641,7 +1649,7 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;
         <!-- ZONE CARDS -->
         <div class="fu2">
           <div style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--sage);margin-bottom:10px">Zone breakdown</div>
-          <div class="od-grid-zones" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px"><div style="background:var(--d3);border:1px solid var(--w08);border-radius:9px;padding:13px">
+          <div class="od-grid-zones" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%;max-width:100%"><div style="background:var(--d3);border:1px solid var(--w08);border-radius:9px;padding:13px">
               <div style="font-size:16px;margin-bottom:6px">🌱</div>
               <div style="font-size:8px;text-transform:uppercase;letter-spacing:.08em;color:var(--sage);margin-bottom:3px">Zone A · House edge</div>
               <div style="font-size:11px;font-weight:600;color:var(--white);margin-bottom:5px">Garden Bed · CMU</div>
@@ -1683,9 +1691,9 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;
         <!-- REFERENCE IMAGES -->
         <div class="fu2">
           <div style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--sage);margin-bottom:10px">Design references</div>
-          <div class="od-grid-2" style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div class="od-grid-2" style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;width:100%;max-width:100%">
             <div style="background:var(--d2);border:1px solid var(--w08);border-radius:10px;overflow:hidden">
-              <img src="https://cdn.jsdelivr.net/gh/bennyg10/commonground@main/assets/gate.jpg" class="od-ref-img" style="width:100%;height:160px;object-fit:cover;display:block" alt="Entry gate reference">
+              <img style="max-width:100%;display:block" src="https://cdn.jsdelivr.net/gh/bennyg10/commonground@main/assets/gate.jpg" class="od-ref-img" style="width:100%;height:clamp(140px,15vw,220px);object-fit:cover;display:block" alt="Entry gate reference">
               <div style="padding:11px 13px">
                 <div style="font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--sage);margin-bottom:3px">Entry gate + CMU wall</div>
                 <div style="font-size:11px;font-weight:600;color:var(--white);margin-bottom:4px">Front entryway direction</div>
@@ -1693,7 +1701,7 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;
               </div>
             </div>
             <div style="background:var(--d2);border:1px solid var(--w08);border-radius:10px;overflow:hidden">
-              <img src="https://cdn.jsdelivr.net/gh/bennyg10/commonground@main/assets/wood.jpg" class="od-ref-img" style="width:100%;height:160px;object-fit:cover;display:block" alt="Wood panel reference">
+              <img style="max-width:100%;display:block" src="https://cdn.jsdelivr.net/gh/bennyg10/commonground@main/assets/wood.jpg" class="od-ref-img" style="width:100%;height:clamp(140px,15vw,220px);object-fit:cover;display:block" alt="Wood panel reference">
               <div style="padding:11px 13px">
                 <div style="font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--sage);margin-bottom:3px">Wood panel feature</div>
                 <div style="font-size:11px;font-weight:600;color:var(--white);margin-bottom:4px">Horizontal slat privacy panel</div>
