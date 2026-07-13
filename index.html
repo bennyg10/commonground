@@ -690,355 +690,272 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;
 
       <!-- SVG CANVAS -->
       <div style="background:var(--d1);overflow:auto;padding:16px;display:flex;align-items:flex-start;justify-content:center">
-        <svg viewBox="0 0 860 680" width="860" height="680" xmlns="http://www.w3.org/2000/svg" id="fp-main-svg" style="cursor:default">
-          <defs>
-            <pattern id="fpgrid" width="20" height="20" patternUnits="userSpaceOnUse">
-              <path d="M20 0L0 0 0 20" fill="none" stroke="rgba(253,255,254,.025)" stroke-width=".5"/>
-            </pattern>
-            <style>
-html,body{overflow-x:hidden;max-width:100%}
+        <svg viewBox="0 0 1060 580" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;display:block">
+<defs>
+  <style>
+    .fp-wall{fill:none;stroke:#FDFFFE;stroke-width:5;stroke-linejoin:round;stroke-linecap:round}
+    .fp-wall-thin{fill:none;stroke:#FDFFFE;stroke-width:2.5;stroke-linejoin:round}
+    .fp-room-fill{fill:rgba(213,220,153,.06)}
+    .fp-room-fill-alt{fill:rgba(74,155,111,.05)}
+    .fp-room-fill-bath{fill:rgba(91,155,213,.05)}
+    .fp-room-fill-kitchen{fill:rgba(201,168,76,.05)}
+    .fp-label{font-family:"DM Sans",system-ui,sans-serif;font-size:10px;font-weight:600;fill:rgba(253,255,254,.55);text-anchor:middle;letter-spacing:.08em;text-transform:uppercase}
+    .fp-dim{font-family:"DM Sans",system-ui,sans-serif;font-size:7.5px;fill:rgba(253,255,254,.28);text-anchor:middle}
+    .fp-furniture{fill:none;stroke:rgba(253,255,254,.2);stroke-width:1.2}
+    .fp-furniture-fill{fill:rgba(253,255,254,.06);stroke:rgba(253,255,254,.18);stroke-width:1}
+    .fp-door{fill:none;stroke:rgba(232,135,74,.7);stroke-width:1.5}
+    .fp-door-arc{fill:none;stroke:rgba(232,135,74,.4);stroke-width:1}
+    .fp-accent{stroke:rgba(232,135,74,.8);stroke-width:3}
+    .fp-dim-line{stroke:rgba(253,255,254,.15);stroke-width:.8;stroke-dasharray:3,2}
+    .fp-room-tap{cursor:pointer;fill:transparent}
+    .fp-adu-wall{fill:none;stroke:rgba(253,255,254,.6);stroke-width:4;stroke-linejoin:round}
+  </style>
 
-              .fp-rl{font-family:"DM Sans",sans-serif;font-size:8.5px;font-weight:600;fill:rgba(253,255,254,.55);text-anchor:middle;pointer-events:none;letter-spacing:.04em}
-              .fp-rs{font-family:"DM Sans",sans-serif;font-size:7px;fill:rgba(253,255,254,.28);text-anchor:middle;pointer-events:none}
-              .fp-dim{stroke:rgba(115,127,115,.45);stroke-width:.6;fill:none}
-              .fp-dt{font-family:"DM Sans",sans-serif;font-size:6.5px;fill:rgba(115,127,115,.6);text-anchor:middle}
-              .fp-gr{font-family:"DM Sans",sans-serif;font-size:8px;fill:rgba(115,127,115,.45);text-anchor:middle;font-weight:600}
-              .fp-we{fill:#2C312E;stroke:#4A5147;stroke-width:.5}
-              .fp-wi{fill:#232826;stroke:#3A3F3C;stroke-width:.4}
-              .fp-rm{transition:fill .15s,stroke .15s;cursor:pointer}
-              .fp-rg:hover .fp-rm{fill:rgba(213,220,153,.13)!important;stroke:rgba(213,220,153,.7)!important;stroke-width:1.5!important}
-              .fp-rg.fp-sel .fp-rm{fill:rgba(213,220,153,.2)!important;stroke:rgba(213,220,153,1)!important;stroke-width:2!important}
-              .fp-rg.fp-ok .fp-rm{fill:rgba(74,155,111,.07)!important}
-              .fp-rg.fp-err .fp-rm{fill:rgba(224,122,95,.07)!important}
-            </style>
-          </defs>
+  <!-- Room highlight on hover -->
+  <filter id="room-glow">
+    <feGaussianBlur stdDeviation="4" result="blur"/>
+    <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+  </filter>
+</defs>
 
-          <!-- Grid bg -->
-          <rect width="860" height="680" fill="url(#fpgrid)"/>
+<!-- ═══════════════════════════════════════════
+     MAIN HOUSE — L-shaped
+     Top block: x=28 y=30 w=590 h=280  (living + kitchen)
+     Bottom strip: x=28 y=310 w=590 h=210  (bedrooms + baths)
+     Left notch top: the L makes it so left side goes full height
+     ═══════════════════════════════════════════ -->
 
-          <!-- Grid ref lines -->
-          <line x1="55" y1="28" x2="55" y2="640" stroke="rgba(115,127,115,.1)" stroke-width=".5" stroke-dasharray="4,4"/>
-          <line x1="230" y1="28" x2="230" y2="640" stroke="rgba(115,127,115,.1)" stroke-width=".5" stroke-dasharray="4,4"/>
-          <line x1="430" y1="28" x2="430" y2="640" stroke="rgba(115,127,115,.1)" stroke-width=".5" stroke-dasharray="4,4"/>
-          <line x1="625" y1="28" x2="625" y2="640" stroke="rgba(115,127,115,.1)" stroke-width=".5" stroke-dasharray="4,4"/>
-          <line x1="800" y1="28" x2="800" y2="640" stroke="rgba(115,127,115,.1)" stroke-width=".5" stroke-dasharray="4,4"/>
-          <line x1="28" y1="55" x2="840" y2="55" stroke="rgba(115,127,115,.1)" stroke-width=".5" stroke-dasharray="4,4"/>
-          <line x1="28" y1="200" x2="840" y2="200" stroke="rgba(115,127,115,.1)" stroke-width=".5" stroke-dasharray="4,4"/>
-          <line x1="28" y1="410" x2="840" y2="410" stroke="rgba(115,127,115,.1)" stroke-width=".5" stroke-dasharray="4,4"/>
-          <line x1="28" y1="570" x2="840" y2="570" stroke="rgba(115,127,115,.1)" stroke-width=".5" stroke-dasharray="4,4"/>
+<!-- Room fills -->
+<!-- Living room -->
+<rect class="fp-room-fill" x="30" y="32" width="305" height="278"/>
+<!-- Kitchen -->
+<rect class="fp-room-fill-kitchen" x="335" y="32" width="283" height="278"/>
+<!-- Master bed -->
+<rect class="fp-room-fill-alt" x="30" y="310" width="158" height="208"/>
+<!-- Master bath -->
+<rect class="fp-room-fill-bath" x="188" y="310" width="145" height="208"/>
+<!-- Bed 2 -->
+<rect class="fp-room-fill-alt" x="333" y="310" width="130" height="208"/>
+<!-- J&J Bath -->
+<rect class="fp-room-fill-bath" x="463" y="310" width="98" height="208"/>
+<!-- Bed 3 -->
+<rect class="fp-room-fill-alt" x="561" y="310" width="97" height="208"/>
 
-          <!-- Grid labels -->
-          <circle cx="55" cy="40" r="7" fill="none" stroke="rgba(115,127,115,.3)" stroke-width=".7"/><text x="55" y="43" class="fp-gr">01</text>
-          <circle cx="230" cy="40" r="7" fill="none" stroke="rgba(115,127,115,.3)" stroke-width=".7"/><text x="230" y="43" class="fp-gr">02</text>
-          <circle cx="430" cy="40" r="7" fill="none" stroke="rgba(115,127,115,.3)" stroke-width=".7"/><text x="430" y="43" class="fp-gr">03</text>
-          <circle cx="625" cy="40" r="7" fill="none" stroke="rgba(115,127,115,.3)" stroke-width=".7"/><text x="625" y="43" class="fp-gr">04</text>
-          <circle cx="800" cy="40" r="7" fill="none" stroke="rgba(115,127,115,.3)" stroke-width=".7"/><text x="800" y="43" class="fp-gr">05</text>
-          <text x="38" y="58" class="fp-gr">A</text>
-          <text x="38" y="203" class="fp-gr">B</text>
-          <text x="38" y="413" class="fp-gr">C</text>
-          <text x="38" y="573" class="fp-gr">D</text>
+<!-- ── OUTER WALLS ── -->
+<!-- Main house outer perimeter — L-shape -->
+<polyline class="fp-wall" points="
+  30,32
+  618,32
+  618,518
+  30,518
+  30,32
+"/>
+<!-- Interior horizontal wall — divides top from bottom -->
+<line class="fp-wall" x1="30" y1="310" x2="618" y2="310"/>
+<!-- Left side red accent column (from plan) -->
+<line style="stroke:rgba(232,135,74,.9);stroke-width:4" x1="30" y1="32" x2="30" y2="308"/>
 
-          <!-- Dimension lines -->
-          <line x1="57" y1="66" x2="798" y2="66" class="fp-dim"/>
-          <line x1="57" y1="62" x2="57" y2="70" class="fp-dim"/>
-          <line x1="798" y1="62" x2="798" y2="70" class="fp-dim"/>
-          <text x="427" y="64" class="fp-dt">12.85 m  (42ft  overall)</text>
-          <line x1="36" y1="78" x2="36" y2="568" class="fp-dim"/>
-          <line x1="32" y1="78" x2="40" y2="78" class="fp-dim"/>
-          <line x1="32" y1="568" x2="40" y2="568" class="fp-dim"/>
-          <text x="30" y="325" class="fp-dt" transform="rotate(-90 30 325)">12.05 m  (39ft)</text>
-          <text x="143" y="77" class="fp-dt">4.20</text>
-          <text x="330" y="77" class="fp-dt">4.20</text>
-          <text x="527" y="77" class="fp-dt">4.20</text>
+<!-- ── INTERIOR VERTICAL WALLS ── -->
+<!-- Living / Kitchen divider -->
+<line class="fp-wall" x1="335" y1="32" x2="335" y2="310"/>
+<!-- Master bed right wall -->
+<line class="fp-wall" x1="188" y1="310" x2="188" y2="518"/>
+<!-- Master bath / Bed 2 divider -->
+<line class="fp-wall" x1="333" y1="310" x2="333" y2="518"/>
+<!-- Bed 2 / JJ Bath divider — with red accent door -->
+<line class="fp-wall" x1="463" y1="310" x2="463" y2="518"/>
+<!-- JJ Bath / Bed 3 divider -->
+<line class="fp-wall" x1="561" y1="310" x2="561" y2="518"/>
 
-          <!-- ═══ EXTERIOR PERIMETER ═══ -->
-          <rect x="57" y="78" width="741" height="490" class="fp-we"/>
-          <rect x="68" y="89" width="719" height="468" fill="#1C201D"/>
+<!-- ── INTERIOR HORIZONTAL WALLS (rooms) ── -->
+<!-- Master bath / laundry area partial wall -->
+<line class="fp-wall-thin" x1="188" y1="420" x2="333" y2="420"/>
+<!-- JJ Bath internal wall (partial for tub) -->
+<line class="fp-wall-thin" x1="463" y1="420" x2="561" y2="420"/>
 
-          <!-- ═══ ENTRY ═══ -->
-          <g class="fp-rg" id="fpr-entry" onclick="fpSelect('entry')">
-            <rect class="fp-rm" x="68" y="89" width="112" height="140" fill="rgba(253,255,254,.02)" stroke="rgba(253,255,254,.07)" stroke-width=".5"/>
-            <!-- Door swing -->
-            <path d="M124 229 L124 203 A26,26 0 0,1 150 229" fill="none" stroke="rgba(253,255,254,.2)" stroke-width=".7"/>
-            <line x1="124" y1="229" x2="150" y2="229" stroke="rgba(253,255,254,.18)" stroke-width=".7"/>
-            <rect x="68" y="224" width="112" height="5" class="fp-wi"/>
-            <text x="124" y="148" class="fp-rl">Entry</text>
-            <text x="124" y="160" class="fp-rs">6ftx12ft</text>
-            <circle cx="80" cy="100" r="6.5" fill="rgba(253,255,254,.05)" stroke="rgba(253,255,254,.1)" stroke-width=".5"/>
-            <text x="80" y="103" style="font-family:'DM Sans',sans-serif;font-size:6.5px;fill:rgba(253,255,254,.35);text-anchor:middle">01</text>
-          </g>
+<!-- ── DOOR OPENINGS (red accent like plan) ── -->
+<!-- Master bed entry door -->
+<line style="stroke:rgba(232,135,74,.85);stroke-width:3.5" x1="188" y1="352" x2="188" y2="392"/>
+<path class="fp-door-arc" d="M188,352 Q228,352 228,392"/>
+<!-- Master bath to bed door -->
+<line style="stroke:rgba(232,135,74,.85);stroke-width:3.5" x1="250" y1="310" x2="290" y2="310"/>
+<path class="fp-door-arc" d="M250,310 Q250,350 290,350"/>
+<!-- Bed 2 door -->
+<line style="stroke:rgba(232,135,74,.85);stroke-width:3.5" x1="333" y1="350" x2="333" y2="390"/>
+<path class="fp-door-arc" d="M333,350 Q373,350 373,390"/>
+<!-- JJ Bath door from Bed 2 -->
+<line style="stroke:rgba(232,135,74,.85);stroke-width:3.5" x1="395" y1="310" x2="435" y2="310"/>
+<path class="fp-door-arc" d="M395,310 Q395,350 435,350"/>
+<!-- JJ Bath door from hall side (red accent vertical) -->
+<line style="stroke:rgba(232,135,74,.95);stroke-width:3.5" x1="463" y1="360" x2="463" y2="400"/>
+<!-- Bed 3 door -->
+<line style="stroke:rgba(232,135,74,.85);stroke-width:3.5" x1="561" y1="350" x2="561" y2="390"/>
+<path class="fp-door-arc" d="M561,350 Q601,350 601,390"/>
+<!-- Kitchen entry -->
+<line style="stroke:rgba(232,135,74,.7);stroke-width:3" x1="335" y1="100" x2="335" y2="140"/>
+<!-- Living room entry left (main door) -->
+<line style="stroke:rgba(232,135,74,.85);stroke-width:3.5" x1="30" y1="200" x2="30" y2="240"/>
+<path class="fp-door-arc" d="M30,200 Q70,200 70,240"/>
 
-          <!-- ═══ LIVING ROOM ═══ -->
-          <g class="fp-rg fp-ok" id="fpr-living" onclick="fpSelect('living')">
-            <rect class="fp-rm" x="68" y="229" width="290" height="181" fill="rgba(74,155,111,.04)" stroke="rgba(74,155,111,.15)" stroke-width=".5"/>
-            <!-- Sofa -->
-            <rect x="82" y="270" width="88" height="38" rx="3" fill="rgba(253,255,254,.05)" stroke="rgba(253,255,254,.13)" stroke-width=".6"/>
-            <rect x="82" y="270" width="88" height="11" rx="2" fill="rgba(253,255,254,.07)"/>
-            <rect x="170" y="270" width="11" height="38" rx="2" fill="rgba(253,255,254,.06)" stroke="rgba(253,255,254,.1)" stroke-width=".4"/>
-            <rect x="82" y="308" width="11" height="32" rx="2" fill="rgba(253,255,254,.06)" stroke="rgba(253,255,254,.1)" stroke-width=".4"/>
-            <!-- Coffee table -->
-            <rect x="106" y="316" width="46" height="26" rx="2" fill="rgba(253,255,254,.04)" stroke="rgba(253,255,254,.1)" stroke-width=".5"/>
-            <!-- TV wall -->
-            <rect x="68" y="234" width="55" height="5" rx="1" fill="rgba(213,220,153,.14)"/>
-            <text x="95" y="239" style="font-family:'DM Sans',sans-serif;font-size:5.5px;fill:rgba(213,220,153,.45);text-anchor:middle">TV WALL</text>
-            <text x="180" y="385" class="fp-rl" style="font-size:9px">Living Room</text>
-            <text x="180" y="397" class="fp-rs">Open plan · 18ftx15ft</text>
-            <circle cx="80" cy="240" r="6.5" fill="rgba(253,255,254,.05)" stroke="rgba(253,255,254,.1)" stroke-width=".5"/>
-            <text x="80" y="243" style="font-family:'DM Sans',sans-serif;font-size:6.5px;fill:rgba(253,255,254,.35);text-anchor:middle">02</text>
-          </g>
+<!-- ── STAIR indicator (UP) -->
+<rect class="fp-wall-thin" x="590" y="240" width="28" height="70" rx="2"/>
+<g style="fill:rgba(253,255,254,.2);stroke:rgba(253,255,254,.15);stroke-width:.8">
+  <line x1="590" y1="250" x2="618" y2="250"/>
+  <line x1="590" y1="260" x2="618" y2="260"/>
+  <line x1="590" y1="270" x2="618" y2="270"/>
+  <line x1="590" y1="280" x2="618" y2="280"/>
+  <line x1="590" y1="290" x2="618" y2="290"/>
+  <line x1="590" y1="300" x2="618" y2="300"/>
+</g>
+<text x="604" y="320" class="fp-dim" style="font-size:7px;fill:rgba(253,255,254,.4)">UP</text>
 
-          <!-- ═══ KITCHEN ═══ -->
-          <g class="fp-rg" id="fpr-kitchen" onclick="fpSelect('kitchen')">
-            <rect class="fp-rm" x="180" y="89" width="250" height="140" fill="rgba(201,168,76,.03)" stroke="rgba(201,168,76,.12)" stroke-width=".5"/>
-            <!-- Counter top wall -->
-            <rect x="186" y="95" width="238" height="20" rx="1" fill="rgba(253,255,254,.05)" stroke="rgba(253,255,254,.1)" stroke-width=".5"/>
-            <!-- Sink -->
-            <rect x="306" y="97" width="28" height="16" rx="2" fill="rgba(253,255,254,.04)" stroke="rgba(253,255,254,.18)" stroke-width=".5"/>
-            <ellipse cx="320" cy="105" rx="9" ry="6" fill="none" stroke="rgba(253,255,254,.18)" stroke-width=".5"/>
-            <!-- Range -->
-            <rect x="368" y="97" width="32" height="16" rx="1" fill="rgba(253,255,254,.04)" stroke="rgba(253,255,254,.13)" stroke-width=".5"/>
-            <circle cx="375" cy="101" r="2.5" fill="none" stroke="rgba(253,255,254,.22)" stroke-width=".6"/>
-            <circle cx="384" cy="101" r="2.5" fill="none" stroke="rgba(253,255,254,.22)" stroke-width=".6"/>
-            <circle cx="375" cy="109" r="2.5" fill="none" stroke="rgba(253,255,254,.22)" stroke-width=".6"/>
-            <circle cx="384" cy="109" r="2.5" fill="none" stroke="rgba(253,255,254,.22)" stroke-width=".6"/>
-            <!-- Fridge -->
-            <rect x="186" y="116" width="24" height="20" rx="2" fill="rgba(253,255,254,.06)" stroke="rgba(253,255,254,.16)" stroke-width=".6"/>
-            <line x1="198" y1="118" x2="198" y2="134" stroke="rgba(253,255,254,.13)" stroke-width=".4"/>
-            <!-- Island -->
-            <rect x="248" y="142" width="110" height="46" rx="3" fill="rgba(253,255,254,.04)" stroke="rgba(253,255,254,.13)" stroke-width=".7"/>
-            <text x="303" y="169" style="font-family:'DM Sans',sans-serif;font-size:6.5px;fill:rgba(253,255,254,.28);text-anchor:middle">ISLAND</text>
-            <text x="303" y="209" class="fp-rl">Kitchen</text>
-            <text x="303" y="221" class="fp-rs">Open plan · 21ftx12ft</text>
-            <circle cx="192" cy="100" r="6.5" fill="rgba(253,255,254,.05)" stroke="rgba(253,255,254,.1)" stroke-width=".5"/>
-            <text x="192" y="103" style="font-family:'DM Sans',sans-serif;font-size:6.5px;fill:rgba(253,255,254,.35);text-anchor:middle">03</text>
-          </g>
+<!-- ════════════ FURNITURE ════════════ -->
 
-          <!-- ═══ DINING ═══ -->
-          <g class="fp-rg fp-ok" id="fpr-dining" onclick="fpSelect('dining')">
-            <rect class="fp-rm" x="358" y="229" width="172" height="181" fill="rgba(253,255,254,.02)" stroke="rgba(253,255,254,.05)" stroke-width=".5" stroke-dasharray="4,3"/>
-            <!-- Dining table -->
-            <rect x="385" y="268" width="82" height="50" rx="3" fill="rgba(253,255,254,.04)" stroke="rgba(253,255,254,.13)" stroke-width=".6"/>
-            <!-- Chairs -->
-            <rect x="393" y="258" width="18" height="9" rx="2" fill="rgba(253,255,254,.05)" stroke="rgba(253,255,254,.1)" stroke-width=".4"/>
-            <rect x="421" y="258" width="18" height="9" rx="2" fill="rgba(253,255,254,.05)" stroke="rgba(253,255,254,.1)" stroke-width=".4"/>
-            <rect x="393" y="319" width="18" height="9" rx="2" fill="rgba(253,255,254,.05)" stroke="rgba(253,255,254,.1)" stroke-width=".4"/>
-            <rect x="421" y="319" width="18" height="9" rx="2" fill="rgba(253,255,254,.05)" stroke="rgba(253,255,254,.1)" stroke-width=".4"/>
-            <rect x="374" y="277" width="11" height="18" rx="2" fill="rgba(253,255,254,.05)" stroke="rgba(253,255,254,.1)" stroke-width=".4"/>
-            <rect x="467" y="277" width="11" height="18" rx="2" fill="rgba(253,255,254,.05)" stroke="rgba(253,255,254,.1)" stroke-width=".4"/>
-            <text x="444" y="376" class="fp-rl">Dining</text>
-            <text x="444" y="388" class="fp-rs">Open plan · 14ftx15ft</text>
-            <circle cx="370" cy="240" r="6.5" fill="rgba(253,255,254,.05)" stroke="rgba(253,255,254,.1)" stroke-width=".5"/>
-            <text x="370" y="243" style="font-family:'DM Sans',sans-serif;font-size:6.5px;fill:rgba(253,255,254,.35);text-anchor:middle">04</text>
-          </g>
+<!-- LIVING ROOM furniture -->
+<!-- Sofa L-shape -->
+<rect class="fp-furniture-fill" x="50" y="80" width="120" height="45" rx="4"/>
+<rect class="fp-furniture-fill" x="50" y="80" width="45" height="100" rx="4"/>
+<!-- Oval coffee table -->
+<ellipse class="fp-furniture-fill" cx="185" cy="155" rx="35" ry="22"/>
+<!-- TV/console left wall -->
+<rect class="fp-furniture-fill" x="33" y="72" width="12" height="80" rx="2"/>
+<!-- Armchair -->
+<rect class="fp-furniture-fill" x="155" y="80" width="36" height="36" rx="4"/>
+<!-- Dog/fireplace icon hint -->
+<circle style="fill:none;stroke:rgba(253,255,254,.15);stroke-width:1" cx="185" cy="240" r="14"/>
+<text x="185" y="244" style="font-size:8px;fill:rgba(253,255,254,.18);text-anchor:middle">✦</text>
 
-          <!-- ═══ WOODEN DECK (Phase II) ═══ -->
-          <g class="fp-rg" id="fpr-deck" onclick="fpSelect('deck')">
-            <rect class="fp-rm" x="530" y="89" width="257" height="140" fill="rgba(115,127,115,.03)" stroke="rgba(115,127,115,.18)" stroke-width=".8" stroke-dasharray="6,3"/>
-            <line x1="530" y1="108" x2="787" y2="108" stroke="rgba(115,127,115,.07)" stroke-width=".4"/>
-            <line x1="530" y1="127" x2="787" y2="127" stroke="rgba(115,127,115,.07)" stroke-width=".4"/>
-            <line x1="530" y1="146" x2="787" y2="146" stroke="rgba(115,127,115,.07)" stroke-width=".4"/>
-            <line x1="530" y1="165" x2="787" y2="165" stroke="rgba(115,127,115,.07)" stroke-width=".4"/>
-            <line x1="530" y1="184" x2="787" y2="184" stroke="rgba(115,127,115,.07)" stroke-width=".4"/>
-            <text x="658" y="148" class="fp-rl" style="fill:rgba(115,127,115,.6)">Wooden Deck</text>
-            <text x="658" y="160" class="fp-rs" style="fill:rgba(115,127,115,.38)">Phase II · 21ftx12ft · Ipe wood pending</text>
-            <circle cx="542" cy="100" r="6.5" fill="rgba(253,255,254,.04)" stroke="rgba(115,127,115,.22)" stroke-width=".5"/>
-            <text x="542" y="103" style="font-family:'DM Sans',sans-serif;font-size:6.5px;fill:rgba(115,127,115,.45);text-anchor:middle">05</text>
-          </g>
+<!-- KITCHEN furniture -->
+<!-- Counter run along top -->
+<rect class="fp-furniture-fill" x="337" y="35" width="278" height="30" rx="2"/>
+<!-- Island -->
+<rect class="fp-furniture-fill" x="390" y="100" width="175" height="60" rx="3"/>
+<text x="477" y="135" class="fp-dim" style="font-size:7px">ISLAND</text>
+<!-- Dining table -->
+<rect class="fp-furniture-fill" x="385" y="195" width="160" height="75" rx="3"/>
+<!-- Dining chairs -->
+<rect class="fp-furniture-fill" x="385" y="188" width="22" height="14" rx="2"/>
+<rect class="fp-furniture-fill" x="418" y="188" width="22" height="14" rx="2"/>
+<rect class="fp-furniture-fill" x="451" y="188" width="22" height="14" rx="2"/>
+<rect class="fp-furniture-fill" x="484" y="188" width="22" height="14" rx="2"/>
+<rect class="fp-furniture-fill" x="517" y="188" width="22" height="14" rx="2"/>
+<rect class="fp-furniture-fill" x="385" y="274" width="22" height="14" rx="2"/>
+<rect class="fp-furniture-fill" x="418" y="274" width="22" height="14" rx="2"/>
+<rect class="fp-furniture-fill" x="451" y="274" width="22" height="14" rx="2"/>
+<rect class="fp-furniture-fill" x="484" y="274" width="22" height="14" rx="2"/>
+<rect class="fp-furniture-fill" x="517" y="274" width="22" height="14" rx="2"/>
+<!-- Sink dots on counter -->
+<circle style="fill:rgba(253,255,254,.12);stroke:rgba(253,255,254,.18);stroke-width:.8" cx="470" cy="50" r="7"/>
+<circle style="fill:rgba(253,255,254,.12);stroke:rgba(253,255,254,.18);stroke-width:.8" cx="490" cy="50" r="7"/>
 
-          <!-- Interior wall separators -->
-          <rect x="68" y="410" width="719" height="7" class="fp-wi"/>
-          <rect x="170" y="89" width="10" height="321" class="fp-wi"/>
-          <rect x="520" y="89" width="10" height="321" class="fp-wi"/>
-          <rect x="348" y="229" width="10" height="321" class="fp-wi"/>
-          <rect x="680" y="417" width="10" height="140" class="fp-wi"/>
+<!-- MASTER BED furniture -->
+<rect class="fp-furniture-fill" x="42" y="350" width="115" height="90" rx="4"/>
+<!-- Headboard -->
+<rect style="fill:rgba(253,255,254,.1);stroke:rgba(253,255,254,.2);stroke-width:1" x="42" y="350" width="115" height="12" rx="2"/>
+<!-- Nightstands -->
+<rect class="fp-furniture-fill" x="34" y="362" width="14" height="14" rx="2"/>
+<rect class="fp-furniture-fill" x="157" y="362" width="14" height="14" rx="2"/>
 
-          <!-- ═══ MASTER BEDROOM ═══ -->
-          <g class="fp-rg" id="fpr-master" onclick="fpSelect('master')">
-            <rect class="fp-rm" x="530" y="229" width="257" height="188" fill="rgba(253,255,254,.02)" stroke="rgba(253,255,254,.07)" stroke-width=".5"/>
-            <!-- King bed -->
-            <rect x="566" y="250" width="86" height="105" rx="3" fill="rgba(253,255,254,.04)" stroke="rgba(253,255,254,.13)" stroke-width=".7"/>
-            <rect x="566" y="250" width="86" height="15" rx="2" fill="rgba(253,255,254,.07)"/>
-            <rect x="573" y="257" width="25" height="14" rx="2" fill="rgba(253,255,254,.06)" stroke="rgba(253,255,254,.1)" stroke-width=".3"/>
-            <rect x="618" y="257" width="25" height="14" rx="2" fill="rgba(253,255,254,.06)" stroke="rgba(253,255,254,.1)" stroke-width=".3"/>
-            <rect x="552" y="258" width="13" height="13" rx="2" fill="rgba(253,255,254,.05)" stroke="rgba(253,255,254,.1)" stroke-width=".4"/>
-            <rect x="653" y="258" width="13" height="13" rx="2" fill="rgba(253,255,254,.05)" stroke="rgba(253,255,254,.1)" stroke-width=".4"/>
-            <!-- Door -->
-            <path d="M530 370 L530 344 A26,26 0 0,0 556 370" fill="none" stroke="rgba(253,255,254,.22)" stroke-width=".7"/>
-            <line x1="530" y1="370" x2="556" y2="370" stroke="rgba(253,255,254,.18)" stroke-width=".7"/>
-            <!-- Cabinet banner -->
-            <rect x="672" y="234" width="108" height="20" rx="2" fill="rgba(201,168,76,.06)" stroke="rgba(201,168,76,.18)" stroke-width=".5"/>
-            <text x="726" y="247" style="font-family:'DM Sans',sans-serif;font-size:6px;fill:rgba(201,168,76,.48);text-anchor:middle">CABINETS IN PROGRESS</text>
-            <text x="658" y="377" class="fp-rl" style="font-size:9px">Master Bedroom</text>
-            <text x="658" y="389" class="fp-rs">Leo · Primary · 21ftx15ft</text>
-            <circle cx="658" cy="400" r="3" fill="#C9A84C" style="animation:blink 2s infinite"/>
-            <circle cx="542" cy="240" r="6.5" fill="rgba(253,255,254,.05)" stroke="rgba(253,255,254,.1)" stroke-width=".5"/>
-            <text x="542" y="243" style="font-family:'DM Sans',sans-serif;font-size:6.5px;fill:rgba(253,255,254,.35);text-anchor:middle">06</text>
-          </g>
+<!-- MASTER BATH furniture -->
+<!-- Tub -->
+<rect class="fp-furniture-fill" x="210" y="330" width="55" height="78" rx="10"/>
+<ellipse style="fill:rgba(253,255,254,.06);stroke:rgba(253,255,254,.14);stroke-width:1" cx="238" cy="370" rx="20" ry="28"/>
+<!-- Double vanity -->
+<rect class="fp-furniture-fill" x="200" y="430" width="110" height="24" rx="2"/>
+<circle style="fill:rgba(253,255,254,.1);stroke:rgba(253,255,254,.18);stroke-width:.8" cx="230" cy="442" r="7"/>
+<circle style="fill:rgba(253,255,254,.1);stroke:rgba(253,255,254,.18);stroke-width:.8" cx="280" cy="442" r="7"/>
+<!-- Toilet -->
+<rect class="fp-furniture-fill" x="196" y="470" width="26" height="32" rx="4"/>
+<ellipse style="fill:rgba(253,255,254,.07);stroke:rgba(253,255,254,.15);stroke-width:.8" cx="209" cy="488" rx="10" ry="12"/>
+<!-- Shower/stair -->
+<rect class="fp-furniture-fill" x="280" y="330" width="48" height="55" rx="2"/>
+<line style="stroke:rgba(253,255,254,.12);stroke-width:.8" x1="280" y1="340" x2="328" y2="340"/>
+<line style="stroke:rgba(253,255,254,.12);stroke-width:.8" x1="280" y1="350" x2="328" y2="350"/>
+<line style="stroke:rgba(253,255,254,.12);stroke-width:.8" x1="280" y1="360" x2="328" y2="360"/>
+<line style="stroke:rgba(253,255,254,.12);stroke-width:.8" x1="280" y1="370" x2="328" y2="370"/>
 
-          <!-- ═══ PRIMARY BATH ═══ -->
-          <g class="fp-rg fp-ok" id="fpr-pbath" onclick="fpSelect('pbath')">
-            <rect class="fp-rm" x="530" y="417" width="150" height="140" fill="rgba(74,155,111,.06)" stroke="rgba(74,155,111,.28)" stroke-width=".7"/>
-            <!-- Shower -->
-            <rect x="538" y="425" width="50" height="46" rx="2" fill="rgba(253,255,254,.03)" stroke="rgba(253,255,254,.12)" stroke-width=".6"/>
-            <line x1="538" y1="425" x2="588" y2="471" stroke="rgba(253,255,254,.06)" stroke-width=".3"/>
-            <line x1="588" y1="425" x2="538" y2="471" stroke="rgba(253,255,254,.06)" stroke-width=".3"/>
-            <circle cx="563" cy="448" r="3.5" fill="none" stroke="rgba(253,255,254,.18)" stroke-width=".5"/>
-            <!-- Double vanity -->
-            <rect x="596" y="425" width="76" height="24" rx="2" fill="rgba(253,255,254,.05)" stroke="rgba(253,255,254,.13)" stroke-width=".5"/>
-            <circle cx="614" cy="437" r="6.5" fill="none" stroke="rgba(253,255,254,.18)" stroke-width=".5"/>
-            <circle cx="646" cy="437" r="6.5" fill="none" stroke="rgba(253,255,254,.18)" stroke-width=".5"/>
-            <!-- Toilet -->
-            <rect x="538" y="479" width="22" height="30" rx="3" fill="rgba(253,255,254,.04)" stroke="rgba(253,255,254,.13)" stroke-width=".5"/>
-            <ellipse cx="549" cy="496" rx="9" ry="11" fill="none" stroke="rgba(253,255,254,.13)" stroke-width=".5"/>
-            <!-- Tub -->
-            <rect x="568" y="481" width="104" height="50" rx="4" fill="rgba(253,255,254,.03)" stroke="rgba(253,255,254,.13)" stroke-width=".6"/>
-            <rect x="575" y="488" width="90" height="36" rx="3" fill="rgba(253,255,254,.02)" stroke="rgba(253,255,254,.08)" stroke-width=".4"/>
-            <!-- Door -->
-            <path d="M530 460 L530 437 A23,23 0 0,1 553 460" fill="none" stroke="rgba(253,255,254,.22)" stroke-width=".7"/>
-            <line x1="530" y1="460" x2="553" y2="460" stroke="rgba(253,255,254,.18)" stroke-width=".7"/>
-            <text x="605" y="525" class="fp-rl" style="fill:rgba(74,155,111,.75)">Primary Bath</text>
-            <text x="605" y="537" class="fp-rs" style="fill:rgba(74,155,111,.5)">Complete ✓</text>
-            <circle cx="542" cy="428" r="6.5" fill="rgba(74,155,111,.1)" stroke="rgba(74,155,111,.28)" stroke-width=".5"/>
-            <text x="542" y="431" style="font-family:'DM Sans',sans-serif;font-size:6.5px;fill:rgba(74,155,111,.55);text-anchor:middle">07</text>
-          </g>
+<!-- BED 2 furniture -->
+<rect class="fp-furniture-fill" x="350" y="380" width="95" height="75" rx="4"/>
+<rect style="fill:rgba(253,255,254,.1);stroke:rgba(253,255,254,.2);stroke-width:1" x="350" y="380" width="95" height="10" rx="2"/>
+<!-- Desk -->
+<rect class="fp-furniture-fill" x="350" y="470" width="80" height="22" rx="2"/>
 
-          <!-- ═══ J&J BATH ═══ -->
-          <g class="fp-rg fp-ok" id="fpr-jjbath" onclick="fpSelect('jjbath')">
-            <rect class="fp-rm" x="180" y="417" width="168" height="140" fill="rgba(74,155,111,.06)" stroke="rgba(74,155,111,.28)" stroke-width=".7"/>
-            <!-- Shower/tub -->
-            <rect x="188" y="425" width="56" height="50" rx="2" fill="rgba(253,255,254,.03)" stroke="rgba(253,255,254,.12)" stroke-width=".6"/>
-            <line x1="188" y1="425" x2="244" y2="475" stroke="rgba(253,255,254,.06)" stroke-width=".3"/>
-            <line x1="244" y1="425" x2="188" y2="475" stroke="rgba(253,255,254,.06)" stroke-width=".3"/>
-            <!-- Double vanity -->
-            <rect x="252" y="425" width="88" height="24" rx="2" fill="rgba(253,255,254,.05)" stroke="rgba(253,255,254,.13)" stroke-width=".5"/>
-            <circle cx="270" cy="437" r="6.5" fill="none" stroke="rgba(253,255,254,.18)" stroke-width=".5"/>
-            <circle cx="305" cy="437" r="6.5" fill="none" stroke="rgba(253,255,254,.18)" stroke-width=".5"/>
-            <!-- 2x Toilet -->
-            <rect x="188" y="484" width="22" height="28" rx="3" fill="rgba(253,255,254,.04)" stroke="rgba(253,255,254,.13)" stroke-width=".5"/>
-            <ellipse cx="199" cy="500" rx="8.5" ry="10" fill="none" stroke="rgba(253,255,254,.12)" stroke-width=".5"/>
-            <rect x="218" y="484" width="22" height="28" rx="3" fill="rgba(253,255,254,.04)" stroke="rgba(253,255,254,.13)" stroke-width=".5"/>
-            <ellipse cx="229" cy="500" rx="8.5" ry="10" fill="none" stroke="rgba(253,255,254,.12)" stroke-width=".5"/>
-            <!-- Door -->
-            <path d="M290 417 L290 440 A23,23 0 0,0 313 417" fill="none" stroke="rgba(253,255,254,.22)" stroke-width=".7"/>
-            <line x1="290" y1="417" x2="313" y2="417" stroke="rgba(253,255,254,.18)" stroke-width=".7"/>
-            <text x="264" y="527" class="fp-rl" style="fill:rgba(74,155,111,.75)">J&amp;J Bath</text>
-            <text x="264" y="539" class="fp-rs" style="fill:rgba(74,155,111,.5)">Complete ✓ · ★★★★★</text>
-            <circle cx="193" cy="428" r="6.5" fill="rgba(74,155,111,.1)" stroke="rgba(74,155,111,.28)" stroke-width=".5"/>
-            <text x="193" y="431" style="font-family:'DM Sans',sans-serif;font-size:6.5px;fill:rgba(74,155,111,.55);text-anchor:middle">08</text>
-          </g>
+<!-- J&J BATH furniture -->
+<!-- Tub bottom -->
+<rect class="fp-furniture-fill" x="473" y="432" width="56" height="72" rx="8"/>
+<ellipse style="fill:rgba(253,255,254,.06);stroke:rgba(253,255,254,.14);stroke-width:1" cx="501" cy="468" rx="20" ry="25"/>
+<!-- Sink -->
+<rect class="fp-furniture-fill" x="473" y="325" width="55" height="40" rx="4"/>
+<circle style="fill:rgba(253,255,254,.1);stroke:rgba(253,255,254,.18);stroke-width:.8" cx="500" cy="345" r="8"/>
+<!-- Toilet -->
+<rect class="fp-furniture-fill" x="531" y="330" width="24" height="32" rx="4"/>
+<ellipse style="fill:rgba(253,255,254,.07);stroke:rgba(253,255,254,.15);stroke-width:.8" cx="543" cy="348" rx="9" ry="12"/>
 
-          <!-- ═══ BEDROOM 1 — Leo ═══ -->
-          <g class="fp-rg" id="fpr-br1" onclick="fpSelect('br1')">
-            <rect class="fp-rm" x="68" y="417" width="112" height="140" fill="rgba(253,255,254,.02)" stroke="rgba(253,255,254,.07)" stroke-width=".5"/>
-            <rect x="78" y="430" width="52" height="74" rx="3" fill="rgba(253,255,254,.04)" stroke="rgba(253,255,254,.12)" stroke-width=".6"/>
-            <rect x="78" y="430" width="52" height="11" rx="2" fill="rgba(253,255,254,.06)"/>
-            <rect x="88" y="435" width="30" height="9" rx="2" fill="rgba(253,255,254,.05)" stroke="rgba(253,255,254,.1)" stroke-width=".3"/>
-            <!-- Door -->
-            <path d="M155" y="518 L155 494 A24,24 0 0,0 179 518" fill="none" stroke="rgba(253,255,254,.22)" stroke-width=".7"/>
-            <line x1="155" y1="518" x2="179" y2="518" stroke="rgba(253,255,254,.18)" stroke-width=".7"/>
-            <text x="124" y="523" class="fp-rl">Bedroom 1</text>
-            <text x="124" y="535" class="fp-rs">Leo · 9ftx12ft</text>
-            <circle cx="80" cy="428" r="6.5" fill="rgba(253,255,254,.05)" stroke="rgba(253,255,254,.1)" stroke-width=".5"/>
-            <text x="80" y="431" style="font-family:'DM Sans',sans-serif;font-size:6.5px;fill:rgba(253,255,254,.35);text-anchor:middle">09</text>
-          </g>
+<!-- BED 3 furniture -->
+<rect class="fp-furniture-fill" x="572" y="360" width="95" height="80" rx="4"/>
+<rect style="fill:rgba(253,255,254,.1);stroke:rgba(253,255,254,.2);stroke-width:1" x="572" y="360" width="95" height="10" rx="2"/>
+<!-- Desk/dresser -->
+<rect class="fp-furniture-fill" x="572" y="460" width="65" height="22" rx="2"/>
 
-          <!-- ═══ BEDROOM 3 — Mila ═══ -->
-          <g class="fp-rg fp-err" id="fpr-mila" onclick="fpSelect('mila')">
-            <rect class="fp-rm" x="348" y="417" width="182" height="140" fill="rgba(224,122,95,.05)" stroke="rgba(224,122,95,.28)" stroke-width=".7"/>
-            <!-- Bed -->
-            <rect x="380" y="434" width="76" height="88" rx="3" fill="rgba(253,255,254,.04)" stroke="rgba(253,255,254,.12)" stroke-width=".6"/>
-            <rect x="380" y="434" width="76" height="13" rx="2" fill="rgba(253,255,254,.07)"/>
-            <rect x="387" y="440" width="25" height="11" rx="2" fill="rgba(253,255,254,.05)" stroke="rgba(253,255,254,.09)" stroke-width=".3"/>
-            <rect x="421" y="440" width="25" height="11" rx="2" fill="rgba(253,255,254,.05)" stroke="rgba(253,255,254,.09)" stroke-width=".3"/>
-            <!-- Cabinet issue flag -->
-            <rect x="462" y="422" width="62" height="20" rx="2" fill="rgba(224,122,95,.08)" stroke="rgba(224,122,95,.28)" stroke-width=".5"/>
-            <text x="493" y="435" style="font-family:'DM Sans',sans-serif;font-size:5.5px;fill:rgba(224,122,95,.6);text-anchor:middle">CABINET ✗ COLOR</text>
-            <!-- Door -->
-            <path d="M348 490 L348 466 A24,24 0 0,1 372 490" fill="none" stroke="rgba(253,255,254,.22)" stroke-width=".7"/>
-            <line x1="348" y1="490" x2="372" y2="490" stroke="rgba(253,255,254,.18)" stroke-width=".7"/>
-            <circle cx="436" cy="510" r="3" fill="#E07A5F" style="animation:blink 2s infinite"/>
-            <text x="436" y="524" class="fp-rl" style="fill:rgba(224,122,95,.78)">Bedroom 3 — Mila</text>
-            <text x="436" y="536" class="fp-rs" style="fill:rgba(224,122,95,.5)">Cabinet reinstall needed · 15ftx12ft</text>
-            <circle cx="360" cy="428" r="6.5" fill="rgba(224,122,95,.1)" stroke="rgba(224,122,95,.28)" stroke-width=".5"/>
-            <text x="360" y="431" style="font-family:'DM Sans',sans-serif;font-size:6.5px;fill:rgba(224,122,95,.5);text-anchor:middle">10</text>
-          </g>
+<!-- ════════════ ROOM LABELS ════════════ -->
+<text x="182" y="60" class="fp-label">Living Room</text>
+<text x="478" y="75" class="fp-label">Kitchen</text>
+<text x="95" y="490" class="fp-label">Master Bed</text>
+<text x="246" y="500" class="fp-label" style="font-size:8.5px">Master Bath</text>
+<text x="398" y="490" class="fp-label">Bed 2</text>
+<text x="510" y="500" class="fp-label" style="font-size:8.5px">J&amp;J Bath</text>
+<text x="609" y="490" class="fp-label">Bed 3</text>
 
-          <!-- ═══ LAUNDRY ═══ -->
-          <g class="fp-rg" id="fpr-laundry" onclick="fpSelect('laundry')">
-            <rect class="fp-rm" x="680" y="417" width="107" height="140" fill="rgba(253,255,254,.02)" stroke="rgba(253,255,254,.07)" stroke-width=".5"/>
-            <!-- Washer -->
-            <rect x="688" y="429" width="38" height="38" rx="3" fill="rgba(253,255,254,.04)" stroke="rgba(253,255,254,.12)" stroke-width=".6"/>
-            <circle cx="707" cy="448" r="13" fill="none" stroke="rgba(253,255,254,.14)" stroke-width=".7"/>
-            <circle cx="707" cy="448" r="7" fill="none" stroke="rgba(253,255,254,.09)" stroke-width=".4"/>
-            <!-- Dryer -->
-            <rect x="729" y="429" width="38" height="38" rx="3" fill="rgba(253,255,254,.04)" stroke="rgba(253,255,254,.12)" stroke-width=".6"/>
-            <circle cx="748" cy="448" r="13" fill="none" stroke="rgba(253,255,254,.14)" stroke-width=".7"/>
-            <circle cx="748" cy="448" r="7" fill="none" stroke="rgba(253,255,254,.09)" stroke-width=".4"/>
-            <!-- Door -->
-            <path d="M680 498 L680 474 A24,24 0 0,1 704 498" fill="none" stroke="rgba(253,255,254,.22)" stroke-width=".7"/>
-            <line x1="680" y1="498" x2="704" y2="498" stroke="rgba(253,255,254,.18)" stroke-width=".7"/>
-            <text x="733" y="516" class="fp-rl">Laundry</text>
-            <text x="733" y="528" class="fp-rs">W/D · check drains</text>
-            <circle cx="692" cy="428" r="6.5" fill="rgba(253,255,254,.05)" stroke="rgba(253,255,254,.1)" stroke-width=".5"/>
-            <text x="692" y="431" style="font-family:'DM Sans',sans-serif;font-size:6.5px;fill:rgba(253,255,254,.35);text-anchor:middle">11</text>
-          </g>
+<!-- ════════════ KEY DIMENSIONS ════════════ -->
+<!-- 375cm island label -->
+<text x="477" y="95" class="fp-dim">375.0 cm [147⅝"]</text>
+<!-- Master bed wall -->
+<text x="109" y="325" class="fp-dim">295.2 cm [116⅛"]</text>
+<line class="fp-dim-line" x1="30" y1="320" x2="188" y2="320"/>
+<!-- Top header dim -->
+<text x="200" y="26" class="fp-dim">70.4 cm [27¾"]</text>
 
-          <!-- ═══ ADU SEPARATOR ═══ -->
-          <line x1="57" y1="580" x2="640" y2="580" stroke="rgba(213,220,153,.08)" stroke-width=".7" stroke-dasharray="5,3"/>
-          <text x="348" y="588" style="font-family:'DM Sans',sans-serif;font-size:7px;fill:rgba(213,220,153,.2);text-anchor:middle;letter-spacing:.14em">— —  DETACHED ADU  — —</text>
+<!-- ════════════ ADU ════════════ -->
+<!-- ADU outer wall -->
+<rect class="fp-adu-wall" x="740" y="32" width="280" height="320" rx="2"/>
+<!-- ADU inner small room top-left -->
+<rect class="fp-adu-wall" x="740" y="32" width="95" height="88" rx="0"/>
+<!-- ADU label -->
+<text x="900" y="210" class="fp-label" style="font-size:14px;fill:rgba(253,255,254,.45)">ADU</text>
 
-          <!-- ADU exterior -->
-          <rect x="57" y="593" width="540" height="85" class="fp-we"/>
-          <rect x="68" y="601" width="518" height="69" fill="#1C201D"/>
-          <rect x="205" y="601" width="7" height="69" class="fp-wi"/>
+<!-- ADU door -->
+<line style="stroke:rgba(232,135,74,.7);stroke-width:3" x1="835" y1="32" x2="875" y2="32"/>
+<path class="fp-door-arc" d="M835,32 Q835,72 875,72"/>
 
-          <!-- ADU Bath -->
-          <g class="fp-rg fp-ok" id="fpr-adubath" onclick="fpSelect('adubath')">
-            <rect class="fp-rm" x="68" y="601" width="137" height="69" fill="rgba(74,155,111,.06)" stroke="rgba(74,155,111,.25)" stroke-width=".6"/>
-            <rect x="75" y="607" width="36" height="32" rx="2" fill="rgba(253,255,254,.03)" stroke="rgba(253,255,254,.1)" stroke-width=".5"/>
-            <line x1="75" y1="607" x2="111" y2="639" stroke="rgba(253,255,254,.04)" stroke-width=".3"/>
-            <rect x="117" y="607" width="16" height="22" rx="3" fill="rgba(253,255,254,.04)" stroke="rgba(253,255,254,.1)" stroke-width=".4"/>
-            <ellipse cx="125" cy="619" rx="6" ry="8" fill="none" stroke="rgba(253,255,254,.1)" stroke-width=".4"/>
-            <rect x="76" y="648" width="56" height="14" rx="2" fill="rgba(253,255,254,.04)" stroke="rgba(253,255,254,.1)" stroke-width=".4"/>
-            <circle cx="104" cy="655" r="5" fill="none" stroke="rgba(253,255,254,.16)" stroke-width=".4"/>
-            <text x="136" y="648" style="font-family:'DM Sans',sans-serif;font-size:7px;font-weight:600;fill:rgba(74,155,111,.65);text-anchor:middle">ADU Bath</text>
-            <text x="136" y="659" style="font-family:'DM Sans',sans-serif;font-size:6.5px;fill:rgba(74,155,111,.42);text-anchor:middle">Complete ✓</text>
-          </g>
+<!-- ════════════ COMPASS / SCALE ════════════ -->
+<circle style="fill:none;stroke:rgba(253,255,254,.1);stroke-width:1" cx="700" cy="490" r="20"/>
+<line style="stroke:rgba(213,220,153,.6);stroke-width:2" x1="700" y1="474" x2="700" y2="490"/>
+<polygon style="fill:rgba(213,220,153,.7)" points="700,470 695,480 705,480"/>
+<text x="700" y="468" style="font-size:7px;fill:rgba(213,220,153,.7);text-anchor:middle;font-family:DM Sans,sans-serif">N</text>
 
-          <!-- ADU Studio -->
-          <g class="fp-rg" id="fpr-adustudio" onclick="fpSelect('adustudio')">
-            <rect class="fp-rm" x="212" y="601" width="374" height="69" fill="rgba(201,168,76,.04)" stroke="rgba(201,168,76,.18)" stroke-width=".6"/>
-            <rect x="222" y="609" width="72" height="44" rx="3" fill="rgba(253,255,254,.04)" stroke="rgba(253,255,254,.1)" stroke-width=".5"/>
-            <rect x="222" y="609" width="72" height="11" rx="2" fill="rgba(253,255,254,.06)"/>
-            <rect x="492" y="607" width="84" height="18" rx="2" fill="rgba(253,255,254,.04)" stroke="rgba(253,255,254,.1)" stroke-width=".4"/>
-            <circle cx="506" cy="616" r="3.5" fill="none" stroke="rgba(253,255,254,.18)" stroke-width=".4"/>
-            <circle cx="518" cy="616" r="3.5" fill="none" stroke="rgba(253,255,254,.18)" stroke-width=".4"/>
-            <rect x="316" y="601" width="160" height="12" rx="1" fill="rgba(201,168,76,.05)" stroke="rgba(201,168,76,.16)" stroke-width=".4"/>
-            <text x="396" y="610" style="font-family:'DM Sans',sans-serif;font-size:5.5px;fill:rgba(201,168,76,.42);text-anchor:middle">CABINETS IN PROGRESS</text>
-            <text x="396" y="648" style="font-family:'DM Sans',sans-serif;font-size:7.5px;font-weight:600;fill:rgba(201,168,76,.7);text-anchor:middle;letter-spacing:.04em">ADU STUDIO / BEDROOM</text>
-            <text x="396" y="659" style="font-family:'DM Sans',sans-serif;font-size:6.5px;fill:rgba(201,168,76,.38);text-anchor:middle">405 SF · Cabinets in progress · Sonos + A/C pending</text>
-          </g>
+<!-- Scale bar -->
+<line style="stroke:rgba(253,255,254,.3);stroke-width:1.5" x1="750" y1="510" x2="870" y2="510"/>
+<line style="stroke:rgba(253,255,254,.3);stroke-width:1.5" x1="750" y1="506" x2="750" y2="514"/>
+<line style="stroke:rgba(253,255,254,.3);stroke-width:1.5" x1="810" y1="506" x2="810" y2="514"/>
+<line style="stroke:rgba(253,255,254,.3);stroke-width:1.5" x1="870" y1="506" x2="870" y2="514"/>
+<text x="750" y="524" class="fp-dim">0</text>
+<text x="810" y="524" class="fp-dim">5m</text>
+<text x="870" y="524" class="fp-dim">10m</text>
 
-          <!-- Compass -->
-          <g transform="translate(818,94)">
-            <circle cx="11" cy="11" r="10" fill="rgba(253,255,254,.04)" stroke="rgba(253,255,254,.1)" stroke-width=".6"/>
-            <text x="11" y="15" style="font-family:'DM Sans',sans-serif;font-size:8px;font-weight:700;fill:rgba(253,255,254,.3);text-anchor:middle">N</text>
-            <line x1="11" y1="4" x2="11" y2="7" stroke="rgba(253,255,254,.28)" stroke-width="1"/>
-          </g>
+<!-- ════════════ TAPPABLE ROOM OVERLAYS ════════════ -->
+<rect class="fp-room-tap" x="30" y="32" width="305" height="278" onclick="fpSelect('living')" data-room="living"/>
+<rect class="fp-room-tap" x="335" y="32" width="283" height="278" onclick="fpSelect('kitchen')" data-room="kitchen"/>
+<rect class="fp-room-tap" x="30" y="310" width="158" height="208" onclick="fpSelect('master-bed')" data-room="master-bed"/>
+<rect class="fp-room-tap" x="188" y="310" width="145" height="208" onclick="fpSelect('master-bath')" data-room="master-bath"/>
+<rect class="fp-room-tap" x="333" y="310" width="130" height="208" onclick="fpSelect('bed2')" data-room="bed2"/>
+<rect class="fp-room-tap" x="463" y="310" width="98" height="208" onclick="fpSelect('jjbath')" data-room="jjbath"/>
+<rect class="fp-room-tap" x="561" y="310" width="97" height="208" onclick="fpSelect('bed3')" data-room="bed3"/>
+<rect class="fp-room-tap" x="740" y="32" width="280" height="320" onclick="fpSelect('adu')" data-room="adu"/>
 
-          <!-- Scale bar -->
-          <g transform="translate(68,578)">
-            <line x1="0" y1="4" x2="96" y2="4" stroke="rgba(115,127,115,.45)" stroke-width=".8"/>
-            <line x1="0" y1="1" x2="0" y2="7" stroke="rgba(115,127,115,.45)" stroke-width=".8"/>
-            <line x1="48" y1="1" x2="48" y2="7" stroke="rgba(115,127,115,.45)" stroke-width=".8"/>
-            <line x1="96" y1="1" x2="96" y2="7" stroke="rgba(115,127,115,.45)" stroke-width=".8"/>
-            <text x="0" y="13" style="font-family:'DM Sans',sans-serif;font-size:6px;fill:rgba(115,127,115,.5)">0</text>
-            <text x="44" y="13" style="font-family:'DM Sans',sans-serif;font-size:6px;fill:rgba(115,127,115,.5)">10ft</text>
-            <text x="88" y="13" style="font-family:'DM Sans',sans-serif;font-size:6px;fill:rgba(115,127,115,.5)">20ft</text>
-          </g>
+<!-- Room highlight ring (shown on select) -->
+<rect id="fp-highlight" x="0" y="0" width="0" height="0" fill="none" stroke="rgba(213,220,153,.45)" stroke-width="2.5" rx="2" style="pointer-events:none;transition:all .2s ease"/>
 
-          <text x="430" y="672" style="font-family:'DM Sans',sans-serif;font-size:7px;fill:rgba(253,255,254,.12);text-anchor:middle">2560 Coolidge Ave · Santa Monica CA · Common Ground DRAFT · Ebru Kuyak Design</text>
-        </svg>
+</svg>
       </div>
 
       <!-- FP DETAIL PANEL -->
@@ -1950,21 +1867,44 @@ var fpTradeMap = {
   adu:     {trades:[{l:'Cabinet crew — south wall',cls:'active'},{l:'Electrician — speakers',cls:'active'}]},
 };
 
-function fpSelect(el, roomId, name, desc) {
-  // Remove highlight from all rooms
-  document.querySelectorAll('.fp-room').forEach(function(r) { r.classList.remove('selected'); });
-  // Add to clicked
-  el.classList.add('selected');
+function fpSelect(roomId) {
+  var ROOMS = {"living": {"name": "Living Room", "size": "~20'×18'", "desc": "Open plan · Fireplace · TV wall · Sofa + seating", "trades": ["GC", "Electrician", "Fireplace specialist", "Cabinet / finish"], "status": "Final close"}, "kitchen": {"name": "Kitchen", "size": "~21'×14'", "desc": "Kitchen + dining · Island 375cm · 6-seat dining table", "trades": ["GC", "Plumber", "Electrician", "Appliance installer", "Cabinet / finish"], "status": "Final close"}, "master-bed": {"name": "Master Bedroom", "size": "~17'×14'", "desc": "Primary suite · King bed · En-suite bath access · Closet", "trades": ["GC", "Electrician", "Cabinet / closet installer", "TV / mount"], "status": "Final close"}, "master-bath": {"name": "Master Bath", "size": "~12'×14'", "desc": "Soaking tub · Double vanity · Walk-in shower · Smart glass · Towel warmer", "trades": ["GC", "Tile crew", "Plumber", "Glass installer", "Mirror specialist"], "status": "Final close"}, "bed2": {"name": "Bedroom 2", "size": "~13'×12'", "desc": "Leo's room · Bed + desk + closet", "trades": ["GC", "Electrician", "Cabinet / closet installer"], "status": "Final close"}, "jjbath": {"name": "J&J Bath", "size": "~10'×12'", "desc": "Jack & Jill · Tub + toilet + sink · Dual access", "trades": ["GC", "Tile crew", "Plumber", "Glass installer"], "status": "Final close"}, "bed3": {"name": "Bedroom 3", "size": "~12'×12'", "desc": "Mila's room · Bed + closet + dresser", "trades": ["GC", "Electrician", "Cabinet / closet installer"], "status": "Final close"}, "adu": {"name": "ADU", "size": "~405 SF", "desc": "Garage conversion · Studio + bath · Mini-split HVAC · Sub-panel", "trades": ["GC", "Plumber", "Electrician", "HVAC specialist"], "status": "Final close"}};
+  var room = ROOMS[roomId];
+  if (!room) return;
+
+  // Highlight room on SVG
+  var hl = document.getElementById('fp-highlight');
+  var el = document.querySelector('[data-room="'+roomId+'"]');
+  if (hl && el) {
+    var x = parseFloat(el.getAttribute('x'));
+    var y = parseFloat(el.getAttribute('y'));
+    var w = parseFloat(el.getAttribute('width'));
+    var hh = parseFloat(el.getAttribute('height'));
+    hl.setAttribute('x', x-2); hl.setAttribute('y', y-2);
+    hl.setAttribute('width', w+4); hl.setAttribute('height', hh+4);
+  }
   currentRoom = roomId;
-  // Update panel
-  document.getElementById('fp-pname').textContent = name;
-  var tData = fpTradeMap[roomId] || {trades:[]};
-  var tc = document.getElementById('fp-ptrades');
-  tc.innerHTML = tData.trades.map(function(t) {
-    return '<div class="fp-tc ' + (t.cls||'') + '">' + t.l + '</div>';
-  }).join('') || '<div class="fp-tc">No active trades</div>';
-  document.getElementById('fp-panel').classList.add('show');
-  document.getElementById('wt-fab').style.display = 'none';
+
+  // Show panel content
+  var idle = document.getElementById('fp-panel-idle');
+  var content = document.getElementById('fp-panel-content');
+  if (idle) idle.style.display = 'none';
+  if (content) content.style.display = 'block';
+
+  // Fill panel
+  var n = document.getElementById('fpc-name');
+  var s = document.getElementById('fpc-size');
+  var st = document.getElementById('fpc-status');
+  var tr = document.getElementById('fpc-trades');
+  var no = document.getElementById('fpc-notes');
+
+  if (n) n.textContent = room.name;
+  if (s) s.textContent = room.size + ' · ' + room.desc;
+  if (st) st.innerHTML = '<span style="font-size:10px;font-weight:600;padding:3px 9px;border-radius:20px;background:var(--ok15);color:var(--ok);border:1px solid var(--ok30)">' + room.status + '</span>';
+  if (tr) tr.innerHTML = room.trades.map(function(t) {
+    return '<span style="font-size:9px;font-weight:600;padding:2px 7px;border-radius:20px;background:var(--l10);color:var(--lime);border:1px solid var(--l20);display:inline-block;margin:2px 2px 0 0">'+t+'</span>';
+  }).join('');
+  if (no) no.innerHTML = '<div style="margin-top:12px;font-size:10px;color:var(--w30);line-height:1.6">Tap <strong style=\'color:var(--w50)\'>+ Add note</strong> to log an update for this room.</div>';
 }
 
 function closeFpPanel() {
@@ -3032,11 +2972,14 @@ function fpSelect(id){
   }).join('');
 }
 
-function fpResetSelection(){
-  if(fpSelected){ var el=document.getElementById('fpr-'+fpSelected); if(el) el.classList.remove('fp-sel'); }
-  fpSelected=null;
-  document.getElementById('fp-panel-idle').style.display='flex';
-  document.getElementById('fp-panel-content').style.display='none';
+function fpResetSelection() {
+  var hl = document.getElementById('fp-highlight');
+  if (hl) { hl.setAttribute('width','0'); hl.setAttribute('height','0'); }
+  var idle = document.getElementById('fp-panel-idle');
+  var content = document.getElementById('fp-panel-content');
+  if (idle) idle.style.display = 'flex';
+  if (content) content.style.display = 'none';
+  currentRoom = null;
 }
 
 function fpToggleLegend(){
