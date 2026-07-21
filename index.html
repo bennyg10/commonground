@@ -1210,554 +1210,282 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;
 
   <!-- ══ SCREEN: AI PLAN SCANNER ══ -->
   <div class="screen" id="sc-scanner">
-    <div class="scrl">
-      <div class="sh fu1"><span class="sh-title">AI Plan Scanner</span><span style="font-size:9px;font-weight:700;background:var(--l10);color:var(--lime);border:1px solid var(--l20);border-radius:20px;padding:2px 8px;letter-spacing:.04em">BETA</span></div>
-      <div style="background:var(--d3);border:1.5px dashed var(--w15);border-radius:var(--r);padding:24px;text-align:center;margin-bottom:12px;cursor:pointer" class="fu2" onclick="document.getElementById('scanner-file').click()">
-        <input type="file" id="scanner-file" accept=".pdf,.jpg,.jpeg,.png" style="display:none" onchange="alert('Plan received — demo scan running. Full scanner coming tomorrow with live AI analysis.')">
-        <div style="font-size:28px;margin-bottom:8px">📐</div>
-        <div style="font-size:13px;font-weight:600;color:var(--white);margin-bottom:3px">Drop your plan here</div>
-        <div style="font-size:11px;color:var(--w50)">PDF, JPG, or PNG · architectural or landscape</div>
-      </div>
-      <div style="background:var(--am15);border:1px solid var(--am30);border-radius:var(--sm);padding:10px 12px;font-size:11px;color:rgba(201,168,76,.9);margin-bottom:12px;display:flex;gap:8px;line-height:1.6">
-        💡 Full AI scan with live flag analysis and structured output — working demo building tomorrow. Upload a plan now to queue it.
-      </div>
-      <div style="font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--sage);margin-bottom:8px">Recent scans</div>
-      <div class="detail fu2"><div class="detail-hd"><div class="detail-title">Coolidge Option B — demo scan</div><span style="font-size:9px;background:var(--or15);color:var(--ora);padding:2px 6px;border-radius:20px;font-weight:500">3 critical</span></div><div style="padding:10px 13px;font-size:11px;color:var(--w50);line-height:1.7">8 flags · 2 resolved · Scanned June 28<br>Refrigerator clearance insufficient · Shower door conflict · ADU speaker/duct conflict</div></div>
-    </div>
-  </div>
-
-
-  <!-- SCREEN: DESIGN MODE -->
-  <div class="screen" id="sc-design" data-role-gate="client">
-    <div class="scrl" style="padding:0">
-
-      <!-- HEADER -->
-      <div style="padding:14px 18px 12px;border-bottom:1px solid var(--w08);display:flex;align-items:center;gap:10px;background:var(--d1);flex-shrink:0">
-        <div>
-          <div style="font-family:'Syne',sans-serif;font-size:16px;font-weight:800;color:var(--white);letter-spacing:-.03em">Design mode <span style="font-size:12px;font-weight:600;color:var(--lime)">✦</span></div>
-          <div style="font-size:10px;color:var(--w30);margin-top:1px">Dream, visualize, and curate your space</div>
-        </div>
-        <div style="margin-left:auto;font-size:9px;font-weight:700;background:var(--l10);color:var(--lime);border:1px solid var(--l20);border-radius:20px;padding:3px 10px;letter-spacing:.06em">✦ DREAM</div>
-      </div>
-
-      <div style="padding:18px;display:flex;flex-direction:column;gap:20px">
-
-        <!-- ══ SECTION 1: MOOD BOARDS ══ -->
-        <div class="fu1">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-            <div>
-              <div style="font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--white);letter-spacing:-.02em">Mood boards</div>
-              <div style="font-size:10px;color:var(--w30);margin-top:1px">Visual inspiration · Connect Pinterest to sync</div>
-            </div>
-            <div style="display:flex;gap:7px">
-              <button onclick="dmConnectPinterest()" style="display:flex;align-items:center;gap:5px;padding:5px 11px;background:none;border:1px solid var(--w08);border-radius:6px;font-size:10px;color:var(--w50);cursor:pointer;font-family:inherit;transition:all .15s" onmouseover="this.style.borderColor='var(--l20)';this.style.color='var(--lime)'" onmouseout="this.style.borderColor='var(--w08)';this.style.color='var(--w50)'">
-                <i class="ti ti-brand-pinterest" style="font-size:12px" aria-hidden="true"></i> Connect Pinterest
-              </button>
-              <button onclick="dmAddMoodItem()" style="display:flex;align-items:center;gap:5px;padding:5px 11px;background:var(--lime);border:none;border-radius:6px;font-size:10px;font-weight:700;color:var(--dk);cursor:pointer;font-family:inherit">
-                <i class="ti ti-plus" style="font-size:11px" aria-hidden="true"></i> Add
-              </button>
-            </div>
-          </div>
-          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px" id="dm-mood-grid"><div style="background:var(--d3);border:1px solid var(--w08);border-radius:10px;overflow:hidden;cursor:pointer;transition:all .18s" onmouseover="this.style.borderColor='var(--l20)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--w08)';this.style.transform=''">
-              <div style="height:100px;background:var(--d4);display:flex;align-items:center;justify-content:center;font-size:32px;position:relative">
-                🏠
-                <span style="position:absolute;top:6px;left:6px;font-size:8px;font-weight:600;background:rgba(17,16,21,.75);color:var(--w50);padding:2px 6px;border-radius:20px;border:1px solid var(--w08)">Kitchen</span>
-              </div>
-              <div style="padding:9px 11px">
-                <div style="font-size:10px;font-weight:500;color:var(--white);margin-bottom:2px">Kitchen island</div>
-                <div style="font-size:9px;color:var(--w30)">Tap to expand</div>
-              </div>
-            </div><div style="background:var(--d3);border:1px solid var(--w08);border-radius:10px;overflow:hidden;cursor:pointer;transition:all .18s" onmouseover="this.style.borderColor='var(--l20)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--w08)';this.style.transform=''">
-              <div style="height:100px;background:var(--d4);display:flex;align-items:center;justify-content:center;font-size:32px;position:relative">
-                🛁
-                <span style="position:absolute;top:6px;left:6px;font-size:8px;font-weight:600;background:rgba(17,16,21,.75);color:var(--w50);padding:2px 6px;border-radius:20px;border:1px solid var(--w08)">Master bath</span>
-              </div>
-              <div style="padding:9px 11px">
-                <div style="font-size:10px;font-weight:500;color:var(--white);margin-bottom:2px">Master bath tile</div>
-                <div style="font-size:9px;color:var(--w30)">Tap to expand</div>
-              </div>
-            </div><div style="background:var(--d3);border:1px solid var(--w08);border-radius:10px;overflow:hidden;cursor:pointer;transition:all .18s" onmouseover="this.style.borderColor='var(--l20)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--w08)';this.style.transform=''">
-              <div style="height:100px;background:var(--d4);display:flex;align-items:center;justify-content:center;font-size:32px;position:relative">
-                💡
-                <span style="position:absolute;top:6px;left:6px;font-size:8px;font-weight:600;background:rgba(17,16,21,.75);color:var(--w50);padding:2px 6px;border-radius:20px;border:1px solid var(--w08)">Living</span>
-              </div>
-              <div style="padding:9px 11px">
-                <div style="font-size:10px;font-weight:500;color:var(--white);margin-bottom:2px">Living room lighting</div>
-                <div style="font-size:9px;color:var(--w30)">Tap to expand</div>
-              </div>
-            </div><div style="background:var(--d3);border:1px solid var(--w08);border-radius:10px;overflow:hidden;cursor:pointer;transition:all .18s" onmouseover="this.style.borderColor='var(--l20)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--w08)';this.style.transform=''">
-              <div style="height:100px;background:var(--d4);display:flex;align-items:center;justify-content:center;font-size:32px;position:relative">
-                🌿
-                <span style="position:absolute;top:6px;left:6px;font-size:8px;font-weight:600;background:rgba(17,16,21,.75);color:var(--w50);padding:2px 6px;border-radius:20px;border:1px solid var(--w08)">Deck</span>
-              </div>
-              <div style="padding:9px 11px">
-                <div style="font-size:10px;font-weight:500;color:var(--white);margin-bottom:2px">Deck / outdoor</div>
-                <div style="font-size:9px;color:var(--w30)">Tap to expand</div>
-              </div>
-            </div><div style="background:var(--d3);border:1.5px dashed var(--l20);border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;min-height:152px;cursor:pointer;transition:background .15s" onclick="dmAddMoodItem()" onmouseover="this.style.background='var(--l10)'" onmouseout="this.style.background='var(--d3)'">
-              <i class="ti ti-plus" style="font-size:20px;color:var(--lime)" aria-hidden="true"></i>
-              <div style="font-size:10px;font-weight:600;color:var(--lime)">Add board</div>
-              <div style="font-size:9px;color:var(--w30)">URL or image</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- ══ SECTION 2: STUCCO SELECTOR ══ -->
-        <div class="fu2">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-            <div>
-              <div style="font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--white);letter-spacing:-.02em">Stucco selector</div>
-              <div style="font-size:10px;color:var(--w30);margin-top:1px">La Habra colors · Custom mix · Live preview on your home</div>
-            </div>
-            <button onclick="dmOpenFullVisualizer()" style="display:flex;align-items:center;gap:5px;padding:5px 11px;background:none;border:1px solid var(--l20);border-radius:6px;font-size:10px;font-weight:600;color:var(--lime);cursor:pointer;font-family:inherit;transition:background .15s" onmouseover="this.style.background='var(--l10)'" onmouseout="this.style.background='none'">
-              <i class="ti ti-arrows-maximize" style="font-size:11px" aria-hidden="true"></i> Full screen
-            </button>
-          </div>
-
-          <!-- Embedded paint visualizer -->
-          <div style="background:var(--d1);border:1px solid var(--w08);border-radius:var(--r);overflow:hidden">
-
-            <!-- Mini toolbar -->
-            <div style="display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid var(--w08);background:var(--d2)">
-              <div style="display:flex;background:var(--d3);border-radius:6px;padding:2px;gap:1px">
-                <button class="dmtab on" id="dmtab-solid" onclick="dmSetMode('solid',this)">Solid</button>
-                <button class="dmtab" id="dmtab-mix" onclick="dmSetMode('mix',this)">Mix</button>
-              </div>
-              <div style="display:flex;align-items:center;gap:6px;margin-left:auto">
-                <span style="font-size:9px;color:var(--sage)">Intensity</span>
-                <input type="range" id="dm-intensity" min="10" max="75" value="42" style="width:70px" oninput="dmUpdateIntensity(this.value)">
-                <span style="font-size:9px;color:var(--w50);min-width:24px" id="dm-int-val">42%</span>
-              </div>
-              <button onclick="dmToggleOriginal()" id="dm-orig-btn" style="display:flex;align-items:center;gap:3px;padding:3px 8px;background:var(--d3);border:1px solid var(--w08);border-radius:5px;font-size:9px;color:var(--w50);cursor:pointer;font-family:inherit">
-                <i class="ti ti-eye" style="font-size:11px" aria-hidden="true"></i> Original
-              </button>
-            </div>
-
-            <!-- Two-col: canvas + controls -->
-            <div style="display:grid;grid-template-columns:1fr 260px;min-height:300px">
-
-              <!-- Canvas -->
-              <div style="position:relative;background:#080a08;display:flex;align-items:center;justify-content:center;overflow:hidden;min-height:280px">
-                <canvas id="dm-base-canvas" style="position:absolute;top:0;left:0;width:100%;height:100%"></canvas>
-                <canvas id="dm-overlay-canvas" style="position:absolute;top:0;left:0;width:100%;height:100%;transition:opacity .2s"></canvas>
-                <div id="dm-canvas-hint" style="position:relative;z-index:1;text-align:center;color:var(--w30);font-size:10px;pointer-events:none">
-                  <div style="font-size:20px;margin-bottom:6px;opacity:.3">🏠</div>
-                  Loading preview…
-                </div>
-              </div>
-
-              <!-- Color controls -->
-              <div style="background:var(--d2);border-left:1px solid var(--w08);padding:12px;overflow-y:auto;display:flex;flex-direction:column;gap:10px">
-
-                <!-- Active color display -->
-                <div id="dm-active-color" style="display:none;background:var(--d3);border:1px solid var(--w08);border-radius:var(--sm);overflow:hidden">
-                  <div id="dm-ac-bar" style="height:36px;position:relative">
-                    <div style="position:absolute;inset:0;background:repeating-linear-gradient(45deg,rgba(0,0,0,.04) 0,rgba(0,0,0,.04) 2px,transparent 2px,transparent 8px)"></div>
-                  </div>
-                  <div style="padding:7px 9px">
-                    <div style="font-size:10px;font-weight:600;color:var(--white)" id="dm-ac-name">—</div>
-                    <div style="font-size:9px;color:var(--sage)" id="dm-ac-code">—</div>
-                  </div>
-                </div>
-
-                <!-- SOLID mode -->
-                <div id="dm-solid-panel">
-                  <div style="font-size:8px;text-transform:uppercase;letter-spacing:.1em;color:var(--sage);margin-bottom:6px" id="dm-cat-label">Standard Collection</div>
-                  <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px" id="dm-cat-pills"><button class="cat-pill  on" onclick="dmSwitchCat("Standard")" style="font-size:9px;padding:2px 7px">Standard</button><button class="cat-pill" onclick="dmSwitchCat("Santa Barbara")" style="font-size:9px;padding:2px 7px">Santa Barbara</button><button class="cat-pill" onclick="dmSwitchCat("Modern")" style="font-size:9px;padding:2px 7px">Modern</button></div>
-                  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px" id="dm-color-grid"></div>
-                </div>
-
-                <!-- MIX mode -->
-                <div id="dm-mix-panel" style="display:none">
-                  <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px">
-                    <div style="background:var(--d3);border:1px solid var(--w08);border-radius:var(--sm);padding:7px;cursor:pointer" id="dm-mb-a" onclick="dmStartSelect('a')">
-                      <div style="font-size:8px;color:var(--sage);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Color A</div>
-                      <div id="dm-mb-swatch-a" style="height:24px;border-radius:4px;background:var(--d5);margin-bottom:4px;border:1px solid rgba(255,255,255,.06)"></div>
-                      <div style="font-size:9px;color:var(--w50)" id="dm-mb-name-a">Choose</div>
-                    </div>
-                    <div style="background:var(--d3);border:1px solid var(--w08);border-radius:var(--sm);padding:7px;cursor:pointer" id="dm-mb-b" onclick="dmStartSelect('b')">
-                      <div style="font-size:8px;color:var(--sage);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Color B</div>
-                      <div id="dm-mb-swatch-b" style="height:24px;border-radius:4px;background:var(--d5);margin-bottom:4px;border:1px solid rgba(255,255,255,.06)"></div>
-                      <div style="font-size:9px;color:var(--w50)" id="dm-mb-name-b">Choose</div>
-                    </div>
-                  </div>
-                  <div style="display:flex;align-items:center;gap:6px;margin-bottom:5px">
-                    <span style="font-size:9px;color:var(--lime);min-width:24px" id="dm-ra">50%</span>
-                    <input type="range" id="dm-ratio" min="10" max="90" value="50" style="flex:1" oninput="dmUpdateRatio(this.value)">
-                    <span style="font-size:9px;color:var(--lime);min-width:24px;text-align:right" id="dm-rb">50%</span>
-                  </div>
-                  <div style="height:7px;border-radius:4px;overflow:hidden;display:flex;margin-bottom:8px">
-                    <div id="dm-bar-a" style="width:50%;background:#666;height:100%;transition:width .2s"></div>
-                    <div id="dm-bar-b" style="width:50%;background:#444;height:100%;transition:width .2s"></div>
-                  </div>
-                  <!-- Quick ratios -->
-                  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-bottom:8px"><div onclick="dmApplyRatio(75)" id="dm-rsug-75" style="border-radius:5px;overflow:hidden;cursor:pointer;border:2px solid transparent;transition:border-color .15s">
-                      <div style="height:14px;display:flex" id="dm-rsugbar-75">
-                        <div style="width:75%;background:#888;height:100%"></div>
-                        <div style="width:25%;background:#555;height:100%"></div>
-                      </div>
-                      <div style="font-size:8px;color:var(--w30);text-align:center;padding:2px;background:var(--d3)">75/25</div>
-                    </div><div onclick="dmApplyRatio(50)" id="dm-rsug-50" style="border-radius:5px;overflow:hidden;cursor:pointer;border:2px solid var(--lime);transition:border-color .15s">
-                      <div style="height:14px;display:flex" id="dm-rsugbar-50">
-                        <div style="width:50%;background:#888;height:100%"></div>
-                        <div style="width:50%;background:#555;height:100%"></div>
-                      </div>
-                      <div style="font-size:8px;color:var(--w30);text-align:center;padding:2px;background:var(--d3)">50/50</div>
-                    </div><div onclick="dmApplyRatio(25)" id="dm-rsug-25" style="border-radius:5px;overflow:hidden;cursor:pointer;border:2px solid transparent;transition:border-color .15s">
-                      <div style="height:14px;display:flex" id="dm-rsugbar-25">
-                        <div style="width:25%;background:#888;height:100%"></div>
-                        <div style="width:75%;background:#555;height:100%"></div>
-                      </div>
-                      <div style="font-size:8px;color:var(--w30);text-align:center;padding:2px;background:var(--d3)">25/75</div>
-                    </div></div>
-                  <div style="font-size:8px;text-transform:uppercase;letter-spacing:.1em;color:var(--sage);margin-bottom:5px">Colors</div>
-                  <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px" id="dm-cat-pills-mix"><button class="cat-pill  on" onclick="dmSwitchCatMix("Standard")" style="font-size:9px;padding:2px 7px">Standard</button><button class="cat-pill" onclick="dmSwitchCatMix("Santa Barbara")" style="font-size:9px;padding:2px 7px">Santa Barbara</button><button class="cat-pill" onclick="dmSwitchCatMix("Modern")" style="font-size:9px;padding:2px 7px">Modern</button></div>
-                  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px" id="dm-color-grid-mix"></div>
-                </div>
-
-                <!-- Generate compare -->
-                <button onclick="dmGenerateCompare()" style="width:100%;display:flex;align-items:center;justify-content:center;gap:5px;padding:8px;background:none;border:1px solid var(--l20);border-radius:7px;font-size:10px;font-weight:600;color:var(--lime);cursor:pointer;font-family:inherit;transition:background .15s" onmouseover="this.style.background='var(--l10)'" onmouseout="this.style.background='none'">
-                  <i class="ti ti-layout-columns" style="font-size:12px" aria-hidden="true"></i> Compare 3 options
-                </button>
-
-              </div>
-            </div>
-
-            <!-- Compare strip (hidden until generated) -->
-            <div id="dm-compare-strip" style="display:none;border-top:1px solid var(--w08)">
-              <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;height:160px">
-                <div style="position:relative;overflow:hidden;cursor:pointer;border-right:1px solid var(--w08)" id="dmc-0" onclick="dmChooseCompare(0)">
-                  <canvas id="dmc-canvas-0" style="width:100%;height:100%;object-fit:cover"></canvas>
-                  <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(17,16,21,.9));padding:8px 10px">
-                    <div style="font-size:10px;font-weight:600;color:#FDFFFE" id="dmc-name-0">—</div>
-                    <div style="font-size:9px;color:var(--w50)" id="dmc-mix-0">—</div>
-                  </div>
-                  <div style="position:absolute;top:6px;right:6px;background:var(--lime);color:var(--dk);border:none;border-radius:20px;padding:2px 8px;font-size:9px;font-weight:700;cursor:pointer;display:none" id="dmc-btn-0">Choose</div>
-                </div>
-                <div style="position:relative;overflow:hidden;cursor:pointer;border-right:1px solid var(--w08)" id="dmc-1" onclick="dmChooseCompare(1)">
-                  <canvas id="dmc-canvas-1" style="width:100%;height:100%;object-fit:cover"></canvas>
-                  <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(17,16,21,.9));padding:8px 10px">
-                    <div style="font-size:10px;font-weight:600;color:#FDFFFE" id="dmc-name-1">—</div>
-                    <div style="font-size:9px;color:var(--w50)" id="dmc-mix-1">—</div>
-                  </div>
-                </div>
-                <div style="position:relative;overflow:hidden;cursor:pointer" id="dmc-2" onclick="dmChooseCompare(2)">
-                  <canvas id="dmc-canvas-2" style="width:100%;height:100%;object-fit:cover"></canvas>
-                  <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(17,16,21,.9));padding:8px 10px">
-                    <div style="font-size:10px;font-weight:600;color:#FDFFFE" id="dmc-name-2">—</div>
-                    <div style="font-size:9px;color:var(--w50)" id="dmc-mix-2">—</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </div>
-
-        <!-- ══ SECTION 3: DREAM PRODUCTS ══ -->
-        <div class="fu3">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-            <div>
-              <div style="font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--white);letter-spacing:-.02em">Dream products</div>
-              <div style="font-size:10px;color:var(--w30);margin-top:1px">Items to buy · Assign to rooms · Builds your dream budget</div>
-            </div>
-            <button onclick="dmAddDreamProduct()" style="display:flex;align-items:center;gap:5px;padding:6px 13px;background:var(--lime);border:none;border-radius:7px;font-size:10px;font-weight:700;color:var(--dk);cursor:pointer;font-family:inherit">
-              <i class="ti ti-plus" style="font-size:11px" aria-hidden="true"></i> Add product
-            </button>
-          </div>
-          <!-- Filter pills -->
-          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px" id="dm-room-filter">
-            <button class="cat-pill on" onclick="dmFilterRoom('all',this)">All rooms</button><button class="cat-pill" onclick="dmFilterRoom("Entry",this)">Entry</button><button class="cat-pill" onclick="dmFilterRoom("Living room",this)">Living room</button><button class="cat-pill" onclick="dmFilterRoom("Kitchen",this)">Kitchen</button><button class="cat-pill" onclick="dmFilterRoom("Dining",this)">Dining</button><button class="cat-pill" onclick="dmFilterRoom("Master bedroom",this)">Master bedroom</button><button class="cat-pill" onclick="dmFilterRoom("Master bath",this)">Master bath</button><button class="cat-pill" onclick="dmFilterRoom("J&J bath",this)">J&J bath</button><button class="cat-pill" onclick="dmFilterRoom("Bedroom 1 \u2014 Leo",this)">Bedroom 1 — Leo</button></div>
-          <!-- Product grid -->
-          <div style="display:flex;flex-direction:column;gap:7px" id="dm-product-list"></div>
-          <div style="background:var(--d3);border:1px solid var(--w08);border-radius:var(--r);padding:10px 14px;margin-top:10px;display:flex;justify-content:space-between;align-items:center">
-            <span style="font-size:11px;color:var(--w50)">Dream budget total</span>
-            <span style="font-size:14px;font-weight:700;color:var(--lime)" id="dm-budget-total">TBD</span>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </div>
-
-    <!-- SCREEN: OUTDOOR LOG -->
-  <div class="screen" id="sc-outdoor-log">
-    <div class="scrl" style="padding:0;overflow-x:hidden;max-width:100%;width:100%">
+    <div class="scrl" style="padding:0;overflow-x:hidden;width:100%;max-width:100%">
 
       <!-- HEADER -->
       <div style="padding:14px 18px 12px;border-bottom:1px solid var(--w08);background:var(--d1);display:flex;align-items:center;gap:10px;flex-shrink:0">
         <div style="flex:1">
-          <div style="font-family:'Syne',sans-serif;font-size:16px;font-weight:800;color:var(--white);letter-spacing:-.03em">Outdoor Decisions</div>
-          <div style="font-size:10px;color:var(--w30);margin-top:1px">Front yard concept · Landscape Team review</div>
+          <div style="font-family:'Syne',sans-serif;font-size:16px;font-weight:800;color:var(--white);letter-spacing:-.03em">Plan scanner</div>
+          <div style="font-size:10px;color:var(--w30);margin-top:1px">Upload a CAD file or build your floor plan step by step</div>
         </div>
-        <span style="font-size:9px;font-weight:700;background:var(--am15);color:var(--amb);border:1px solid var(--am30);border-radius:20px;padding:3px 10px;letter-spacing:.05em">Decisions needed</span>
+        <span style="font-size:9px;font-weight:700;background:var(--l10);color:var(--lime);border:1px solid var(--l20);border-radius:20px;padding:3px 10px;letter-spacing:.05em">AI · BETA</span>
       </div>
 
-      <div class="od-padding" style="padding:16px;display:flex;flex-direction:column;gap:18px;overflow-x:hidden;width:100%;max-width:100%;word-break:break-word;box-sizing:border-box">
+      <!-- ENTRY CHOICE — shown first -->
+      <div id="scanner-entry" style="padding:24px;display:flex;flex-direction:column;gap:12px">
 
-        <!-- TEAM MESSAGE -->
-        <div style="background:var(--d2);border:1px solid var(--l20);border-radius:12px;padding:18px 20px;position:relative;overflow:hidden" class="fu1">
-          <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--lime),rgba(213,220,153,0))"></div>
-          <div style="display:flex;align-items:center;gap:9px;margin-bottom:12px">
-            <div style="width:32px;height:32px;border-radius:50%;background:var(--d4);border:2px solid var(--l20);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--lime);flex-shrink:0">BG</div>
-            <div>
-              <div style="font-size:12px;font-weight:600;color:var(--white)">Ben Gordon</div>
-              <div style="font-size:10px;color:var(--sage)">Client · July 9, 2026</div>
+        <div style="font-size:12px;color:var(--w50);line-height:1.7;margin-bottom:4px">
+          Start by uploading your floor plan or walk through a guided builder — no CAD file required.
+        </div>
+
+        <!-- Option A: Upload -->
+        <div onclick="scannerShowUpload()" style="background:var(--d2);border:1px solid var(--w08);border-radius:12px;padding:20px;cursor:pointer;display:flex;gap:16px;align-items:center;transition:border-color .2s" onmouseover="this.style.borderColor='var(--l20)'" onmouseout="this.style.borderColor='var(--w08)'">
+          <div style="width:44px;height:44px;border-radius:10px;background:var(--d4);border:1px solid var(--l20);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            <i class="ti ti-upload" style="font-size:20px;color:var(--lime)"></i>
+          </div>
+          <div>
+            <div style="font-size:13px;font-weight:600;color:var(--white);margin-bottom:3px">Upload a floor plan</div>
+            <div style="font-size:11px;color:var(--w50);line-height:1.5">CAD file, PDF, or photo of your plan. We extract the outline and rooms automatically.</div>
+            <div style="display:flex;gap:5px;margin-top:8px">
+              <span style="font-size:9px;font-weight:600;background:var(--d4);color:var(--w50);border:1px solid var(--w08);border-radius:20px;padding:2px 7px">.dwg</span>
+              <span style="font-size:9px;font-weight:600;background:var(--d4);color:var(--w50);border:1px solid var(--w08);border-radius:20px;padding:2px 7px">.pdf</span>
+              <span style="font-size:9px;font-weight:600;background:var(--d4);color:var(--w50);border:1px solid var(--w08);border-radius:20px;padding:2px 7px">.jpg</span>
+              <span style="font-size:9px;font-weight:600;background:var(--d4);color:var(--w50);border:1px solid var(--w08);border-radius:20px;padding:2px 7px">.png</span>
             </div>
           </div>
-          <div style="font-size:12px;color:var(--w70);line-height:1.8;margin-bottom:12px">
-            Team — sharing the updated front yard concept. <strong style="color:var(--white)">Working layout, not final</strong> — proportions approximate. Goal is to align on direction before Landscape Team finalizes their proposal.
+          <i class="ti ti-arrow-right" style="font-size:16px;color:var(--w30);margin-left:auto;flex-shrink:0"></i>
+        </div>
+
+        <!-- Divider -->
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="flex:1;height:1px;background:var(--w08)"></div>
+          <span style="font-size:10px;color:var(--w30)">or</span>
+          <div style="flex:1;height:1px;background:var(--w08)"></div>
+        </div>
+
+        <!-- Option B: Draft your own -->
+        <div onclick="scannerShowDemo()" style="background:var(--d2);border:1px solid var(--w08);border-radius:12px;padding:20px;cursor:pointer;display:flex;gap:16px;align-items:center;transition:border-color .2s" onmouseover="this.style.borderColor='var(--l20)'" onmouseout="this.style.borderColor='var(--w08)'">
+          <div style="width:44px;height:44px;border-radius:10px;background:var(--d4);border:1px solid var(--l20);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            <i class="ti ti-pencil" style="font-size:20px;color:var(--lime)"></i>
           </div>
-          <div style="display:flex;flex-direction:column;gap:7px;margin-bottom:14px">
-            <div style="display:flex;align-items:flex-start;gap:9px;font-size:11px;color:var(--w60,rgba(253,255,254,.65));line-height:1.6">
-              <div style="width:20px;height:20px;border-radius:50%;background:var(--l10);border:1px solid var(--l20);display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:var(--lime);flex-shrink:0;margin-top:1px">1</div>
-              <div><strong style="color:var(--white)">CMU wall smooth stucco</strong> — no columns, bottom + right perimeter. Clean modern boundary from the street.</div>
-            </div><div style="display:flex;align-items:flex-start;gap:9px;font-size:11px;color:var(--w60,rgba(253,255,254,.65));line-height:1.6">
-              <div style="width:20px;height:20px;border-radius:50%;background:var(--l10);border:1px solid var(--l20);display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:var(--lime);flex-shrink:0;margin-top:1px">2</div>
-              <div><strong style="color:var(--white)">Garden Bed CMU planter</strong> — 10'6" wide along house front, 21" high. Ebru to specify planting palette.</div>
-            </div><div style="display:flex;align-items:flex-start;gap:9px;font-size:11px;color:var(--w60,rgba(253,255,254,.65));line-height:1.6">
-              <div style="width:20px;height:20px;border-radius:50%;background:var(--l10);border:1px solid var(--l20);display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:var(--lime);flex-shrink:0;margin-top:1px">3</div>
-              <div><strong style="color:var(--white)">Concrete patio</strong> — 16'×16' left zone. Smooth finish confirmed ✓. Steps descend to paver path.</div>
-            </div><div style="display:flex;align-items:flex-start;gap:9px;font-size:11px;color:var(--w60,rgba(253,255,254,.65));line-height:1.6">
-              <div style="width:20px;height:20px;border-radius:50%;background:var(--l10);border:1px solid var(--l20);display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:var(--lime);flex-shrink:0;margin-top:1px">4</div>
-              <div><strong style="color:var(--white)">Concrete steps + paver path</strong> — 7 steps with LED underglow at 7" each, 7 offset 2' pavers at sidewalk level, 6" gaps, 18' total.</div>
-            </div><div style="display:flex;align-items:flex-start;gap:9px;font-size:11px;color:var(--w60,rgba(253,255,254,.65));line-height:1.6">
-              <div style="width:20px;height:20px;border-radius:50%;background:var(--l10);border:1px solid var(--l20);display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:var(--lime);flex-shrink:0;margin-top:1px">5</div>
-              <div><strong style="color:var(--white)">Front entryway</strong> — 7'×4'. Planter bed 3'×2' beside it. Gate Walnut vs. Hickory — Ebru to confirm.</div>
-            </div><div style="display:flex;align-items:flex-start;gap:9px;font-size:11px;color:var(--w60,rgba(253,255,254,.65));line-height:1.6">
-              <div style="width:20px;height:20px;border-radius:50%;background:var(--l10);border:1px solid var(--l20);display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:var(--lime);flex-shrink:0;margin-top:1px">6</div>
-              <div><strong style="color:var(--white)">Wood panel feature</strong> — 10' wide horizontal slat panel. Material TBD — Ebru input needed.</div>
+          <div>
+            <div style="font-size:13px;font-weight:600;color:var(--white);margin-bottom:3px">Draft your home floor plan</div>
+            <div style="font-size:11px;color:var(--w50);line-height:1.5">No CAD file? No problem. Answer a few questions and we build your outline layer by layer — you confirm each step.</div>
+            <div style="display:inline-flex;align-items:center;gap:5px;margin-top:8px;font-size:9px;font-weight:600;background:var(--ok15);color:var(--ok);border:1px solid var(--ok30);border-radius:20px;padding:2px 8px">
+              <i class="ti ti-check" style="font-size:10px"></i> No file needed
             </div>
           </div>
-          <div style="display:flex;gap:6px;flex-wrap:wrap">
-            <span style="font-size:9px;font-weight:700;background:var(--am15);color:var(--amb);border:1px solid var(--am30);border-radius:20px;padding:2px 8px">Decisions needed</span>
-            <span style="font-size:9px;font-weight:700;background:var(--ok15);color:var(--ok);border:1px solid var(--ok30);border-radius:20px;padding:2px 8px">Landscape Team review</span>
-            <span style="font-size:9px;font-weight:700;background:var(--l10);color:var(--lime);border:1px solid var(--l20);border-radius:20px;padding:2px 8px">Ebru input</span>
-          </div>
-        </div>
-
-        <!-- SITE PLAN -->
-        <div style="background:var(--d2);border:1px solid var(--w08);border-radius:12px;overflow:hidden" class="fu2">
-          <div style="padding:11px 16px;border-bottom:1px solid var(--w08);display:flex;align-items:center;gap:9px">
-            <span style="font-size:12px;font-weight:600;color:var(--white)">Site plan — front yard concept v3</span>
-            <span style="font-size:9px;font-weight:700;background:var(--am15);color:var(--amb);border:1px solid var(--am30);border-radius:20px;padding:2px 8px">Rough · not to scale</span>
-          </div>
-          <img onclick="openPlanModal()" src="https://cdn.jsdelivr.net/gh/bennyg10/commonground@main/assets/plan-v3.jpg" style="max-width:100%;width:100%;display:block;cursor:zoom-in" alt="Front yard concept plan">
-          <div style="padding:10px 16px;font-size:10px;color:var(--w30);border-top:1px solid var(--w08);line-height:1.65">
-            House at top · Sidewalk at bottom · Tap image to zoom · Legend: 1 Wood Panel · 2 Garden Bed · 3 Concrete Steps · 4 Concrete Pavers · 5 Front Entry · 6 Wooden Panel · 7 CMU Wall · 8 Hedges
-          </div>
-        </div>
-
-        <!-- ZONE BREAKDOWN — clickable cards with reference images -->
-        <div class="fu2">
-          <div style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--sage);margin-bottom:10px">Zone breakdown — tap to expand references</div>
-
-          <!-- ZONE CARDS GRID -->
-          <div class="od-grid-zones" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%;max-width:100%">
-
-            <!-- Zone A: Concrete Steps + Pavers -->
-            <div id="zone-concrete" onclick="odToggleZone('concrete')" style="background:var(--d3);border:1px solid var(--w08);border-radius:9px;overflow:hidden;cursor:pointer;transition:border-color .2s" onmouseover="this.style.borderColor='var(--l20)'" onmouseout="this.style.borderColor='var(--w08)'">
-              <img src="https://cdn.jsdelivr.net/gh/bennyg10/commonground@main/assets/ref_concrete3.jpg" style="width:100%;height:120px;object-fit:cover;object-position:center;display:block;opacity:.82">
-              <div style="padding:10px 12px">
-                <div style="font-size:8px;text-transform:uppercase;letter-spacing:.08em;color:var(--sage);margin-bottom:3px">Zone A · Steps + Pavers</div>
-                <div style="font-size:11px;font-weight:600;color:var(--white);margin-bottom:4px">Concrete Path</div>
-                <div style="font-size:10px;color:var(--w50);line-height:1.5">7 steps · 7" risers · LED underglow · 7 offset pavers 18' total</div>
-                <div style="display:inline-flex;align-items:center;gap:4px;font-size:8px;font-weight:600;background:var(--d4);color:var(--w50);border:1px solid var(--w08);border-radius:20px;padding:2px 7px;margin-top:7px">3'×2' · 6" gaps</div>
-              </div>
-            </div>
-
-            <!-- Zone B: Entry Gate -->
-            <div id="zone-entry" onclick="odToggleZone('entry')" style="background:var(--d3);border:1px solid var(--w08);border-radius:9px;overflow:hidden;cursor:pointer;transition:border-color .2s" onmouseover="this.style.borderColor='var(--l20)'" onmouseout="this.style.borderColor='var(--w08)'">
-              <img src="https://cdn.jsdelivr.net/gh/bennyg10/commonground@main/assets/ref_entry1.jpg" style="width:100%;height:120px;object-fit:cover;object-position:center;display:block;opacity:.82">
-              <div style="padding:10px 12px">
-                <div style="font-size:8px;text-transform:uppercase;letter-spacing:.08em;color:var(--sage);margin-bottom:3px">Zone B · Entry</div>
-                <div style="font-size:11px;font-weight:600;color:var(--white);margin-bottom:4px">Front Entryway</div>
-                <div style="font-size:10px;color:var(--w50);line-height:1.5">7'×4' · Gate Walnut vs Hickory · Planter 3'×2' · CMU stucco wall</div>
-                <div style="display:inline-flex;align-items:center;gap:4px;font-size:8px;font-weight:600;background:var(--am15);color:var(--amb);border:1px solid var(--am30);border-radius:20px;padding:2px 7px;margin-top:7px">Gate color TBD</div>
-                <a href="https://www.saumarra.com/?pp=0&epik=dj0yJnU9M05qN1BaQnR0OU5ZczVnTVk0bVpIb2N2MlJMUnZDeXomcD0xJm49dDk2Y19meEdOVzE5XzlOT0Jqb25XdyZ0PUFBQUFBR3BhN2dr" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:4px;font-size:8px;font-weight:600;background:var(--l10);color:var(--lime);border:1px solid var(--l20);border-radius:20px;padding:2px 7px;margin-top:7px;text-decoration:none" onclick="event.stopPropagation()">
-                  <i class="ti ti-external-link" style="font-size:10px"></i> View door ↗
-                </a>
-              </div>
-            </div>
-
-            <!-- Zone C: Concrete Patio -->
-            <div id="zone-patio" onclick="odToggleZone('patio')" style="background:var(--d3);border:1px solid var(--w08);border-radius:9px;overflow:hidden;cursor:pointer;transition:border-color .2s" onmouseover="this.style.borderColor='var(--l20)'" onmouseout="this.style.borderColor='var(--w08)'">
-              <img src="https://cdn.jsdelivr.net/gh/bennyg10/commonground@main/assets/ref_concrete1.jpg" style="width:100%;height:120px;object-fit:cover;object-position:center;display:block;opacity:.82">
-              <div style="padding:10px 12px">
-                <div style="font-size:8px;text-transform:uppercase;letter-spacing:.08em;color:var(--sage);margin-bottom:3px">Zone C · Patio</div>
-                <div style="font-size:11px;font-weight:600;color:var(--white);margin-bottom:4px">Concrete Patio</div>
-                <div style="font-size:10px;color:var(--w50);line-height:1.5">16'×16' · Smooth finish confirmed ✓ · Left yard zone</div>
-                <div style="display:inline-flex;align-items:center;gap:4px;font-size:8px;font-weight:600;background:var(--ok15);color:var(--ok);border:1px solid var(--ok30);border-radius:20px;padding:2px 7px;margin-top:7px">✓ Confirmed smooth</div>
-              </div>
-            </div>
-
-            <!-- Zone D: Garden Bed + Planting -->
-            <div id="zone-planting" onclick="odToggleZone('planting')" style="background:var(--d3);border:1px solid var(--w08);border-radius:9px;overflow:hidden;cursor:pointer;transition:border-color .2s" onmouseover="this.style.borderColor='var(--l20)'" onmouseout="this.style.borderColor='var(--w08)'">
-              <img src="https://cdn.jsdelivr.net/gh/bennyg10/commonground@main/assets/ref_tree.jpg" style="width:100%;height:120px;object-fit:cover;object-position:center;display:block;opacity:.82">
-              <div style="padding:10px 12px">
-                <div style="font-size:8px;text-transform:uppercase;letter-spacing:.08em;color:var(--sage);margin-bottom:3px">Zone D · Planting</div>
-                <div style="font-size:11px;font-weight:600;color:var(--white);margin-bottom:4px">Garden Bed + Trees</div>
-                <div style="font-size:10px;color:var(--w50);line-height:1.5">CMU planter 10'6" wide · 21" high · Planting palette Ebru to specify</div>
-                <div style="display:inline-flex;align-items:center;gap:4px;font-size:8px;font-weight:600;background:var(--l10);color:var(--lime);border:1px solid var(--l20);border-radius:20px;padding:2px 7px;margin-top:7px">Ebru input needed</div>
-              </div>
-            </div>
-
-            <!-- Zone E: Wood Panel -->
-            <div id="zone-wood" onclick="odToggleZone('wood')" style="background:var(--d3);border:1px solid var(--w08);border-radius:9px;overflow:hidden;cursor:pointer;transition:border-color .2s" onmouseover="this.style.borderColor='var(--l20)'" onmouseout="this.style.borderColor='var(--w08)'">
-              <img src="https://cdn.jsdelivr.net/gh/bennyg10/commonground@main/assets/ref_wood2.jpg" style="width:100%;height:120px;object-fit:cover;object-position:center;display:block;opacity:.82">
-              <div style="padding:10px 12px">
-                <div style="font-size:8px;text-transform:uppercase;letter-spacing:.08em;color:var(--sage);margin-bottom:3px">Zone E · Privacy</div>
-                <div style="font-size:11px;font-weight:600;color:var(--white);margin-bottom:4px">Wood Panel Feature</div>
-                <div style="font-size:10px;color:var(--w50);line-height:1.5">10' wide · Horizontal slat · Material TBD · Ties to deck language</div>
-                <div style="display:inline-flex;align-items:center;gap:4px;font-size:8px;font-weight:600;background:var(--l10);color:var(--lime);border:1px solid var(--l20);border-radius:20px;padding:2px 7px;margin-top:7px">Ebru input needed</div>
-              </div>
-            </div>
-
-            <!-- Zone F: Master Bed Deck Phase II -->
-            <div id="zone-deck" onclick="odToggleZone('deck')" style="background:var(--am15);border:1px solid var(--am30);border-radius:9px;overflow:hidden;cursor:pointer;transition:border-color .2s" onmouseover="this.style.borderColor='var(--amb)'" onmouseout="this.style.borderColor='var(--am30)'">
-              <img src="https://cdn.jsdelivr.net/gh/bennyg10/commonground@main/assets/ref_wood1.jpg" style="width:100%;height:90px;object-fit:cover;display:block;opacity:.65">
-              <div style="padding:10px 12px">
-                <div style="font-size:8px;text-transform:uppercase;letter-spacing:.08em;color:var(--amb);margin-bottom:3px">Phase II · Top right</div>
-                <div style="font-size:11px;font-weight:600;color:var(--white);margin-bottom:4px">Master Bed Deck</div>
-                <div style="font-size:10px;color:var(--w50);line-height:1.5">17'×14' · Brazilian hardwood · LED underglow · GC quote pending</div>
-                <div style="display:inline-flex;align-items:center;gap:4px;font-size:8px;font-weight:600;background:var(--am15);color:var(--amb);border:1px solid var(--am30);border-radius:20px;padding:2px 7px;margin-top:7px">Phase II · quote pending</div>
-              </div>
-            </div>
-
-          </div>
-        </div>
-
-        <!-- EXPANDED ZONE REFERENCE PANELS (hidden by default) -->
-        <!-- Concrete / Steps expanded -->
-        <div id="zone-concrete-detail" style="display:none;background:var(--d2);border:1px solid var(--l20);border-radius:12px;overflow:hidden;animation:fadeup .25s ease">
-          <div style="padding:11px 16px;border-bottom:1px solid var(--w08);display:flex;align-items:center;justify-content:space-between">
-            <span style="font-size:12px;font-weight:600;color:var(--white)">Concrete Steps + Pavers — References</span>
-            <button onclick="odToggleZone('concrete')" style="background:none;border:none;color:var(--w50);cursor:pointer;font-size:16px;line-height:1">×</button>
-          </div>
-          <div class="od-grid-2" style="display:grid;grid-template-columns:repeat(2,1fr);gap:0;max-height:500px;overflow:hidden">
-            <img src="https://cdn.jsdelivr.net/gh/bennyg10/commonground@main/assets/ref_concrete2.jpg" style="width:100%;height:240px;object-fit:cover;object-position:center;display:block;border-right:1px solid var(--w08)" alt="Concrete steps + planter">
-            <img src="https://cdn.jsdelivr.net/gh/bennyg10/commonground@main/assets/ref_concrete3.jpg" style="width:100%;height:240px;object-fit:cover;object-position:center;display:block" alt="Concrete steps detail">
-            <img src="https://cdn.jsdelivr.net/gh/bennyg10/commonground@main/assets/ref_concrete4.jpg" style="width:100%;height:240px;object-fit:cover;object-position:center;display:block;border-right:1px solid var(--w08);border-top:1px solid var(--w08)" alt="LED underglow steps">
-            <img src="https://cdn.jsdelivr.net/gh/bennyg10/commonground@main/assets/ref_concrete1.jpg" style="width:100%;height:240px;object-fit:cover;object-position:center;display:block;border-top:1px solid var(--w08)" alt="Patio outdoor living">
-          </div>
-          <div style="padding:12px 16px;font-size:11px;color:var(--w50);line-height:1.7;border-top:1px solid var(--w08)">
-            <strong style="color:var(--w70)">Concrete steps:</strong> 7 risers at 7" high each · 2/3" overhang at base for LED strip underglow · Smooth finish · Width 4'6"<br>
-            <strong style="color:var(--w70)">Paver path:</strong> 7 offset 2' pavers · 6" gaps between all · 18' total · 3'×2' each
-          </div>
-        </div>
-
-        <!-- Entry expanded -->
-        <div id="zone-entry-detail" style="display:none;background:var(--d2);border:1px solid var(--l20);border-radius:12px;overflow:hidden;animation:fadeup .25s ease">
-          <div style="padding:11px 16px;border-bottom:1px solid var(--w08);display:flex;align-items:center;justify-content:space-between">
-            <span style="font-size:12px;font-weight:600;color:var(--white)">Front Entry — References</span>
-            <button onclick="odToggleZone('entry')" style="background:none;border:none;color:var(--w50);cursor:pointer;font-size:16px;line-height:1">×</button>
-          </div>
-          <div class="od-grid-2" style="display:grid;grid-template-columns:repeat(2,1fr);gap:0;max-height:500px;overflow:hidden">
-            <img src="https://cdn.jsdelivr.net/gh/bennyg10/commonground@main/assets/ref_entry1.jpg" style="width:100%;height:280px;object-fit:cover;object-position:center;display:block;border-right:1px solid var(--w08)" alt="White CMU wall + wood gate">
-            <img src="https://cdn.jsdelivr.net/gh/bennyg10/commonground@main/assets/ref_entry2.jpg" style="width:100%;height:280px;object-fit:cover;object-position:center;display:block" alt="Stucco entry + wood door">
-          </div>
-          <div style="padding:12px 16px;font-size:11px;color:var(--w50);line-height:1.7;border-top:1px solid var(--w08)">
-            <strong style="color:var(--w70)">Gate:</strong> Walnut vs. Hickory warm wood tone — Ebru to confirm against La Habra Silver Grey stucco<br>
-            <strong style="color:var(--w70)">Entryway:</strong> 7'×4' · Planter 3'×2' beside · Thicker jamb on L side · CMU smooth stucco backdrop<br><br>
-            <a href="https://www.saumarra.com/?pp=0&epik=dj0yJnU9M05qN1BaQnR0OU5ZczVnTVk0bVpIb2N2MlJMUnZDeXomcD0xJm49dDk2Y19meEdOVzE5XzlOT0Jqb25XdyZ0PUFBQUFBR3BhN2dr" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;padding:7px 13px;background:var(--lime);color:var(--dk);border-radius:7px;font-size:11px;font-weight:700;text-decoration:none;margin-top:4px;transition:background .15s" onmouseover="this.style.background='#c8d488'" onmouseout="this.style.background='var(--lime)'">
-              <i class="ti ti-external-link" style="font-size:12px"></i> View front door — Saumarra ↗
-            </a>
-          </div>
-        </div>
-
-        <!-- Patio expanded -->
-        <div id="zone-patio-detail" style="display:none;background:var(--d2);border:1px solid var(--l20);border-radius:12px;overflow:hidden;animation:fadeup .25s ease">
-          <div style="padding:11px 16px;border-bottom:1px solid var(--w08);display:flex;align-items:center;justify-content:space-between">
-            <span style="font-size:12px;font-weight:600;color:var(--white)">Concrete Patio — References</span>
-            <button onclick="odToggleZone('patio')" style="background:none;border:none;color:var(--w50);cursor:pointer;font-size:16px;line-height:1">×</button>
-          </div>
-          <img src="https://cdn.jsdelivr.net/gh/bennyg10/commonground@main/assets/ref_concrete1.jpg" style="width:100%;height:340px;object-fit:cover;object-position:center;display:block" alt="Outdoor living patio">
-          <div style="padding:12px 16px;font-size:11px;color:var(--w50);line-height:1.7;border-top:1px solid var(--w08)">
-            <strong style="color:var(--w70)">Patio:</strong> 16'×16' · Smooth concrete finish confirmed ✓ · Left yard zone adjacent to wood panel and garden bed
-          </div>
-        </div>
-
-        <!-- Planting expanded -->
-        <div id="zone-planting-detail" style="display:none;background:var(--d2);border:1px solid var(--l20);border-radius:12px;overflow:hidden;animation:fadeup .25s ease">
-          <div style="padding:11px 16px;border-bottom:1px solid var(--w08);display:flex;align-items:center;justify-content:space-between">
-            <span style="font-size:12px;font-weight:600;color:var(--white)">Garden Bed + Planting — References</span>
-            <button onclick="odToggleZone('planting')" style="background:none;border:none;color:var(--w50);cursor:pointer;font-size:16px;line-height:1">×</button>
-          </div>
-          <img src="https://cdn.jsdelivr.net/gh/bennyg10/commonground@main/assets/ref_tree.jpg" style="width:100%;height:340px;object-fit:cover;object-position:center;display:block" alt="Olive tree planting">
-          <div style="padding:12px 16px;font-size:11px;color:var(--w50);line-height:1.7;border-top:1px solid var(--w08)">
-            <strong style="color:var(--w70)">Garden Bed:</strong> CMU planter 10'6" wide · 21" high · Ebru to specify planting palette against Silver Grey stucco and olive/lavender palette direction
-          </div>
-        </div>
-
-        <!-- Wood Panel expanded -->
-        <div id="zone-wood-detail" style="display:none;background:var(--d2);border:1px solid var(--l20);border-radius:12px;overflow:hidden;animation:fadeup .25s ease">
-          <div style="padding:11px 16px;border-bottom:1px solid var(--w08);display:flex;align-items:center;justify-content:space-between">
-            <span style="font-size:12px;font-weight:600;color:var(--white)">Wood Panel + Deck — References</span>
-            <button onclick="odToggleZone('wood')" style="background:none;border:none;color:var(--w50);cursor:pointer;font-size:16px;line-height:1">×</button>
-          </div>
-          <div class="od-grid-2" style="display:grid;grid-template-columns:repeat(2,1fr);gap:0;max-height:500px;overflow:hidden">
-            <img src="https://cdn.jsdelivr.net/gh/bennyg10/commonground@main/assets/ref_wood2.jpg" style="width:100%;height:280px;object-fit:cover;object-position:center;display:block;border-right:1px solid var(--w08)" alt="Wood slat privacy panel">
-            <img src="https://cdn.jsdelivr.net/gh/bennyg10/commonground@main/assets/ref_wood1.jpg" style="width:100%;height:280px;object-fit:cover;object-position:center;display:block" alt="Deck LED underglow">
-          </div>
-          <div style="padding:12px 16px;font-size:11px;color:var(--w50);line-height:1.7;border-top:1px solid var(--w08)">
-            <strong style="color:var(--w70)">Wood panel:</strong> 10' wide horizontal slat · Material TBD (teak / cedar / Ipe) · Ebru to confirm<br>
-            <strong style="color:var(--w70)">Deck Phase II:</strong> 17'×14' · Brazilian hardwood · LED underglow at risers · Separate GC quote
-          </div>
-        </div>
-
-        <!-- Deck expanded -->
-        <div id="zone-deck-detail" style="display:none;background:var(--d2);border:1px solid var(--am30);border-radius:12px;overflow:hidden;animation:fadeup .25s ease">
-          <div style="padding:11px 16px;border-bottom:1px solid var(--w08);display:flex;align-items:center;justify-content:space-between">
-            <span style="font-size:12px;font-weight:600;color:var(--white)">Master Bed Deck Phase II</span>
-            <button onclick="odToggleZone('deck')" style="background:none;border:none;color:var(--w50);cursor:pointer;font-size:16px;line-height:1">×</button>
-          </div>
-          <img src="https://cdn.jsdelivr.net/gh/bennyg10/commonground@main/assets/ref_wood1.jpg" style="width:100%;height:340px;object-fit:cover;object-position:center;display:block" alt="Deck LED underglow reference">
-          <div style="padding:12px 16px;font-size:11px;color:var(--w50);line-height:1.7;border-top:1px solid var(--w08)">
-            <strong style="color:var(--amb)">Phase II:</strong> 17'×14' Brazilian hardwood deck off master bedroom slider · LED underglow at step transitions · Separate quote from GC · Not blocking Phase I
-          </div>
-        </div>
-
-        <!-- OPEN DECISIONS -->
-        <div class="fu3">
-          <div style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--sage);margin-bottom:10px">Open decisions</div>
-          <div style="display:flex;flex-direction:column;gap:7px">
-            <div class="od-decision-row" style="background:var(--d3);border:1px solid var(--w08);border-radius:9px;padding:12px 14px;display:flex;align-items:flex-start;gap:10px">
-              <div style="width:26px;height:26px;border-radius:50%;background:var(--am15);border:1px solid var(--am30);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:var(--amb);flex-shrink:0;margin-top:1px">1</div>
-              <div style="flex:1;min-width:0"><div style="font-size:11px;font-weight:600;color:var(--white);margin-bottom:2px">Gate color — Walnut vs. Hickory</div><div style="font-size:10px;color:var(--w50);line-height:1.55">Both warm wood tones. Confirm with Ebru — which reads better against La Habra -16 Silver Grey stucco.</div></div>
-              <span style="font-size:9px;font-weight:700;padding:2px 8px;border-radius:20px;white-space:nowrap;flex-shrink:0;background:var(--am15);color:var(--amb);border:1px solid var(--am30)">Ebru → Ben</span>
-            </div><div class="od-decision-row" style="background:var(--d3);border:1px solid var(--w08);border-radius:9px;padding:12px 14px;display:flex;align-items:flex-start;gap:10px">
-              <div style="width:26px;height:26px;border-radius:50%;background:var(--l10);border:1px solid var(--l20);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:var(--lime);flex-shrink:0;margin-top:1px">2</div>
-              <div style="flex:1;min-width:0"><div style="font-size:11px;font-weight:600;color:var(--white);margin-bottom:2px">Wood panel material — teak vs. cedar vs. Ipe</div><div style="font-size:10px;color:var(--w50);line-height:1.55">Horizontal slat panel (10'×6'). Ebru to confirm. Should complement the deck language.</div></div>
-              <span style="font-size:9px;font-weight:700;padding:2px 8px;border-radius:20px;white-space:nowrap;flex-shrink:0;background:var(--l10);color:var(--lime);border:1px solid var(--l20)">Ebru input needed</span>
-            </div><div class="od-decision-row" style="background:var(--d3);border:1px solid var(--w08);border-radius:9px;padding:12px 14px;display:flex;align-items:flex-start;gap:10px">
-              <div style="width:26px;height:26px;border-radius:50%;background:var(--l10);border:1px solid var(--l20);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:var(--lime);flex-shrink:0;margin-top:1px">3</div>
-              <div style="flex:1;min-width:0"><div style="font-size:11px;font-weight:600;color:var(--white);margin-bottom:2px">Garden bed planting palette</div><div style="font-size:10px;color:var(--w50);line-height:1.55">CMU raised planter 10'6" along house front. Ebru to specify. Should work with Silver Grey stucco.</div></div>
-              <span style="font-size:9px;font-weight:700;padding:2px 8px;border-radius:20px;white-space:nowrap;flex-shrink:0;background:var(--l10);color:var(--lime);border:1px solid var(--l20)">Ebru input needed</span>
-            </div><div class="od-decision-row" style="background:var(--d3);border:1px solid var(--w08);border-radius:9px;padding:12px 14px;display:flex;align-items:flex-start;gap:10px">
-              <div style="width:26px;height:26px;border-radius:50%;background:var(--ok15);border:1px solid var(--ok30);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:var(--ok);flex-shrink:0;margin-top:1px">4</div>
-              <div style="flex:1;min-width:0"><div style="font-size:11px;font-weight:600;color:var(--white);margin-bottom:2px">Concrete patio finish — Smooth ✓</div><div style="font-size:10px;color:var(--w50);line-height:1.55">16'×16' patio left zone. Smooth concrete finish confirmed. Landscape Team to spec accordingly.</div></div>
-              <span style="font-size:9px;font-weight:700;padding:2px 8px;border-radius:20px;white-space:nowrap;flex-shrink:0;background:var(--ok15);color:var(--ok);border:1px solid var(--ok30)">✓ Closed</span>
-            </div><div class="od-decision-row" style="background:var(--d3);border:1px solid var(--w08);border-radius:9px;padding:12px 14px;display:flex;align-items:flex-start;gap:10px">
-              <div style="width:26px;height:26px;border-radius:50%;background:var(--ok15);border:1px solid var(--ok30);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:var(--ok);flex-shrink:0;margin-top:1px">5</div>
-              <div style="flex:1;min-width:0"><div style="font-size:11px;font-weight:600;color:var(--white);margin-bottom:2px">Landscape Team Phase I contract</div><div style="font-size:10px;color:var(--w50);line-height:1.55">Verify pricing still valid post-tariff. Ben to sign once gate color + planting palette confirmed with Ebru.</div></div>
-              <span style="font-size:9px;font-weight:700;padding:2px 8px;border-radius:20px;white-space:nowrap;flex-shrink:0;background:var(--ok15);color:var(--ok);border:1px solid var(--ok30)">Ready to sign · pending above</span>
-            </div><div class="od-decision-row" style="background:var(--d3);border:1px solid var(--w08);border-radius:9px;padding:12px 14px;display:flex;align-items:flex-start;gap:10px">
-              <div style="width:26px;height:26px;border-radius:50%;background:var(--am15);border:1px solid var(--am30);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:var(--amb);flex-shrink:0;margin-top:1px">6</div>
-              <div style="flex:1;min-width:0"><div style="font-size:11px;font-weight:600;color:var(--white);margin-bottom:2px">Master Bed Deck — Phase II quote timing</div><div style="font-size:10px;color:var(--w50);line-height:1.55">17'×14' Brazilian hardwood. GC to quote separately. Not blocking Phase I.</div></div>
-              <span style="font-size:9px;font-weight:700;padding:2px 8px;border-radius:20px;white-space:nowrap;flex-shrink:0;background:var(--am15);color:var(--amb);border:1px solid var(--am30)">Lance → quote pending</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- FOOTER -->
-        <div style="background:var(--d3);border:1px solid var(--w08);border-radius:9px;padding:12px 14px;font-size:10px;color:var(--w30);line-height:1.7" class="fu3">
-          <strong style="color:var(--w50)">Note:</strong> Working concept for team alignment — not a final design document. Proportions approximate. Landscape Team to use as directional input only.
-          <br><strong style="color:var(--w50)">Next step:</strong> Ebru confirms gate color + planting palette → Ben signs Landscape Team contract → Phase I begins.
+          <i class="ti ti-arrow-right" style="font-size:16px;color:var(--w30);margin-left:auto;flex-shrink:0"></i>
         </div>
 
       </div>
+
+      <!-- UPLOAD FLOW -->
+      <div id="scanner-upload" style="display:none;padding:24px">
+        <button onclick="scannerShowEntry()" style="background:none;border:none;color:var(--w50);cursor:pointer;font-size:12px;display:flex;align-items:center;gap:5px;margin-bottom:16px;padding:0">
+          <i class="ti ti-arrow-left" style="font-size:13px"></i> Back
+        </button>
+        <div style="background:var(--d3);border:1.5px dashed var(--w15);border-radius:12px;padding:32px;text-align:center;cursor:pointer;margin-bottom:16px" onclick="document.getElementById('scanner-file').click()">
+          <input type="file" id="scanner-file" accept=".dwg,.dxf,.pdf,.jpg,.jpeg,.png,.svg" style="display:none" onchange="scannerFileSelected(this)">
+          <i class="ti ti-cloud-upload" style="font-size:36px;color:var(--w30);display:block;margin-bottom:10px"></i>
+          <div style="font-size:13px;font-weight:600;color:var(--white);margin-bottom:4px">Drop your file here or tap to browse</div>
+          <div style="font-size:11px;color:var(--w30)">.dwg · .dxf · .pdf · .jpg · .png · .svg</div>
+        </div>
+        <div id="scanner-file-status" style="display:none;background:var(--ok15);border:1px solid var(--ok30);border-radius:10px;padding:14px 16px;font-size:12px;color:var(--ok);display:flex;align-items:center;gap:8px">
+          <i class="ti ti-check" style="font-size:14px"></i>
+          <span id="scanner-file-name">File received</span>
+        </div>
+      </div>
+
+      <!-- DEMO / ONBOARDING FLOW -->
+      <div id="scanner-demo" style="display:none;padding:16px">
+        <button onclick="scannerShowEntry()" style="background:none;border:none;color:var(--w50);cursor:pointer;font-size:12px;display:flex;align-items:center;gap:5px;margin-bottom:14px;padding:0">
+          <i class="ti ti-arrow-left" style="font-size:13px"></i> Back
+        </button>
+
+        <!-- Step progress -->
+        <div style="display:flex;align-items:center;gap:4px;margin-bottom:20px">
+          <div id="ob-pd1" style="width:24px;height:24px;border-radius:50%;background:var(--d4);border:1px solid var(--l20);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:var(--lime)">1</div>
+          <div id="ob-pl1" style="flex:1;height:1px;background:var(--w08)"></div>
+          <div id="ob-pd2" style="width:24px;height:24px;border-radius:50%;background:var(--d4);border:1px solid var(--w08);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:var(--w30)">2</div>
+          <div id="ob-pl2" style="flex:1;height:1px;background:var(--w08)"></div>
+          <div id="ob-pd3" style="width:24px;height:24px;border-radius:50%;background:var(--d4);border:1px solid var(--w08);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:var(--w30)">3</div>
+          <div id="ob-pl3" style="flex:1;height:1px;background:var(--w08)"></div>
+          <div id="ob-pd4" style="width:24px;height:24px;border-radius:50%;background:var(--d4);border:1px solid var(--w08);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:var(--w30)">4</div>
+          <div id="ob-pl4" style="flex:1;height:1px;background:var(--w08)"></div>
+          <div id="ob-pd5" style="width:24px;height:24px;border-radius:50%;background:var(--d4);border:1px solid var(--w08);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:var(--w30)">5</div>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:18px;margin-top:-14px">
+          <span style="font-size:9px;color:var(--w30)">Shape</span>
+          <span style="font-size:9px;color:var(--w30)">Size</span>
+          <span style="font-size:9px;color:var(--w30)">Notch</span>
+          <span style="font-size:9px;color:var(--w30)">Rooms</span>
+          <span style="font-size:9px;color:var(--w30)">Confirm</span>
+        </div>
+
+        <!-- OB STEP 1: Shape -->
+        <div id="ob-step1" style="background:var(--d2);border:1px solid var(--w08);border-radius:12px;padding:16px">
+          <div style="font-size:13px;font-weight:600;color:var(--white);margin-bottom:4px">What shape is the outer wall?</div>
+          <div style="font-size:11px;color:var(--w50);margin-bottom:14px;line-height:1.6">Pick the closest match — we refine it next.</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px">
+            <div id="ob-sh-rect" onclick="obSelectShape('rect')" style="border:1px solid var(--w08);border-radius:9px;padding:12px 8px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;background:var(--d3)">
+              <svg width="44" height="34" viewBox="0 0 44 34"><rect x="2" y="2" width="40" height="30" fill="none" stroke="rgba(253,255,254,.35)" stroke-width="1.5" rx="1"/></svg>
+              <span style="font-size:10px;color:var(--w50)">Rectangle</span>
+            </div>
+            <div id="ob-sh-l" onclick="obSelectShape('l')" style="border:1px solid var(--l20);border-radius:9px;padding:12px 8px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;background:var(--l10)">
+              <svg width="44" height="34" viewBox="0 0 44 34"><polyline points="2,2 28,2 28,16 42,16 42,32 2,32 2,2" fill="none" stroke="var(--lime)" stroke-width="1.5"/></svg>
+              <span style="font-size:10px;color:var(--lime)">L-shape</span>
+            </div>
+            <div id="ob-sh-u" onclick="obSelectShape('u')" style="border:1px solid var(--w08);border-radius:9px;padding:12px 8px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;background:var(--d3)">
+              <svg width="44" height="34" viewBox="0 0 44 34"><polyline points="2,2 14,2 14,18 30,18 30,2 42,2 42,32 2,32 2,2" fill="none" stroke="rgba(253,255,254,.35)" stroke-width="1.5"/></svg>
+              <span style="font-size:10px;color:var(--w50)">U-shape</span>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:flex-end">
+            <button onclick="obGoStep(2)" style="padding:7px 14px;background:var(--d4);border:1px solid var(--l20);border-radius:8px;color:var(--lime);font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">Next <i class="ti ti-arrow-right" style="font-size:11px"></i></button>
+          </div>
+        </div>
+
+        <!-- OB STEP 2: Size -->
+        <div id="ob-step2" style="display:none;background:var(--d2);border:1px solid var(--w08);border-radius:12px;padding:16px">
+          <div style="font-size:13px;font-weight:600;color:var(--white);margin-bottom:4px">Overall dimensions</div>
+          <div style="font-size:11px;color:var(--w50);margin-bottom:14px">Outer wall to outer wall.</div>
+          <div style="margin-bottom:12px">
+            <div style="font-size:11px;color:var(--w50);margin-bottom:6px">Total width (left to right)</div>
+            <div style="display:flex;gap:6px;align-items:center">
+              <input type="number" id="ob-w-ft" placeholder="42" min="1" style="width:72px;background:var(--d4);border:1px solid var(--w08);border-radius:7px;padding:7px 10px;color:var(--white);font-size:12px;font-family:inherit">
+              <span style="font-size:11px;color:var(--w30)">ft</span>
+              <input type="number" id="ob-w-in" placeholder="0" min="0" max="11" style="width:56px;background:var(--d4);border:1px solid var(--w08);border-radius:7px;padding:7px 10px;color:var(--white);font-size:12px;font-family:inherit">
+              <span style="font-size:11px;color:var(--w30)">in</span>
+            </div>
+          </div>
+          <div style="margin-bottom:14px">
+            <div style="font-size:11px;color:var(--w50);margin-bottom:6px">Total depth (front to back)</div>
+            <div style="display:flex;gap:6px;align-items:center">
+              <input type="number" id="ob-d-ft" placeholder="39" min="1" style="width:72px;background:var(--d4);border:1px solid var(--w08);border-radius:7px;padding:7px 10px;color:var(--white);font-size:12px;font-family:inherit">
+              <span style="font-size:11px;color:var(--w30)">ft</span>
+              <input type="number" id="ob-d-in" placeholder="0" min="0" max="11" style="width:56px;background:var(--d4);border:1px solid var(--w08);border-radius:7px;padding:7px 10px;color:var(--white);font-size:12px;font-family:inherit">
+              <span style="font-size:11px;color:var(--w30)">in</span>
+            </div>
+          </div>
+          <div style="margin-bottom:16px">
+            <div style="font-size:11px;color:var(--w50);margin-bottom:8px">Detached structure? (ADU / garage)</div>
+            <div style="display:flex;gap:8px">
+              <div id="ob-adu-y" onclick="obSelectADU(true)" style="flex:1;border:1px solid var(--w08);border-radius:8px;padding:8px;text-align:center;cursor:pointer;background:var(--d3);font-size:11px;color:var(--w50)">Yes</div>
+              <div id="ob-adu-n" onclick="obSelectADU(false)" style="flex:1;border:1px solid var(--l20);border-radius:8px;padding:8px;text-align:center;cursor:pointer;background:var(--l10);font-size:11px;color:var(--lime)">No</div>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:space-between">
+            <button onclick="obGoStep(1)" style="padding:7px 12px;background:none;border:1px solid var(--w08);border-radius:8px;color:var(--w50);font-size:11px;cursor:pointer;font-family:inherit"><i class="ti ti-arrow-left" style="font-size:11px"></i> Back</button>
+            <button onclick="obGoStep(3)" style="padding:7px 14px;background:var(--d4);border:1px solid var(--l20);border-radius:8px;color:var(--lime);font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">Next <i class="ti ti-arrow-right" style="font-size:11px"></i></button>
+          </div>
+        </div>
+
+        <!-- OB STEP 3: Notch -->
+        <div id="ob-step3" style="display:none;background:var(--d2);border:1px solid var(--w08);border-radius:12px;padding:16px">
+          <div style="font-size:13px;font-weight:600;color:var(--white);margin-bottom:4px">Where is the notch?</div>
+          <div style="font-size:11px;color:var(--w50);margin-bottom:14px">Which corner is cut away?</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">
+            <div id="ob-n-tr" onclick="obSelectNotch('tr')" style="border:1px solid var(--w08);border-radius:8px;padding:10px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:5px;background:var(--d3)">
+              <svg width="40" height="30" viewBox="0 0 40 30"><polyline points="2,2 26,2 26,14 38,14 38,28 2,28 2,2" fill="none" stroke="rgba(253,255,254,.35)" stroke-width="1.5"/></svg>
+              <span style="font-size:10px;color:var(--w50)">Top right</span>
+            </div>
+            <div id="ob-n-tl" onclick="obSelectNotch('tl')" style="border:1px solid var(--w08);border-radius:8px;padding:10px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:5px;background:var(--d3)">
+              <svg width="40" height="30" viewBox="0 0 40 30"><polyline points="14,2 38,2 38,28 2,28 2,14 14,14 14,2" fill="none" stroke="rgba(253,255,254,.35)" stroke-width="1.5"/></svg>
+              <span style="font-size:10px;color:var(--w50)">Top left</span>
+            </div>
+            <div id="ob-n-br" onclick="obSelectNotch('br')" style="border:1px solid var(--l20);border-radius:8px;padding:10px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:5px;background:var(--l10)">
+              <svg width="40" height="30" viewBox="0 0 40 30"><polyline points="2,2 38,2 38,16 26,16 26,28 2,28 2,2" fill="none" stroke="var(--lime)" stroke-width="1.5"/></svg>
+              <span style="font-size:10px;color:var(--lime)">Bottom right</span>
+            </div>
+            <div id="ob-n-bl" onclick="obSelectNotch('bl')" style="border:1px solid var(--w08);border-radius:8px;padding:10px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:5px;background:var(--d3)">
+              <svg width="40" height="30" viewBox="0 0 40 30"><polyline points="2,2 38,2 38,28 14,28 14,16 2,16 2,2" fill="none" stroke="rgba(253,255,254,.35)" stroke-width="1.5"/></svg>
+              <span style="font-size:10px;color:var(--w50)">Bottom left</span>
+            </div>
+          </div>
+          <div style="display:flex;gap:8px;margin-bottom:10px">
+            <div style="flex:1">
+              <div style="font-size:11px;color:var(--w50);margin-bottom:5px">Notch width</div>
+              <div style="display:flex;gap:5px;align-items:center">
+                <input type="number" id="ob-nw" placeholder="17" min="1" oninput="obUpdatePreview()" style="width:64px;background:var(--d4);border:1px solid var(--w08);border-radius:7px;padding:7px 8px;color:var(--white);font-size:12px;font-family:inherit">
+                <span style="font-size:11px;color:var(--w30)">ft wide</span>
+              </div>
+            </div>
+            <div style="flex:1">
+              <div style="font-size:11px;color:var(--w50);margin-bottom:5px">Notch depth</div>
+              <div style="display:flex;gap:5px;align-items:center">
+                <input type="number" id="ob-nd" placeholder="15" min="1" oninput="obUpdatePreview()" style="width:64px;background:var(--d4);border:1px solid var(--w08);border-radius:7px;padding:7px 8px;color:var(--white);font-size:12px;font-family:inherit">
+                <span style="font-size:11px;color:var(--w30)">ft deep</span>
+              </div>
+            </div>
+          </div>
+          <!-- Live preview -->
+          <div style="background:var(--d4);border:1px solid var(--w08);border-radius:8px;padding:12px;display:flex;align-items:center;justify-content:center;margin-bottom:14px;min-height:110px">
+            <svg id="ob-preview" width="160" height="100" viewBox="0 0 160 100">
+              <polyline id="ob-preview-poly" points="10,10 104,10 104,56 150,56 150,90 10,90 10,10" fill="rgba(213,220,153,.06)" stroke="var(--lime)" stroke-width="1.5" stroke-linejoin="miter"/>
+            </svg>
+          </div>
+          <div style="display:flex;justify-content:space-between">
+            <button onclick="obGoStep(2)" style="padding:7px 12px;background:none;border:1px solid var(--w08);border-radius:8px;color:var(--w50);font-size:11px;cursor:pointer;font-family:inherit"><i class="ti ti-arrow-left" style="font-size:11px"></i> Back</button>
+            <button onclick="obGoStep(4)" style="padding:7px 14px;background:var(--d4);border:1px solid var(--l20);border-radius:8px;color:var(--lime);font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">Next <i class="ti ti-arrow-right" style="font-size:11px"></i></button>
+          </div>
+        </div>
+
+        <!-- OB STEP 4: Rooms -->
+        <div id="ob-step4" style="display:none;background:var(--d2);border:1px solid var(--w08);border-radius:12px;padding:16px">
+          <div style="font-size:13px;font-weight:600;color:var(--white);margin-bottom:4px">What rooms does it have?</div>
+          <div style="font-size:11px;color:var(--w50);margin-bottom:14px">Check everything that applies.</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:16px"><label id="ob-rc-living" style="display:flex;align-items:center;gap:7px;padding:9px 11px;border:1px solid var(--l20);border-radius:8px;cursor:pointer;background:var(--l10)">
+              <input type="checkbox" checked onchange="obToggleRoom(this,'ob-rc-living')" style="accent-color:var(--lime);cursor:pointer">
+              <span style="font-size:11px;color:var(--white)">Living room</span>
+            </label><label id="ob-rc-kitchen" style="display:flex;align-items:center;gap:7px;padding:9px 11px;border:1px solid var(--l20);border-radius:8px;cursor:pointer;background:var(--l10)">
+              <input type="checkbox" checked onchange="obToggleRoom(this,'ob-rc-kitchen')" style="accent-color:var(--lime);cursor:pointer">
+              <span style="font-size:11px;color:var(--white)">Kitchen</span>
+            </label><label id="ob-rc-dining" style="display:flex;align-items:center;gap:7px;padding:9px 11px;border:1px solid var(--l20);border-radius:8px;cursor:pointer;background:var(--l10)">
+              <input type="checkbox" checked onchange="obToggleRoom(this,'ob-rc-dining')" style="accent-color:var(--lime);cursor:pointer">
+              <span style="font-size:11px;color:var(--white)">Dining room</span>
+            </label><label id="ob-rc-master" style="display:flex;align-items:center;gap:7px;padding:9px 11px;border:1px solid var(--l20);border-radius:8px;cursor:pointer;background:var(--l10)">
+              <input type="checkbox" checked onchange="obToggleRoom(this,'ob-rc-master')" style="accent-color:var(--lime);cursor:pointer">
+              <span style="font-size:11px;color:var(--white)">Primary bedroom</span>
+            </label><label id="ob-rc-mbath" style="display:flex;align-items:center;gap:7px;padding:9px 11px;border:1px solid var(--l20);border-radius:8px;cursor:pointer;background:var(--l10)">
+              <input type="checkbox" checked onchange="obToggleRoom(this,'ob-rc-mbath')" style="accent-color:var(--lime);cursor:pointer">
+              <span style="font-size:11px;color:var(--white)">Primary bath</span>
+            </label><label id="ob-rc-bed2" style="display:flex;align-items:center;gap:7px;padding:9px 11px;border:1px solid var(--w08);border-radius:8px;cursor:pointer;background:var(--d3)">
+              <input type="checkbox"  onchange="obToggleRoom(this,'ob-rc-bed2')" style="accent-color:var(--lime);cursor:pointer">
+              <span style="font-size:11px;color:var(--white)">Bedroom 2</span>
+            </label><label id="ob-rc-bed3" style="display:flex;align-items:center;gap:7px;padding:9px 11px;border:1px solid var(--w08);border-radius:8px;cursor:pointer;background:var(--d3)">
+              <input type="checkbox"  onchange="obToggleRoom(this,'ob-rc-bed3')" style="accent-color:var(--lime);cursor:pointer">
+              <span style="font-size:11px;color:var(--white)">Bedroom 3</span>
+            </label><label id="ob-rc-jjbath" style="display:flex;align-items:center;gap:7px;padding:9px 11px;border:1px solid var(--w08);border-radius:8px;cursor:pointer;background:var(--d3)">
+              <input type="checkbox"  onchange="obToggleRoom(this,'ob-rc-jjbath')" style="accent-color:var(--lime);cursor:pointer">
+              <span style="font-size:11px;color:var(--white)">J&J bath</span>
+            </label><label id="ob-rc-laundry" style="display:flex;align-items:center;gap:7px;padding:9px 11px;border:1px solid var(--w08);border-radius:8px;cursor:pointer;background:var(--d3)">
+              <input type="checkbox"  onchange="obToggleRoom(this,'ob-rc-laundry')" style="accent-color:var(--lime);cursor:pointer">
+              <span style="font-size:11px;color:var(--white)">Laundry</span>
+            </label><label id="ob-rc-office" style="display:flex;align-items:center;gap:7px;padding:9px 11px;border:1px solid var(--w08);border-radius:8px;cursor:pointer;background:var(--d3)">
+              <input type="checkbox"  onchange="obToggleRoom(this,'ob-rc-office')" style="accent-color:var(--lime);cursor:pointer">
+              <span style="font-size:11px;color:var(--white)">Office</span>
+            </label><label id="ob-rc-entry" style="display:flex;align-items:center;gap:7px;padding:9px 11px;border:1px solid var(--w08);border-radius:8px;cursor:pointer;background:var(--d3)">
+              <input type="checkbox"  onchange="obToggleRoom(this,'ob-rc-entry')" style="accent-color:var(--lime);cursor:pointer">
+              <span style="font-size:11px;color:var(--white)">Entry / foyer</span>
+            </label><label id="ob-rc-garage" style="display:flex;align-items:center;gap:7px;padding:9px 11px;border:1px solid var(--w08);border-radius:8px;cursor:pointer;background:var(--d3)">
+              <input type="checkbox"  onchange="obToggleRoom(this,'ob-rc-garage')" style="accent-color:var(--lime);cursor:pointer">
+              <span style="font-size:11px;color:var(--white)">Garage</span>
+            </label></div>
+          <div style="display:flex;justify-content:space-between">
+            <button onclick="obGoStep(3)" style="padding:7px 12px;background:none;border:1px solid var(--w08);border-radius:8px;color:var(--w50);font-size:11px;cursor:pointer;font-family:inherit"><i class="ti ti-arrow-left" style="font-size:11px"></i> Back</button>
+            <button onclick="obGoStep(5)" style="padding:7px 14px;background:var(--d4);border:1px solid var(--l20);border-radius:8px;color:var(--lime);font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">Next <i class="ti ti-arrow-right" style="font-size:11px"></i></button>
+          </div>
+        </div>
+
+        <!-- OB STEP 5: Confirm -->
+        <div id="ob-step5" style="display:none;background:var(--d2);border:1px solid var(--w08);border-radius:12px;padding:16px">
+          <div style="font-size:13px;font-weight:600;color:var(--white);margin-bottom:4px">Review and confirm</div>
+          <div style="font-size:11px;color:var(--w50);margin-bottom:14px;line-height:1.6">We draw the outline from this. You confirm before interior walls are added.</div>
+          <div id="ob-summary" style="display:flex;flex-direction:column;gap:7px;margin-bottom:14px"></div>
+          <div style="background:var(--ok15);border:1px solid var(--ok30);border-radius:8px;padding:11px 13px;font-size:11px;color:var(--ok);line-height:1.6;margin-bottom:16px;display:flex;gap:8px;align-items:flex-start">
+            <i class="ti ti-info-circle" style="font-size:14px;flex-shrink:0;margin-top:1px"></i>
+            <span>Outline is locked after this. Interior walls are added one at a time — you approve each layer before we continue.</span>
+          </div>
+          <div style="display:flex;justify-content:space-between">
+            <button onclick="obGoStep(4)" style="padding:7px 12px;background:none;border:1px solid var(--w08);border-radius:8px;color:var(--w50);font-size:11px;cursor:pointer;font-family:inherit"><i class="ti ti-arrow-left" style="font-size:11px"></i> Back</button>
+            <button onclick="obConfirm()" style="padding:7px 14px;background:var(--ok15);border:1px solid var(--ok30);border-radius:8px;color:var(--ok);font-size:11px;font-weight:700;cursor:pointer;font-family:inherit"><i class="ti ti-check" style="font-size:11px"></i> Confirm outline — Layer 1</button>
+          </div>
+        </div>
+
+      </div>
+
     </div>
-
 </main>
 
 <!-- ══ RIGHT PANEL ══ -->
@@ -3809,6 +3537,47 @@ function odToggleZone(zone) {
     setTimeout(function(){ el.scrollIntoView({behavior:'smooth', block:'nearest'}); }, 50);
     odOpenZone = zone;
   }
+}
+
+
+/* ── PLAN SCANNER ── */
+var obState={shape:'l',adu:false,notch:'br'};
+function scannerShowEntry(){document.getElementById('scanner-entry').style.display='flex';document.getElementById('scanner-upload').style.display='none';document.getElementById('scanner-demo').style.display='none';}
+function scannerShowUpload(){document.getElementById('scanner-entry').style.display='none';document.getElementById('scanner-upload').style.display='block';}
+function scannerShowDemo(){document.getElementById('scanner-entry').style.display='none';document.getElementById('scanner-demo').style.display='block';obGoStep(1);}
+function scannerFileSelected(input){if(!input.files[0])return;document.getElementById('scanner-file-name').textContent=input.files[0].name+' received';document.getElementById('scanner-file-status').style.display='flex';}
+function obGoStep(n){
+  for(var i=1;i<=5;i++){
+    var s=document.getElementById('ob-step'+i);if(s)s.style.display=i===n?'block':'none';
+    var pd=document.getElementById('ob-pd'+i);
+    if(pd){pd.style.background=i<n?'var(--ok15)':'var(--d4)';pd.style.borderColor=i<n?'var(--ok30)':i===n?'var(--l20)':'var(--w08)';pd.style.color=i<n?'var(--ok)':i===n?'var(--lime)':'var(--w30)';pd.textContent=i<n?'✓':String(i);}
+    var pl=document.getElementById('ob-pl'+i);if(pl)pl.style.background=i<n?'var(--ok30)':'var(--w08)';
+  }
+  if(n===5)obBuildSummary();
+}
+function obSelectShape(s){obState.shape=s;['rect','l','u'].forEach(function(k){var el=document.getElementById('ob-sh-'+k);if(!el)return;var on=k===s;el.style.borderColor=on?'var(--l20)':'var(--w08)';el.style.background=on?'var(--l10)':'var(--d3)';el.querySelector('span').style.color=on?'var(--lime)':'var(--w50)';});}
+function obSelectADU(v){obState.adu=v;['y','n'].forEach(function(k){var el=document.getElementById('ob-adu-'+k);if(!el)return;var on=k==='y'?v:!v;el.style.borderColor=on?'var(--l20)':'var(--w08)';el.style.background=on?'var(--l10)':'var(--d3)';el.style.color=on?'var(--lime)':'var(--w50)';});}
+function obSelectNotch(n){obState.notch=n;['tr','tl','br','bl'].forEach(function(k){var el=document.getElementById('ob-n-'+k);if(!el)return;var on=k===n;el.style.borderColor=on?'var(--l20)':'var(--w08)';el.style.background=on?'var(--l10)':'var(--d3)';el.querySelector('span').style.color=on?'var(--lime)':'var(--w50)';el.querySelector('polyline').setAttribute('stroke',on?'var(--lime)':'rgba(253,255,254,.35)');});obUpdatePreview();}
+function obUpdatePreview(){
+  var wFt=parseInt(document.getElementById('ob-w-ft').value)||42,dFt=parseInt(document.getElementById('ob-d-ft').value)||39,nW=parseInt(document.getElementById('ob-nw').value)||17,nD=parseInt(document.getElementById('ob-nd').value)||15;
+  var sc=Math.min(140/wFt,80/dFt),W=Math.round(wFt*sc),H=Math.round(dFt*sc),nWp=Math.round(nW*sc),nDp=Math.round(nD*sc),ox=Math.round((160-W)/2),oy=Math.round((100-H)/2);
+  var n=obState.notch,pts;
+  if(n==='br')pts=[[ox,oy],[ox+W,oy],[ox+W,oy+H-nDp],[ox+W-nWp,oy+H-nDp],[ox+W-nWp,oy+H],[ox,oy+H]];
+  else if(n==='tr')pts=[[ox,oy],[ox+W-nWp,oy],[ox+W-nWp,oy+nDp],[ox+W,oy+nDp],[ox+W,oy+H],[ox,oy+H]];
+  else if(n==='tl')pts=[[ox+nWp,oy],[ox+W,oy],[ox+W,oy+H],[ox,oy+H],[ox,oy+nDp],[ox+nWp,oy+nDp]];
+  else pts=[[ox,oy],[ox+W,oy],[ox+W,oy+H],[ox+nWp,oy+H],[ox+nWp,oy+H-nDp],[ox,oy+H-nDp]];
+  pts.push(pts[0]);
+  var poly=document.getElementById('ob-preview-poly');if(poly)poly.setAttribute('points',pts.map(function(p){return p[0]+','+p[1];}).join(' '));
+}
+function obToggleRoom(cb,id){var el=document.getElementById(id);if(!el)return;el.style.borderColor=cb.checked?'var(--l20)':'var(--w08)';el.style.background=cb.checked?'var(--l10)':'var(--d3)';}
+function obBuildSummary(){
+  var rooms=[];document.querySelectorAll('#ob-step4 input[type=checkbox]:checked').forEach(function(cb){rooms.push(cb.closest('label').querySelector('span').textContent);});
+  var rows=[{i:'ti-shape',l:'Shape',v:({rect:'Rectangle',l:'L-shape',u:'U-shape'})[obState.shape]},{i:'ti-arrows-horizontal',l:'Width',v:(document.getElementById('ob-w-ft').value||42)+"' "+(document.getElementById('ob-w-in').value||0)+'"'},{i:'ti-arrows-vertical',l:'Depth',v:(document.getElementById('ob-d-ft').value||39)+"' "+(document.getElementById('ob-d-in').value||0)+'"'},{i:'ti-cut',l:'Notch',v:({tr:'Top right',tl:'Top left',br:'Bottom right',bl:'Bottom left'})[obState.notch]+' · '+(document.getElementById('ob-nw').value||17)+"' wide × "+(document.getElementById('ob-nd').value||15)+"' deep"},{i:'ti-building',l:'Detached',v:obState.adu?'Yes — ADU / garage':'None'},{i:'ti-layout-grid',l:'Rooms',v:rooms.join(', ')||'None'}];
+  document.getElementById('ob-summary').innerHTML=rows.map(function(r){return '<div style="display:flex;align-items:flex-start;gap:9px;padding:9px 11px;background:var(--d3);border:1px solid var(--w08);border-radius:8px;margin-bottom:6px"><i class="ti '+r.i+'" style="font-size:13px;color:var(--w30);margin-top:1px;flex-shrink:0"></i><div><div style="font-size:10px;color:var(--w30);margin-bottom:2px">'+r.l+'</div><div style="font-size:12px;color:var(--white)">'+r.v+'</div></div></div>';}).join('');
+}
+function obConfirm(){
+  var rooms=[];document.querySelectorAll('#ob-step4 input[type=checkbox]:checked').forEach(function(cb){rooms.push(cb.closest('label').querySelector('span').textContent);});
+  alert('Layer 1 locked.\nShape: '+obState.shape+' · '+(document.getElementById('ob-w-ft').value||42)+"' wide × "+(document.getElementById('ob-d-ft').value||39)+"' deep\nNotch: "+obState.notch+'\nRooms: '+rooms.join(', ')+'\n\nReady for Layer 2 — interior walls.');
 }
 
 </script>
