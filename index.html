@@ -534,6 +534,8 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;
 .role-banner-gc{background:var(--ok15);color:var(--ok);border:1px solid var(--ok30)}
 .role-banner-trade{background:var(--am15);color:var(--amb);border:1px solid var(--am30)}
 
+
+@media(min-width:721px){#sc-progress .scrl,#sc-punch .scrl,#sc-finance .scrl{padding:16px 28px!important}}
 </style>
 </head>
 <body>
@@ -605,11 +607,7 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;
       <button class="nav-btn" onclick="sbNav(this,'team')"><i class="ti ti-users"></i>Team &amp; trades</button>
       <button class="nav-btn" onclick="sbNav(this,'products')"><i class="ti ti-package"></i>Products<span class="nav-badge">5</span></button>
       <button class="nav-btn" onclick="sbNav(this,'scanner')"><i class="ti ti-scan"></i>Plan scanner<span class="nav-badge" style="background:var(--l10);color:var(--lime)">AI</span></button>
-      <div class="term-row" onclick="openModal('termination')">
-        <i class="ti ti-circle-x" style="color:var(--del);font-size:12px"></i>
-        <span style="font-size:10px;color:var(--del);font-weight:500;flex:1">Early termination — tile crew 1</span>
-        <i class="ti ti-chevron-right" style="color:var(--del);font-size:11px"></i>
-      </div>
+      
     </div>
 
     <!-- LANDSCAPE — three-leaf icon -->
@@ -895,17 +893,34 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;
 
   <!-- SCREEN: LANDSCAPE -->
   <div class="screen" id="sc-landscape">
-    <div class="scrl">
-      <div class="sh fu1"><span class="sh-title">Landscape</span><span class="pill p-am">$110,829 · Pending</span></div>
-      <div class="detail fu2">
-        <div class="detail-hd"><div class="detail-title">Liliput Phase I — Front yard</div></div>
-        <div style="padding:10px 13px;font-size:11px;color:var(--w50);line-height:1.8">CMU wall 65 LF · 6 columns at 60" · Cumaru topper + gates · Cumaru deck 375 sqft · Pergola footings · Lemon / lilac trees · Porcelain entry path<br><br>Proposal #2982 · Jan 26, 2026 · <span style="color:var(--amb)">Confirm pricing valid post-tariff warning before signing</span></div>
+    <div class="scrl" style="padding:16px;display:flex;flex-direction:column;gap:14px">
+      <div style="font-family:'Syne',sans-serif;font-size:15px;font-weight:800;color:var(--white);letter-spacing:-.02em;padding-bottom:12px;border-bottom:1px solid var(--w08)">Landscape Overview</div>
+      <div style="background:var(--d2);border:1px solid var(--w08);border-radius:12px;padding:16px 18px">
+        <div style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--sage);margin-bottom:6px">Phase I · Landscape Team</div>
+        <div style="font-size:14px;font-weight:600;color:var(--white);margin-bottom:4px">Front Yard Scope</div>
+        <div style="font-size:11px;color:var(--w50);line-height:1.65;margin-bottom:12px">CMU wall · Garden bed · Concrete patio · Entry pavers · Wood panel · Planting palette</div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:10px;font-weight:600;padding:3px 10px;border-radius:20px;background:var(--am15);color:var(--amb);border:1px solid var(--am30)">Pending sign-off</span>
+          <span style="font-size:11px;font-weight:600;color:var(--white)">$110,829</span>
+        </div>
       </div>
-    </div>
-  </div>
-
-  <!-- SCREEN: FINANCE -->
-  <div class="screen" id="sc-finance" data-role-gate="client">
+      <div style="background:var(--d2);border:1px solid var(--w08);border-radius:12px;padding:16px 18px">
+        <div style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--sage);margin-bottom:10px">Open items</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;align-items:center;gap:8px;font-size:11px;color:var(--w70)"><span style="width:6px;height:6px;border-radius:50%;background:var(--amb);flex-shrink:0"></span>Gate color — Walnut vs. Hickory · Ebru input needed</div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:11px;color:var(--w70)"><span style="width:6px;height:6px;border-radius:50%;background:var(--amb);flex-shrink:0"></span>Wood panel material — Ebru input needed</div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:11px;color:var(--w70)"><span style="width:6px;height:6px;border-radius:50%;background:var(--amb);flex-shrink:0"></span>Garden bed planting palette — Ebru input needed</div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:11px;color:var(--ok)"><span style="width:6px;height:6px;border-radius:50%;background:var(--ok);flex-shrink:0"></span>Concrete patio — Smooth ✓ Closed</div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:11px;color:var(--w70)"><span style="width:6px;height:6px;border-radius:50%;background:var(--amb);flex-shrink:0"></span>Phase I contract — ready to sign pending above</div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:11px;color:var(--w70)"><span style="width:6px;height:6px;border-radius:50%;background:var(--amb);flex-shrink:0"></span>Master Bed Deck Phase II — Lance quote pending</div>
+        </div>
+      </div>
+      <div onclick="goScreen('outdoor-log');document.querySelectorAll('.nav-btn').forEach(function(b){b.classList.remove('on')});var ob=document.querySelector('[onclick*=outdoor-log]');if(ob)ob.classList.add('on')" style="background:var(--d3);border:1px solid var(--l20);border-radius:12px;padding:14px 16px;cursor:pointer;display:flex;align-items:center;gap:12px" onmouseover="this.style.borderColor='var(--lime)'" onmouseout="this.style.borderColor='var(--l20)'">
+        <i class="ti ti-map-pin" style="font-size:20px;color:var(--lime)"></i>
+        <div style="flex:1"><div style="font-size:12px;font-weight:600;color:var(--white);margin-bottom:2px">View Outdoor Decisions</div><div style="font-size:10px;color:var(--w50)">Site plan · Zone breakdown · References · Open decisions</div></div>
+        <i class="ti ti-arrow-right" style="font-size:14px;color:var(--w30)"></i>
+      </div>
+    </div><div class="screen" id="sc-finance" data-role-gate="client">
     <div class="scrl">
 
       <!-- Summary bar -->
