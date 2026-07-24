@@ -690,234 +690,53 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;
 
       <!-- SVG CANVAS -->
       <div style="background:var(--d1);overflow:auto;padding:16px;display:flex;align-items:flex-start;justify-content:center">
-        <svg viewBox="0 0 1000 820" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;display:block;background:transparent">
-<style>
-    .fp-label{font-family:"DM Sans",system-ui,sans-serif;font-size:11px;font-weight:600;fill:rgba(253,255,254,.7);text-anchor:middle;letter-spacing:.04em}
-    .fp-sub{font-family:"DM Sans",system-ui,sans-serif;font-size:9px;fill:rgba(253,255,254,.32);text-anchor:middle}
-    .fp-num{font-family:"DM Sans",system-ui,sans-serif;font-size:8px;fill:rgba(253,255,254,.35);text-anchor:middle}
-    .fp-status-lbl{font-family:"DM Sans",system-ui,sans-serif;font-size:7px;font-weight:700;text-anchor:middle;letter-spacing:.06em}
-    .fp-room-tap{fill:transparent;cursor:pointer}
-    .fp-room-bg{transition:fill .2s ease}
-    .fp-room-tap:hover + .fp-room-bg, .fp-room-tap:hover ~ rect.fp-room-bg{fill:rgba(213,220,153,.08)}
+        <svg viewBox="0 0 580 340" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;display:block">
+<defs>
+  <style>
+    .fp-room{cursor:pointer;transition:fill .15s}
+    .fp-room:hover{fill:rgba(213,220,153,.12)}
+    .fp-room.on{fill:rgba(213,220,153,.18)}
   </style>
-<line x1="40" y1="30" x2="830" y2="30" stroke="rgba(253,255,254,.12)" stroke-width=".8"/>
-<line x1="40" y1="26" x2="40" y2="34" stroke="rgba(253,255,254,.15)" stroke-width=".8"/>
-<line x1="830" y1="26" x2="830" y2="34" stroke="rgba(253,255,254,.15)" stroke-width=".8"/>
-<text x="435" y="26" style="font-size:7.5px;fill:rgba(253,255,254,.28);font-family:DM Sans,sans-serif;text-anchor:middle">12.85 m (42ft overall)</text>
-<line x1="30" y1="40" x2="30" y2="648" stroke="rgba(253,255,254,.12)" stroke-width=".8"/>
-<line x1="26" y1="40" x2="34" y2="40" stroke="rgba(253,255,254,.15)" stroke-width=".8"/>
-<line x1="26" y1="648" x2="34" y2="648" stroke="rgba(253,255,254,.15)" stroke-width=".8"/>
-<text x="16" y="350" style="font-size:7.5px;fill:rgba(253,255,254,.28);font-family:DM Sans,sans-serif;text-anchor:middle" transform="rotate(-90 16 350)">12.05 m (39ft)</text>
-<text x="40" y="18" style="font-size:7px;fill:rgba(253,255,254,.2);font-family:DM Sans,sans-serif;text-anchor:middle">01</text>
-<text x="285" y="18" style="font-size:7px;fill:rgba(253,255,254,.2);font-family:DM Sans,sans-serif;text-anchor:middle">02</text>
-<text x="505" y="18" style="font-size:7px;fill:rgba(253,255,254,.2);font-family:DM Sans,sans-serif;text-anchor:middle">03</text>
-<text x="700" y="18" style="font-size:7px;fill:rgba(253,255,254,.2);font-family:DM Sans,sans-serif;text-anchor:middle">04</text>
-<text x="830" y="18" style="font-size:7px;fill:rgba(253,255,254,.2);font-family:DM Sans,sans-serif;text-anchor:middle">05</text>
-<text x="22" y="45" style="font-size:7px;fill:rgba(253,255,254,.2);font-family:DM Sans,sans-serif;text-anchor:middle">A</text>
-<text x="22" y="210" style="font-size:7px;fill:rgba(253,255,254,.2);font-family:DM Sans,sans-serif;text-anchor:middle">B</text>
-<text x="22" y="480" style="font-size:7px;fill:rgba(253,255,254,.2);font-family:DM Sans,sans-serif;text-anchor:middle">C</text>
-<text x="22" y="653" style="font-size:7px;fill:rgba(253,255,254,.2);font-family:DM Sans,sans-serif;text-anchor:middle">D</text>
-<line x1="155" y1="40" x2="155" y2="648" stroke="rgba(253,255,254,.04)" stroke-width=".8" stroke-dasharray="4,4"/>
-<line x1="320" y1="40" x2="320" y2="648" stroke="rgba(253,255,254,.04)" stroke-width=".8" stroke-dasharray="4,4"/>
-<line x1="390" y1="40" x2="390" y2="648" stroke="rgba(253,255,254,.04)" stroke-width=".8" stroke-dasharray="4,4"/>
-<line x1="505" y1="40" x2="505" y2="648" stroke="rgba(253,255,254,.04)" stroke-width=".8" stroke-dasharray="4,4"/>
-<line x1="660" y1="40" x2="660" y2="648" stroke="rgba(253,255,254,.04)" stroke-width=".8" stroke-dasharray="4,4"/>
-<line x1="830" y1="40" x2="830" y2="648" stroke="rgba(253,255,254,.04)" stroke-width=".8" stroke-dasharray="4,4"/>
-<line x1="40" y1="205" x2="830" y2="205" stroke="rgba(253,255,254,.04)" stroke-width=".8" stroke-dasharray="4,4"/>
-<line x1="40" y1="475" x2="830" y2="475" stroke="rgba(253,255,254,.04)" stroke-width=".8" stroke-dasharray="4,4"/>
-<polyline stroke="#FDFFFE" stroke-width="4" fill="none" stroke-linejoin="round" stroke-linecap="round" points="40,40 830,40 830,648 40,648 40,40"/>
-<line stroke="rgba(253,255,254,.7)" stroke-width="2.5" fill="none" stroke-linecap="round" x1="40" y1="205" x2="155" y2="205"/>
-<line stroke="rgba(253,255,254,.7)" stroke-width="2.5" fill="none" stroke-linecap="round" x1="40" y1="475" x2="830" y2="475"/>
-<line stroke="rgba(253,255,254,.7)" stroke-width="2.5" fill="none" stroke-linecap="round" x1="155" y1="205" x2="155" y2="475"/>
-<line stroke="rgba(253,255,254,.7)" stroke-width="2.5" fill="none" stroke-linecap="round" x1="320" y1="40" x2="320" y2="475"/>
-<line stroke="rgba(253,255,254,.7)" stroke-width="2.5" fill="none" stroke-linecap="round" x1="155" y1="40" x2="155" y2="205"/>
-<line stroke="rgba(253,255,254,.7)" stroke-width="2.5" fill="none" stroke-linecap="round" x1="390" y1="40" x2="390" y2="475"/>
-<line stroke="rgba(253,255,254,.7)" stroke-width="2.5" fill="none" stroke-linecap="round" x1="505" y1="40" x2="505" y2="475"/>
-<line stroke="rgba(253,255,254,.7)" stroke-width="2.5" fill="none" stroke-linecap="round" x1="660" y1="205" x2="660" y2="475"/>
-<line stroke="rgba(253,255,254,.7)" stroke-width="2.5" fill="none" stroke-linecap="round" x1="505" y1="225" x2="830" y2="225"/>
-<line stroke="rgba(253,255,254,.7)" stroke-width="2.5" fill="none" stroke-linecap="round" x1="195" y1="475" x2="195" y2="648"/>
-<line stroke="rgba(253,255,254,.7)" stroke-width="2.5" fill="none" stroke-linecap="round" x1="390" y1="475" x2="390" y2="648"/>
-<line stroke="rgba(253,255,254,.7)" stroke-width="2.5" fill="none" stroke-linecap="round" x1="660" y1="475" x2="660" y2="648"/>
-<line stroke="rgba(253,255,254,.7)" stroke-width="2.5" fill="none" stroke-linecap="round" x1="830" y1="475" x2="830" y2="648"/>
-<line stroke="rgba(253,255,254,.7)" stroke-width="2.5" fill="none" stroke-linecap="round" x1="750" y1="475" x2="750" y2="648"/>
-<rect stroke="#FDFFFE" stroke-width="4" fill="none" stroke-linejoin="round" stroke-linecap="round" x="40" y="640" width="660" height="160" rx="2"/>
-<line stroke="rgba(253,255,254,.7)" stroke-width="2.5" fill="none" stroke-linecap="round" x1="205" y1="640" x2="205" y2="800"/>
-<line stroke="rgba(232,135,74,.85)" stroke-width="3" fill="none" x1="40" y1="145" x2="40" y2="185"/>
-<path stroke="rgba(232,135,74,.35)" stroke-width="1.2" fill="none" d="M40,145 Q80,145 80,185"/>
-<line stroke="rgba(232,135,74,.85)" stroke-width="3" fill="none" x1="155" y1="390" x2="155" y2="430"/>
-<path stroke="rgba(232,135,74,.35)" stroke-width="1.2" fill="none" d="M155,390 Q195,390 195,430"/>
-<line stroke="rgba(232,135,74,.85)" stroke-width="3" fill="none" x1="320" y1="130" x2="320" y2="170"/>
-<path stroke="rgba(232,135,74,.35)" stroke-width="1.2" fill="none" d="M320,130 Q360,130 360,170"/>
-<line stroke="rgba(232,135,74,.85)" stroke-width="3" fill="none" x1="660" y1="300" x2="660" y2="340"/>
-<path stroke="rgba(232,135,74,.35)" stroke-width="1.2" fill="none" d="M660,300 Q700,300 700,340"/>
-<line stroke="rgba(232,135,74,.85)" stroke-width="3" fill="none" x1="195" y1="510" x2="195" y2="550"/>
-<path stroke="rgba(232,135,74,.35)" stroke-width="1.2" fill="none" d="M195,510 Q155,510 155,550"/>
-<line stroke="rgba(232,135,74,.85)" stroke-width="3" fill="none" x1="390" y1="510" x2="390" y2="550"/>
-<path stroke="rgba(232,135,74,.35)" stroke-width="1.2" fill="none" d="M390,510 Q430,510 430,550"/>
-<line stroke="rgba(232,135,74,.85)" stroke-width="3" fill="none" x1="390" y1="540" x2="430" y2="540"/>
-<line stroke="rgba(232,135,74,.85)" stroke-width="3" fill="none" x1="660" y1="510" x2="660" y2="550"/>
-<path stroke="rgba(232,135,74,.35)" stroke-width="1.2" fill="none" d="M660,510 Q700,510 700,550"/>
-<line stroke="rgba(232,135,74,.85)" stroke-width="3" fill="none" x1="205" y1="680" x2="205" y2="720"/>
-<path stroke="rgba(232,135,74,.35)" stroke-width="1.2" fill="none" d="M205,680 Q165,680 165,720"/>
-<line stroke="rgba(232,135,74,.85)" stroke-width="3" fill="none" x1="360" y1="640" x2="400" y2="640"/>
-<path stroke="rgba(232,135,74,.35)" stroke-width="1.2" fill="none" d="M360,640 Q360,680 400,680"/>
-<path d="M40,170 Q80,170 80,210" fill="none" stroke="rgba(253,255,254,.15)" stroke-width="1.2"/>
-<line x1="40" y1="170" x2="40" y2="210" stroke="rgba(232,135,74,.5)" stroke-width="2"/>
-<rect x="55" y="295" width="140" height="50" rx="4" fill:rgba(253,255,254,.06);stroke:rgba(253,255,254,.14);stroke-width:1/>
-<rect x="55" y="295" width="50" height="90" rx="4" fill:rgba(253,255,254,.06);stroke:rgba(253,255,254,.14);stroke-width:1/>
-<ellipse cx="170" cy="380" rx="38" ry="22" fill:rgba(253,255,254,.06);stroke:rgba(253,255,254,.14);stroke-width:1/>
-<rect x="45" y="245" width="14" height="90" rx="2" fill:rgba(253,255,254,.06);stroke:rgba(253,255,254,.14);stroke-width:1/>
-<rect x="60" y="230" width="65" height="10" rx="2" style="fill:rgba(213,220,153,.08);stroke:rgba(213,220,153,.2);stroke-width:1"/>
-<text x="92" y="239" style="font-size:6px;fill:rgba(213,220,153,.4);font-family:DM Sans,sans-serif;font-weight:700;text-anchor:middle;letter-spacing:.06em">TV WALL</text>
-<rect x="157" y="43" width="286" height="28" rx="2" fill:rgba(253,255,254,.06);stroke:rgba(253,255,254,.14);stroke-width:1/>
-<circle cx="380" cy="57" r="8" fill:rgba(253,255,254,.06);stroke:rgba(253,255,254,.14);stroke-width:1/>
-<circle cx="402" cy="57" r="8" fill:rgba(253,255,254,.06);stroke:rgba(253,255,254,.14);stroke-width:1/>
-<rect x="210" y="105" width="185" height="65" rx="4" fill:rgba(253,255,254,.06);stroke:rgba(253,255,254,.14);stroke-width:1/>
-<text x="303" y="142" style="font-size:8px;fill:rgba(253,255,254,.3);font-family:DM Sans,sans-serif;text-anchor:middle;letter-spacing:.06em">ISLAND</text>
-<rect x="210" y="205" width="175" height="80" rx="4" fill:rgba(253,255,254,.06);stroke:rgba(253,255,254,.14);stroke-width:1/>
-<rect x="215" y="195" width="24" height="14" rx="3" fill:rgba(253,255,254,.06);stroke:rgba(253,255,254,.14);stroke-width:1/>
-<rect x="215" y="289" width="24" height="14" rx="3" fill:rgba(253,255,254,.06);stroke:rgba(253,255,254,.14);stroke-width:1/>
-<rect x="250" y="195" width="24" height="14" rx="3" fill:rgba(253,255,254,.06);stroke:rgba(253,255,254,.14);stroke-width:1/>
-<rect x="250" y="289" width="24" height="14" rx="3" fill:rgba(253,255,254,.06);stroke:rgba(253,255,254,.14);stroke-width:1/>
-<rect x="285" y="195" width="24" height="14" rx="3" fill:rgba(253,255,254,.06);stroke:rgba(253,255,254,.14);stroke-width:1/>
-<rect x="285" y="289" width="24" height="14" rx="3" fill:rgba(253,255,254,.06);stroke:rgba(253,255,254,.14);stroke-width:1/>
-<rect x="320" y="195" width="24" height="14" rx="3" fill:rgba(253,255,254,.06);stroke:rgba(253,255,254,.14);stroke-width:1/>
-<rect x="320" y="289" width="24" height="14" rx="3" fill:rgba(253,255,254,.06);stroke:rgba(253,255,254,.14);stroke-width:1/>
-<rect x="355" y="195" width="24" height="14" rx="3" fill:rgba(253,255,254,.06);stroke:rgba(253,255,254,.14);stroke-width:1/>
-<rect x="355" y="289" width="24" height="14" rx="3" fill:rgba(253,255,254,.06);stroke:rgba(253,255,254,.14);stroke-width:1/>
-<rect x="540" y="330" width="145" height="110" rx="4" fill:rgba(253,255,254,.06);stroke:rgba(253,255,254,.14);stroke-width:1/>
-<rect x="540" y="330" width="145" height="14" rx="2" style="fill:rgba(253,255,254,.1);stroke:rgba(253,255,254,.2);stroke-width:1"/>
-<rect x="530" y="345" width="16" height="18" rx="2" fill:rgba(253,255,254,.06);stroke:rgba(253,255,254,.14);stroke-width:1/>
-<rect x="683" y="345" width="16" height="18" rx="2" fill:rgba(253,255,254,.06);stroke:rgba(253,255,254,.14);stroke-width:1/>
-<path d="M660,475 Q660,515 700,475" fill="none" stroke="rgba(253,255,254,.15)" stroke-width="1.2"/>
-<line x1="660" y1="475" x2="700" y2="475" stroke="rgba(232,135,74,.5)" stroke-width="2"/>
-<rect x="52" y="493" width="120" height="95" rx="4" fill:rgba(253,255,254,.06);stroke:rgba(253,255,254,.14);stroke-width:1/>
-<rect x="52" y="493" width="120" height="12" rx="2" style="fill:rgba(253,255,254,.08);stroke:rgba(253,255,254,.18);stroke-width:1"/>
-<rect x="210" y="493" width="60" height="88" rx="8" fill:rgba(253,255,254,.06);stroke:rgba(253,255,254,.14);stroke-width:1/>
-<ellipse cx="240" cy="537" rx="20" ry="30" style="fill:rgba(253,255,254,.04);stroke:rgba(253,255,254,.12);stroke-width:.8"/>
-<rect x="210" y="595" width="170" height="22" rx="3" fill:rgba(253,255,254,.06);stroke:rgba(253,255,254,.14);stroke-width:1/>
-<circle cx="260" cy="606" r="8" fill:rgba(253,255,254,.06);stroke:rgba(253,255,254,.14);stroke-width:1/>
-<circle cx="330" cy="606" r="8" fill:rgba(253,255,254,.06);stroke:rgba(253,255,254,.14);stroke-width:1/>
-<rect x="410" y="500" width="115" height="105" rx="4" fill:rgba(253,255,254,.06);stroke:rgba(253,255,254,.14);stroke-width:1/>
-<rect x="410" y="500" width="115" height="13" rx="2" style="fill:rgba(224,122,95,.12);stroke:rgba(224,122,95,.3);stroke-width:1"/>
-<rect x="675" y="498" width="55" height="80" rx="8" fill:rgba(253,255,254,.06);stroke:rgba(253,255,254,.14);stroke-width:1/>
-<ellipse cx="702" cy="538" rx="18" ry="28" style="fill:rgba(253,255,254,.04);stroke:rgba(253,255,254,.1);stroke-width:.8"/>
-<rect x="675" y="593" width="120" height="22" rx="3" fill:rgba(253,255,254,.06);stroke:rgba(253,255,254,.14);stroke-width:1/>
-<circle cx="712" cy="604" r="8" fill:rgba(253,255,254,.06);stroke:rgba(253,255,254,.14);stroke-width:1/>
-<circle cx="756" cy="604" r="8" fill:rgba(253,255,254,.06);stroke:rgba(253,255,254,.14);stroke-width:1/>
-<path d="M660,510 Q700,510 700,550" fill="none" stroke="rgba(253,255,254,.15)" stroke-width="1.2"/>
-<line x1="660" y1="510" x2="660" y2="550" stroke="rgba(232,135,74,.5)" stroke-width="2"/>
-<circle cx="860" cy="530" r="20" fill:rgba(253,255,254,.06);stroke:rgba(253,255,254,.14);stroke-width:1/>
-<circle cx="860" cy="575" r="20" fill:rgba(253,255,254,.06);stroke:rgba(253,255,254,.14);stroke-width:1/>
-<rect x="55" y="648" width="100" height="110" rx="4" fill:rgba(253,255,254,.06);stroke:rgba(253,255,254,.14);stroke-width:1/>
-<circle cx="82" cy="740" r="14" fill:rgba(253,255,254,.06);stroke:rgba(253,255,254,.14);stroke-width:1/>
-<rect x="280" y="648" width="115" height="65" rx="4" fill:rgba(253,255,254,.06);stroke:rgba(253,255,254,.14);stroke-width:1/>
-<circle cx="545" cy="660" r="12" fill:rgba(253,255,254,.06);stroke:rgba(253,255,254,.14);stroke-width:1/>
-<circle cx="575" cy="660" r="12" fill:rgba(253,255,254,.06);stroke:rgba(253,255,254,.14);stroke-width:1/>
-<rect x="40" y="40" w="115" h="165" class="fp-room-tap" data-room="entry" onclick="fpSelect('entry')"/>
-<rect x="41" y="41" width="113" height="163" fill="rgba(253,255,254,.03)" stroke="rgba(253,255,254,.18)" stroke-width="1.5" rx="2" class="fp-room-bg" id="room-bg-entry"/>
-<rect x="48" y="48" width="22" height="16" rx="3" fill="rgba(253,255,254,.06)" stroke="rgba(253,255,254,.12)" stroke-width="1"/>
-<text x="59" y="60" class="fp-num">01</text>
-<text x="97.5" y="130.5" class="fp-label">Entry</text>
-<text x="97.5" y="146.5" class="fp-sub">6ft×12ft</text>
-<rect x="155" y="40" w="290" h="295" class="fp-room-tap" data-room="kitchen" onclick="fpSelect('kitchen')"/>
-<rect x="156" y="41" width="288" height="293" fill="rgba(201,168,76,.08)" stroke="rgba(201,168,76,.45)" stroke-width="1.5" rx="2" class="fp-room-bg" id="room-bg-kitchen"/>
-<rect x="163" y="48" width="22" height="16" rx="3" fill="rgba(253,255,254,.06)" stroke="rgba(253,255,254,.12)" stroke-width="1"/>
-<text x="174" y="60" class="fp-num">03</text>
-<text x="300.0" y="195.5" class="fp-label">Kitchen</text>
-<text x="300.0" y="211.5" class="fp-sub">21ft×12ft</text>
-<rect x="505" y="40" w="325" h="185" class="fp-room-tap" data-room="deck" onclick="fpSelect('deck')"/>
-<rect x="506" y="41" width="323" height="183" fill="rgba(201,168,76,.05)" stroke="rgba(201,168,76,.2)" stroke-width="1.5" rx="2" class="fp-room-bg" id="room-bg-deck"/>
-<rect x="513" y="48" width="22" height="16" rx="3" fill="rgba(253,255,254,.06)" stroke="rgba(253,255,254,.12)" stroke-width="1"/>
-<text x="524" y="60" class="fp-num">05</text>
-<rect x="753" y="47" width="70" height="15" rx="4" fill="rgba(201,168,76,.08)" stroke="rgba(201,168,76,.55)" stroke-width=".8"/>
-<text x="788.0" y="58" class="fp-status-lbl" fill="rgba(201,168,76,.55)">Phase II</text>
-<text x="667.5" y="140.5" class="fp-label">Wooden Deck</text>
-<text x="667.5" y="156.5" class="fp-sub">Phase II · 17ft×14ft</text>
-<rect x="40" y="205" w="280" h="270" class="fp-room-tap" data-room="living" onclick="fpSelect('living')"/>
-<rect x="41" y="206" width="278" height="268" fill="rgba(74,155,111,.10)" stroke="rgba(74,155,111,.55)" stroke-width="1.5" rx="2" class="fp-room-bg" id="room-bg-living"/>
-<rect x="48" y="213" width="22" height="16" rx="3" fill="rgba(253,255,254,.06)" stroke="rgba(253,255,254,.12)" stroke-width="1"/>
-<text x="59" y="225" class="fp-num">02</text>
-<text x="180.0" y="348.0" class="fp-label">Living Room</text>
-<text x="180.0" y="364.0" class="fp-sub">18ft×15ft</text>
-<rect x="390" y="205" w="270" h="270" class="fp-room-tap" data-room="dining" onclick="fpSelect('dining')"/>
-<rect x="391" y="206" width="268" height="268" fill="rgba(253,255,254,.03)" stroke="rgba(253,255,254,.18)" stroke-width="1.5" rx="2" class="fp-room-bg" id="room-bg-dining"/>
-<rect x="398" y="213" width="22" height="16" rx="3" fill="rgba(253,255,254,.06)" stroke="rgba(253,255,254,.12)" stroke-width="1"/>
-<text x="409" y="225" class="fp-num">04</text>
-<text x="525.0" y="348.0" class="fp-label">Dining</text>
-<text x="525.0" y="364.0" class="fp-sub">14ft×15ft</text>
-<rect x="505" y="225" w="325" h="250" class="fp-room-tap" data-room="master_bed" onclick="fpSelect('master_bed')"/>
-<rect x="506" y="226" width="323" height="248" fill="rgba(74,155,111,.10)" stroke="rgba(74,155,111,.55)" stroke-width="1.5" rx="2" class="fp-room-bg" id="room-bg-master_bed"/>
-<rect x="513" y="233" width="22" height="16" rx="3" fill="rgba(253,255,254,.06)" stroke="rgba(253,255,254,.12)" stroke-width="1"/>
-<text x="524" y="245" class="fp-num">06</text>
-<rect x="753" y="232" width="70" height="15" rx="4" fill="rgba(224,122,95,.15)" stroke="#D4B96A" stroke-width=".8"/>
-<text x="788.0" y="243" class="fp-status-lbl" fill="#D4B96A">CABINETS</text>
-<text x="667.5" y="358.0" class="fp-label">Master Bedroom</text>
-<text x="667.5" y="374.0" class="fp-sub">21ft×15ft</text>
-<rect x="40" y="475" w="155" h="175" class="fp-room-tap" data-room="bed1" onclick="fpSelect('bed1')"/>
-<rect x="41" y="476" width="153" height="173" fill="rgba(253,255,254,.03)" stroke="rgba(253,255,254,.18)" stroke-width="1.5" rx="2" class="fp-room-bg" id="room-bg-bed1"/>
-<rect x="48" y="483" width="22" height="16" rx="3" fill="rgba(253,255,254,.06)" stroke="rgba(253,255,254,.12)" stroke-width="1"/>
-<text x="59" y="495" class="fp-num">09</text>
-<text x="117.5" y="570.5" class="fp-label">Bedroom 1</text>
-<text x="117.5" y="586.5" class="fp-sub">Leo · 9ft×12ft</text>
-<rect x="195" y="475" w="195" h="175" class="fp-room-tap" data-room="jjbath" onclick="fpSelect('jjbath')"/>
-<rect x="196" y="476" width="193" height="173" fill="rgba(74,155,111,.12)" stroke="rgba(74,155,111,.65)" stroke-width="1.5" rx="2" class="fp-room-bg" id="room-bg-jjbath"/>
-<rect x="203" y="483" width="22" height="16" rx="3" fill="rgba(253,255,254,.06)" stroke="rgba(253,255,254,.12)" stroke-width="1"/>
-<text x="214" y="495" class="fp-num">08</text>
-<rect x="313" y="482" width="70" height="15" rx="4" fill="rgba(74,155,111,.15)" stroke="#7FC89A" stroke-width=".8"/>
-<text x="348.0" y="493" class="fp-status-lbl" fill="#7FC89A">Complete</text>
-<text x="292.5" y="570.5" class="fp-label">J&J Bath</text>
-<text x="292.5" y="586.5" class="fp-sub">Complete ✓</text>
-<rect x="390" y="475" w="270" h="175" class="fp-room-tap" data-room="bed3" onclick="fpSelect('bed3')"/>
-<rect x="391" y="476" width="268" height="173" fill="rgba(224,122,95,.10)" stroke="rgba(224,122,95,.55)" stroke-width="1.5" rx="2" class="fp-room-bg" id="room-bg-bed3"/>
-<rect x="398" y="483" width="22" height="16" rx="3" fill="rgba(253,255,254,.06)" stroke="rgba(253,255,254,.12)" stroke-width="1"/>
-<text x="409" y="495" class="fp-num">10</text>
-<rect x="552.5" y="482" width="100.5" height="15" rx="4" fill="rgba(224,122,95,.15)" stroke="#E8874A" stroke-width=".8"/>
-<text x="602.75" y="493" class="fp-status-lbl" fill="#E8874A">CABINET COLOR</text>
-<text x="525.0" y="570.5" class="fp-label">Bedroom 3 — Mila</text>
-<text x="525.0" y="586.5" class="fp-sub">15ft×12ft</text>
-<rect x="660" y="475" w="170" h="175" class="fp-room-tap" data-room="primary_bath" onclick="fpSelect('primary_bath')"/>
-<rect x="661" y="476" width="168" height="173" fill="rgba(74,155,111,.12)" stroke="rgba(74,155,111,.65)" stroke-width="1.5" rx="2" class="fp-room-bg" id="room-bg-primary_bath"/>
-<rect x="668" y="483" width="22" height="16" rx="3" fill="rgba(253,255,254,.06)" stroke="rgba(253,255,254,.12)" stroke-width="1"/>
-<text x="679" y="495" class="fp-num">07</text>
-<rect x="753" y="482" width="70" height="15" rx="4" fill="rgba(74,155,111,.15)" stroke="#7FC89A" stroke-width=".8"/>
-<text x="788.0" y="493" class="fp-status-lbl" fill="#7FC89A">Complete</text>
-<text x="745.0" y="570.5" class="fp-label">Primary Bath</text>
-<text x="745.0" y="586.5" class="fp-sub">Complete ✓</text>
-<rect x="830" y="475" w="80" h="175" class="fp-room-tap" data-room="laundry" onclick="fpSelect('laundry')"/>
-<rect x="831" y="476" width="78" height="173" fill="rgba(253,255,254,.03)" stroke="rgba(253,255,254,.18)" stroke-width="1.5" rx="2" class="fp-room-bg" id="room-bg-laundry"/>
-<rect x="838" y="483" width="22" height="16" rx="3" fill="rgba(253,255,254,.06)" stroke="rgba(253,255,254,.12)" stroke-width="1"/>
-<text x="849" y="495" class="fp-num">11</text>
-<text x="870.0" y="570.5" class="fp-label">Laundry</text>
-<text x="870.0" y="586.5" class="fp-sub">W/D · check drains</text>
-<rect x="40" y="640" w="165" h="160" class="fp-room-tap" data-room="adu_bath" onclick="fpSelect('adu_bath')"/>
-<rect x="41" y="641" width="163" height="158" fill="rgba(74,155,111,.12)" stroke="rgba(74,155,111,.65)" stroke-width="1.5" rx="2" class="fp-room-bg" id="room-bg-adu_bath"/>
-<rect x="128" y="647" width="70" height="15" rx="4" fill="rgba(74,155,111,.15)" stroke="#7FC89A" stroke-width=".8"/>
-<text x="163.0" y="658" class="fp-status-lbl" fill="#7FC89A">Complete</text>
-<text x="122.5" y="728.0" class="fp-label">ADU Bath</text>
-<text x="122.5" y="744.0" class="fp-sub">Complete ✓</text>
-<rect x="205" y="640" w="490" h="160" class="fp-room-tap" data-room="adu_studio" onclick="fpSelect('adu_studio')"/>
-<rect x="206" y="641" width="488" height="158" fill="rgba(201,168,76,.08)" stroke="rgba(201,168,76,.45)" stroke-width="1.5" rx="2" class="fp-room-bg" id="room-bg-adu_studio"/>
-<rect x="618" y="647" width="70" height="15" rx="4" fill="rgba(224,122,95,.15)" stroke="#D4B96A" stroke-width=".8"/>
-<text x="653.0" y="658" class="fp-status-lbl" fill="#D4B96A">CABINETS</text>
-<text x="450.0" y="728.0" class="fp-label">ADU Studio / Bedroom</text>
-<text x="450.0" y="744.0" class="fp-sub">405 SF · Cabinets in progress · Sonos + A/C pending</text>
-<text x="435" y="628" style="font-size:8px;text-transform:uppercase;letter-spacing:.15em;fill:rgba(253,255,254,.2);font-family:DM Sans,sans-serif;font-weight:700;text-anchor:middle">— DETACHED ADU —</text>
-<circle cx="900" cy="110" r="22" fill="none" stroke="rgba(253,255,254,.1)" stroke-width="1"/>
-<line x1="900" y1="92" x2="900" y2="108" stroke="rgba(213,220,153,.7)" stroke-width="2"/>
-<polygon points="900,88 896,100 904,100" fill="rgba(213,220,153,.8)"/>
-<text x="900" y="86" style="font-size:7px;fill:rgba(213,220,153,.7);font-family:DM Sans,sans-serif;font-weight:700;text-anchor:middle">N</text>
-<text x="900" y="140" style="font-size:8px;fill:rgba(253,255,254,.2);font-family:DM Sans,sans-serif;text-anchor:middle">i</text>
-<line x1="860" y1="160" x2="980" y2="160" stroke="rgba(253,255,254,.3)" stroke-width="1.2"/>
-<line x1="860" y1="156" x2="860" y2="164" stroke="rgba(253,255,254,.3)" stroke-width="1.2"/>
-<line x1="920" y1="156" x2="920" y2="164" stroke="rgba(253,255,254,.3)" stroke-width="1.2"/>
-<line x1="980" y1="156" x2="980" y2="164" stroke="rgba(253,255,254,.3)" stroke-width="1.2"/>
-<text x="860" y="173" style="font-size:7px;fill:rgba(253,255,254,.3);font-family:DM Sans,sans-serif;text-anchor:middle">0</text>
-<text x="920" y="173" style="font-size:7px;fill:rgba(253,255,254,.3);font-family:DM Sans,sans-serif;text-anchor:middle">10ft</text>
-<text x="980" y="173" style="font-size:7px;fill:rgba(253,255,254,.3);font-family:DM Sans,sans-serif;text-anchor:middle">20ft</text>
-<rect id="fp-highlight" x="0" y="0" width="0" height="0" fill="none" stroke="rgba(213,220,153,.55)" stroke-width="2.5" rx="3" stroke-dasharray="6,3" style="pointer-events:none;transition:all .25s ease"/>
-<text x="435" y="620" style="font-size:7px;fill:rgba(253,255,254,.08);font-family:DM Sans,sans-serif;text-anchor:middle;letter-spacing:.1em">2560 COOLIDGE AVE · SANTA MONICA CA · COMMON GROUND DRAFT · EBRU KUYUK DESIGN</text>
+</defs>
 
+<!-- Room fills -->
+<rect id="r-living"  class="fp-room" x="70"  y="60"  width="130" height="140" fill="rgba(213,220,153,.04)" onclick="fpSelect('living')"/>
+<rect id="r-kitchen" class="fp-room" x="200" y="60"  width="134" height="140" fill="rgba(213,220,153,.04)" onclick="fpSelect('kitchen')"/>
+<rect id="r-mbed"    class="fp-room" x="26"  y="200" width="74"  height="80"  fill="rgba(213,220,153,.04)" onclick="fpSelect('mbed')"/>
+<rect id="r-mbath"   class="fp-room" x="100" y="200" width="75"  height="80"  fill="rgba(213,220,153,.04)" onclick="fpSelect('mbath')"/>
+<rect id="r-bed2"    class="fp-room" x="175" y="200" width="85"  height="80"  fill="rgba(213,220,153,.04)" onclick="fpSelect('bed2')"/>
+<rect id="r-jjbath"  class="fp-room" x="260" y="200" width="75"  height="80"  fill="rgba(213,220,153,.04)" onclick="fpSelect('jjbath')"/>
+<rect id="r-bed3"    class="fp-room" x="335" y="200" width="79"  height="80"  fill="rgba(213,220,153,.04)" onclick="fpSelect('bed3')"/>
+<rect id="r-adu"     class="fp-room" x="455" y="97"  width="115" height="143" fill="rgba(213,220,153,.04)" onclick="fpSelect('adu')"/>
+
+<!-- L1: Outer wall -->
+<polyline fill="none" stroke="rgba(253,255,254,.6)" stroke-width="2.5" stroke-linejoin="miter" stroke-linecap="square"
+  points="69,60 334,60 334,200 414,200 414,280 25,280 25,200 69,200 69,60"/>
+
+<!-- L2: Walls -->
+<line x1="25"  y1="200" x2="414" y2="200" stroke="rgba(253,255,254,.6)" stroke-width="2"/>
+<line x1="200" y1="63"  x2="200" y2="197" stroke="rgba(213,220,153,.2)" stroke-width="1" stroke-dasharray="5,5"/>
+<line x1="100" y1="200" x2="100" y2="280" stroke="rgba(253,255,254,.6)" stroke-width="2.5" stroke-linecap="square"/>
+<line x1="175" y1="200" x2="175" y2="280" stroke="rgba(253,255,254,.6)" stroke-width="2.5" stroke-linecap="square"/>
+<line x1="260" y1="200" x2="260" y2="280" stroke="rgba(253,255,254,.6)" stroke-width="2.5" stroke-linecap="square"/>
+<line x1="335" y1="200" x2="335" y2="280" stroke="rgba(253,255,254,.6)" stroke-width="2.5" stroke-linecap="square"/>
+
+<!-- L3: Labels -->
+<text x="134" y="126" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9"   font-weight="600" fill="rgba(253,255,254,.55)" letter-spacing=".04em" pointer-events="none">LIVING ROOM</text>
+<text x="267" y="126" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9"   font-weight="600" fill="rgba(253,255,254,.55)" letter-spacing=".04em" pointer-events="none">KITCHEN</text>
+<text x="62"  y="236" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="7"   font-weight="600" fill="rgba(253,255,254,.55)" letter-spacing=".04em" pointer-events="none">MASTER BED</text>
+<text x="137" y="236" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="7"   font-weight="600" fill="rgba(253,255,254,.55)" letter-spacing=".04em" pointer-events="none">MASTER BATH</text>
+<text x="217" y="243" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="7.5" font-weight="600" fill="rgba(253,255,254,.55)" letter-spacing=".04em" pointer-events="none">BED 2</text>
+<text x="297" y="236" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="7"   font-weight="600" fill="rgba(253,255,254,.55)" letter-spacing=".04em" pointer-events="none">J&amp;J BATH</text>
+<text x="374" y="243" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="7.5" font-weight="600" fill="rgba(253,255,254,.55)" letter-spacing=".04em" pointer-events="none">BED 3</text>
+
+<!-- ADU -->
+<rect x="455" y="97"  width="46"  height="55"  fill="none" stroke="rgba(253,255,254,.6)" stroke-width="2"/>
+<rect x="455" y="97"  width="115" height="143" fill="none" stroke="rgba(253,255,254,.6)" stroke-width="2.5"/>
+<text x="512" y="178" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" font-weight="600" fill="rgba(253,255,254,.55)" letter-spacing=".04em" pointer-events="none">ADU</text>
+
+<!-- Highlight ring -->
+<rect id="fp-highlight" x="0" y="0" width="0" height="0" fill="none" stroke="rgba(213,220,153,.8)" stroke-width="2" rx="2" pointer-events="none"/>
 </svg>
       </div>
 
@@ -1648,47 +1467,35 @@ var fpTradeMap = {
 };
 
 function fpSelect(roomId) {
-  var ROOMS = {"entry": {"name": "Entry", "size": "6ft×12ft", "desc": "Front entry · Door to living room", "trades": ["GC", "Electrician"], "status": "Final close"}, "kitchen": {"name": "Kitchen", "size": "21ft×12ft", "desc": "Open plan · Island 375cm · Stove + sink", "trades": ["GC", "Plumber", "Electrician", "Appliance installer", "Cabinet"], "status": "Final close"}, "deck": {"name": "Wooden Deck", "size": "17ft×14ft", "desc": "Phase II · Ipe wood · Separate quote pending", "trades": ["GC", "Electrician"], "status": "Phase II"}, "living": {"name": "Living Room", "size": "18ft×15ft", "desc": "Open plan · Fireplace · TV wall · Sofa area", "trades": ["GC", "Electrician", "Fireplace"], "status": "Final close"}, "dining": {"name": "Dining", "size": "14ft×15ft", "desc": "Open plan dining · Connected to kitchen", "trades": ["GC", "Electrician"], "status": "Final close"}, "master_bed": {"name": "Master Bedroom", "size": "21ft×15ft", "desc": "Primary suite · King bed · Closet · En-suite", "trades": ["GC", "Electrician", "Cabinet / closet"], "status": "Cabinets in progress"}, "bed1": {"name": "Bedroom 1 — Leo", "size": "9ft×12ft", "desc": "Leo's room · Bed + closet", "trades": ["GC", "Electrician", "Cabinet"], "status": "Final close"}, "jjbath": {"name": "J&J Bath", "size": "Complete", "desc": "Jack & Jill · Tub + vanity + toilet · ★★★★★", "trades": ["GC", "Tile", "Plumber", "Glass"], "status": "Complete ✓"}, "bed3": {"name": "Bedroom 3 — Mila", "size": "15ft×12ft", "desc": "Cabinet reinstall needed · Color confirm pending", "trades": ["GC", "Cabinet"], "status": "Cabinet color issue"}, "primary_bath": {"name": "Primary Bath", "size": "Complete", "desc": "Soaking tub · Double vanity · Smart glass", "trades": ["GC", "Tile", "Plumber", "Glass", "Mirror"], "status": "Complete ✓"}, "laundry": {"name": "Laundry", "size": "W/D", "desc": "Washer + dryer · Check drains · Soap residue issue", "trades": ["GC", "Plumber"], "status": "Check drains"}, "adu_bath": {"name": "ADU Bath", "size": "Complete", "desc": "ADU bathroom · Complete", "trades": ["GC", "Tile", "Plumber"], "status": "Complete ✓"}, "adu_studio": {"name": "ADU Studio", "size": "405 SF", "desc": "Studio / bedroom · Cabinets in progress · Sonos + A/C pending", "trades": ["GC", "Electrician", "HVAC", "Cabinet"], "status": "Cabinets in progress"}};
+  var ROOMS = {"living": {"name": "Living Room", "size": "~18ft×15ft", "desc": "Open plan · Fireplace · TV wall", "trades": ["GC", "Electrician", "Fireplace"], "status": "Final close", "x": 70, "y": 60, "w": 130, "h": 140}, "kitchen": {"name": "Kitchen", "size": "~21ft×15ft", "desc": "Island · Dining · Stair up", "trades": ["GC", "Plumber", "Electrician", "Appliance"], "status": "Final close", "x": 200, "y": 60, "w": 134, "h": 140}, "mbed": {"name": "Master Bed", "size": "~10ft×12ft", "desc": "Primary suite · En-suite access", "trades": ["GC", "Electrician", "Closet"], "status": "Final close", "x": 26, "y": 200, "w": 74, "h": 80}, "mbath": {"name": "Master Bath", "size": "", "desc": "Soaking tub · Double vanity · Walk-in shower", "trades": ["GC", "Tile", "Plumber", "Glass"], "status": "Final close", "x": 100, "y": 200, "w": 75, "h": 80}, "bed2": {"name": "Bed 2", "size": "~12ft×12ft", "desc": "", "trades": ["GC", "Electrician"], "status": "Final close", "x": 175, "y": 200, "w": 85, "h": 80}, "jjbath": {"name": "J&J Bath", "size": "", "desc": "Jack & Jill · Tub + vanity", "trades": ["GC", "Tile", "Plumber"], "status": "Final close", "x": 260, "y": 200, "w": 75, "h": 80}, "bed3": {"name": "Bed 3 — Mila", "size": "~12ft×12ft", "desc": "Cabinet reinstall needed", "trades": ["GC", "Cabinet"], "status": "Cabinet color issue", "x": 335, "y": 200, "w": 79, "h": 80}, "adu": {"name": "ADU", "size": "405 SF", "desc": "Studio · Cabinets in progress · Sonos + A/C pending", "trades": ["GC", "Electrician", "HVAC"], "status": "Cabinets in progress", "x": 455, "y": 97, "w": 115, "h": 143}};
   var room = ROOMS[roomId];
   if (!room) return;
   currentRoom = roomId;
 
   // Highlight
   var hl = document.getElementById('fp-highlight');
-  var el = document.querySelector('[data-room="'+roomId+'"]');
-  if (hl && el) {
-    var x = parseFloat(el.getAttribute('x'));
-    var y = parseFloat(el.getAttribute('y'));
-    var w = parseFloat(el.getAttribute('w') || el.getAttribute('width') || 0);
-    var hh = parseFloat(el.getAttribute('h') || el.getAttribute('height') || 0);
-    hl.setAttribute('x', x); hl.setAttribute('y', y);
-    hl.setAttribute('width', w); hl.setAttribute('height', hh);
-  }
+  if (hl) { hl.setAttribute('x',room.x); hl.setAttribute('y',room.y); hl.setAttribute('width',room.w); hl.setAttribute('height',room.h); }
+
+  // Deselect all
+  document.querySelectorAll('.fp-room').forEach(function(e){e.classList.remove('on');});
+  var el = document.getElementById('r-'+roomId);
+  if (el) el.classList.add('on');
 
   // Show panel
   var idle = document.getElementById('fp-panel-idle');
   var content = document.getElementById('fp-panel-content');
-  if (idle) idle.style.display = 'none';
-  if (content) content.style.display = 'block';
+  if (idle) idle.style.display='none';
+  if (content) content.style.display='block';
 
-  var n = document.getElementById('fpc-name');
-  var s = document.getElementById('fpc-size');
-  var st = document.getElementById('fpc-status');
-  var tr = document.getElementById('fpc-trades');
+  var STATUS_C={'Final close':'var(--ok)','Cabinet color issue':'#E07A5F','Cabinets in progress':'var(--amb)'};
+  var STATUS_BG={'Final close':'var(--ok15)','Cabinet color issue':'rgba(224,122,95,.15)','Cabinets in progress':'var(--am15)'};
+  var sc=STATUS_C[room.status]||'var(--ok)';
+  var sb=STATUS_BG[room.status]||'var(--ok15)';
 
-  if (n) n.textContent = room.name;
-  if (s) s.textContent = room.size + (room.desc ? ' · ' + room.desc : '');
-
-  var stColor = room.status.includes('Complete') ? 'var(--ok)' :
-                room.status.includes('issue') || room.status.includes('color') ? 'var(--del,#E07A5F)' :
-                room.status === 'Phase II' ? 'var(--amb)' : 'var(--amb)';
-  var stBg = room.status.includes('Complete') ? 'var(--ok15)' :
-             room.status.includes('issue') || room.status.includes('color') ? 'var(--dl15,rgba(224,122,95,.15))' :
-             'var(--am15)';
-  if (st) st.innerHTML = '<span style="font-size:10px;font-weight:600;padding:3px 10px;border-radius:20px;background:'+stBg+';color:'+stColor+';border:1px solid '+stColor+'">' + room.status + '</span>';
-  if (tr) tr.innerHTML = room.trades.map(function(t) {
-    return '<span style="font-size:9px;font-weight:600;padding:2px 7px;border-radius:20px;background:var(--l10);color:var(--lime);border:1px solid var(--l20);display:inline-block;margin:2px 2px 0 0">'+t+'</span>';
-  }).join('');
+  var n=document.getElementById('fpc-name'); if(n) n.textContent=room.name;
+  var s=document.getElementById('fpc-size'); if(s) s.textContent=(room.size?room.size+' · ':'')+room.desc;
+  var st=document.getElementById('fpc-status'); if(st) st.innerHTML='<span style="font-size:10px;font-weight:600;padding:3px 9px;border-radius:20px;background:'+sb+';color:'+sc+';border:1px solid '+sc+'">'+room.status+'</span>';
+  var tr=document.getElementById('fpc-trades'); if(tr) tr.innerHTML=room.trades.map(function(t){return'<span style="font-size:9px;font-weight:600;padding:2px 7px;border-radius:20px;background:var(--l10);color:var(--lime);border:1px solid var(--l20);display:inline-block;margin:2px 2px 0 0">'+t+'</span>';}).join('');
 }
 
 function closeFpPanel() {
