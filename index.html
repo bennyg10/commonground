@@ -1363,6 +1363,198 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;
       <div class="fin-row"><span class="fin-label">Remodel 6 bal.</span><span class="fin-amount" style="color:var(--del)">$119,908</span></div>
       <div class="fin-row"><span class="fin-label">Liliput Phase I</span><span class="fin-amount" style="color:var(--sage)">$110,829</span></div>
     </div>
+    <!-- GC PIPELINE PANEL — shown when GC role selected -->
+    <div class="rp-panel" id="rpp-gc-pipeline" style="padding:0">
+      <div style="padding:12px 14px;border-bottom:1px solid var(--w08)">
+        <div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:800;color:var(--white);letter-spacing:-.02em">GC Pipeline</div>
+        <div style="font-size:9px;color:var(--w30);margin-top:1px">Blueprint → Code check → Scope → Sub RFQ</div>
+      </div>
+      <div style="padding:12px 14px;display:flex;flex-direction:column;gap:8px;overflow-y:auto;height:calc(100% - 52px)">
+
+        <!-- Stage indicators -->
+        <div style="display:flex;align-items:center;gap:4px;margin-bottom:4px">
+          <div id="gc-s1" style="flex:1;height:3px;border-radius:2px;background:var(--lime)"></div>
+          <div id="gc-s2" style="flex:1;height:3px;border-radius:2px;background:var(--w08)"></div>
+          <div id="gc-s3" style="flex:1;height:3px;border-radius:2px;background:var(--w08)"></div>
+          <div id="gc-s4" style="flex:1;height:3px;border-radius:2px;background:var(--w08)"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+          <span style="font-size:7px;color:var(--lime)">Upload</span>
+          <span id="gc-s2l" style="font-size:7px;color:var(--w30)">Code</span>
+          <span id="gc-s3l" style="font-size:7px;color:var(--w30)">Scope</span>
+          <span id="gc-s4l" style="font-size:7px;color:var(--w30)">RFQ</span>
+        </div>
+
+        <!-- STAGE 1: Upload -->
+        <div id="gc-stage1">
+          <div style="font-size:10px;font-weight:600;color:var(--white);margin-bottom:8px">1 — Upload blueprints</div>
+          <div onclick="gcDemoUpload(this)" style="background:var(--d3);border:1.5px dashed var(--w15);border-radius:9px;padding:18px 12px;text-align:center;cursor:pointer;margin-bottom:8px" onmouseover="this.style.borderColor='var(--l20)'" onmouseout="this.style.borderColor='var(--w15)'">
+            <i class="ti ti-file-upload" style="font-size:24px;color:var(--w30);display:block;margin-bottom:6px"></i>
+            <div style="font-size:11px;font-weight:600;color:var(--white);margin-bottom:2px">Drop plans here</div>
+            <div style="font-size:9px;color:var(--w30)">.pdf · .dwg · .jpg · .png</div>
+          </div>
+          <div style="display:flex;gap:4px;margin-bottom:8px">
+            <input id="gc-city" placeholder="City / county" style="flex:1;background:var(--d4);border:1px solid var(--w08);border-radius:7px;padding:6px 8px;font-size:10px;color:var(--white);font-family:inherit" value="Santa Monica, CA">
+            <select style="background:var(--d4);border:1px solid var(--w08);border-radius:7px;padding:6px 8px;font-size:10px;color:var(--white);font-family:inherit">
+              <option>ADU</option><option>Remodel</option><option>New build</option>
+            </select>
+          </div>
+          <button onclick="gcDemoUpload(this)" style="width:100%;padding:8px;background:var(--lime);border:none;border-radius:8px;font-size:11px;font-weight:700;color:var(--dk);cursor:pointer;font-family:inherit">
+            <i class="ti ti-cpu" style="font-size:11px"></i> Analyze plans
+          </button>
+        </div>
+
+        <!-- STAGE 2: Extraction result (hidden until upload) -->
+        <div id="gc-stage2" style="display:none">
+          <div style="font-size:10px;font-weight:600;color:var(--white);margin-bottom:8px">2 — Plan extraction</div>
+          <div style="background:var(--d2);border:1px solid var(--ok30);border-radius:9px;padding:12px;margin-bottom:8px">
+            <div style="font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--ok);margin-bottom:8px">✓ Extraction complete</div>
+            <div style="display:flex;flex-direction:column;gap:5px">
+              <div style="display:flex;justify-content:space-between;font-size:10px"><span style="color:var(--w50)">Property</span><span style="color:var(--white);font-weight:500">2560 Coolidge Ave</span></div>
+              <div style="display:flex;justify-content:space-between;font-size:10px"><span style="color:var(--w50)">Total SF</span><span style="color:var(--white);font-weight:500">1,400 SF + 405 ADU</span></div>
+              <div style="display:flex;justify-content:space-between;font-size:10px"><span style="color:var(--w50)">Rooms</span><span style="color:var(--white);font-weight:500">7 rooms + ADU</span></div>
+              <div style="display:flex;justify-content:space-between;font-size:10px"><span style="color:var(--w50)">Project type</span><span style="color:var(--white);font-weight:500">ADU + Remodel</span></div>
+              <div style="display:flex;justify-content:space-between;font-size:10px"><span style="color:var(--w50)">Trades detected</span><span style="color:var(--white);font-weight:500">7 trades</span></div>
+            </div>
+          </div>
+          <!-- Code check results -->
+          <div style="font-size:10px;font-weight:600;color:var(--white);margin-bottom:6px">Code check — Santa Monica ADU</div>
+          <div style="display:flex;flex-direction:column;gap:4px;margin-bottom:10px">
+            <div style="display:flex;align-items:center;gap:7px;padding:6px 8px;background:var(--ok15);border:1px solid var(--ok30);border-radius:6px;font-size:9px;color:var(--ok)"><i class="ti ti-check" style="font-size:11px;flex-shrink:0"></i>Setback — 4ft rear · Meets 4ft min</div>
+            <div style="display:flex;align-items:center;gap:7px;padding:6px 8px;background:var(--ok15);border:1px solid var(--ok30);border-radius:6px;font-size:9px;color:var(--ok)"><i class="ti ti-check" style="font-size:11px;flex-shrink:0"></i>Max ADU height 16ft · Plan shows 11ft</div>
+            <div style="display:flex;align-items:center;gap:7px;padding:6px 8px;background:var(--am15);border:1px solid var(--am30);border-radius:6px;font-size:9px;color:var(--amb)"><i class="ti ti-alert-triangle" style="font-size:11px;flex-shrink:0"></i>Egress window — Bed 2 sill height unconfirmed</div>
+            <div style="display:flex;align-items:center;gap:7px;padding:6px 8px;background:var(--am15);border:1px solid var(--am30);border-radius:6px;font-size:9px;color:var(--amb)"><i class="ti ti-alert-triangle" style="font-size:11px;flex-shrink:0"></i>Panel upgrade — 200A required for ADU</div>
+            <div style="display:flex;align-items:center;gap:7px;padding:6px 8px;background:rgba(224,122,95,.12);border:1px solid rgba(224,122,95,.3);border-radius:6px;font-size:9px;color:#E07A5F"><i class="ti ti-x" style="font-size:11px;flex-shrink:0"></i>Smoke/CO detector — ADU plan missing locations</div>
+          </div>
+          <button onclick="gcGoStage(3)" style="width:100%;padding:8px;background:var(--d4);border:1px solid var(--l20);border-radius:8px;font-size:11px;font-weight:700;color:var(--lime);cursor:pointer;font-family:inherit">
+            Build scope of work <i class="ti ti-arrow-right" style="font-size:11px"></i>
+          </button>
+        </div>
+
+        <!-- STAGE 3: Scope of work (hidden) -->
+        <div id="gc-stage3" style="display:none">
+          <div style="font-size:10px;font-weight:600;color:var(--white);margin-bottom:8px">3 — Scope per trade</div>
+          <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:10px">
+            <div style="background:var(--d3);border:1px solid var(--w08);border-radius:8px;overflow:hidden">
+              <div onclick="gcToggleTrade('elec')" style="padding:8px 10px;display:flex;align-items:center;gap:7px;cursor:pointer">
+                <span style="font-size:13px">⚡</span>
+                <div style="flex:1">
+                  <div style="font-size:10px;font-weight:600;color:var(--white)">Electrical</div>
+                  <div style="font-size:9px;color:var(--w30)">6 items items</div>
+                </div>
+                <i class="ti ti-chevron-down" id="gc-chev-elec" style="font-size:11px;color:var(--w30);transition:transform .2s"></i>
+              </div>
+              <div id="gc-trade-elec" style="display:none;padding:0 10px 10px;display:flex;flex-direction:column;gap:4px">
+                <label style="display:flex;align-items:flex-start;gap:6px;font-size:9px;color:var(--w60,rgba(253,255,254,.6));line-height:1.5;cursor:pointer"><input type="checkbox" checked style="margin-top:2px;accent-color:var(--lime);flex-shrink:0"><span>Panel upgrade to 200A</span></label><label style="display:flex;align-items:flex-start;gap:6px;font-size:9px;color:var(--w60,rgba(253,255,254,.6));line-height:1.5;cursor:pointer"><input type="checkbox" checked style="margin-top:2px;accent-color:var(--lime);flex-shrink:0"><span>ADU sub-panel installation</span></label><label style="display:flex;align-items:flex-start;gap:6px;font-size:9px;color:var(--w60,rgba(253,255,254,.6));line-height:1.5;cursor:pointer"><input type="checkbox" checked style="margin-top:2px;accent-color:var(--lime);flex-shrink:0"><span>Circuit layout per plan</span></label><label style="display:flex;align-items:flex-start;gap:6px;font-size:9px;color:var(--w60,rgba(253,255,254,.6));line-height:1.5;cursor:pointer"><input type="checkbox" checked style="margin-top:2px;accent-color:var(--lime);flex-shrink:0"><span>Outlet locations — island + kitchen</span></label><label style="display:flex;align-items:flex-start;gap:6px;font-size:9px;color:var(--w60,rgba(253,255,254,.6));line-height:1.5;cursor:pointer"><input type="checkbox" checked style="margin-top:2px;accent-color:var(--lime);flex-shrink:0"><span>Smoke/CO detector locations</span></label><label style="display:flex;align-items:flex-start;gap:6px;font-size:9px;color:var(--w60,rgba(253,255,254,.6));line-height:1.5;cursor:pointer"><input type="checkbox" checked style="margin-top:2px;accent-color:var(--lime);flex-shrink:0"><span>Exterior weatherproof outlets</span></label>
+              </div>
+            </div><div style="background:var(--d3);border:1px solid var(--w08);border-radius:8px;overflow:hidden">
+              <div onclick="gcToggleTrade('plumb')" style="padding:8px 10px;display:flex;align-items:center;gap:7px;cursor:pointer">
+                <span style="font-size:13px">🔧</span>
+                <div style="flex:1">
+                  <div style="font-size:10px;font-weight:600;color:var(--white)">Plumbing</div>
+                  <div style="font-size:9px;color:var(--w30)">5 items items</div>
+                </div>
+                <i class="ti ti-chevron-down" id="gc-chev-plumb" style="font-size:11px;color:var(--w30);transition:transform .2s"></i>
+              </div>
+              <div id="gc-trade-plumb" style="display:none;padding:0 10px 10px;display:flex;flex-direction:column;gap:4px">
+                <label style="display:flex;align-items:flex-start;gap:6px;font-size:9px;color:var(--w60,rgba(253,255,254,.6));line-height:1.5;cursor:pointer"><input type="checkbox" checked style="margin-top:2px;accent-color:var(--lime);flex-shrink:0"><span>ADU bathroom rough-in</span></label><label style="display:flex;align-items:flex-start;gap:6px;font-size:9px;color:var(--w60,rgba(253,255,254,.6));line-height:1.5;cursor:pointer"><input type="checkbox" checked style="margin-top:2px;accent-color:var(--lime);flex-shrink:0"><span>Water heater relocation</span></label><label style="display:flex;align-items:flex-start;gap:6px;font-size:9px;color:var(--w60,rgba(253,255,254,.6));line-height:1.5;cursor:pointer"><input type="checkbox" checked style="margin-top:2px;accent-color:var(--lime);flex-shrink:0"><span>Drain line for ADU</span></label><label style="display:flex;align-items:flex-start;gap:6px;font-size:9px;color:var(--w60,rgba(253,255,254,.6));line-height:1.5;cursor:pointer"><input type="checkbox" checked style="margin-top:2px;accent-color:var(--lime);flex-shrink:0"><span>Island sink connection</span></label><label style="display:flex;align-items:flex-start;gap:6px;font-size:9px;color:var(--w60,rgba(253,255,254,.6));line-height:1.5;cursor:pointer"><input type="checkbox" checked style="margin-top:2px;accent-color:var(--lime);flex-shrink:0"><span>Exterior hose bib</span></label>
+              </div>
+            </div><div style="background:var(--d3);border:1px solid var(--w08);border-radius:8px;overflow:hidden">
+              <div onclick="gcToggleTrade('framing')" style="padding:8px 10px;display:flex;align-items:center;gap:7px;cursor:pointer">
+                <span style="font-size:13px">🏗️</span>
+                <div style="flex:1">
+                  <div style="font-size:10px;font-weight:600;color:var(--white)">Framing</div>
+                  <div style="font-size:9px;color:var(--w30)">4 items items</div>
+                </div>
+                <i class="ti ti-chevron-down" id="gc-chev-framing" style="font-size:11px;color:var(--w30);transition:transform .2s"></i>
+              </div>
+              <div id="gc-trade-framing" style="display:none;padding:0 10px 10px;display:flex;flex-direction:column;gap:4px">
+                <label style="display:flex;align-items:flex-start;gap:6px;font-size:9px;color:var(--w60,rgba(253,255,254,.6));line-height:1.5;cursor:pointer"><input type="checkbox" checked style="margin-top:2px;accent-color:var(--lime);flex-shrink:0"><span>ADU garage conversion framing</span></label><label style="display:flex;align-items:flex-start;gap:6px;font-size:9px;color:var(--w60,rgba(253,255,254,.6));line-height:1.5;cursor:pointer"><input type="checkbox" checked style="margin-top:2px;accent-color:var(--lime);flex-shrink:0"><span>Header sizing per structural</span></label><label style="display:flex;align-items:flex-start;gap:6px;font-size:9px;color:var(--w60,rgba(253,255,254,.6));line-height:1.5;cursor:pointer"><input type="checkbox" checked style="margin-top:2px;accent-color:var(--lime);flex-shrink:0"><span>Blocking for cabinets</span></label><label style="display:flex;align-items:flex-start;gap:6px;font-size:9px;color:var(--w60,rgba(253,255,254,.6));line-height:1.5;cursor:pointer"><input type="checkbox" checked style="margin-top:2px;accent-color:var(--lime);flex-shrink:0"><span>Fire blocking per code</span></label>
+              </div>
+            </div><div style="background:var(--d3);border:1px solid var(--w08);border-radius:8px;overflow:hidden">
+              <div onclick="gcToggleTrade('hvac')" style="padding:8px 10px;display:flex;align-items:center;gap:7px;cursor:pointer">
+                <span style="font-size:13px">🌡️</span>
+                <div style="flex:1">
+                  <div style="font-size:10px;font-weight:600;color:var(--white)">HVAC</div>
+                  <div style="font-size:9px;color:var(--w30)">3 items items</div>
+                </div>
+                <i class="ti ti-chevron-down" id="gc-chev-hvac" style="font-size:11px;color:var(--w30);transition:transform .2s"></i>
+              </div>
+              <div id="gc-trade-hvac" style="display:none;padding:0 10px 10px;display:flex;flex-direction:column;gap:4px">
+                <label style="display:flex;align-items:flex-start;gap:6px;font-size:9px;color:var(--w60,rgba(253,255,254,.6));line-height:1.5;cursor:pointer"><input type="checkbox" checked style="margin-top:2px;accent-color:var(--lime);flex-shrink:0"><span>Mini-split system ADU</span></label><label style="display:flex;align-items:flex-start;gap:6px;font-size:9px;color:var(--w60,rgba(253,255,254,.6));line-height:1.5;cursor:pointer"><input type="checkbox" checked style="margin-top:2px;accent-color:var(--lime);flex-shrink:0"><span>Fresh air calc per code</span></label><label style="display:flex;align-items:flex-start;gap:6px;font-size:9px;color:var(--w60,rgba(253,255,254,.6));line-height:1.5;cursor:pointer"><input type="checkbox" checked style="margin-top:2px;accent-color:var(--lime);flex-shrink:0"><span>Duct sealing existing house</span></label>
+              </div>
+            </div><div style="background:var(--d3);border:1px solid var(--w08);border-radius:8px;overflow:hidden">
+              <div onclick="gcToggleTrade('tile')" style="padding:8px 10px;display:flex;align-items:center;gap:7px;cursor:pointer">
+                <span style="font-size:13px">🪨</span>
+                <div style="flex:1">
+                  <div style="font-size:10px;font-weight:600;color:var(--white)">Tile</div>
+                  <div style="font-size:9px;color:var(--w30)">4 items items</div>
+                </div>
+                <i class="ti ti-chevron-down" id="gc-chev-tile" style="font-size:11px;color:var(--w30);transition:transform .2s"></i>
+              </div>
+              <div id="gc-trade-tile" style="display:none;padding:0 10px 10px;display:flex;flex-direction:column;gap:4px">
+                <label style="display:flex;align-items:flex-start;gap:6px;font-size:9px;color:var(--w60,rgba(253,255,254,.6));line-height:1.5;cursor:pointer"><input type="checkbox" checked style="margin-top:2px;accent-color:var(--lime);flex-shrink:0"><span>Master bath — floor + walls</span></label><label style="display:flex;align-items:flex-start;gap:6px;font-size:9px;color:var(--w60,rgba(253,255,254,.6));line-height:1.5;cursor:pointer"><input type="checkbox" checked style="margin-top:2px;accent-color:var(--lime);flex-shrink:0"><span>J&J bath — floor + walls</span></label><label style="display:flex;align-items:flex-start;gap:6px;font-size:9px;color:var(--w60,rgba(253,255,254,.6));line-height:1.5;cursor:pointer"><input type="checkbox" checked style="margin-top:2px;accent-color:var(--lime);flex-shrink:0"><span>ADU bath — floor + walls</span></label><label style="display:flex;align-items:flex-start;gap:6px;font-size:9px;color:var(--w60,rgba(253,255,254,.6));line-height:1.5;cursor:pointer"><input type="checkbox" checked style="margin-top:2px;accent-color:var(--lime);flex-shrink:0"><span>Kitchen backsplash</span></label>
+              </div>
+            </div>
+          </div>
+          <button onclick="gcGoStage(4)" style="width:100%;padding:8px;background:var(--d4);border:1px solid var(--l20);border-radius:8px;font-size:11px;font-weight:700;color:var(--lime);cursor:pointer;font-family:inherit">
+            Send RFQ to subs <i class="ti ti-arrow-right" style="font-size:11px"></i>
+          </button>
+        </div>
+
+        <!-- STAGE 4: RFQ (hidden) -->
+        <div id="gc-stage4" style="display:none">
+          <div style="font-size:10px;font-weight:600;color:var(--white);margin-bottom:8px">4 — Sub outreach</div>
+          <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:10px">
+            <div style="background:var(--d3);border:1px solid var(--w08);border-radius:8px;padding:8px 10px;display:flex;align-items:center;gap:7px">
+              <div style="width:28px;height:28px;border-radius:50%;background:var(--d4);display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0">⚡</div>
+              <div style="flex:1">
+                <div style="font-size:10px;font-weight:600;color:var(--white)">Electrician — TBD</div>
+                <div style="font-size:9px;color:var(--w30)">RFQ link sent · Awaiting bid</div>
+              </div>
+              <span style="font-size:8px;font-weight:700;padding:2px 6px;border-radius:20px;background:var(--am15);color:var(--amb);border:1px solid var(--am30)">Pending</span>
+            </div><div style="background:var(--d3);border:1px solid var(--w08);border-radius:8px;padding:8px 10px;display:flex;align-items:center;gap:7px">
+              <div style="width:28px;height:28px;border-radius:50%;background:var(--d4);display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0">🔧</div>
+              <div style="flex:1">
+                <div style="font-size:10px;font-weight:600;color:var(--white)">Plumber — TBD</div>
+                <div style="font-size:9px;color:var(--w30)">RFQ link sent · Awaiting bid</div>
+              </div>
+              <span style="font-size:8px;font-weight:700;padding:2px 6px;border-radius:20px;background:var(--am15);color:var(--amb);border:1px solid var(--am30)">Pending</span>
+            </div><div style="background:var(--d3);border:1px solid var(--w08);border-radius:8px;padding:8px 10px;display:flex;align-items:center;gap:7px">
+              <div style="width:28px;height:28px;border-radius:50%;background:var(--d4);display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0">🏗️</div>
+              <div style="flex:1">
+                <div style="font-size:10px;font-weight:600;color:var(--white)">Framing — TBD</div>
+                <div style="font-size:9px;color:var(--w30)">RFQ link sent · Awaiting bid</div>
+              </div>
+              <span style="font-size:8px;font-weight:700;padding:2px 6px;border-radius:20px;background:var(--am15);color:var(--amb);border:1px solid var(--am30)">Pending</span>
+            </div><div style="background:var(--d3);border:1px solid var(--w08);border-radius:8px;padding:8px 10px;display:flex;align-items:center;gap:7px">
+              <div style="width:28px;height:28px;border-radius:50%;background:var(--d4);display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0">🌡️</div>
+              <div style="flex:1">
+                <div style="font-size:10px;font-weight:600;color:var(--white)">HVAC — TBD</div>
+                <div style="font-size:9px;color:var(--w30)">Bid received</div>
+              </div>
+              <span style="font-size:8px;font-weight:700;padding:2px 6px;border-radius:20px;background:var(--ok15);color:var(--ok);border:1px solid var(--ok30)">$8,400 · 5 days</span>
+            </div><div style="background:var(--d3);border:1px solid var(--w08);border-radius:8px;padding:8px 10px;display:flex;align-items:center;gap:7px">
+              <div style="width:28px;height:28px;border-radius:50%;background:var(--d4);display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0">🪨</div>
+              <div style="flex:1">
+                <div style="font-size:10px;font-weight:600;color:var(--white)">Tile — TBD</div>
+                <div style="font-size:9px;color:var(--w30)">Bid received</div>
+              </div>
+              <span style="font-size:8px;font-weight:700;padding:2px 6px;border-radius:20px;background:var(--ok15);color:var(--ok);border:1px solid var(--ok30)">$24,800 · 3 wks</span>
+            </div>
+          </div>
+          <div style="background:var(--d2);border:1px solid var(--w08);border-radius:8px;padding:10px;margin-bottom:8px">
+            <div style="font-size:9px;color:var(--sage);margin-bottom:4px">Bids received · 2 of 5</div>
+            <div style="font-size:16px;font-weight:700;color:var(--white)">$33,200</div>
+            <div style="font-size:9px;color:var(--w30)">Partial total · 3 bids pending</div>
+          </div>
+          <button onclick="gcGoStage(1)" style="width:100%;padding:8px;background:none;border:1px solid var(--w08);border-radius:8px;font-size:10px;color:var(--w50);cursor:pointer;font-family:inherit">
+            ← Start new project
+          </button>
+        </div>
+
+      </div>
+    </div>
   </div>
 </div>
 
@@ -3401,6 +3593,60 @@ function obConfirm(){
   var rooms=[];document.querySelectorAll('#ob-step4 input[type=checkbox]:checked').forEach(function(cb){rooms.push(cb.closest('label').querySelector('span').textContent);});
   alert('Layer 1 locked.\nShape: '+obState.shape+' · '+(document.getElementById('ob-w-ft').value||42)+"' wide × "+(document.getElementById('ob-d-ft').value||39)+"' deep\nNotch: "+obState.notch+'\nRooms: '+rooms.join(', ')+'\n\nReady for Layer 2 — interior walls.');
 }
+
+
+/* ── GC PIPELINE ── */
+var gcCurrentStage = 1;
+
+function gcDemoUpload(btn) {
+  if (btn) { btn.textContent = '⏳ Analyzing...'; btn.disabled = true; }
+  setTimeout(function() { gcGoStage(2); }, 1400);
+}
+
+function gcGoStage(n) {
+  gcCurrentStage = n;
+  for (var i = 1; i <= 4; i++) {
+    var s = document.getElementById('gc-stage' + i);
+    if (s) s.style.display = i === n ? 'block' : 'none';
+    var bar = document.getElementById('gc-s' + i);
+    if (bar) bar.style.background = i <= n ? 'var(--lime)' : 'var(--w08)';
+    var lbl = document.getElementById('gc-s' + i + 'l');
+    if (lbl) lbl.style.color = i <= n ? 'var(--lime)' : 'var(--w30)';
+  }
+}
+
+function gcToggleTrade(id) {
+  var panel = document.getElementById('gc-trade-' + id);
+  var chev  = document.getElementById('gc-chev-' + id);
+  if (!panel) return;
+  var open = panel.style.display !== 'none';
+  panel.style.display = open ? 'none' : 'flex';
+  panel.style.flexDirection = 'column';
+  panel.style.gap = '4px';
+  if (chev) chev.style.transform = open ? '' : 'rotate(180deg)';
+}
+
+// Show GC pipeline when GC role selected in right panel
+var _origSetRole = setRole;
+setRole = function(btn) {
+  _origSetRole(btn);
+  var role = btn.textContent.trim().toLowerCase();
+  var gcPanel = document.getElementById('rpp-gc-pipeline');
+  var tabs = document.querySelector('.rp-tabs');
+  if (role === 'gc' && gcPanel) {
+    // Show pipeline, hide normal tabs
+    document.querySelectorAll('.rp-panel').forEach(function(p) { p.classList.remove('on'); });
+    gcPanel.classList.add('on');
+    gcPanel.style.display = 'block';
+    if (tabs) tabs.style.opacity = '.3';
+  } else {
+    if (gcPanel) { gcPanel.classList.remove('on'); gcPanel.style.display = 'none'; }
+    if (tabs) tabs.style.opacity = '1';
+    // Restore default panel
+    var def = document.getElementById('rpp-decisions');
+    if (def) def.classList.add('on');
+  }
+};
 
 </script>
 
