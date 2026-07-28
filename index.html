@@ -893,32 +893,174 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;
 
   <!-- SCREEN: LANDSCAPE -->
   <div class="screen" id="sc-landscape">
-    <div class="scrl" style="padding:16px;display:flex;flex-direction:column;gap:14px">
-      <div style="font-family:'Syne',sans-serif;font-size:15px;font-weight:800;color:var(--white);letter-spacing:-.02em;padding-bottom:12px;border-bottom:1px solid var(--w08)">Landscape Overview</div>
-      <div style="background:var(--d2);border:1px solid var(--w08);border-radius:12px;padding:16px 18px">
-        <div style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--sage);margin-bottom:6px">Phase I · Landscape Team</div>
-        <div style="font-size:14px;font-weight:600;color:var(--white);margin-bottom:4px">Front Yard Scope</div>
-        <div style="font-size:11px;color:var(--w50);line-height:1.65;margin-bottom:12px">CMU wall · Garden bed · Concrete patio · Entry pavers · Wood panel · Planting palette</div>
-        <div style="display:flex;align-items:center;gap:8px">
-          <span style="font-size:10px;font-weight:600;padding:3px 10px;border-radius:20px;background:var(--am15);color:var(--amb);border:1px solid var(--am30)">Pending sign-off</span>
-          <span style="font-size:11px;font-weight:600;color:var(--white)">$110,829</span>
+    <div class="scrl" style="padding:0;overflow-x:hidden;width:100%;max-width:100%">
+
+      <!-- HEADER -->
+      <div style="padding:14px 18px 12px;border-bottom:1px solid var(--w08);background:var(--d1);display:flex;align-items:center;gap:10px;flex-shrink:0">
+        <div style="flex:1">
+          <div style="font-family:'Syne',sans-serif;font-size:16px;font-weight:800;color:var(--white);letter-spacing:-.03em">Outdoor Decisions</div>
+          <div style="font-size:10px;color:var(--w30);margin-top:1px">Front yard concept · Landscape Team review</div>
         </div>
+        <span style="font-size:9px;font-weight:700;background:var(--am15);color:var(--amb);border:1px solid var(--am30);border-radius:20px;padding:3px 10px;letter-spacing:.05em">Decisions needed</span>
       </div>
-      <div style="background:var(--d2);border:1px solid var(--w08);border-radius:12px;padding:16px 18px">
-        <div style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--sage);margin-bottom:10px">Open items</div>
-        <div style="display:flex;flex-direction:column;gap:8px">
-          <div style="display:flex;align-items:center;gap:8px;font-size:11px;color:var(--w70)"><span style="width:6px;height:6px;border-radius:50%;background:var(--amb);flex-shrink:0"></span>Gate color — Walnut vs. Hickory · Ebru input needed</div>
-          <div style="display:flex;align-items:center;gap:8px;font-size:11px;color:var(--w70)"><span style="width:6px;height:6px;border-radius:50%;background:var(--amb);flex-shrink:0"></span>Wood panel material — Ebru input needed</div>
-          <div style="display:flex;align-items:center;gap:8px;font-size:11px;color:var(--w70)"><span style="width:6px;height:6px;border-radius:50%;background:var(--amb);flex-shrink:0"></span>Garden bed planting palette — Ebru input needed</div>
-          <div style="display:flex;align-items:center;gap:8px;font-size:11px;color:var(--ok)"><span style="width:6px;height:6px;border-radius:50%;background:var(--ok);flex-shrink:0"></span>Concrete patio — Smooth ✓ Closed</div>
-          <div style="display:flex;align-items:center;gap:8px;font-size:11px;color:var(--w70)"><span style="width:6px;height:6px;border-radius:50%;background:var(--amb);flex-shrink:0"></span>Phase I contract — ready to sign pending above</div>
-          <div style="display:flex;align-items:center;gap:8px;font-size:11px;color:var(--w70)"><span style="width:6px;height:6px;border-radius:50%;background:var(--amb);flex-shrink:0"></span>Master Bed Deck Phase II — Lance quote pending</div>
+
+      <div style="padding:16px;display:flex;flex-direction:column;gap:16px;overflow-x:hidden;width:100%;max-width:100%;box-sizing:border-box">
+
+        <!-- PHASE I STATUS -->
+        <div style="background:var(--d2);border:1px solid var(--w08);border-radius:12px;padding:16px 18px">
+          <div style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--sage);margin-bottom:6px">Phase I · Landscape Team</div>
+          <div style="font-size:14px;font-weight:600;color:var(--white);margin-bottom:4px">Front Yard Scope</div>
+          <div style="font-size:11px;color:var(--w50);line-height:1.65;margin-bottom:12px">CMU wall · Garden bed · Concrete patio · Entry pavers · Wood panel · Planting palette</div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="font-size:10px;font-weight:600;padding:3px 10px;border-radius:20px;background:var(--am15);color:var(--amb);border:1px solid var(--am30)">Pending sign-off</span>
+            <span style="font-size:13px;font-weight:700;color:var(--white)">$110,829</span>
+          </div>
         </div>
-      </div>
-      <div onclick="goScreen('outdoor-log');document.querySelectorAll('.nav-btn').forEach(function(b){b.classList.remove('on')});var ob=document.querySelector('[onclick*=outdoor-log]');if(ob)ob.classList.add('on')" style="background:var(--d3);border:1px solid var(--l20);border-radius:12px;padding:14px 16px;cursor:pointer;display:flex;align-items:center;gap:12px" onmouseover="this.style.borderColor='var(--lime)'" onmouseout="this.style.borderColor='var(--l20)'">
-        <i class="ti ti-map-pin" style="font-size:20px;color:var(--lime)"></i>
-        <div style="flex:1"><div style="font-size:12px;font-weight:600;color:var(--white);margin-bottom:2px">View Outdoor Decisions</div><div style="font-size:10px;color:var(--w50)">Site plan · Zone breakdown · References · Open decisions</div></div>
-        <i class="ti ti-arrow-right" style="font-size:14px;color:var(--w30)"></i>
+
+        <!-- SITE PLAN -->
+        <div style="background:var(--d2);border:1px solid var(--w08);border-radius:12px;overflow:hidden">
+          <div style="padding:10px 14px;border-bottom:1px solid var(--w08);display:flex;align-items:center;gap:8px">
+            <span style="font-size:11px;font-weight:600;color:var(--white)">Site plan — front yard v3</span>
+            <span style="font-size:9px;font-weight:700;background:var(--am15);color:var(--amb);border:1px solid var(--am30);border-radius:20px;padding:2px 7px">Rough</span>
+          </div>
+          <img src="https://cdn.jsdelivr.net/gh/bennyg10/commonground@main/assets/plan-v3.jpg" style="width:100%;display:block" alt="Front yard plan">
+        </div>
+
+        <!-- ZONE CARDS -->
+        <div style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--sage)">Zone breakdown — tap to expand</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+          <div onclick="odToggleZone('wall')" style="background:var(--d3);border:1px solid var(--w08);border-radius:9px;overflow:hidden;cursor:pointer" onmouseover="this.style.borderColor='var(--l20)'" onmouseout="this.style.borderColor='var(--w08)'">
+            <img src="https://cdn.jsdelivr.net/gh/bennyg10/commonground@main/assets/ls_entry_wall.jpg" style="width:100%;height:100px;object-fit:cover;display:block;opacity:.8">
+            <div style="padding:9px 11px">
+              <div style="font-size:8px;text-transform:uppercase;letter-spacing:.07em;color:var(--sage);margin-bottom:2px">Zone A</div>
+              <div style="font-size:11px;font-weight:600;color:var(--white)">Wall + Topper</div>
+              <div style="font-size:10px;color:var(--w50);margin-top:3px;line-height:1.4">CMU smooth stucco · 12" wood slat topper · LED option</div>
+            </div>
+          </div><div onclick="odToggleZone('entry')" style="background:var(--d3);border:1px solid var(--w08);border-radius:9px;overflow:hidden;cursor:pointer" onmouseover="this.style.borderColor='var(--l20)'" onmouseout="this.style.borderColor='var(--w08)'">
+            <img src="https://cdn.jsdelivr.net/gh/bennyg10/commonground@main/assets/ls_gate_entry.jpg" style="width:100%;height:100px;object-fit:cover;display:block;opacity:.8">
+            <div style="padding:9px 11px">
+              <div style="font-size:8px;text-transform:uppercase;letter-spacing:.07em;color:var(--sage);margin-bottom:2px">Zone B</div>
+              <div style="font-size:11px;font-weight:600;color:var(--white)">Entrance</div>
+              <div style="font-size:10px;color:var(--w50);margin-top:3px;line-height:1.4">4ft inset gate · Garden bed · Warm wood</div>
+            </div>
+          </div><div onclick="odToggleZone('mail')" style="background:var(--d3);border:1px solid var(--w08);border-radius:9px;overflow:hidden;cursor:pointer" onmouseover="this.style.borderColor='var(--l20)'" onmouseout="this.style.borderColor='var(--w08)'">
+            <img src="https://cdn.jsdelivr.net/gh/bennyg10/commonground@main/assets/ls_wooden_panel.jpg" style="width:100%;height:100px;object-fit:cover;display:block;opacity:.8">
+            <div style="padding:9px 11px">
+              <div style="font-size:8px;text-transform:uppercase;letter-spacing:.07em;color:var(--sage);margin-bottom:2px">Zone C</div>
+              <div style="font-size:11px;font-weight:600;color:var(--white)">Mail + Package</div>
+              <div style="font-size:10px;color:var(--w50);margin-top:3px;line-height:1.4">Nova Bravios mailbox · Box Gobbler 1428</div>
+            </div>
+          </div><div onclick="odToggleZone('steps')" style="background:var(--d3);border:1px solid var(--w08);border-radius:9px;overflow:hidden;cursor:pointer" onmouseover="this.style.borderColor='var(--l20)'" onmouseout="this.style.borderColor='var(--w08)'">
+            <img src="https://cdn.jsdelivr.net/gh/bennyg10/commonground@main/assets/ls_steps_led.jpg" style="width:100%;height:100px;object-fit:cover;display:block;opacity:.8">
+            <div style="padding:9px 11px">
+              <div style="font-size:8px;text-transform:uppercase;letter-spacing:.07em;color:var(--sage);margin-bottom:2px">Zone D</div>
+              <div style="font-size:11px;font-weight:600;color:var(--white)">Steps + Concrete</div>
+              <div style="font-size:10px;color:var(--w50);margin-top:3px;line-height:1.4">7 risers · 7" each · LED underglow · Pebble 641</div>
+            </div>
+          </div><div onclick="odToggleZone('panel')" style="background:var(--d3);border:1px solid var(--w08);border-radius:9px;overflow:hidden;cursor:pointer" onmouseover="this.style.borderColor='var(--l20)'" onmouseout="this.style.borderColor='var(--w08)'">
+            <img src="https://cdn.jsdelivr.net/gh/bennyg10/commonground@main/assets/ls_wooden_panel.jpg" style="width:100%;height:100px;object-fit:cover;display:block;opacity:.8">
+            <div style="padding:9px 11px">
+              <div style="font-size:8px;text-transform:uppercase;letter-spacing:.07em;color:var(--sage);margin-bottom:2px">Zone E</div>
+              <div style="font-size:11px;font-weight:600;color:var(--white)">Wood Panel</div>
+              <div style="font-size:10px;color:var(--w50);margin-top:3px;line-height:1.4">Vertical slats · 10ft wide · Material TBD</div>
+            </div>
+          </div><div onclick="odToggleZone('deck')" style="background:var(--d3);border:1px solid var(--w08);border-radius:9px;overflow:hidden;cursor:pointer" onmouseover="this.style.borderColor='var(--l20)'" onmouseout="this.style.borderColor='var(--w08)'">
+            <img src="https://cdn.jsdelivr.net/gh/bennyg10/commonground@main/assets/ls_cmu_led_wall.jpg" style="width:100%;height:100px;object-fit:cover;display:block;opacity:.8">
+            <div style="padding:9px 11px">
+              <div style="font-size:8px;text-transform:uppercase;letter-spacing:.07em;color:var(--sage);margin-bottom:2px">Zone F</div>
+              <div style="font-size:11px;font-weight:600;color:var(--white)">Deck Phase II</div>
+              <div style="font-size:10px;color:var(--w50);margin-top:3px;line-height:1.4">17'×14' · Brazilian hardwood · GC quote</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- EXPANDED ZONE DETAILS -->
+        <div id="zone-wall-detail" style="display:none;background:var(--d2);border:1px solid var(--l20);border-radius:12px;overflow:hidden">
+          <div style="padding:10px 14px;border-bottom:1px solid var(--w08);display:flex;align-items:center;justify-content:space-between">
+            <span style="font-size:12px;font-weight:600;color:var(--white)">Wall + Topper References</span>
+            <button onclick="odToggleZone('wall')" style="background:none;border:none;color:var(--w50);cursor:pointer;font-size:16px">×</button>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:0">
+            <img src="https://cdn.jsdelivr.net/gh/bennyg10/commonground@main/assets/ls_entry_wall.jpg" style="width:100%;height:200px;object-fit:cover;display:block;border-right:1px solid var(--w08)"><img src="https://cdn.jsdelivr.net/gh/bennyg10/commonground@main/assets/ls_wall_topper.jpg" style="width:100%;height:200px;object-fit:cover;display:block;border-right:1px solid var(--w08)">
+          </div>
+          <div style="padding:12px 14px;font-size:11px;color:var(--w50);line-height:1.7;border-top:1px solid var(--w08)">CMU smooth stucco wall · 12" horizontal slat topper · LED strip option at base gap. Ask Javier: extra cost for gap + LED install method.</div>
+        </div><div id="zone-entry-detail" style="display:none;background:var(--d2);border:1px solid var(--l20);border-radius:12px;overflow:hidden">
+          <div style="padding:10px 14px;border-bottom:1px solid var(--w08);display:flex;align-items:center;justify-content:space-between">
+            <span style="font-size:12px;font-weight:600;color:var(--white)">Entrance References</span>
+            <button onclick="odToggleZone('entry')" style="background:none;border:none;color:var(--w50);cursor:pointer;font-size:16px">×</button>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:0">
+            <img src="https://cdn.jsdelivr.net/gh/bennyg10/commonground@main/assets/ls_gate_entry.jpg" style="width:100%;height:200px;object-fit:cover;display:block;border-right:1px solid var(--w08)"><img src="https://cdn.jsdelivr.net/gh/bennyg10/commonground@main/assets/ls_entry_wall.jpg" style="width:100%;height:200px;object-fit:cover;display:block;border-right:1px solid var(--w08)">
+          </div>
+          <div style="padding:12px 14px;font-size:11px;color:var(--w50);line-height:1.7;border-top:1px solid var(--w08)">Solid wood gate · 4ft inset entry · Planter 3'×2' beside gate · Confirm: Walnut vs Hickory warm wood tone against Silver Grey stucco.</div>
+        </div><div id="zone-mail-detail" style="display:none;background:var(--d2);border:1px solid var(--l20);border-radius:12px;overflow:hidden">
+          <div style="padding:10px 14px;border-bottom:1px solid var(--w08);display:flex;align-items:center;justify-content:space-between">
+            <span style="font-size:12px;font-weight:600;color:var(--white)">Mail + Package Drop</span>
+            <button onclick="odToggleZone('mail')" style="background:none;border:none;color:var(--w50);cursor:pointer;font-size:16px">×</button>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:0">
+            <img src="https://cdn.jsdelivr.net/gh/bennyg10/commonground@main/assets/ls_cmu_topper.jpg" style="width:100%;height:200px;object-fit:cover;display:block;border-right:1px solid var(--w08)"><img src="https://cdn.jsdelivr.net/gh/bennyg10/commonground@main/assets/ls_cmu_led_wall.jpg" style="width:100%;height:200px;object-fit:cover;display:block;border-right:1px solid var(--w08)">
+          </div>
+          <div style="padding:12px 14px;font-size:11px;color:var(--w50);line-height:1.7;border-top:1px solid var(--w08)">Nova Bravios mailbox (above) + Box Gobbler 1428 package drop (below) · Both flush-mounted matte black in right wall panel.</div>
+        </div><div id="zone-steps-detail" style="display:none;background:var(--d2);border:1px solid var(--l20);border-radius:12px;overflow:hidden">
+          <div style="padding:10px 14px;border-bottom:1px solid var(--w08);display:flex;align-items:center;justify-content:space-between">
+            <span style="font-size:12px;font-weight:600;color:var(--white)">Steps + Concrete</span>
+            <button onclick="odToggleZone('steps')" style="background:none;border:none;color:var(--w50);cursor:pointer;font-size:16px">×</button>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:0">
+            <img src="https://cdn.jsdelivr.net/gh/bennyg10/commonground@main/assets/ls_steps_led.jpg" style="width:100%;height:200px;object-fit:cover;display:block;border-right:1px solid var(--w08)"><img src="https://cdn.jsdelivr.net/gh/bennyg10/commonground@main/assets/ls_cmu_topper.jpg" style="width:100%;height:200px;object-fit:cover;display:block;border-right:1px solid var(--w08)">
+          </div>
+          <div style="padding:12px 14px;font-size:11px;color:var(--w50);line-height:1.7;border-top:1px solid var(--w08)">7 concrete risers · 7" each · LED strip underglow at base of each step · Davis Colors Pebble 641 for all concrete.</div>
+        </div><div id="zone-panel-detail" style="display:none;background:var(--d2);border:1px solid var(--l20);border-radius:12px;overflow:hidden">
+          <div style="padding:10px 14px;border-bottom:1px solid var(--w08);display:flex;align-items:center;justify-content:space-between">
+            <span style="font-size:12px;font-weight:600;color:var(--white)">Wood Panel</span>
+            <button onclick="odToggleZone('panel')" style="background:none;border:none;color:var(--w50);cursor:pointer;font-size:16px">×</button>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:0">
+            <img src="https://cdn.jsdelivr.net/gh/bennyg10/commonground@main/assets/ls_wooden_panel.jpg" style="width:100%;height:200px;object-fit:cover;display:block;border-right:1px solid var(--w08)"><img src="https://cdn.jsdelivr.net/gh/bennyg10/commonground@main/assets/ls_gate_entry.jpg" style="width:100%;height:200px;object-fit:cover;display:block;border-right:1px solid var(--w08)">
+          </div>
+          <div style="padding:12px 14px;font-size:11px;color:var(--w50);line-height:1.7;border-top:1px solid var(--w08)">Vertical wood slats · 10ft wide · Left side of property · Material TBD — Ebru to confirm teak / cedar / Ipe.</div>
+        </div><div id="zone-deck-detail" style="display:none;background:var(--d2);border:1px solid var(--l20);border-radius:12px;overflow:hidden">
+          <div style="padding:10px 14px;border-bottom:1px solid var(--w08);display:flex;align-items:center;justify-content:space-between">
+            <span style="font-size:12px;font-weight:600;color:var(--white)">Deck Phase II</span>
+            <button onclick="odToggleZone('deck')" style="background:none;border:none;color:var(--w50);cursor:pointer;font-size:16px">×</button>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:0">
+            <img src="https://cdn.jsdelivr.net/gh/bennyg10/commonground@main/assets/ls_cmu_led_wall.jpg" style="width:100%;height:200px;object-fit:cover;display:block;border-right:1px solid var(--w08)"><img src="https://cdn.jsdelivr.net/gh/bennyg10/commonground@main/assets/ls_steps_led.jpg" style="width:100%;height:200px;object-fit:cover;display:block;border-right:1px solid var(--w08)">
+          </div>
+          <div style="padding:12px 14px;font-size:11px;color:var(--w50);line-height:1.7;border-top:1px solid var(--w08)">17'×14' master bed deck · Brazilian hardwood · LED underglow at step transitions · Separate GC quote pending.</div>
+        </div>
+
+        <!-- OPEN DECISIONS -->
+        <div style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--sage)">Open decisions</div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div style="background:var(--d3);border:1px solid var(--w08);border-radius:9px;padding:11px 13px;display:flex;align-items:flex-start;gap:9px">
+            <div style="width:24px;height:24px;border-radius:50%;background:var(--am15);border:1px solid var(--am30);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:var(--amb);flex-shrink:0;margin-top:1px">1</div>
+            <div style="flex:1;min-width:0"><div style="font-size:11px;font-weight:600;color:var(--white);margin-bottom:2px">Gate color — Walnut vs. Hickory</div><div style="font-size:10px;color:var(--w50);line-height:1.55">Confirm with Ebru — reads against La Habra Silver Grey stucco.</div></div>
+            <span style="font-size:9px;font-weight:700;padding:2px 8px;border-radius:20px;white-space:nowrap;background:var(--am15);color:var(--amb);border:1px solid var(--am30)">Ebru → Ben</span>
+          </div><div style="background:var(--d3);border:1px solid var(--w08);border-radius:9px;padding:11px 13px;display:flex;align-items:flex-start;gap:9px">
+            <div style="width:24px;height:24px;border-radius:50%;background:var(--l10);border:1px solid var(--l20);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:var(--lime);flex-shrink:0;margin-top:1px">2</div>
+            <div style="flex:1;min-width:0"><div style="font-size:11px;font-weight:600;color:var(--white);margin-bottom:2px">Wood panel material — teak vs cedar vs Ipe</div><div style="font-size:10px;color:var(--w50);line-height:1.55">10ft horizontal slat panel. Ebru to confirm.</div></div>
+            <span style="font-size:9px;font-weight:700;padding:2px 8px;border-radius:20px;white-space:nowrap;background:var(--l10);color:var(--lime);border:1px solid var(--l20)">Ebru input</span>
+          </div><div style="background:var(--d3);border:1px solid var(--w08);border-radius:9px;padding:11px 13px;display:flex;align-items:flex-start;gap:9px">
+            <div style="width:24px;height:24px;border-radius:50%;background:var(--l10);border:1px solid var(--l20);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:var(--lime);flex-shrink:0;margin-top:1px">3</div>
+            <div style="flex:1;min-width:0"><div style="font-size:11px;font-weight:600;color:var(--white);margin-bottom:2px">Garden bed planting palette</div><div style="font-size:10px;color:var(--w50);line-height:1.55">CMU raised planter along house front. Ebru to specify.</div></div>
+            <span style="font-size:9px;font-weight:700;padding:2px 8px;border-radius:20px;white-space:nowrap;background:var(--l10);color:var(--lime);border:1px solid var(--l20)">Ebru input</span>
+          </div><div style="background:var(--d3);border:1px solid var(--w08);border-radius:9px;padding:11px 13px;display:flex;align-items:flex-start;gap:9px">
+            <div style="width:24px;height:24px;border-radius:50%;background:var(--am15);border:1px solid var(--am30);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:var(--amb);flex-shrink:0;margin-top:1px">4</div>
+            <div style="flex:1;min-width:0"><div style="font-size:11px;font-weight:600;color:var(--white);margin-bottom:2px">LED strip in wall base — Javier</div><div style="font-size:10px;color:var(--w50);line-height:1.55">Extra cost for gap at base + LED strip install method?</div></div>
+            <span style="font-size:9px;font-weight:700;padding:2px 8px;border-radius:20px;white-space:nowrap;background:var(--am15);color:var(--amb);border:1px solid var(--am30)">Ask Javier</span>
+          </div><div style="background:var(--d3);border:1px solid var(--w08);border-radius:9px;padding:11px 13px;display:flex;align-items:flex-start;gap:9px">
+            <div style="width:24px;height:24px;border-radius:50%;background:var(--ok15);border:1px solid var(--ok30);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:var(--ok);flex-shrink:0;margin-top:1px">5</div>
+            <div style="flex:1;min-width:0"><div style="font-size:11px;font-weight:600;color:var(--white);margin-bottom:2px">Concrete patio — smooth finish</div><div style="font-size:10px;color:var(--w50);line-height:1.55">Confirmed ✓</div></div>
+            <span style="font-size:9px;font-weight:700;padding:2px 8px;border-radius:20px;white-space:nowrap;background:var(--ok15);color:var(--ok);border:1px solid var(--ok30)">✓ Closed</span>
+          </div><div style="background:var(--d3);border:1px solid var(--w08);border-radius:9px;padding:11px 13px;display:flex;align-items:flex-start;gap:9px">
+            <div style="width:24px;height:24px;border-radius:50%;background:var(--ok15);border:1px solid var(--ok30);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:var(--ok);flex-shrink:0;margin-top:1px">6</div>
+            <div style="flex:1;min-width:0"><div style="font-size:11px;font-weight:600;color:var(--white);margin-bottom:2px">Phase I contract</div><div style="font-size:10px;color:var(--w50);line-height:1.55">Verify pricing post-tariff. Sign once above resolved.</div></div>
+            <span style="font-size:9px;font-weight:700;padding:2px 8px;border-radius:20px;white-space:nowrap;background:var(--ok15);color:var(--ok);border:1px solid var(--ok30)">Ready to sign</span>
+          </div>
+        </div>
+
       </div>
     </div><div class="screen" id="sc-finance" data-role-gate="client">
     <div class="scrl">
@@ -1608,7 +1750,7 @@ function sbNav(btn, name) {
 function landscapeNav() {
   var secHead = document.querySelector('.nav-sec-head');
   if(secHead) toggleSec(secHead, 'sec1');
-  goScreen('outdoor-log');
+  goScreen('landscape');
   document.querySelectorAll('.nav-btn').forEach(function(b) { b.classList.remove('on'); });
   var odBtn = document.querySelector('[onclick*=\'outdoor-log\']');
   if (odBtn) odBtn.classList.add('on');
@@ -2190,7 +2332,7 @@ function applyRole(role) {
 
   // Always redirect to defaultScreen for javier; otherwise only if on gated screen
   if (role === 'javier') {
-    goScreen('outdoor-log');
+    goScreen('landscape');
   } else {
     var activeScreen = document.querySelector('.screen.on');
     if (activeScreen && cfg.hiddenScreens.indexOf(activeScreen.id) !== -1) {
@@ -3647,6 +3789,25 @@ setRole = function(btn) {
     if (def) def.classList.add('on');
   }
 };
+
+
+/* ── ZONE TOGGLE ── */
+var odOpenZone = null;
+function odToggleZone(zone) {
+  var el = document.getElementById('zone-' + zone + '-detail');
+  if (!el) return;
+  if (odOpenZone === zone) {
+    el.style.display = 'none'; odOpenZone = null;
+  } else {
+    if (odOpenZone) {
+      var prev = document.getElementById('zone-' + odOpenZone + '-detail');
+      if (prev) prev.style.display = 'none';
+    }
+    el.style.display = 'block';
+    setTimeout(function(){ el.scrollIntoView({behavior:'smooth',block:'nearest'}); }, 50);
+    odOpenZone = zone;
+  }
+}
 
 </script>
 
