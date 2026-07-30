@@ -564,7 +564,7 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;
 <!-- ══ SIDEBAR — no duplicate logo ══ -->
 <aside class="sb" id="sb">
   <!-- Project card — user tag instead of logo -->
-  <div class="sb-proj-header" onclick="goScreen('fp')">
+  <div class="sb-proj-header" onclick="openRoleModal()" style="cursor:pointer">
     <div class="sb-proj-main">
       <div class="sb-proj-eyebrow">Active project</div>
       <div class="sb-proj-name">Coolidge Remodel + ADU</div>
@@ -736,6 +736,187 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;
 <!-- Highlight ring -->
 <rect id="fp-highlight" x="0" y="0" width="0" height="0" fill="none" stroke="rgba(213,220,153,.8)" stroke-width="2" rx="2" pointer-events="none"/>
 </svg>
+      </div>
+
+
+      <!-- ANALYZE PLANS STRIP -->
+      <div id="fp-analyze-strip" style="border-top:1px solid var(--w08);padding:12px 16px;display:flex;align-items:center;gap:12px;background:var(--d2);flex-shrink:0">
+        <div style="flex:1">
+          <div style="font-size:11px;font-weight:600;color:var(--white);margin-bottom:1px">AI Plan Analysis</div>
+          <div style="font-size:9px;color:var(--w40)">Upload blueprints → code check → trade scope → sub RFQ</div>
+        </div>
+        <button onclick="openGCPipeline()" style="padding:7px 14px;background:var(--lime);border:none;border-radius:8px;font-size:11px;font-weight:700;color:var(--dk);cursor:pointer;font-family:inherit;white-space:nowrap;flex-shrink:0">
+          <i class="ti ti-cpu" style="font-size:11px"></i> Analyze Plans
+        </button>
+      </div>
+
+      <!-- GC PIPELINE FULLSCREEN OVERLAY -->
+      <div id="gc-pipeline-overlay" style="display:none;position:absolute;inset:0;background:var(--d1);z-index:100;overflow-y:auto;flex-direction:column">
+        <div style="padding:14px 18px 12px;border-bottom:1px solid var(--w08);display:flex;align-items:center;gap:10px;flex-shrink:0;background:var(--d1)">
+          <button onclick="closeGCPipeline()" style="background:none;border:none;color:var(--w50);cursor:pointer;font-size:13px;display:flex;align-items:center;gap:5px;padding:0;font-family:inherit"><i class="ti ti-arrow-left" style="font-size:13px"></i> Back to floor plan</button>
+          <div style="flex:1;font-family:'Syne',sans-serif;font-size:14px;font-weight:800;color:var(--white);letter-spacing:-.02em;text-align:center">GC Pipeline</div>
+          <div style="width:80px"></div>
+        </div>
+
+        <!-- Stage bar -->
+        <div style="padding:14px 20px 0;display:flex;align-items:center;gap:6px">
+          <div id="fp-gc-s1" style="flex:1;height:3px;border-radius:2px;background:var(--lime)"></div>
+          <div id="fp-gc-s2" style="flex:1;height:3px;border-radius:2px;background:var(--w08)"></div>
+          <div id="fp-gc-s3" style="flex:1;height:3px;border-radius:2px;background:var(--w08)"></div>
+          <div id="fp-gc-s4" style="flex:1;height:3px;border-radius:2px;background:var(--w08)"></div>
+        </div>
+        <div style="padding:4px 20px 12px;display:flex;justify-content:space-between">
+          <span style="font-size:8px;color:var(--lime)">Upload</span>
+          <span id="fp-gc-s2l" style="font-size:8px;color:var(--w30)">Code check</span>
+          <span id="fp-gc-s3l" style="font-size:8px;color:var(--w30)">Scope</span>
+          <span id="fp-gc-s4l" style="font-size:8px;color:var(--w30)">Send RFQ</span>
+        </div>
+
+        <div style="padding:0 20px 24px;display:flex;flex-direction:column;gap:14px">
+
+          <!-- STAGE 1 -->
+          <div id="fp-gc-stage1">
+            <div style="font-size:13px;font-weight:600;color:var(--white);margin-bottom:12px">Upload your blueprints</div>
+            <div onclick="fpGcUpload(this)" style="background:var(--d3);border:1.5px dashed var(--w15);border-radius:12px;padding:32px 20px;text-align:center;cursor:pointer;margin-bottom:12px" onmouseover="this.style.borderColor='var(--l20)'" onmouseout="this.style.borderColor='var(--w15)'">
+              <i class="ti ti-cloud-upload" style="font-size:40px;color:var(--w30);display:block;margin-bottom:10px"></i>
+              <div style="font-size:13px;font-weight:600;color:var(--white);margin-bottom:4px">Drop plans here</div>
+              <div style="font-size:10px;color:var(--w30);margin-bottom:14px">.pdf · .dwg · .jpg · .png</div>
+              <div style="display:inline-flex;gap:6px">
+                <span style="font-size:9px;font-weight:600;background:var(--d4);color:var(--w50);border:1px solid var(--w08);border-radius:20px;padding:2px 8px">.dwg</span>
+                <span style="font-size:9px;font-weight:600;background:var(--d4);color:var(--w50);border:1px solid var(--w08);border-radius:20px;padding:2px 8px">.pdf</span>
+                <span style="font-size:9px;font-weight:600;background:var(--d4);color:var(--w50);border:1px solid var(--w08);border-radius:20px;padding:2px 8px">.jpg</span>
+              </div>
+            </div>
+            <div style="display:flex;gap:8px;margin-bottom:12px">
+              <input id="fp-gc-city" value="Santa Monica, CA" style="flex:1;background:var(--d4);border:1px solid var(--w08);border-radius:8px;padding:8px 10px;font-size:11px;color:var(--white);font-family:inherit">
+              <select style="background:var(--d4);border:1px solid var(--w08);border-radius:8px;padding:8px 10px;font-size:11px;color:var(--white);font-family:inherit">
+                <option>ADU</option><option>Remodel</option><option>New build</option>
+              </select>
+            </div>
+            <!-- Pain points -->
+            <div style="background:var(--d3);border:1px solid var(--w08);border-radius:10px;padding:14px 16px;margin-bottom:12px">
+              <div style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--sage);margin-bottom:10px">Why GCs choose Common Ground</div>
+              <div style="display:flex;flex-direction:column;gap:8px">
+                <div style="font-size:11px;color:var(--w60);line-height:1.6;display:flex;gap:8px"><span style="color:var(--lime);flex-shrink:0">✓</span>"We said / they said" — rework that kills margins. CG creates a single source of truth every trade can see.</div>
+                <div style="font-size:11px;color:var(--w60);line-height:1.6;display:flex;gap:8px"><span style="color:var(--lime);flex-shrink:0">✓</span>Subs making on-the-fly calls that cost you time, money, and reputation. CG routes every decision through you first.</div>
+                <div style="font-size:11px;color:var(--w60);line-height:1.6;display:flex;gap:8px"><span style="color:var(--lime);flex-shrink:0">✓</span>Blueprint → code check → trade scope → sub RFQ in hours, not 4–5 days.</div>
+                <div style="font-size:11px;font-weight:600;color:var(--white);line-height:1.6;display:flex;gap:8px"><span style="color:var(--lime);flex-shrink:0">→</span>First project is free.</div>
+              </div>
+            </div>
+            <button onclick="fpGcUpload(this)" style="width:100%;padding:12px;background:var(--lime);border:none;border-radius:10px;font-size:13px;font-weight:700;color:var(--dk);cursor:pointer;font-family:inherit">
+              <i class="ti ti-cpu" style="font-size:13px"></i> Analyze plans
+            </button>
+          </div>
+
+          <!-- STAGE 2: Extraction + Code Check -->
+          <div id="fp-gc-stage2" style="display:none">
+            <div style="background:var(--d3);border:1px solid var(--ok30);border-radius:10px;padding:14px 16px;margin-bottom:12px">
+              <div style="font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--ok);margin-bottom:10px">✓ Extraction complete — 2560 Coolidge Ave</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+                <div style="background:var(--d4);border-radius:7px;padding:9px 11px"><div style="font-size:8px;color:var(--sage);margin-bottom:2px">Total SF</div><div style="font-size:13px;font-weight:600;color:var(--white)">1,805 SF</div></div>
+                <div style="background:var(--d4);border-radius:7px;padding:9px 11px"><div style="font-size:8px;color:var(--sage);margin-bottom:2px">Rooms</div><div style="font-size:13px;font-weight:600;color:var(--white)">7 + ADU</div></div>
+                <div style="background:var(--d4);border-radius:7px;padding:9px 11px"><div style="font-size:8px;color:var(--sage);margin-bottom:2px">Project type</div><div style="font-size:13px;font-weight:600;color:var(--white)">ADU + Remodel</div></div>
+                <div style="background:var(--d4);border-radius:7px;padding:9px 11px"><div style="font-size:8px;color:var(--sage);margin-bottom:2px">Trades</div><div style="font-size:13px;font-weight:600;color:var(--white)">7 detected</div></div>
+              </div>
+            </div>
+            <div style="font-size:11px;font-weight:600;color:var(--white);margin-bottom:8px">Code check — Santa Monica ADU</div>
+            <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px">
+              <div style="display:flex;align-items:flex-start;gap:8px;padding:9px 11px;background:var(--ok15);border:1px solid var(--ok30);border-radius:8px;font-size:10px;color:var(--ok)"><i class="ti ti-check" style="font-size:12px;flex-shrink:0;margin-top:1px"></i><span>Rear setback 4ft — meets 4ft minimum ✓</span></div>
+              <div style="display:flex;align-items:flex-start;gap:8px;padding:9px 11px;background:var(--ok15);border:1px solid var(--ok30);border-radius:8px;font-size:10px;color:var(--ok)"><i class="ti ti-check" style="font-size:12px;flex-shrink:0;margin-top:1px"></i><span>ADU max height 16ft — plan shows 11ft ✓</span></div>
+              <div style="display:flex;align-items:flex-start;gap:8px;padding:9px 11px;background:var(--am15);border:1px solid var(--am30);border-radius:8px;font-size:10px;color:var(--amb)"><i class="ti ti-alert-triangle" style="font-size:12px;flex-shrink:0;margin-top:1px"></i><span>Egress window — Bed 2 sill height unconfirmed, verify before permit</span></div>
+              <div style="display:flex;align-items:flex-start;gap:8px;padding:9px 11px;background:var(--am15);border:1px solid var(--am30);border-radius:8px;font-size:10px;color:var(--amb)"><i class="ti ti-alert-triangle" style="font-size:12px;flex-shrink:0;margin-top:1px"></i><span>Panel upgrade — 200A required for ADU sub-panel</span></div>
+              <div style="display:flex;align-items:flex-start;gap:8px;padding:9px 11px;background:rgba(224,100,80,.12);border:1px solid rgba(224,100,80,.3);border-radius:8px;font-size:10px;color:#E07A5F"><i class="ti ti-x" style="font-size:12px;flex-shrink:0;margin-top:1px"></i><span>Smoke/CO detector locations missing from ADU plan — required for permit</span></div>
+            </div>
+            <button onclick="fpGcGoStage(3)" style="width:100%;padding:11px;background:var(--d4);border:1px solid var(--l20);border-radius:10px;font-size:12px;font-weight:700;color:var(--lime);cursor:pointer;font-family:inherit">Build scope of work →</button>
+          </div>
+
+          <!-- STAGE 3: Trade Scope -->
+          <div id="fp-gc-stage3" style="display:none">
+            <div style="font-size:13px;font-weight:600;color:var(--white);margin-bottom:12px">Scope per trade</div>
+            <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px"><div style="background:var(--d3);border:1px solid var(--w08);border-radius:10px;overflow:hidden">
+                <div onclick="fpGcTrade('elec')" style="padding:11px 14px;display:flex;align-items:center;gap:10px;cursor:pointer">
+                  <span style="font-size:16px">⚡</span>
+                  <div style="flex:1"><div style="font-size:11px;font-weight:600;color:var(--white)">Electrical</div><div style="font-size:9px;color:var(--w30)">6 items</div></div>
+                  <i class="ti ti-chevron-down" id="fp-gc-chev-elec" style="font-size:12px;color:var(--w30);transition:transform .2s"></i>
+                </div>
+                <div id="fp-gc-trade-elec" style="display:none;padding:0 14px 12px;flex-direction:column;gap:5px">
+                  <label style="display:flex;align-items:flex-start;gap:7px;font-size:10px;color:var(--w60);line-height:1.55;cursor:pointer"><input type="checkbox" checked style="margin-top:2px;accent-color:var(--lime);flex-shrink:0"><span>Panel upgrade to 200A</span></label><label style="display:flex;align-items:flex-start;gap:7px;font-size:10px;color:var(--w60);line-height:1.55;cursor:pointer"><input type="checkbox" checked style="margin-top:2px;accent-color:var(--lime);flex-shrink:0"><span>ADU sub-panel install</span></label><label style="display:flex;align-items:flex-start;gap:7px;font-size:10px;color:var(--w60);line-height:1.55;cursor:pointer"><input type="checkbox" checked style="margin-top:2px;accent-color:var(--lime);flex-shrink:0"><span>Circuit layout per plan</span></label><label style="display:flex;align-items:flex-start;gap:7px;font-size:10px;color:var(--w60);line-height:1.55;cursor:pointer"><input type="checkbox" checked style="margin-top:2px;accent-color:var(--lime);flex-shrink:0"><span>Island + kitchen outlets</span></label><label style="display:flex;align-items:flex-start;gap:7px;font-size:10px;color:var(--w60);line-height:1.55;cursor:pointer"><input type="checkbox" checked style="margin-top:2px;accent-color:var(--lime);flex-shrink:0"><span>Smoke/CO detector locations ADU</span></label><label style="display:flex;align-items:flex-start;gap:7px;font-size:10px;color:var(--w60);line-height:1.55;cursor:pointer"><input type="checkbox" checked style="margin-top:2px;accent-color:var(--lime);flex-shrink:0"><span>Exterior weatherproof outlets</span></label>
+                </div>
+              </div><div style="background:var(--d3);border:1px solid var(--w08);border-radius:10px;overflow:hidden">
+                <div onclick="fpGcTrade('plumb')" style="padding:11px 14px;display:flex;align-items:center;gap:10px;cursor:pointer">
+                  <span style="font-size:16px">🔧</span>
+                  <div style="flex:1"><div style="font-size:11px;font-weight:600;color:var(--white)">Plumbing</div><div style="font-size:9px;color:var(--w30)">5 items</div></div>
+                  <i class="ti ti-chevron-down" id="fp-gc-chev-plumb" style="font-size:12px;color:var(--w30);transition:transform .2s"></i>
+                </div>
+                <div id="fp-gc-trade-plumb" style="display:none;padding:0 14px 12px;flex-direction:column;gap:5px">
+                  <label style="display:flex;align-items:flex-start;gap:7px;font-size:10px;color:var(--w60);line-height:1.55;cursor:pointer"><input type="checkbox" checked style="margin-top:2px;accent-color:var(--lime);flex-shrink:0"><span>ADU bathroom rough-in</span></label><label style="display:flex;align-items:flex-start;gap:7px;font-size:10px;color:var(--w60);line-height:1.55;cursor:pointer"><input type="checkbox" checked style="margin-top:2px;accent-color:var(--lime);flex-shrink:0"><span>Water heater relocation</span></label><label style="display:flex;align-items:flex-start;gap:7px;font-size:10px;color:var(--w60);line-height:1.55;cursor:pointer"><input type="checkbox" checked style="margin-top:2px;accent-color:var(--lime);flex-shrink:0"><span>Drain line for ADU</span></label><label style="display:flex;align-items:flex-start;gap:7px;font-size:10px;color:var(--w60);line-height:1.55;cursor:pointer"><input type="checkbox" checked style="margin-top:2px;accent-color:var(--lime);flex-shrink:0"><span>Island sink connection</span></label><label style="display:flex;align-items:flex-start;gap:7px;font-size:10px;color:var(--w60);line-height:1.55;cursor:pointer"><input type="checkbox" checked style="margin-top:2px;accent-color:var(--lime);flex-shrink:0"><span>Exterior hose bib</span></label>
+                </div>
+              </div><div style="background:var(--d3);border:1px solid var(--w08);border-radius:10px;overflow:hidden">
+                <div onclick="fpGcTrade('framing')" style="padding:11px 14px;display:flex;align-items:center;gap:10px;cursor:pointer">
+                  <span style="font-size:16px">🏗️</span>
+                  <div style="flex:1"><div style="font-size:11px;font-weight:600;color:var(--white)">Framing</div><div style="font-size:9px;color:var(--w30)">4 items</div></div>
+                  <i class="ti ti-chevron-down" id="fp-gc-chev-framing" style="font-size:12px;color:var(--w30);transition:transform .2s"></i>
+                </div>
+                <div id="fp-gc-trade-framing" style="display:none;padding:0 14px 12px;flex-direction:column;gap:5px">
+                  <label style="display:flex;align-items:flex-start;gap:7px;font-size:10px;color:var(--w60);line-height:1.55;cursor:pointer"><input type="checkbox" checked style="margin-top:2px;accent-color:var(--lime);flex-shrink:0"><span>ADU garage conversion framing</span></label><label style="display:flex;align-items:flex-start;gap:7px;font-size:10px;color:var(--w60);line-height:1.55;cursor:pointer"><input type="checkbox" checked style="margin-top:2px;accent-color:var(--lime);flex-shrink:0"><span>Header sizing per structural</span></label><label style="display:flex;align-items:flex-start;gap:7px;font-size:10px;color:var(--w60);line-height:1.55;cursor:pointer"><input type="checkbox" checked style="margin-top:2px;accent-color:var(--lime);flex-shrink:0"><span>Blocking for cabinets</span></label><label style="display:flex;align-items:flex-start;gap:7px;font-size:10px;color:var(--w60);line-height:1.55;cursor:pointer"><input type="checkbox" checked style="margin-top:2px;accent-color:var(--lime);flex-shrink:0"><span>Fire blocking per code</span></label>
+                </div>
+              </div><div style="background:var(--d3);border:1px solid var(--w08);border-radius:10px;overflow:hidden">
+                <div onclick="fpGcTrade('hvac')" style="padding:11px 14px;display:flex;align-items:center;gap:10px;cursor:pointer">
+                  <span style="font-size:16px">🌡️</span>
+                  <div style="flex:1"><div style="font-size:11px;font-weight:600;color:var(--white)">HVAC</div><div style="font-size:9px;color:var(--w30)">3 items</div></div>
+                  <i class="ti ti-chevron-down" id="fp-gc-chev-hvac" style="font-size:12px;color:var(--w30);transition:transform .2s"></i>
+                </div>
+                <div id="fp-gc-trade-hvac" style="display:none;padding:0 14px 12px;flex-direction:column;gap:5px">
+                  <label style="display:flex;align-items:flex-start;gap:7px;font-size:10px;color:var(--w60);line-height:1.55;cursor:pointer"><input type="checkbox" checked style="margin-top:2px;accent-color:var(--lime);flex-shrink:0"><span>Mini-split system ADU</span></label><label style="display:flex;align-items:flex-start;gap:7px;font-size:10px;color:var(--w60);line-height:1.55;cursor:pointer"><input type="checkbox" checked style="margin-top:2px;accent-color:var(--lime);flex-shrink:0"><span>Fresh air calc per code</span></label><label style="display:flex;align-items:flex-start;gap:7px;font-size:10px;color:var(--w60);line-height:1.55;cursor:pointer"><input type="checkbox" checked style="margin-top:2px;accent-color:var(--lime);flex-shrink:0"><span>Duct sealing main house</span></label>
+                </div>
+              </div><div style="background:var(--d3);border:1px solid var(--w08);border-radius:10px;overflow:hidden">
+                <div onclick="fpGcTrade('tile')" style="padding:11px 14px;display:flex;align-items:center;gap:10px;cursor:pointer">
+                  <span style="font-size:16px">🪨</span>
+                  <div style="flex:1"><div style="font-size:11px;font-weight:600;color:var(--white)">Tile</div><div style="font-size:9px;color:var(--w30)">4 items</div></div>
+                  <i class="ti ti-chevron-down" id="fp-gc-chev-tile" style="font-size:12px;color:var(--w30);transition:transform .2s"></i>
+                </div>
+                <div id="fp-gc-trade-tile" style="display:none;padding:0 14px 12px;flex-direction:column;gap:5px">
+                  <label style="display:flex;align-items:flex-start;gap:7px;font-size:10px;color:var(--w60);line-height:1.55;cursor:pointer"><input type="checkbox" checked style="margin-top:2px;accent-color:var(--lime);flex-shrink:0"><span>Master bath floor + walls</span></label><label style="display:flex;align-items:flex-start;gap:7px;font-size:10px;color:var(--w60);line-height:1.55;cursor:pointer"><input type="checkbox" checked style="margin-top:2px;accent-color:var(--lime);flex-shrink:0"><span>J&J bath floor + walls</span></label><label style="display:flex;align-items:flex-start;gap:7px;font-size:10px;color:var(--w60);line-height:1.55;cursor:pointer"><input type="checkbox" checked style="margin-top:2px;accent-color:var(--lime);flex-shrink:0"><span>ADU bath floor + walls</span></label><label style="display:flex;align-items:flex-start;gap:7px;font-size:10px;color:var(--w60);line-height:1.55;cursor:pointer"><input type="checkbox" checked style="margin-top:2px;accent-color:var(--lime);flex-shrink:0"><span>Kitchen backsplash</span></label>
+                </div>
+              </div>
+            </div>
+            <button onclick="fpGcGoStage(4)" style="width:100%;padding:11px;background:var(--d4);border:1px solid var(--l20);border-radius:10px;font-size:12px;font-weight:700;color:var(--lime);cursor:pointer;font-family:inherit">Send RFQ to subs →</button>
+          </div>
+
+          <!-- STAGE 4: Sub RFQ -->
+          <div id="fp-gc-stage4" style="display:none">
+            <div style="font-size:13px;font-weight:600;color:var(--white);margin-bottom:12px">Sub outreach — RFQ sent</div>
+            <div style="display:flex;flex-direction:column;gap:7px;margin-bottom:14px"><div style="background:var(--d3);border:1px solid var(--w08);border-radius:10px;padding:11px 13px;display:flex;align-items:center;gap:10px">
+                <div style="width:32px;height:32px;border-radius:50%;background:var(--d4);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">⚡</div>
+                <div style="flex:1"><div style="font-size:11px;font-weight:600;color:var(--white)">Electrician</div><div style="font-size:9px;color:var(--w30)">RFQ sent · Awaiting bid</div></div>
+                <span style="font-size:9px;font-weight:700;padding:2px 8px;border-radius:20px;background:var(--am15);color:var(--amb);border:1px solid var(--am30);white-space:nowrap">Pending</span>
+              </div><div style="background:var(--d3);border:1px solid var(--w08);border-radius:10px;padding:11px 13px;display:flex;align-items:center;gap:10px">
+                <div style="width:32px;height:32px;border-radius:50%;background:var(--d4);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">🔧</div>
+                <div style="flex:1"><div style="font-size:11px;font-weight:600;color:var(--white)">Plumber</div><div style="font-size:9px;color:var(--w30)">RFQ sent · Awaiting bid</div></div>
+                <span style="font-size:9px;font-weight:700;padding:2px 8px;border-radius:20px;background:var(--am15);color:var(--amb);border:1px solid var(--am30);white-space:nowrap">Pending</span>
+              </div><div style="background:var(--d3);border:1px solid var(--w08);border-radius:10px;padding:11px 13px;display:flex;align-items:center;gap:10px">
+                <div style="width:32px;height:32px;border-radius:50%;background:var(--d4);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">🏗️</div>
+                <div style="flex:1"><div style="font-size:11px;font-weight:600;color:var(--white)">Framing</div><div style="font-size:9px;color:var(--w30)">RFQ sent · Awaiting bid</div></div>
+                <span style="font-size:9px;font-weight:700;padding:2px 8px;border-radius:20px;background:var(--am15);color:var(--amb);border:1px solid var(--am30);white-space:nowrap">Pending</span>
+              </div><div style="background:var(--d3);border:1px solid var(--w08);border-radius:10px;padding:11px 13px;display:flex;align-items:center;gap:10px">
+                <div style="width:32px;height:32px;border-radius:50%;background:var(--d4);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">🌡️</div>
+                <div style="flex:1"><div style="font-size:11px;font-weight:600;color:var(--white)">HVAC</div><div style="font-size:9px;color:var(--w30)">Bid received</div></div>
+                <span style="font-size:9px;font-weight:700;padding:2px 8px;border-radius:20px;background:var(--ok15);color:var(--ok);border:1px solid var(--ok30);white-space:nowrap">$8,400 · 5 days</span>
+              </div><div style="background:var(--d3);border:1px solid var(--w08);border-radius:10px;padding:11px 13px;display:flex;align-items:center;gap:10px">
+                <div style="width:32px;height:32px;border-radius:50%;background:var(--d4);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">🪨</div>
+                <div style="flex:1"><div style="font-size:11px;font-weight:600;color:var(--white)">Tile</div><div style="font-size:9px;color:var(--w30)">Bid received</div></div>
+                <span style="font-size:9px;font-weight:700;padding:2px 8px;border-radius:20px;background:var(--ok15);color:var(--ok);border:1px solid var(--ok30);white-space:nowrap">$24,800 · 3 wks</span>
+              </div>
+            </div>
+            <div style="background:var(--d3);border:1px solid var(--w08);border-radius:10px;padding:13px 15px;margin-bottom:12px">
+              <div style="font-size:9px;color:var(--sage);margin-bottom:4px">Partial total · 2 of 5 bids</div>
+              <div style="font-size:22px;font-weight:800;font-family:'Syne',sans-serif;color:var(--white);letter-spacing:-.03em">$33,200</div>
+              <div style="font-size:10px;color:var(--w40);margin-top:2px">3 bids still pending — check back soon</div>
+            </div>
+            <button onclick="closeGCPipeline()" style="width:100%;padding:11px;background:none;border:1px solid var(--w08);border-radius:10px;font-size:11px;color:var(--w50);cursor:pointer;font-family:inherit">← Back to floor plan</button>
+          </div>
+
+        </div>
       </div>
 
       <!-- FP DETAIL PANEL -->
@@ -1462,6 +1643,73 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;
       </div>
 
     </div>
+
+<!-- ══ ROLE SWITCHER MODAL ══ -->
+<div id="role-modal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.72);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center">
+  <div style="background:var(--d1);border:1px solid var(--w15);border-radius:18px;width:340px;max-width:92vw;overflow:hidden;box-shadow:0 32px 80px rgba(0,0,0,.6)">
+
+    <!-- Header -->
+    <div style="padding:20px 22px 16px;border-bottom:1px solid var(--w08)">
+      <div style="font-family:'Syne',sans-serif;font-size:17px;font-weight:800;color:var(--white);letter-spacing:-.03em;margin-bottom:3px">Common Ground</div>
+      <div style="font-size:11px;color:var(--w50)">Who are you on this project?</div>
+    </div>
+
+    <!-- Role cards -->
+    <div style="padding:16px;display:flex;flex-direction:column;gap:10px">
+
+      <!-- CLIENT -->
+      <div onclick="selectRoleModal('client')" style="background:var(--d2);border:1px solid var(--w08);border-radius:12px;padding:16px 18px;cursor:pointer;display:flex;align-items:center;gap:14px;transition:border-color .15s" onmouseover="this.style.borderColor='var(--l20)'" onmouseout="this.style.borderColor='var(--w08)'">
+        <div style="width:40px;height:40px;border-radius:10px;background:var(--l10);border:1px solid var(--l20);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <i class="ti ti-home" style="font-size:20px;color:var(--lime)"></i>
+        </div>
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:600;color:var(--white);margin-bottom:2px">Client</div>
+          <div style="font-size:10px;color:var(--w50);line-height:1.5">Full project view · Decisions · Financials · Design mode</div>
+        </div>
+        <i class="ti ti-arrow-right" style="font-size:14px;color:var(--w30)"></i>
+      </div>
+
+      <!-- GC -->
+      <div onclick="selectRoleModal('gc')" style="background:var(--d2);border:1px solid var(--w08);border-radius:12px;padding:16px 18px;cursor:pointer;display:flex;align-items:center;gap:14px;transition:border-color .15s" onmouseover="this.style.borderColor='var(--l20)'" onmouseout="this.style.borderColor='var(--w08)'">
+        <div style="width:40px;height:40px;border-radius:10px;background:var(--am15);border:1px solid var(--am30);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <i class="ti ti-helmet" style="font-size:20px;color:var(--amb)"></i>
+        </div>
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:600;color:var(--white);margin-bottom:2px">General Contractor</div>
+          <div style="font-size:10px;color:var(--w50);line-height:1.5">Progress · Floor plan · Scope builder · Sub RFQ · No client financials</div>
+        </div>
+        <i class="ti ti-arrow-right" style="font-size:14px;color:var(--w30)"></i>
+      </div>
+
+      <!-- TRADE -->
+      <div onclick="selectRoleModal('trade')" style="background:var(--d2);border:1px solid var(--w08);border-radius:12px;padding:16px 18px;cursor:pointer;display:flex;align-items:center;gap:14px;transition:border-color .15s" onmouseover="this.style.borderColor='var(--l20)'" onmouseout="this.style.borderColor='var(--w08)'">
+        <div style="width:40px;height:40px;border-radius:10px;background:var(--d4);border:1px solid var(--w08);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <i class="ti ti-tool" style="font-size:20px;color:var(--w50)"></i>
+        </div>
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:600;color:var(--white);margin-bottom:2px">Trade / Sub</div>
+          <div style="font-size:10px;color:var(--w50);line-height:1.5">My scope only · Checklist · Sign-offs · No financials</div>
+        </div>
+        <i class="ti ti-arrow-right" style="font-size:14px;color:var(--w30)"></i>
+      </div>
+
+    </div>
+
+    <!-- GC Pain Point pitch — shown only for GC hover or always -->
+    <div style="margin:0 16px 16px;background:var(--d3);border:1px solid var(--w08);border-radius:10px;padding:13px 15px">
+      <div style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--sage);margin-bottom:8px">Why GCs use Common Ground</div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <div style="font-size:10px;color:var(--w60);line-height:1.55;display:flex;gap:7px;align-items:flex-start"><span style="color:var(--lime);flex-shrink:0;margin-top:1px">✓</span>Ever had to redo work from "we said / they said"?</div>
+        <div style="font-size:10px;color:var(--w60);line-height:1.55;display:flex;gap:7px;align-items:flex-start"><span style="color:var(--lime);flex-shrink:0;margin-top:1px">✓</span>Had a sub make an on-the-fly call that cost you time, money, and reputation?</div>
+        <div style="font-size:10px;color:var(--w60);line-height:1.55;display:flex;gap:7px;align-items:flex-start"><span style="color:var(--lime);flex-shrink:0;margin-top:1px">✓</span>CG eliminates both. First project is <strong style="color:var(--white)">free.</strong></div>
+      </div>
+    </div>
+
+    <div style="padding:0 16px 16px">
+      <button onclick="closeRoleModal()" style="width:100%;padding:9px;background:none;border:1px solid var(--w08);border-radius:9px;color:var(--w50);font-size:11px;cursor:pointer;font-family:inherit">Cancel</button>
+    </div>
+  </div>
+</div>
 </main>
 
 <!-- ══ RIGHT PANEL ══ -->
@@ -3807,6 +4055,66 @@ function odToggleZone(zone) {
     setTimeout(function(){ el.scrollIntoView({behavior:'smooth',block:'nearest'}); }, 50);
     odOpenZone = zone;
   }
+}
+
+
+/* ── ROLE MODAL ── */
+function openRoleModal() {
+  var m = document.getElementById('role-modal');
+  if (m) { m.style.display = 'flex'; }
+}
+function closeRoleModal() {
+  var m = document.getElementById('role-modal');
+  if (m) m.style.display = 'none';
+}
+function selectRoleModal(role) {
+  closeRoleModal();
+  applyRole(role);
+  // Navigate to right screen
+  if (role === 'gc') {
+    goScreen('progress');
+  } else if (role === 'trade') {
+    goScreen('progress');
+  } else {
+    goScreen('fp');
+  }
+  // Update role tag
+  var tag = document.getElementById('sb-role-tag');
+  if (tag) tag.textContent = role === 'gc' ? 'GC' : role === 'trade' ? 'Trade' : 'Client';
+}
+
+/* ── GC PIPELINE (floor plan embed) ── */
+function openGCPipeline() {
+  var overlay = document.getElementById('gc-pipeline-overlay');
+  if (overlay) { overlay.style.display = 'flex'; overlay.style.flexDirection = 'column'; }
+  fpGcGoStage(1);
+}
+function closeGCPipeline() {
+  var overlay = document.getElementById('gc-pipeline-overlay');
+  if (overlay) overlay.style.display = 'none';
+}
+function fpGcGoStage(n) {
+  for (var i = 1; i <= 4; i++) {
+    var s = document.getElementById('fp-gc-stage' + i);
+    if (s) s.style.display = i === n ? 'block' : 'none';
+    var bar = document.getElementById('fp-gc-s' + i);
+    if (bar) bar.style.background = i <= n ? 'var(--lime)' : 'var(--w08)';
+    var lbl = document.getElementById('fp-gc-s' + i + 'l');
+    if (lbl) lbl.style.color = i <= n ? 'var(--lime)' : 'var(--w30)';
+  }
+}
+function fpGcUpload(btn) {
+  if (btn && btn.tagName === 'BUTTON') { btn.textContent = '⏳  Analyzing...'; btn.disabled = true; }
+  setTimeout(function() { fpGcGoStage(2); }, 1500);
+}
+function fpGcTrade(id) {
+  var panel = document.getElementById('fp-gc-trade-' + id);
+  var chev  = document.getElementById('fp-gc-chev-' + id);
+  if (!panel) return;
+  var open = panel.style.display !== 'none';
+  panel.style.display = open ? 'none' : 'flex';
+  if (!open) { panel.style.flexDirection = 'column'; panel.style.gap = '5px'; }
+  if (chev) chev.style.transform = open ? '' : 'rotate(180deg)';
 }
 
 </script>
