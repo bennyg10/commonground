@@ -687,7 +687,7 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;
     <div style="flex:1;display:grid;grid-template-columns:1fr 260px;overflow:hidden;min-height:0">
 
       <!-- SVG CANVAS -->
-      <div style="background:var(--d1);overflow:auto;padding:16px;display:flex;align-items:flex-start;justify-content:center">
+      <div style="background:var(--d1);overflow:auto;padding:16px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:0">
         <svg viewBox="0 0 580 340" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;display:block">
 <defs>
   <style>
@@ -736,15 +736,13 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;
 <!-- Highlight ring -->
 <rect id="fp-highlight" x="0" y="0" width="0" height="0" fill="none" stroke="rgba(213,220,153,.8)" stroke-width="2" rx="2" pointer-events="none"/>
 </svg>
-      </div>
-
-      <!-- ANALYZE PLANS CTA — below floor plan -->
-      <div style="padding:20px 0 16px;display:flex;flex-direction:column;align-items:center;gap:8px;border-top:1px solid var(--w08)">
+      <div style="padding:16px 0 8px;display:flex;flex-direction:column;align-items:center;gap:8px;border-top:1px solid var(--w08);width:100%">
         <div style="font-size:10px;color:var(--w40);letter-spacing:.04em">AI Plan Analysis</div>
         <button onclick="openGCPipeline()" style="width:200px;height:75px;background:var(--d3);border:1px solid var(--l20);border-radius:12px;cursor:pointer;font-family:inherit;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;transition:background .15s" onmouseover="this.style.background='var(--d4)';this.style.borderColor='var(--lime)'" onmouseout="this.style.background='var(--d3)';this.style.borderColor='var(--l20)'">
           <i class="ti ti-cpu" style="font-size:22px;color:var(--lime)"></i>
           <span style="font-size:12px;font-weight:700;color:var(--white);letter-spacing:.02em">Analyze Plans</span>
         </button>
+      </div>
       </div>
 
       <!-- FP DETAIL PANEL -->
