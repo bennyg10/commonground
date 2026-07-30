@@ -742,7 +742,7 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;
           <div style="display:none"><!-- spacer removed -->
             <div style="font-size:11px;color:var(--w50);margin-top:3px" id="ob-sub">Answer a few quick questions and we'll generate a draft floor plan for your project.</div>
           </div>
-          <button onclick="closeOnboardingDemo()" style="background:var(--w08);border:none;border-radius:6px;width:28px;height:28px;cursor:pointer;color:var(--w50);font-size:14px;flex-shrink:0;margin-left:12px;font-family:inherit">✕</button>
+          
         </div>
         <!-- Progress bar -->
         <div style="padding:14px 22px 0">
@@ -4492,6 +4492,13 @@ var mobDrawerOpen = false;
 
 function mobDrawerInit() {
   if (window.innerWidth > 720) return;
+  // Fix fp layout on mobile at init
+  var grid = document.getElementById('fp-inner-grid');
+  var svg  = document.getElementById('fp-svg-col');
+  var det  = document.getElementById('fp-detail-col');
+  if (grid) { grid.style.gridTemplateColumns = '1fr 0'; grid.style.width = '100%'; }
+  if (svg)  { svg.style.width = '100%'; svg.style.maxWidth = '100%'; }
+  if (det)  { det.style.display = 'none'; det.style.width = '0'; }
   // Clone rp-panel content into drawer
   var src = document.querySelector('.rp-body');
   var dst = document.getElementById('mob-drawer-content');
