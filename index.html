@@ -536,6 +536,13 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;
 
 
 @media(min-width:721px){#sc-progress .scrl,#sc-punch .scrl,#sc-finance .scrl{padding:16px 28px!important}}
+
+/* ── MOBILE ROLE TOGGLE ── */
+@media (max-width: 720px) {
+  #mob-role-toggle { display: flex !important; }
+  .top-page { display: none; }
+}
+
 </style>
 </head>
 <body>
@@ -551,6 +558,12 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;
   <div style="width:1px;height:12px;background:var(--w08)"></div>
   <div class="top-pill"><div class="top-dot"></div>Electricians on site · June 26</div>
   <div class="top-right">
+    <!-- MOBILE ROLE TOGGLE — visible on mobile only -->
+    <div id="mob-role-toggle" style="display:none;align-items:center;background:var(--d3);border:1px solid var(--w08);border-radius:20px;padding:2px;gap:2px">
+      <button id="mob-btn-client" onclick="mobSetRole('client')" style="padding:4px 10px;border-radius:18px;border:none;font-size:9px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s;background:var(--lime);color:var(--dk)">Client</button>
+      <button id="mob-btn-gc"     onclick="mobSetRole('gc')"     style="padding:4px 10px;border-radius:18px;border:none;font-size:9px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s;background:transparent;color:var(--w50)">GC</button>
+      <button id="mob-btn-trade"  onclick="mobSetRole('trade')"  style="padding:4px 10px;border-radius:18px;border:none;font-size:9px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s;background:transparent;color:var(--w50)">Trade</button>
+    </div>
     <span class="top-page" id="page-title">Progress</span>
     <div style="width:1px;height:12px;background:var(--w08)"></div>
     <button class="btn-ghost" style="padding:4px 8px;font-size:10px" onclick="openModal('notes')"><i class="ti ti-writing" style="font-size:11px"></i></button>
@@ -4370,6 +4383,51 @@ function fpGcToggleSub(id) {
   var open = panel.style.display !== 'none';
   panel.style.display = open ? 'none' : 'block';
   if (chev) chev.style.transform = open ? '' : 'rotate(180deg)';
+}
+
+
+/* ── MOBILE ROLE TOGGLE ── */
+function mobSetRole(role) {
+  // Update toggle button styles
+  ['client','gc','trade'].forEach(function(r) {
+    var btn = document.getElementById('mob-btn-' + r);
+    if (!btn) return;
+    if (r === role) {
+      btn.style.background = role === 'gc' ? 'var(--amb)' : role === 'trade' ? 'var(--w40)' : 'var(--lime)';
+      btn.style.color = role === 'gc' ? 'var(--dk)' : role === 'trade' ? 'var(--dk)' : 'var(--dk)';
+    } else {
+      btn.style.background = 'transparent';
+      btn.style.color = 'var(--w50)';
+    }
+  });
+
+  // Apply role
+  applyRole(role);
+
+  // Navigate + set Col-3 state
+  if (role === 'gc') {
+    goScreen('progress');
+    document.querySelectorAll('.nav-btn').forEach(function(b){ b.classList.remove('on'); });
+    var pb = document.querySelector('.nav-btn[onclick*="progress"]');
+    if (pb) pb.classList.add('on');
+    document.querySelectorAll('.role-btn').forEach(function(b){
+      b.classList.toggle('on', b.textContent.trim() === 'GC');
+    });
+    setTimeout(function(){
+      var ab = document.querySelector('.rpt[onclick*="approvals"]');
+      if (ab) ab.click();
+    }, 100);
+  } else if (role === 'trade') {
+    goScreen('progress');
+    document.querySelectorAll('.role-btn').forEach(function(b){
+      b.classList.toggle('on', b.textContent.trim() === 'Trade');
+    });
+  } else {
+    goScreen('fp');
+    document.querySelectorAll('.role-btn').forEach(function(b){
+      b.classList.toggle('on', b.textContent.trim() === 'Client');
+    });
+  }
 }
 
 </script>
