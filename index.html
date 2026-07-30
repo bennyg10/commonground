@@ -462,6 +462,23 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;
   #scanner-demo{padding:12px !important}
 }
 
+
+/* ── MOBILE DRAWER (Col-3 replacement) ── */
+@media(max-width:720px){
+  #mob-drawer { display:flex !important; }
+  .rp { display:none !important; }
+  /* Remove topbar role toggle — drawer handles it */
+  #mob-role-toggle { display:none !important; }
+  #mob-approvals-btn { display:none !important; }
+  /* Pad main content so drawer bar doesn't overlap */
+  .body { padding-bottom:52px !important; }
+  .ctr  { padding-bottom:0 !important; }
+  /* No horizontal scroll */
+  img, table, pre, iframe { max-width:100% !important; }
+  body, html { overflow-x:hidden !important; }
+  .body { overflow-x:hidden !important; }
+}
+
 </style>
 </head>
 <body>
@@ -4469,6 +4486,72 @@ function closeApprovalsSheet() {
   if (s) s.style.display = 'none';
 }
 
+
+/* ── MOBILE DRAWER ── */
+var mobDrawerOpen = false;
+
+function mobDrawerInit() {
+  if (window.innerWidth > 720) return;
+  // Clone rp-panel content into drawer
+  var src = document.querySelector('.rp-body');
+  var dst = document.getElementById('mob-drawer-content');
+  if (src && dst) dst.innerHTML = src.innerHTML;
+}
+
+function mobDrawerToggle() {
+  mobDrawerOpen = !mobDrawerOpen;
+  var panel = document.getElementById('mob-drawer-panel');
+  var chev  = document.getElementById('mob-drawer-chev');
+  if (panel) panel.style.maxHeight = mobDrawerOpen ? '65vh' : '0';
+  if (chev)  chev.style.transform  = mobDrawerOpen ? 'rotate(180deg)' : '';
+}
+
+function mobDrawerTab(name) {
+  // Open drawer if not open
+  if (!mobDrawerOpen) mobDrawerToggle();
+  // Sync with desktop rp tab
+  rpTab(name, null);
+  // Refresh drawer content
+  var src = document.querySelector('.rp-body');
+  var dst = document.getElementById('mob-drawer-content');
+  if (src && dst) dst.innerHTML = src.innerHTML;
+  // Highlight active tab button
+  ['decisions','approvals','chat','finance'].forEach(function(t) {
+    var btn = document.getElementById('mob-dt-' + t);
+    if (!btn) return;
+    var on = t === name;
+    btn.style.background = on ? 'var(--l10)' : 'var(--d4)';
+    btn.style.color = on ? 'var(--lime)' : 'var(--w50)';
+  });
+}
+
+// Override mobSetRole to also update drawer buttons
+var _origMobSetRole = mobSetRole;
+mobSetRole = function(role) {
+  _origMobSetRole(role);
+  // Sync drawer role buttons
+  ['client','gc','trade'].forEach(function(r) {
+    var btn = document.getElementById('mob-d-' + r);
+    if (!btn) return;
+    var on = r === role;
+    btn.style.background = on ? (role==='gc'?'var(--amb)':role==='trade'?'var(--w40)':'var(--lime)') : 'transparent';
+    btn.style.color = on ? 'var(--dk)' : 'var(--w50)';
+  });
+};
+
+// Init drawer after DOM ready
+window.addEventListener('DOMContentLoaded', function() {
+  setTimeout(function() {
+    if (window.innerWidth <= 720) {
+      var drawer = document.getElementById('mob-drawer');
+      if (drawer) drawer.style.display = 'flex';
+      var rp = document.querySelector('.rp');
+      if (rp) rp.style.display = 'none';
+    }
+    mobDrawerInit();
+  }, 300);
+});
+
 </script>
 
 <div id="plan-modal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(17,16,21,.96);backdrop-filter:blur(8px);flex-direction:column;align-items:center;justify-content:center" onclick="planModalBgClick(event)">
@@ -4492,6 +4575,38 @@ function closeApprovalsSheet() {
   <div id="plan-modal-frame" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;overflow:hidden;cursor:grab;touch-action:none" onclick="event.stopPropagation()">
     <img id="plan-modal-img" src="https://cdn.jsdelivr.net/gh/bennyg10/commonground@main/assets/plan-v3.jpg" alt="Site plan" style="max-width:92vw;max-height:86vh;object-fit:contain;transform-origin:center;transform:scale(1) translate(0,0);user-select:none;-webkit-user-drag:none;border-radius:6px;box-shadow:0 8px 40px rgba(0,0,0,.6)" draggable="false">
   </div>
+</div>
+
+<!-- ══ MOBILE COL-3 DRAWER ══ -->
+<div id="mob-drawer" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:500;flex-direction:column;pointer-events:none">
+
+  <!-- Collapsed bar — always visible on mobile -->
+  <div id="mob-drawer-bar" onclick="mobDrawerToggle()" style="background:var(--d2);border-top:1px solid var(--w15);padding:8px 14px;display:flex;align-items:center;gap:10px;cursor:pointer;pointer-events:all;user-select:none">
+    <!-- Drag handle -->
+    <div style="position:absolute;top:5px;left:50%;transform:translateX(-50%);width:32px;height:3px;border-radius:2px;background:var(--w20);"></div>
+    <!-- Role toggle compact -->
+    <div style="display:flex;align-items:center;background:var(--d4);border:1px solid var(--w08);border-radius:20px;padding:2px;gap:2px;flex-shrink:0">
+      <button id="mob-d-client" onclick="event.stopPropagation();mobSetRole('client')" style="padding:3px 9px;border-radius:18px;border:none;font-size:9px;font-weight:700;cursor:pointer;font-family:inherit;background:var(--lime);color:var(--dk)">Client</button>
+      <button id="mob-d-gc"     onclick="event.stopPropagation();mobSetRole('gc')"     style="padding:3px 9px;border-radius:18px;border:none;font-size:9px;font-weight:700;cursor:pointer;font-family:inherit;background:transparent;color:var(--w50)">GC</button>
+      <button id="mob-d-trade"  onclick="event.stopPropagation();mobSetRole('trade')"  style="padding:3px 9px;border-radius:18px;border:none;font-size:9px;font-weight:700;cursor:pointer;font-family:inherit;background:transparent;color:var(--w50)">Trade</button>
+    </div>
+    <!-- 4 sub-tabs -->
+    <div style="display:flex;align-items:center;gap:6px;flex:1;overflow:hidden">
+      <button onclick="event.stopPropagation();mobDrawerTab('decisions')"  id="mob-dt-decisions"  style="display:flex;align-items:center;gap:4px;padding:4px 8px;border-radius:20px;border:none;font-size:9px;font-weight:600;cursor:pointer;font-family:inherit;background:var(--l10);color:var(--lime);flex-shrink:0"><i class="ti ti-alert-circle" style="font-size:10px"></i>Decide</button>
+      <button onclick="event.stopPropagation();mobDrawerTab('approvals')"  id="mob-dt-approvals"  style="display:flex;align-items:center;gap:4px;padding:4px 8px;border-radius:20px;border:none;font-size:9px;font-weight:600;cursor:pointer;font-family:inherit;background:var(--d4);color:var(--w50);flex-shrink:0"><i class="ti ti-check" style="font-size:10px"></i>Approve</button>
+      <button onclick="event.stopPropagation();mobDrawerTab('chat')"       id="mob-dt-chat"       style="display:flex;align-items:center;gap:4px;padding:4px 8px;border-radius:20px;border:none;font-size:9px;font-weight:600;cursor:pointer;font-family:inherit;background:var(--d4);color:var(--w50);flex-shrink:0"><i class="ti ti-message" style="font-size:10px"></i>Chat</button>
+      <button onclick="event.stopPropagation();mobDrawerTab('finance')"    id="mob-dt-finance"    style="display:flex;align-items:center;gap:4px;padding:4px 8px;border-radius:20px;border:none;font-size:9px;font-weight:600;cursor:pointer;font-family:inherit;background:var(--d4);color:var(--w50);flex-shrink:0"><i class="ti ti-currency-dollar" style="font-size:10px"></i>$</button>
+    </div>
+    <!-- Expand chevron -->
+    <i id="mob-drawer-chev" class="ti ti-chevron-up" style="font-size:14px;color:var(--w30);flex-shrink:0;transition:transform .25s"></i>
+  </div>
+
+  <!-- Expanded panel content -->
+  <div id="mob-drawer-panel" style="background:var(--d1);border-top:1px solid var(--w08);overflow-y:auto;max-height:0;transition:max-height .3s ease;pointer-events:all">
+    <!-- Injected from rp-panels via JS -->
+    <div id="mob-drawer-content" style="padding:0"></div>
+  </div>
+
 </div>
 </body>
 </html>
