@@ -4336,7 +4336,30 @@ function selectRoleModal(role) {
   applyRole(role);
   var tag = document.getElementById('sb-role-tag');
   if (tag) tag.textContent = role === 'gc' ? 'GC' : role === 'trade' ? 'Trade' : 'Client';
-  goScreen(role === 'client' ? 'fp' : 'progress');
+  if (role === 'gc') {
+    // Land on Progress + highlight Progress nav + open Approve tab in Col-3
+    goScreen('progress');
+    // Highlight Progress in sidebar nav
+    document.querySelectorAll('.nav-btn').forEach(function(b){ b.classList.remove('on'); });
+    var progBtn = document.querySelector('.nav-btn[onclick*="progress"]');
+    if (progBtn) progBtn.classList.add('on');
+    // Switch Col-3 role button to GC
+    document.querySelectorAll('.role-btn').forEach(function(b){ b.classList.remove('on'); });
+    var gcBtn = document.querySelector('.role-btn');
+    document.querySelectorAll('.role-btn').forEach(function(b){
+      if (b.textContent.trim() === 'GC') b.classList.add('on');
+    });
+    // Open Approve sub-tab in Col-3
+    setTimeout(function(){
+      var approveBtn = document.querySelector('.rpt[onclick*="approvals"]') ||
+                       document.querySelector('.rpt[onclick*="approve"]');
+      if (approveBtn) approveBtn.click();
+    }, 100);
+  } else if (role === 'trade') {
+    goScreen('progress');
+  } else {
+    goScreen('fp');
+  }
 }
 
 
