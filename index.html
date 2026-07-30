@@ -448,6 +448,13 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;
 }
 
 @media(max-width:720px){
+  .body{grid-template-columns:1fr !important;width:100vw !important;max-width:100vw !important}
+  .shell{overflow-x:hidden !important}
+  .ctr{width:100% !important;max-width:100vw !important;overflow-x:hidden !important}
+  .sb{position:fixed;left:-220px;top:44px;height:calc(100vh - 44px);width:220px;z-index:100;transition:left .25s}
+  .sb.on{left:0}
+  .mob-btn{display:flex}
+  .top-pill{display:none !important}
   #fp-onboarding-overlay{position:fixed !important;inset:0 !important;z-index:9990 !important;display:block !important;overflow-y:auto !important}
   #fp-onboarding-modal{width:calc(100vw - 24px) !important;max-width:calc(100vw - 24px) !important;max-height:none !important;overflow-y:visible !important;margin:60px auto 24px !important;box-sizing:border-box !important}
 }
@@ -616,7 +623,7 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;
     <div style="flex:1;display:grid;grid-template-columns:1fr 260px;overflow:hidden;min-height:0" id="fp-inner-grid">
 
       <!-- SVG CANVAS -->
-      <div style="background:var(--d1);overflow:auto;padding:16px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:0">
+      <div id="fp-svg-col" style="background:var(--d1);overflow:auto;padding:16px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:0">
         <svg viewBox="0 0 580 340" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;display:block">
 <defs>
   <style>
@@ -675,7 +682,7 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;
       </div>
 
       <!-- FP DETAIL PANEL -->
-      <div style="background:var(--d2);border-left:1px solid var(--w08);display:flex;flex-direction:column;overflow:hidden">
+      <div id="fp-detail-col" style="background:var(--d2);border-left:1px solid var(--w08);display:flex;flex-direction:column;overflow:hidden">
         <div style="padding:14px 16px;border-bottom:1px solid var(--w08);flex-shrink:0">
           <div style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--sage);margin-bottom:2px">Floor plan</div>
           <div style="font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--white);letter-spacing:-.02em">2560 Coolidge Ave</div>
@@ -2160,6 +2167,14 @@ function goScreen(name) {
   document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('on'); });
   var t = document.getElementById('sc-' + name);
   if (t) t.classList.add('on');
+  if (name === 'fp' && window.innerWidth <= 720) {
+    var grid = document.getElementById('fp-inner-grid');
+    var svg  = document.getElementById('fp-svg-col');
+    var det  = document.getElementById('fp-detail-col');
+    if (grid) { grid.style.gridTemplateColumns = '1fr 0'; grid.style.width = '100%'; }
+    if (svg)  { svg.style.width = '100%'; svg.style.maxWidth = '100%'; svg.style.minWidth = '0'; }
+    if (det)  { det.style.display = 'none'; det.style.width = '0'; det.style.minWidth = '0'; }
+  }
   var titles = {fp:'Floor plan',progress:'Project phases',punch:'Punch list',
     landscape:'Landscape',finance:'Financials','notes-screen':'Site notes',
     team:'Team & trades',products:'Products',design:'Design mode','outdoor-log':'Outdoor decisions'};
