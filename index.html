@@ -716,10 +716,13 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;
     <div id="fp-onboarding-overlay" style="display:none;position:fixed;inset:0;background:rgba(17,16,21,.88);z-index:200;align-items:center;justify-content:center">
       <div id="fp-onboarding-modal" style="background:var(--d2);border:1px solid var(--l20);border-radius:16px;width:480px;max-width:calc(100vw - 24px);overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.5)">
         <!-- Modal header -->
-        <div style="padding:20px 22px 0;display:flex;align-items:flex-start;justify-content:space-between">
-          <div>
+        <div style="padding:16px 18px 0;display:flex;align-items:flex-start;justify-content:space-between;gap:12px">
+          <div style="flex:1">
             <div style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--sage);margin-bottom:4px">Floor plan onboarding</div>
             <div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:var(--white);letter-spacing:-.03em" id="ob-title">Let's draft your floor plan</div>
+          </div>
+          <button onclick="closeOnboardingDemo()" style="width:32px;height:32px;border-radius:50%;background:var(--d4);border:1px solid var(--w08);color:var(--w50);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:inherit;line-height:1;margin-top:2px">×</button>
+          <div style="display:none"><!-- spacer removed -->
             <div style="font-size:11px;color:var(--w50);margin-top:3px" id="ob-sub">Answer a few quick questions and we'll generate a draft floor plan for your project.</div>
           </div>
           <button onclick="closeOnboardingDemo()" style="background:var(--w08);border:none;border-radius:6px;width:28px;height:28px;cursor:pointer;color:var(--w50);font-size:14px;flex-shrink:0;margin-left:12px;font-family:inherit">✕</button>
