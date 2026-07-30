@@ -738,6 +738,14 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;
 </svg>
       </div>
 
+      <!-- ANALYZE PLANS CTA — below floor plan -->
+      <div style="padding:20px 0 16px;display:flex;flex-direction:column;align-items:center;gap:8px;border-top:1px solid var(--w08)">
+        <div style="font-size:10px;color:var(--w40);letter-spacing:.04em">AI Plan Analysis</div>
+        <button onclick="openGCPipeline()" style="width:200px;height:75px;background:var(--d3);border:1px solid var(--l20);border-radius:12px;cursor:pointer;font-family:inherit;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;transition:background .15s" onmouseover="this.style.background='var(--d4)';this.style.borderColor='var(--lime)'" onmouseout="this.style.background='var(--d3)';this.style.borderColor='var(--l20)'">
+          <i class="ti ti-cpu" style="font-size:22px;color:var(--lime)"></i>
+          <span style="font-size:12px;font-weight:700;color:var(--white);letter-spacing:.02em">Analyze Plans</span>
+        </button>
+      </div>
 
       <!-- FP DETAIL PANEL -->
       <div style="background:var(--d2);border-left:1px solid var(--w08);display:flex;flex-direction:column;overflow:hidden">
