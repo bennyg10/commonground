@@ -543,6 +543,11 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;
   .top-page { display: none; }
 }
 
+
+@media(max-width:720px){
+  #mob-approvals-btn { display: flex !important; }
+}
+
 </style>
 </head>
 <body>
@@ -558,6 +563,10 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;
   <div style="width:1px;height:12px;background:var(--w08)"></div>
   <div class="top-pill"><div class="top-dot"></div>Electricians on site · June 26</div>
   <div class="top-right">
+    <!-- MOBILE APPROVALS CTA — visible on mobile only -->
+    <button id="mob-approvals-btn" onclick="openApprovalsSheet()" style="display:none;align-items:center;gap:5px;padding:5px 10px;background:var(--ok15);border:1px solid var(--ok30);border-radius:20px;font-size:9px;font-weight:700;color:var(--ok);cursor:pointer;font-family:inherit">
+      <i class="ti ti-check" style="font-size:11px"></i> Approvals
+    </button>
     <!-- MOBILE ROLE TOGGLE — visible on mobile only -->
     <div id="mob-role-toggle" style="display:none;align-items:center;background:var(--d3);border:1px solid var(--w08);border-radius:20px;padding:2px;gap:2px">
       <button id="mob-btn-client" onclick="mobSetRole('client')" style="padding:4px 10px;border-radius:18px;border:none;font-size:9px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s;background:var(--lime);color:var(--dk)">Client</button>
@@ -1891,6 +1900,89 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;
     </div>
   </div>
 </div>
+
+<!-- ── MOBILE APPROVALS SHEET ── -->
+<div id="mob-approvals-sheet" style="display:none;position:fixed;inset:0;z-index:9998;background:rgba(0,0,0,.6);backdrop-filter:blur(4px)" onclick="if(event.target===this)closeApprovalsSheet()">
+  <div style="position:absolute;bottom:0;left:0;right:0;background:var(--d1);border-radius:20px 20px 0 0;max-height:82vh;display:flex;flex-direction:column;overflow:hidden">
+
+    <!-- Sheet handle -->
+    <div style="padding:10px 0 0;display:flex;justify-content:center;flex-shrink:0">
+      <div style="width:36px;height:4px;border-radius:2px;background:var(--w15)"></div>
+    </div>
+
+    <!-- Sheet header -->
+    <div style="padding:14px 20px 10px;border-bottom:1px solid var(--w08);display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
+      <div>
+        <div style="font-family:'Syne',sans-serif;font-size:15px;font-weight:800;color:var(--white);letter-spacing:-.02em">Approvals</div>
+        <div style="font-size:10px;color:var(--w30);margin-top:1px">Items needing your sign-off</div>
+      </div>
+      <button onclick="closeApprovalsSheet()" style="background:var(--d3);border:1px solid var(--w08);border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--w50);font-size:14px;font-family:inherit">×</button>
+    </div>
+
+    <!-- Sheet content — scrollable -->
+    <div style="overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:8px">
+
+      <div style="background:var(--d2);border:1px solid var(--w08);border-radius:12px;padding:14px 15px;display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;align-items:flex-start;gap:10px">
+          <div style="width:32px;height:32px;border-radius:8px;background:rgba(224,100,80,.15);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">🎨</div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:10px;color:var(--sage);text-transform:uppercase;letter-spacing:.07em;margin-bottom:2px">Bedroom 3 · Cabinets</div>
+            <div style="font-size:13px;font-weight:600;color:var(--white);margin-bottom:3px">Wrong color — confirm reinstall</div>
+            <div style="font-size:11px;color:var(--w50);line-height:1.55">Mila's room. Full reinstall + correct color + doors + drawers. Confirm color with supplier first.</div>
+          </div>
+          <span style="font-size:8px;font-weight:700;padding:2px 7px;border-radius:20px;background:rgba(224,100,80,.15);color:#E07A5F;border:1px solid rgba(224,100,80,.3);white-space:nowrap;flex-shrink:0">Urgent</span>
+        </div>
+        <div style="display:flex;gap:7px">
+          <button style="flex:1;padding:8px;background:var(--ok15);border:1px solid var(--ok30);border-radius:8px;font-size:11px;font-weight:600;color:var(--ok);cursor:pointer;font-family:inherit">✓ Confirm</button>
+          <button style="flex:1;padding:8px;background:var(--d3);border:1px solid var(--w08);border-radius:8px;font-size:11px;font-weight:600;color:var(--w50);cursor:pointer;font-family:inherit">Discuss</button>
+        </div>
+      </div>      <div style="background:var(--d2);border:1px solid var(--w08);border-radius:12px;padding:14px 15px;display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;align-items:flex-start;gap:10px">
+          <div style="width:32px;height:32px;border-radius:8px;background:rgba(74,155,111,.12);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">🔥</div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:10px;color:var(--sage);text-transform:uppercase;letter-spacing:.07em;margin-bottom:2px">Living Room · Fireplace</div>
+            <div style="font-size:13px;font-weight:600;color:var(--white);margin-bottom:3px">Install cooling registers</div>
+            <div style="font-size:11px;color:var(--w50);line-height:1.55">Per manual page 4. Required for vapor airflow. Electricians missed this.</div>
+          </div>
+          <span style="font-size:8px;font-weight:700;padding:2px 7px;border-radius:20px;background:var(--am15);color:var(--amb);border:1px solid var(--am30);white-space:nowrap;flex-shrink:0">Required</span>
+        </div>
+        <div style="display:flex;gap:7px">
+          <button style="flex:1;padding:8px;background:var(--ok15);border:1px solid var(--ok30);border-radius:8px;font-size:11px;font-weight:600;color:var(--ok);cursor:pointer;font-family:inherit">✓ Confirm</button>
+          <button style="flex:1;padding:8px;background:var(--d3);border:1px solid var(--w08);border-radius:8px;font-size:11px;font-weight:600;color:var(--w50);cursor:pointer;font-family:inherit">Discuss</button>
+        </div>
+      </div>      <div style="background:var(--d2);border:1px solid var(--w08);border-radius:12px;padding:14px 15px;display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;align-items:flex-start;gap:10px">
+          <div style="width:32px;height:32px;border-radius:8px;background:var(--am15);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">🌿</div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:10px;color:var(--sage);text-transform:uppercase;letter-spacing:.07em;margin-bottom:2px">Landscape · Lilifut</div>
+            <div style="font-size:13px;font-weight:600;color:var(--white);margin-bottom:3px">Phase I — $110,829</div>
+            <div style="font-size:11px;color:var(--w50);line-height:1.55">Verify pricing still valid post-tariff warning before signing.</div>
+          </div>
+          <span style="font-size:8px;font-weight:700;padding:2px 7px;border-radius:20px;background:var(--ok15);color:var(--ok);border:1px solid var(--ok30);white-space:nowrap;flex-shrink:0">Ready to sign</span>
+        </div>
+        <div style="display:flex;gap:7px">
+          <button style="flex:1;padding:8px;background:var(--ok15);border:1px solid var(--ok30);border-radius:8px;font-size:11px;font-weight:600;color:var(--ok);cursor:pointer;font-family:inherit">✓ Confirm</button>
+          <button style="flex:1;padding:8px;background:var(--d3);border:1px solid var(--w08);border-radius:8px;font-size:11px;font-weight:600;color:var(--w50);cursor:pointer;font-family:inherit">Discuss</button>
+        </div>
+      </div>      <div style="background:var(--d2);border:1px solid var(--w08);border-radius:12px;padding:14px 15px;display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;align-items:flex-start;gap:10px">
+          <div style="width:32px;height:32px;border-radius:8px;background:var(--l10);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">🏗️</div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:10px;color:var(--sage);text-transform:uppercase;letter-spacing:.07em;margin-bottom:2px">ADU · Cabinets</div>
+            <div style="font-size:13px;font-weight:600;color:var(--white);margin-bottom:3px">Cabinet install in progress</div>
+            <div style="font-size:11px;color:var(--w50);line-height:1.55">Sonos + A/C pending. Confirm cabinet layout before finalizing.</div>
+          </div>
+          <span style="font-size:8px;font-weight:700;padding:2px 7px;border-radius:20px;background:var(--am15);color:var(--amb);border:1px solid var(--am30);white-space:nowrap;flex-shrink:0">In progress</span>
+        </div>
+        <div style="display:flex;gap:7px">
+          <button style="flex:1;padding:8px;background:var(--ok15);border:1px solid var(--ok30);border-radius:8px;font-size:11px;font-weight:600;color:var(--ok);cursor:pointer;font-family:inherit">✓ Confirm</button>
+          <button style="flex:1;padding:8px;background:var(--d3);border:1px solid var(--w08);border-radius:8px;font-size:11px;font-weight:600;color:var(--w50);cursor:pointer;font-family:inherit">Discuss</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 </main>
 
 <!-- ══ RIGHT PANEL ══ -->
@@ -4428,6 +4520,17 @@ function mobSetRole(role) {
       b.classList.toggle('on', b.textContent.trim() === 'Client');
     });
   }
+}
+
+
+/* ── MOBILE APPROVALS SHEET ── */
+function openApprovalsSheet() {
+  var s = document.getElementById('mob-approvals-sheet');
+  if (s) s.style.display = 'block';
+}
+function closeApprovalsSheet() {
+  var s = document.getElementById('mob-approvals-sheet');
+  if (s) s.style.display = 'none';
 }
 
 </script>
