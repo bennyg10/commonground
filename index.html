@@ -668,7 +668,7 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;
 <main class="ctr">
 
   <!-- SCREEN: FLOOR PLAN — daily brief ON TOP, floor plan fills below -->
-  <div class="screen" id="sc-fp">
+  <div class="screen" style="position:relative" id="sc-fp">
     <!-- TOPBAR: Floor Plan header with Demo CTA -->
     <div style="flex-shrink:0;background:var(--d1);border-bottom:1px solid var(--w08);padding:10px 16px;display:flex;align-items:center;gap:10px">
       <div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--white);letter-spacing:-.01em">Floor Plan</div>
@@ -816,6 +816,9 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;
     </div>
 
     <!-- GC PIPELINE FULLSCREEN — loads when Analyze Plans clicked -->
+    
+    </div>
+
     <div id="gc-pipeline-overlay" style="display:none;position:absolute;inset:0;background:var(--d1);z-index:200;flex-direction:column;overflow:hidden">
 
       <!-- Pipeline header -->
@@ -1143,7 +1146,6 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;
         </div>
 
       </div>
-    </div>
     </div>
   </div>
   <!-- SCREEN: PROGRESS -->
