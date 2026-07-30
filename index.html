@@ -577,6 +577,13 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;
   #sc-fp .ti-cpu{font-size:20px}
 }
 
+
+@media(max-width:720px){
+  #fp-onboarding-overlay { position: fixed !important; inset: 0 !important; z-index: 9990 !important; }
+  #fp-onboarding-modal { width: calc(100vw - 32px) !important; max-width: 100% !important; border-radius: 16px !important; max-height: 85vh !important; overflow-y: auto !important; }
+  #scanner-demo { padding: 12px !important; }
+}
+
 </style>
 </head>
 <body>
@@ -828,7 +835,7 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;
     </div>
 
     <!-- ONBOARDING DEMO MODAL -->
-    <div id="fp-onboarding-overlay" style="display:none;position:absolute;inset:0;background:rgba(17,16,21,.88);z-index:200;align-items:center;justify-content:center">
+    <div id="fp-onboarding-overlay" style="display:none;position:fixed;inset:0;background:rgba(17,16,21,.88);z-index:200;align-items:center;justify-content:center">
       <div id="fp-onboarding-modal" style="background:var(--d2);border:1px solid var(--l20);border-radius:16px;width:480px;max-width:90vw;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.5)">
         <!-- Modal header -->
         <div style="padding:20px 22px 0;display:flex;align-items:flex-start;justify-content:space-between">
