@@ -455,7 +455,7 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;
   .sb.on{left:0}
   .mob-btn{display:flex}
   .top-pill{display:none !important}
-  #fp-onboarding-overlay{position:fixed !important;inset:0 !important;z-index:9990 !important;display:block !important;overflow-y:auto !important}
+  #fp-onboarding-overlay{position:fixed !important;inset:0 !important;z-index:9990 !important;overflow-y:auto !important}
   #fp-onboarding-modal{width:calc(100vw - 24px) !important;max-width:calc(100vw - 24px) !important;max-height:none !important;overflow-y:visible !important;margin:60px auto 24px !important;box-sizing:border-box !important}
 }
   #fp-onboarding-overlay #fp-onboarding-modal{width:calc(100vw - 24px) !important;max-width:100vw !important;max-height:85vh !important;overflow-y:auto !important;box-sizing:border-box !important}
@@ -3418,7 +3418,7 @@ var OB_QUESTIONS = [
 function openOnboardingDemo(){
   OB_ANSWERS = {}; OB_STEP = 0;
   var ov = document.getElementById('fp-onboarding-overlay');
-  ov.style.display = window.innerWidth <= 720 ? 'block' : 'flex';
+  ov.style.display = window.innerWidth <= 720 ? 'block' : 'flex'; ov.style.setProperty('display', window.innerWidth <= 720 ? 'block' : 'flex', 'important');
   // Force modal full width on mobile
   if(window.innerWidth <= 720){
     var modal = document.getElementById('fp-onboarding-modal');
@@ -3433,7 +3433,8 @@ function openOnboardingDemo(){
 }
 
 function closeOnboardingDemo(){
-  document.getElementById('fp-onboarding-overlay').style.display='none';
+  var ov = document.getElementById('fp-onboarding-overlay');
+  ov.style.setProperty('display','none','important');
 }
 
 function obRender(){
