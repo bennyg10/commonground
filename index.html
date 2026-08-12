@@ -4657,6 +4657,16 @@ window.addEventListener('DOMContentLoaded', function() {
   }, 300);
 });
 
+
+/* ── FIX: ensure .rp is direct child of .body ── */
+document.addEventListener('DOMContentLoaded', function() {
+  var rp = document.querySelector('.rp');
+  var body = document.querySelector('.body');
+  if (rp && body && rp.parentElement !== body) {
+    body.appendChild(rp);
+  }
+});
+
 </script>
 
 <div id="plan-modal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(17,16,21,.96);backdrop-filter:blur(8px);flex-direction:column;align-items:center;justify-content:center" onclick="planModalBgClick(event)">
