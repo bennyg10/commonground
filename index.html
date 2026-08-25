@@ -4419,7 +4419,7 @@ Be thorough. Flag anything that cannot be verified from the plans as a warning. 
 
     gcLog('Running AI compliance analysis...', 'var(--lime)');
 
-    var response = await fetch('https://api.anthropic.com/v1/messages', {
+    var response = await fetch('/api/analyze', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
