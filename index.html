@@ -2793,6 +2793,32 @@ function getTS(trade){
 
 
 /* ── PROGRESS PAGE (v11) ── */
+
+/* ── EXPERT TIPS — surfaced inline wherever a matching punch-list item appears ── */
+var EXPERT_TIPS = [
+  {keywords:['sliding door','slider track','slider door'], tip:'If the track sits exposed directly to rain — not inset into the house with covering from a roof extension, covered patio, or pergola — make sure a drain/weep path is added for the track. Without one, rainwater pools in the track and leaks inside, causing interior water damage.'}
+];
+
+function pgFindTip(text){
+  var lower = (text||'').toLowerCase();
+  for (var i=0;i<EXPERT_TIPS.length;i++){
+    var kws = EXPERT_TIPS[i].keywords;
+    for (var j=0;j<kws.length;j++){
+      if (lower.indexOf(kws[j]) !== -1) return EXPERT_TIPS[i];
+    }
+  }
+  return null;
+}
+
+function pgTipHtml(text){
+  var tip = pgFindTip(text);
+  if(!tip) return '';
+  return '<div style="grid-column:1/-1;display:flex;align-items:flex-start;gap:7px;padding:7px 9px;margin:1px 0 3px;border-radius:7px;border:1px solid var(--l20);background:var(--l10);font-size:10px;line-height:1.5;color:var(--lime)">'+
+    '<i class="ti ti-bulb" style="font-size:13px;flex-shrink:0;margin-top:1px"></i>'+
+    '<span><b>Expert tip:</b> '+tip.tip+'</span>'+
+  '</div>';
+}
+
 var PG_ONSITE = ['Plumber','GC'];
 
 var PG_PHASES = [
@@ -2802,6 +2828,7 @@ var PG_PHASES = [
   {lbl:'Tile + Fixtures',state:'done',items:[{n:'Master bath — tile complete',s:'done'},{n:'J&J bath — tile complete ✓',s:'done'},{n:'ADU bath — tile complete',s:'done'},{n:'Shower glass — all baths',s:'done'},{n:'Towel warmers + mirrors installed',s:'done'},{n:'Cabinets — all rooms installed',s:'done'}]},
   {lbl:'Paint + Detail',state:'done',items:[{n:'Interior paint — main house + ADU',s:'done'},{n:'Fog film — smart glass',s:'done'},{n:'Exterior paint complete',s:'done'},{n:'Moved in ✓',s:'done'}]},
   {lbl:'Final punch',state:'active',items:[
+    {n:'Sliding door track drainage — add weep/drain path (exposed to rain)',s:'urgent'},
     {n:'Sewer gas — inspect lines under house',s:'urgent'},{n:'Washer + dryer drain/outlet check',s:'rem'},
     {n:'Water pressure — master bath',s:'rem'},{n:'Ethernet ports install',s:'rem'},
     {n:'Kitchen door switch → Legrand dimmer',s:'rem'},{n:'Kids tub filler (awaiting delivery)',s:'rem'},
@@ -2817,9 +2844,9 @@ var PG_PHASES = [
 var PG_TRADES = {
   Plumber:{done:['Rough plumbing main house','ADU plumbing rough-in','Moen Flo valve + pressure regulator','Shower heads — all baths','All toilets installed'],prog:['Sewer gas — inspect lines under house'],rem:['Increase water pressure — master bath','Kids tub filler faucet (awaiting delivery)','Kids bath shower trim (awaiting tile piece)','Washer + dryer drain/outlet check']},
   Electrician:{done:['200 amp main panel','Rough wiring main house','ADU rough electrical','Pre-wire speakers + cameras','Legrand switches installed','Outlet covers installed'],prog:[],rem:['Ethernet ports — install','Kitchen sliding door switch → Legrand dimmer']},
-  GC:{done:['Full demo + framing','Drywall + insulation','Exterior paint','Interior doors + baseboards','All tile work','Cabinets — all rooms','Moved in ✓'],prog:['Sewer gas — inspect under house'],rem:['Cabinet above washer + dryer','Final drywall patch + paint','Bathroom ceiling paint','Pocket door — order thinner replacement','Front door — purchase + install','Ipe deck quote D1 + D2','Gutter + drain quote']},
+  GC:{done:['Full demo + framing','Drywall + insulation','Exterior paint','Interior doors + baseboards','All tile work','Cabinets — all rooms','Moved in ✓'],prog:['Sewer gas — inspect under house','Sliding door track drainage — coordinate fix (exposed to rain)'],rem:['Cabinet above washer + dryer','Final drywall patch + paint','Bathroom ceiling paint','Pocket door — order thinner replacement','Front door — purchase + install','Ipe deck quote D1 + D2','Gutter + drain quote']},
   Vanity:{done:['Vanity install — all baths'],prog:[],rem:['Primary bath vanity bottom shelf — secure','Vanity drawer mechanism — adjust','Bathroom accessories install','ADU mirrored cabinet install']},
-  Windows:{done:['All windows installed','ADU exterior doors'],prog:['Front door color decision w/ Max'],rem:['Front door — purchase + install','Pocket door — source thinner replacement']},
+  Windows:{done:['All windows installed','ADU exterior doors'],prog:['Front door color decision w/ Max','Sliding door track drainage — add weep/drain path (exposed to rain)'],rem:['Front door — purchase + install','Pocket door — source thinner replacement']},
   Landscape:{done:['Phase I proposal received'],prog:['Awaiting signed contract'],rem:['Ipe deck quote — D1 + D2','Gutter + drain quote','Phase I — CMU wall, Cumaru deck, pergola']}
 };
 
@@ -2906,7 +2933,7 @@ function pgSelectPhase(i){
       return '<div style="display:flex;align-items:flex-start;gap:7px;padding:5px 0;font-size:11px;border-bottom:1px solid var(--w08)">'+
         '<div style="width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:3px;background:'+c+anim+'"></div>'+
         '<span style="color:var(--w70);flex:1;line-height:1.45">'+item.n+'</span>'+badge+
-      '</div>';
+      '</div>'+pgTipHtml(item.n);
     }).join('')+
     '</div>';
   detail.style.display='block';
@@ -2954,7 +2981,7 @@ function pgSelectTrade(name){
   var addOc="pgAddTask('"+name+"')";
   body.innerHTML='<div style="display:grid;grid-template-columns:1fr 1fr;gap:5px">'+
     tasks.map(function(t){
-      var urgent=t.s==='prog'&&t.n.toLowerCase().indexOf('sewer')!==-1;
+      var urgent=t.s==='prog'&&(t.n.toLowerCase().indexOf('sewer')!==-1||t.n.toLowerCase().indexOf('drainage')!==-1);
       var s=urgent?'urgent':t.s;
       var dc=s==='done'?'var(--ok)':s==='prog'||s==='urgent'?'var(--amb)':'var(--ora)';
       var da=(s==='prog'||s==='urgent')?';animation:blink 2s infinite':'';
@@ -2963,7 +2990,7 @@ function pgSelectTrade(name){
       var tc=s==='done'?'var(--w50)':'var(--w70)';
       return '<div style="'+op+'display:flex;align-items:flex-start;gap:6px;padding:7px 9px;border-radius:7px;border:1px solid '+bc+';background:var(--d2);font-size:10px;line-height:1.4">'+
         '<div style="width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:2px;background:'+dc+da+'"></div>'+
-        '<span style="color:'+tc+';flex:1">'+t.n+'</span></div>';
+        '<span style="color:'+tc+';flex:1">'+t.n+'</span></div>'+pgTipHtml(t.n);
     }).join('')+
     '<button onclick="'+addOc+'" style="grid-column:1/-1;display:flex;align-items:center;justify-content:center;gap:5px;padding:9px;border-radius:7px;border:1.5px dashed rgba(213,220,153,.2);background:none;color:var(--lime);font-size:10px;font-weight:700;cursor:pointer;font-family:inherit">+ ADD+</button>'+
   '</div>';
@@ -4603,7 +4630,9 @@ JURISDICTION: ${jContext}
 YOUR TASK:
 1. Extract all measurable data from the plans: square footage, room dimensions, setbacks, heights, lot coverage, number of units, electrical panel info, egress windows, smoke/CO detector locations, ceiling heights
 2. Run a compliance check against current California Title 24 and local ${jurisdiction.replace('_',' ')} municipal code
-3. Return ONLY valid JSON in this exact format:
+3. Also apply these field-learned best-practice checks (not strictly code, but common costly mistakes worth flagging the same way):
+   - Exterior sliding/glass doors: if the track sits exposed directly to rain/weather — i.e. it is NOT inset into the building with covering from a roof extension, covered patio, or pergola overhead — verify the plans show a drain/weep path for the track. Without one, rainwater pools in the track and leaks inside, causing interior water damage. Flag as "warn" (or "fail" if clearly exposed with no drainage shown) under category "Weatherproofing" any exterior sliding door track that looks exposed with no drainage detail called out.
+4. Return ONLY valid JSON in this exact format:
 
 {
   "extraction": {
@@ -4616,12 +4645,12 @@ YOUR TASK:
   },
   "compliance": [
     {
-      "category": "Setbacks|Height|Egress|Electrical|Fire Safety|Plumbing|Structural|Landscape|Zoning",
+      "category": "Setbacks|Height|Egress|Electrical|Fire Safety|Plumbing|Structural|Landscape|Zoning|Weatherproofing",
       "status": "pass|warn|fail",
       "item": "what was checked",
       "found": "what the plans show",
       "required": "what code requires",
-      "codeRef": "specific code section e.g. CBC Section 1203.4",
+      "codeRef": "specific code section e.g. CBC Section 1203.4 — or 'Field best practice' for non-code items like track drainage",
       "correction": "exactly what needs to change to comply"
     }
   ],
