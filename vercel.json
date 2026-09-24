@@ -1,7 +1,11 @@
 {
   "functions": {
-    "api/analyze.js": {
-      "maxDuration": 60
-    }
-  }
+    "api/analyze.js": { "maxDuration": 60 },
+    "api/page.js": { "includeFiles": "api/_pages/**" }
+  },
+  "rewrites": [
+    { "source": "/anita", "destination": "/api/page?project=anita" },
+    { "source": "/anita/", "destination": "/api/page?project=anita" },
+    { "source": "/anita/:role(client|gc|trade)", "destination": "/api/page?project=anita&role=:role" }
+  ]
 }

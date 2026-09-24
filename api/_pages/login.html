@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Common Ground — Sign in</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--black:#0B0B0E;--d1:#111015;--d2:#17161C;--d3:#1E1D24;--d4:#26252D;--white:#FDFFFE;--lime:#D5DC99;--sage:#737F73;
+  --w08:rgba(253,255,254,.08);--w15:rgba(253,255,254,.15);--w30:rgba(253,255,254,.3);--w50:rgba(253,255,254,.5);--w70:rgba(253,255,254,.7);
+  --l10:rgba(213,220,153,.1);--l20:rgba(213,220,153,.2);--ok:#4A9B6F;--del:#E07A5F;--amb:#C9A84C}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%;background:var(--d1);color:var(--white);font-family:"DM Sans",sans-serif}
+body{display:flex;align-items:center;justify-content:center;padding:24px 16px}
+.card{width:100%;max-width:380px;background:var(--d2);border:1px solid var(--w08);border-radius:16px;padding:24px 22px;box-shadow:0 24px 60px rgba(0,0,0,.45)}
+.mark{display:flex;align-items:center;gap:8px;margin-bottom:20px}
+.mark b{width:28px;height:28px;border-radius:7px;background:var(--lime);color:var(--black);display:flex;align-items:center;justify-content:center;font-family:Syne,sans-serif;font-size:11px;font-weight:800}
+.mark span{font-family:Syne,sans-serif;font-size:13px;font-weight:700;color:var(--lime)}
+.eyebrow{font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--sage);margin-bottom:4px}
+h1{font-family:Syne,sans-serif;font-size:20px;font-weight:800;letter-spacing:-.03em;margin-bottom:6px}
+.sub{font-size:12px;color:var(--w50);line-height:1.6;margin-bottom:18px}
+label{display:block;font-size:10px;color:var(--sage);margin:0 0 5px}
+input{width:100%;background:var(--d3);border:1px solid var(--w08);border-radius:9px;padding:11px 12px;font-size:14px;color:var(--white);font-family:inherit;outline:none;margin-bottom:12px}
+input:focus{border-color:var(--l20)}
+input[readonly]{color:var(--w50)}
+button.primary{width:100%;padding:12px;background:var(--lime);border:none;border-radius:9px;font-size:13px;font-weight:700;color:var(--black);cursor:pointer;font-family:inherit;margin-top:2px}
+button.primary:disabled{opacity:.5;cursor:default}
+.link{background:none;border:none;color:var(--w50);font-size:11px;cursor:pointer;font-family:inherit;text-decoration:underline;padding:0}
+.msg{display:none;font-size:11px;line-height:1.5;border-radius:8px;padding:9px 11px;margin-bottom:12px}
+.msg.err{display:block;background:rgba(224,122,95,.12);border:1px solid rgba(224,122,95,.3);color:var(--del)}
+.msg.info{display:block;background:var(--l10);border:1px solid var(--l20);color:var(--lime)}
+.foot{margin-top:16px;font-size:11px;color:var(--w30);line-height:1.6;text-align:center}
+.role{display:inline-block;font-size:9px;font-weight:700;padding:2px 8px;border-radius:20px;background:var(--l10);color:var(--lime);border:1px solid var(--l20);margin-left:6px;vertical-align:middle}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="mark"><b>CG</b><span>Common Ground</span></div>
+  <div id="view"></div>
+</div>
+<script>
+var L = window.CG_LOGIN || {project:'anita', role:'', invite:'', message:'', storage:false};
+var PROJECT_NAMES = {anita:'141 N Anita'};
+var ROLE_NAMES = {client:'Owner', gc:'General Contractor', trade:'Trade / Sub'};
+var pname = PROJECT_NAMES[L.project] || L.project;
+var $ = function(id){ return document.getElementById(id); };
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+var ERR = {bad_login:'That email/phone and password don\'t match.', too_many_attempts:'Too many attempts. Wait 15 minutes and try again.',
+  invite_invalid:'This invite link has expired or was already used. Ask your GC for a new one.', weak_password:'Use at least 8 characters.',
+  bad_identifier:'Enter a valid email or phone number.', bad_setup_code:'That setup code is not right.', admin_exists:'Setup is already done — sign in instead.',
+  storage_not_configured:'Sign-in isn\'t connected yet. The database needs to be set up in Vercel.', network:'Could not reach the server. Check your connection.'};
+function showMsg(t, kind){ var m=$('msg'); if(!m) return; m.className='msg '+(kind||'err'); m.textContent=t; }
+function dest(role){ return '/'+L.project+'/'+(role||L.role||''); }
+function post(body){
+  return fetch('/api/auth',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify(body)})
+    .then(function(r){ return r.json().then(function(j){ j._status=r.status; return j; }); })
+    .catch(function(){ return {error:'network'}; });
+}
+function busy(btn, on, label){ btn.disabled=on; btn.textContent = on ? 'One moment…' : label; }
+
+function viewSignIn(){
+  $('view').innerHTML =
+    '<div class="eyebrow">'+esc(pname)+(L.role?'<span class="role">'+esc(ROLE_NAMES[L.role]||L.role)+'</span>':'')+'</div>'+
+    '<h1>Sign in</h1><div class="sub">Use the email or phone number your GC invited.</div>'+
+    '<div id="msg" class="msg"></div>'+
+    '<form id="f" autocomplete="on"><label for="id">Email or phone</label><input id="id" name="username" autocomplete="username" inputmode="email" required>'+
+    '<label for="pw">Password</label><input id="pw" type="password" name="password" autocomplete="current-password" required>'+
+    '<button class="primary" id="go" type="submit">Sign in</button></form>'+
+    '<div class="foot">Forgot your password? Ask your GC to resend your invite link and set a new one.'+
+    (L.adminExists===false ? '<br><br><button class="link" onclick="viewSetup()">First-time setup (GC)</button>' : '')+
+    (L.signedIn ? '<br><br>Signed in as '+esc(L.signedIn.name)+' · <button class="link" onclick="signOut()">Sign out</button>' : '')+'</div>';
+  if (L.message) showMsg(L.message, L.signedIn ? 'err' : 'info');
+  $('f').onsubmit = function(e){
+    e.preventDefault(); var b=$('go'); busy(b,true,'Sign in');
+    post({action:'login', identifier:$('id').value, password:$('pw').value}).then(function(j){
+      if (j.ok) { location.href = dest(); return; }
+      busy(b,false,'Sign in'); showMsg(ERR[j.error]||j.message||'Sign-in failed.');
+    });
+  };
+}
+
+function viewInvite(){
+  $('view').innerHTML = '<div class="sub">Checking your invite…</div>';
+  fetch('/api/auth?action=invite&token='+encodeURIComponent(L.invite),{credentials:'same-origin'}).then(function(r){return r.json();}).then(function(j){
+    if (!j.ok) { $('view').innerHTML = '<h1>Invite link expired</h1><div class="sub">'+esc(ERR[j.error]||'This link can\'t be used.')+'</div><button class="primary" onclick="viewSignIn()">Go to sign in</button>'; return; }
+    var inv = j.invite;
+    $('view').innerHTML =
+      '<div class="eyebrow">'+esc(PROJECT_NAMES[inv.project]||inv.project)+'<span class="role">'+esc(ROLE_NAMES[inv.role]||inv.role)+'</span></div>'+
+      '<h1>Welcome, '+esc(inv.name.split(' ')[0])+'</h1>'+
+      '<div class="sub">'+(inv.hasAccount ? 'Set a new password to join this project.' : 'Create your password to join the project.')+'</div>'+
+      '<div id="msg" class="msg"></div>'+
+      '<form id="f"><label>Your sign-in</label><input value="'+esc(inv.identifier)+'" readonly autocomplete="username">'+
+      '<label for="nm">Your name</label><input id="nm" value="'+esc(inv.name)+'" autocomplete="name">'+
+      '<label for="pw">Password (8+ characters)</label><input id="pw" type="password" autocomplete="new-password" required>'+
+      '<label for="pw2">Confirm password</label><input id="pw2" type="password" autocomplete="new-password" required>'+
+      '<button class="primary" id="go" type="submit">Join project</button></form>';
+    $('f').onsubmit = function(e){
+      e.preventDefault();
+      if ($('pw').value !== $('pw2').value) return showMsg('Passwords don\'t match.');
+      if ($('pw').value.length < 8) return showMsg(ERR.weak_password);
+      var b=$('go'); busy(b,true,'Join project');
+      post({action:'accept', token:L.invite, password:$('pw').value, name:$('nm').value}).then(function(j){
+        if (j.ok) { location.href = '/'+j.project+'/'+j.role; return; }
+        busy(b,false,'Join project'); showMsg(ERR[j.error]||j.message||'Could not join.');
+      });
+    };
+  }).catch(function(){ $('view').innerHTML='<div class="msg err">'+ERR.network+'</div>'; });
+}
+
+function viewSetup(){
+  $('view').innerHTML =
+    '<div class="eyebrow">One-time setup</div><h1>Create the GC admin account</h1>'+
+    '<div class="sub">Enter the setup code you saved in Vercel (CG_ADMIN_SETUP_CODE). This only works once.</div>'+
+    '<div id="msg" class="msg"></div>'+
+    '<form id="f"><label for="code">Setup code</label><input id="code" type="password" required>'+
+    '<label for="nm">Your name</label><input id="nm" value="Ben Gordon" autocomplete="name" required>'+
+    '<label for="id">Email or phone</label><input id="id" autocomplete="username" required>'+
+    '<label for="pw">Password (8+ characters)</label><input id="pw" type="password" autocomplete="new-password" required>'+
+    '<button class="primary" id="go" type="submit">Create admin account</button></form>'+
+    '<div class="foot"><button class="link" onclick="viewSignIn()">Back to sign in</button></div>';
+  $('f').onsubmit = function(e){
+    e.preventDefault(); var b=$('go'); busy(b,true,'Create admin account');
+    post({action:'setup', code:$('code').value, name:$('nm').value, identifier:$('id').value, password:$('pw').value}).then(function(j){
+      if (j.ok) { location.href = '/'+L.project+'/gc'; return; }
+      busy(b,false,'Create admin account'); showMsg(ERR[j.error]||j.message||'Setup failed.');
+    });
+  };
+}
+
+function signOut(){ post({action:'logout'}).then(function(){ location.href = dest(); }); }
+
+if (!L.storage) { $('view').innerHTML = '<h1>Almost ready</h1><div class="sub">'+esc(L.message)+'</div>'; }
+else if (L.invite) viewInvite();
+else viewSignIn();
+</script>
+</body>
+</html>
