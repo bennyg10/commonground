@@ -3,7 +3,7 @@
 // Project HTML lives in api/_pages/<project>.html, which is NOT publicly reachable.
 import fs from 'node:fs';
 import path from 'node:path';
-import { storageReady, clean, validProject, ROLES, currentUser, publicUser, roleFor, canView, redis, trackUsage } from './_lib.js';
+import { storageReady, clean, validProject, ROLES, currentUser, publicUser, roleFor, canView, redis, trackUsage, canonicalRedirect } from './_lib.js';
 
 const cache = {};
 function readPage(name) {
@@ -25,7 +25,12 @@ export default async function handler(req, res) {
   const project = clean(req.query.project, 40).toLowerCase();
   const role = clean(req.query.role, 10).toLowerCase();
   const invite = clean(req.query.invite, 80);
-  if (!validProject(project) || (role && !ROLES.includes(role))) return send(res, '<h1>Not found</h1>', 404);
+  if (!validProject(project)) return send(res, '<h1>Not found</h1>', 404);
+  { const qs = new URLSearchParams(); if (invite) qs.set('invite', invite); if (req.query.t) qs.set('t', clean(req.query.t, 80));
+    if (canonicalRedirect(req, res, `/${project}${role ? '/' + role : ''}${qs.toString() ? '?' + qs : ''}`)) return; }
+  // public GC bid page (token checked by /api/project)
+  if (role === 'bid') return send(res, inject(readPage('bid.html'), 'CG_BID', { project, t: clean(req.query.t, 80), storage: storageReady() }));
+  if (role && !ROLES.includes(role)) return send(res, '<h1>Not found</h1>', 404);
 
   const login = (message, extra) => send(res, inject(readPage('login.html'), 'CG_LOGIN',
     Object.assign({ project, role: role || '', invite, message: message || '', storage: storageReady() }, extra || {})));

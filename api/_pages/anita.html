@@ -26,7 +26,7 @@ html,body{overflow-x:hidden;max-width:100%}
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;overflow:hidden;font-family:"DM Sans",sans-serif;
-  background:var(--black);color:var(--white);font-size:13px;line-height:1.5}
+  background:var(--black);color:var(--white);font-size:14px;line-height:1.6}
 button{font-family:inherit;cursor:pointer}
 a{color:var(--lime);text-decoration:none}
 textarea,input{font-family:inherit}
@@ -148,7 +148,7 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;
 .ctr{background:var(--d2);display:flex;flex-direction:column;overflow:hidden}
 .screen{display:none;flex:1;flex-direction:column;overflow:hidden}
 .screen.on{display:flex}
-.scrl{flex:1;overflow-y:auto;padding:16px}
+.scrl{flex:1;overflow-y:auto;padding:24px}
 
 /* ── FLOOR PLAN SCREEN ── */
 /* Daily brief sits ON TOP as collapsible container */
@@ -241,12 +241,12 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;
 .p-dim{background:var(--w04);color:var(--w50)}
 
 /* ── SHARED COMPONENTS ── */
-.sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
-.sh-title{font-family:"Syne",sans-serif;font-size:15px;font-weight:700;
+.sh{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.sh-title{font-family:"Syne",sans-serif;font-size:18px;font-weight:700;line-height:1.3;
   color:var(--white);letter-spacing:-.02em}
 .detail{background:var(--d3);border:1px solid var(--w08);border-radius:var(--r);
-  overflow:hidden;margin-bottom:10px}
-.detail-hd{display:flex;align-items:center;gap:8px;padding:10px 13px;
+  overflow:hidden;margin-bottom:14px}
+.detail-hd{display:flex;align-items:center;gap:8px;padding:14px 16px;
   border-bottom:1px solid var(--w08);background:var(--d2)}
 .detail-title{font-size:13px;font-weight:600;color:var(--white);flex:1}
 .cat-strip{display:flex;gap:4px;padding:8px 13px;border-bottom:1px solid var(--w08);flex-wrap:wrap}
@@ -278,13 +278,13 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;
 
 /* Punch list */
 .punch-sec{background:var(--d3);border:1px solid var(--w08);border-radius:var(--r);
-  overflow:hidden;margin-bottom:6px}
-.punch-hd{padding:10px 13px;display:flex;align-items:center;gap:8px;
+  overflow:hidden;margin-bottom:10px}
+.punch-hd{padding:14px 16px;display:flex;align-items:center;gap:8px;
   cursor:pointer;transition:background .15s}
 .punch-hd:hover{background:var(--d4)}
 .punch-body{display:none;border-top:1px solid var(--w08)}
 .punch-body.open{display:block}
-.punch-item{display:flex;align-items:flex-start;gap:8px;padding:8px 13px;
+.punch-item{display:flex;align-items:flex-start;gap:10px;padding:11px 16px;
   border-bottom:1px solid var(--w08);font-size:11px}
 .punch-item:last-child{border-bottom:none}
 .pcheck{flex-shrink:0;margin-top:1px;width:15px;height:15px;border-radius:3px;
@@ -374,21 +374,21 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;
 .rpt i{font-size:12px}
 .rpt:hover{color:var(--w70)}
 .rpt.on{color:var(--lime);border-bottom-color:var(--lime)}
-.rp-body{flex:1;overflow-y:auto;padding:10px}
+.rp-body{flex:1;overflow-y:auto;padding:14px}
 .rp-panel{display:none}
 .rp-panel.on{display:block}
 .dc{background:var(--d2);border:1px solid var(--w08);border-radius:var(--r);
-  margin-bottom:6px;overflow:hidden;transition:border-color .15s}
+  margin-bottom:10px;overflow:hidden;transition:border-color .15s}
 .dc:hover{border-color:var(--w15)}
 .dc-img{height:56px;background:var(--d3);display:flex;align-items:center;
   justify-content:center;font-size:20px;position:relative;overflow:hidden}
 .dc-tag{position:absolute;top:5px;right:5px;font-size:8px;font-weight:700;padding:2px 5px;border-radius:20px}
-.dc-body{padding:8px 10px}
+.dc-body{padding:12px 14px}
 .dc-room{font-size:8px;text-transform:uppercase;letter-spacing:.07em;color:var(--sage);margin-bottom:2px}
 .dc-title{font-size:11px;font-weight:600;color:var(--white);margin-bottom:2px;line-height:1.3}
-.dc-desc{font-size:10px;color:var(--w50);line-height:1.5;margin-bottom:6px}
+.dc-desc{font-size:11px;color:var(--w50);line-height:1.6;margin-bottom:10px}
 .dc-btns{display:flex;gap:4px}
-.dc-btn{flex:1;padding:5px;border-radius:5px;font-size:10px;font-weight:600;border:none;transition:all .15s}
+.dc-btn{flex:1;padding:8px;border-radius:7px;font-size:10px;font-weight:600;border:none;transition:all .15s}
 .dc-ok{background:var(--lime);color:var(--black)}
 .dc-ok:hover{background:#c8d488}
 .dc-dis{background:var(--w04);color:var(--w70);border:1px solid var(--w08)}
@@ -426,7 +426,7 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;
 .fin-label{color:var(--w50)}
 .fin-amount{font-weight:600}
 .fin-sec{font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--sage);padding:8px 0 3px;margin-top:2px}
-.team-card{background:var(--d3);border:1px solid var(--w08);border-radius:var(--r);padding:11px 12px;margin-bottom:6px}
+.team-card{background:var(--d3);border:1px solid var(--w08);border-radius:var(--r);padding:16px 18px;margin-bottom:10px}
 .star-btn{background:none;border:none;font-size:15px;padding:0 1px;cursor:pointer;transition:transform .15s;color:var(--w30)}
 .star-btn:hover{transform:scale(1.2)}
 .star-btn.on{color:var(--amb)}
@@ -558,6 +558,7 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;
       <button class="nav-btn on" onclick="sbNav(this,'fp')"><i class="ti ti-home"></i>Site plan</button>
       <button class="nav-btn" onclick="sbNav(this,'facts')"><i class="ti ti-building-estate"></i>Facts &amp; features<span class="nav-badge" style="background:var(--l10);color:var(--lime);border-color:var(--l20)">Public</span></button>
       <button class="nav-btn" onclick="sbNav(this,'photos')"><i class="ti ti-photo"></i>Before photos<span class="nav-badge" id="nav-photo-count">5</span></button>
+      <button id="nav-btn-proposals" class="nav-btn role-hidden" onclick="sbNav(this,'proposals')"><i class="ti ti-file-certificate"></i>Proposals<span class="nav-badge" id="nav-proposals-badge" style="background:var(--l10);color:var(--lime);border-color:var(--l20)">1</span></button>
       <button class="nav-btn" onclick="sbNav(this,'progress')"><i class="ti ti-chart-line"></i>Progress</button>
       <button class="nav-btn" onclick="sbNav(this,'punch')"><i class="ti ti-clipboard-check"></i>Punch list<span class="nav-badge red">18</span></button>
       <button id="nav-btn-finance-project" class="nav-btn" onclick="sbNav(this,'finance')"><i class="ti ti-coin"></i>Financials<span class="nav-badge red role-financial">$153k</span></button>
@@ -802,32 +803,32 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;
   </div>
   <!-- SCREEN: PROGRESS -->
   <div class="screen on" id="sc-progress">
-    <div class="scrl" style="padding:16px">
+    <div class="scrl" style="padding:24px">
 
       <!-- ROW 1: Brief + Circle -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
-        <div style="background:var(--d3);border:1px solid var(--w08);border-radius:var(--r);padding:18px 20px">
-          <div id="pg-date" style="font-size:11px;font-weight:600;color:var(--sage);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Wednesday · September 23, 2026 · No trades on site today</div>
-          <div id="pg-greeting" style="font-family:Syne,sans-serif;font-size:22px;font-weight:800;color:rgba(253,255,254,.95);letter-spacing:-.03em;margin-bottom:10px">Good morning, Ben.</div>
-          <div style="font-size:12px;color:var(--w50);line-height:1.75">Phase 1 proposal from Trujillo Construction (9/18/26) is out for owner signature — $136,700 base, $153,200 with GC management. Next up: survey, environmental testing, and the LADBS demolition permit. 135 N Anita stays protected throughout.</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px;margin-bottom:18px">
+        <div style="background:var(--d3);border:1px solid var(--w08);border-radius:14px;padding:26px 28px">
+          <div id="pg-date" style="font-size:11px;font-weight:600;color:var(--sage);text-transform:uppercase;letter-spacing:.08em;line-height:1.6;margin-bottom:12px">Wednesday · September 23, 2026 · No trades on site today</div>
+          <div id="pg-greeting" style="font-family:Syne,sans-serif;font-size:26px;font-weight:800;color:rgba(253,255,254,.95);letter-spacing:-.02em;line-height:1.3;padding-bottom:4px;overflow:visible;margin-bottom:16px">Good morning, Ben.</div>
+          <div id="pg-brief" style="font-size:14px;color:var(--w50);line-height:1.8">Phase 1 proposal from Trujillo Construction (9/18/26) is out for owner signature — $136,700 base, $153,200 with GC management. Next up: survey, environmental testing, and the LADBS demolition permit. 135 N Anita stays protected throughout.</div>
         </div>
-        <div style="background:var(--d3);border:1px solid var(--w08);border-radius:var(--r);padding:18px 20px;display:flex;align-items:center;gap:18px">
+        <div style="background:var(--d3);border:1px solid var(--w08);border-radius:14px;padding:26px 28px;display:flex;align-items:center;gap:24px;flex-wrap:wrap">
           <div style="flex-shrink:0;position:relative;width:120px;height:120px">
             <svg width="120" height="120" viewBox="0 0 120 120">
               <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(253,255,254,.06)" stroke-width="10"/>
-              <circle cx="60" cy="60" r="50" fill="none" stroke="#D5DC99" stroke-width="10" stroke-dasharray="314" stroke-dashoffset="298" stroke-linecap="round" transform="rotate(-90 60 60)"/>
+              <circle id="pg-ring" cx="60" cy="60" r="50" fill="none" stroke="#D5DC99" stroke-width="10" stroke-dasharray="314" stroke-dashoffset="314" stroke-linecap="round" transform="rotate(-90 60 60)"/>
             </svg>
             <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none">
-              <div style="font-family:Syne,sans-serif;font-size:26px;font-weight:800;color:var(--lime);line-height:1">5%</div>
-              <div style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--sage);margin-top:2px">complete</div>
+              <div id="pg-pct" style="font-family:Syne,sans-serif;font-size:28px;font-weight:800;color:var(--lime);line-height:1.1">0%</div>
+              <div id="pg-pct-lbl" style="font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--sage);margin-top:4px">Start</div>
             </div>
           </div>
-          <div style="flex:1;display:flex;flex-direction:column;gap:7px" id="pg-trade-pills"></div>
+          <div style="flex:1;min-width:180px;display:flex;flex-direction:column;gap:10px" id="pg-trade-pills"></div>
         </div>
       </div>
 
       <!-- ROW 2: Timeline -->
-      <div style="background:var(--d3);border:1px solid var(--w08);border-radius:var(--r);padding:20px;margin-bottom:12px">
+      <div style="background:var(--d3);border:1px solid var(--w08);border-radius:14px;padding:26px 28px;margin-bottom:18px">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
           <div style="font-family:Syne,sans-serif;font-size:15px;font-weight:800;color:rgba(253,255,254,.9);letter-spacing:-.01em;text-transform:uppercase">Project timeline</div>
           <div style="font-size:12px;font-weight:700;color:var(--lime);letter-spacing:-.01em" id="pg-phase-lbl">Phase 1 of 7</div>
@@ -860,13 +861,16 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;
         </div>
       </div>
 
+      <!-- KICKOFF CHECKLIST — below the timeline -->
+      <div id="kickoff-card" style="margin-bottom:18px"></div>
+
       <!-- ROW 3: Trade punch list -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-        <div style="background:var(--d3);border:1px solid var(--w08);border-radius:var(--r);padding:16px">
-          <div style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--sage);margin-bottom:10px">Tap to view trade specific punch list</div>
-          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px" id="pg-trade-btns"></div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px">
+        <div style="background:var(--d3);border:1px solid var(--w08);border-radius:14px;padding:24px 26px">
+          <div style="font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--sage);margin-bottom:14px">Tap to view trade specific punch list</div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:10px" id="pg-trade-btns"></div>
         </div>
-        <div style="background:var(--d3);border:1px solid var(--w08);border-radius:var(--r);padding:16px">
+        <div style="background:var(--d3);border:1px solid var(--w08);border-radius:14px;padding:24px 26px">
           <div id="pg-tasks-hd" style="display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap">
             <div style="color:var(--w30);font-size:11px">Select a trade to view tasks</div>
           </div>
@@ -1136,7 +1140,7 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;
 
       <!-- INVOICES TAB -->
       <div id="fin-invoices" class="fu2">
-        <div style="font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--sage);margin-bottom:8px">Phase 1 contract — Trujillo Construction proposal 9/18/26 · Option 2</div>
+        <div id="fin-contract-label" style="font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--sage);margin-bottom:8px">Phase 1 contract — Trujillo Construction proposal 9/18/26 · Option 2</div>
 
         <!-- Trade category filter chips -->
         <div id="inv-trade-filters" style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:9px"></div>
@@ -1235,6 +1239,15 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;
       <div style="font-size:11px;color:var(--w50);line-height:1.6;margin-bottom:10px" class="fu1">Existing conditions before demo. These carry into the Phase 2 handoff package when Phase 1 closes. Tap any photo to zoom.</div>
       <div id="ph-tabs" style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:12px" class="fu1"></div>
       <div id="ph-grid" class="fu2" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px"></div>
+    </div>
+  </div>
+
+  <!-- SCREEN: PROPOSALS — GC bidding (owner) -->
+  <div class="screen" id="sc-proposals">
+    <div class="scrl">
+      <div class="sh fu1"><span class="sh-title">Proposals</span><span id="pp-stage"></span></div>
+      <div style="font-size:11px;color:var(--w50);line-height:1.6;margin-bottom:12px" class="fu1">Invite GCs to bid, compare proposals, and choose who to hire. The hired GC gets the kickoff checklist.</div>
+      <div id="pp-body" class="fu2"></div>
     </div>
   </div>
 
@@ -1919,7 +1932,7 @@ function goScreen(name) {
   }
   var titles = {fp:'Site plan',progress:'Project phases',punch:'Punch list',
     landscape:'Site clearing',finance:'Financials','notes-screen':'Site notes',
-    team:'Team & trades',products:'Products',design:'Design mode',facts:'Facts & features',scanner:'Plan scanner',photos:'Before photos'};
+    team:'Team & trades',products:'Products',design:'Design mode',facts:'Facts & features',scanner:'Plan scanner',photos:'Before photos',proposals:'Proposals'};
   var pt = document.getElementById('page-title');
   if (pt) pt.textContent = titles[name] || name;
   closeSb();
@@ -2135,7 +2148,7 @@ function renderPunch() {
     return '<div class="punch-sec"><div class="punch-hd" onclick="togglePunchSec(this)">' +
       '<div style="width:3px;height:26px;border-radius:2px;background:'+(uc[sec.urgency]||'var(--w30)')+';flex-shrink:0"></div>' +
       '<div style="flex:1"><div style="font-size:11px;font-weight:600;color:var(--white)">'+sec.title+'</div>' +
-      '<div style="font-size:9px;color:var(--w50);margin-top:1px">'+op+' open · '+dn+' done · '+sec.trade+'</div></div>' +
+      '<div style="font-size:9px;color:var(--w50);margin-top:1px">'+op+' open · '+dn+' done · '+(typeof pgTradeLabel==='function'?pgTradeLabel(sec.trade):sec.trade)+'</div></div>' +
       '<span class="pill" style="background:'+(uc[sec.urgency]||'var(--w04)')+'20;color:'+(uc[sec.urgency]||'var(--w30)')+';font-size:9px">'+(ul[sec.urgency]||'')+'</span></div>' +
       '<div class="punch-body">'+sec.items.map(function(item,ii) {
         return '<div class="punch-item"><button class="pcheck'+(item.status==='done'?' done':'')+'" onclick="togglePunch('+si+','+ii+',this)">'+(item.status==='done'?'✓':'')+'</button>' +
@@ -2853,16 +2866,26 @@ function decActorName(){
 }
 function decSetActorName(n){ try { localStorage.setItem('cg_'+DEC_PROJECT+'_owner_name', n); } catch(e){} }
 
+/* contract decisions follow the hired GC (none while collecting proposals) */
+function decSeedsForStage(){
+  if (typeof PROJ === 'undefined' || !PROJ || !PROJ.hiredGc) return [];
+  if (PROJ.hiredGc.bidId === 'bid-trujillo') return DEC_SEEDS;
+  var h = PROJ.hiredGc, who = h.company || h.name;
+  return [{id:'contract-'+h.bidId, type:'contract', icon:'✍️', area:'Contract · '+who, title:'Construction contract — '+who, amount:h.amount||null,
+    desc:'Contract based on the hired proposal. Open the proposal document in Proposals before signing.', lines: h.amount ? [['Proposal total', h.amount]] : [],
+    terms:['Changes go through written, priced change orders approved in Common Ground']}];
+}
 /* merged view: seeds + server-created change orders, server state wins */
 function decAll(){
-  var out = DEC_SEEDS.map(function(s){
+  var SEEDS = decSeedsForStage();
+  var out = SEEDS.map(function(s){
     var sv = DEC_SERVER[s.id];
     var d = Object.assign({}, s, {status:'pending', events:[]});
     if (sv) { d.status = sv.status; d.events = sv.events||[]; d.approval = sv.approval; if (sv.amount!=null && s.amount!=null) d.amount = sv.amount; }
     return d;
   });
   Object.keys(DEC_SERVER).forEach(function(id){
-    if (DEC_SEEDS.some(function(s){return s.id===id;})) return;
+    if (SEEDS.some(function(s){return s.id===id;}) || /^(p1-|soil-|contract-)/.test(id)) return;
     var sv = DEC_SERVER[id];
     out.push(Object.assign({icon:'🔁', lines: sv.amount!=null?[[sv.title, sv.amount]]:[], terms:['Change order — adjusts the contract total once approved']}, sv));
   });
@@ -2990,13 +3013,20 @@ function decRenderAll(){
   var role = decRole();
   var open = all.filter(function(d){return d.status!=='approved';});
   var done = all.filter(function(d){return d.status==='approved';});
-  var head = decSyncBadge() + (role==='gc'
+  var bidCard = '';
+  if (typeof PROJ !== 'undefined' && PROJ && PROJ.stage === 'bidding' && role !== 'trade') {
+    var nb = (PROJ.bids||[]).filter(function(b){return b.status==='submitted';}).length;
+    bidCard = '<div class="dc"><div class="dc-img" style="background:var(--d3)">🤝<div class="dc-tag" style="background:none;padding:0"><span style="font-size:8px;font-weight:700;padding:2px 7px;border-radius:20px;background:var(--am15);color:var(--amb);border:1px solid var(--am30)">Collecting</span></div></div>'+
+      '<div class="dc-body"><div class="dc-room">Project · General contractor</div><div class="dc-title">Choose your GC</div><div class="dc-desc">'+nb+' proposal'+(nb===1?'':'s')+' received. Contract decisions appear here once a GC is hired.</div>'+
+      (typeof pjIsOwner==='function' && pjIsOwner() ? '<div class="dc-btns"><button class="dc-btn dc-ok" onclick="sbNav(document.getElementById(\'nav-btn-proposals\'),\'proposals\')">Review proposals</button></div>' : '')+'</div></div>';
+  }
+  var head = decSyncBadge() + bidCard + (role==='gc' && !(typeof PROJ !== 'undefined' && PROJ && PROJ.stage === 'bidding')
     ? '<button onclick="decOpenCreate()" style="width:100%;padding:8px;margin-bottom:8px;background:none;border:1.5px dashed var(--l20);border-radius:8px;color:var(--lime);font-size:10px;font-weight:700;cursor:pointer;font-family:inherit">+ New change order</button>' : '');
   if (role==='trade') { head = decSyncBadge(); open = []; done = []; }
   var body = (role==='trade' ? '<div style="text-align:center;padding:20px 10px;color:var(--w30);font-size:11px;line-height:1.6">Owner decisions and pricing are handled between the owner and the GC.<br>Your scope and checklist are in Progress and Punch list.</div>' : '') +
     open.map(function(d){return decCard(d);}).join('') +
     (done.length ? '<div style="font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--sage);margin:12px 0 8px">Approved</div>' + done.map(function(d){return decCard(d);}).join('') : '') +
-    (role!=='trade' && !open.length && !done.length ? '<div style="text-align:center;padding:20px;color:var(--w30);font-size:11px">No decisions yet</div>' : '');
+    (role!=='trade' && !bidCard && !open.length && !done.length ? '<div style="text-align:center;padding:20px;color:var(--w30);font-size:11px">No decisions yet</div>' : '');
   var rp = document.getElementById('rpp-decisions');
   if (rp) rp.innerHTML = head + body;
   var sheet = document.getElementById('mob-approvals-list');
@@ -3016,6 +3046,7 @@ function decRenderAll(){
 
 /* approvals feed the rest of the project */
 function decApplyToProject(){
+  if (typeof pjApplyTimeline === 'function') pjApplyTimeline();
   var c = decGet('p1-contract'), g = decGet('p1-gc-option');
   if (typeof PG_PHASES !== 'undefined' && PG_PHASES[0]) {
     PG_PHASES[0].items.forEach(function(it){
@@ -3057,7 +3088,8 @@ function decTimeline(d){
   return ev.map(function(e){
     var who = decEsc(e.by)+' <span style="color:var(--w30);font-weight:400">· '+(e.role==='client'?'Owner':e.role==='gc'?'GC':decEsc(e.role||''))+' · '+decWhen(e.at)+'</span>';
     var body = e.type==='comment' ? decEsc(e.note)
-      : e.type==='approved' ? '<span style="color:var(--ok)">✓ Approved '+decMoney(e.amount)+' · signed "'+decEsc(e.signature)+'" · ref '+decEsc(e.ref)+'</span>'
+      : e.type==='approved' ? '<span style="color:var(--ok)">✓ Approved '+decMoney(e.amount)+' · signed "'+decEsc(e.signature)+'"'+(e.method==='offline'?' on paper (recorded by platform admin)':'')+' · ref '+decEsc(e.ref)+'</span>'+(e.method==='offline'&&e.note?' — '+decEsc(e.note):'')
+      : e.type==='voided' ? '<span style="color:var(--del)">Approval voided by platform admin'+(e.voidedRef?' · ref '+decEsc(e.voidedRef):'')+'</span>'+(e.note?' — '+decEsc(e.note):'')
       : e.type==='revised' ? '<span style="color:var(--amb)">Revised to '+decMoney(e.amount)+'</span>'+(e.note?' — '+decEsc(e.note):'')
       : e.type==='created' ? '<span style="color:var(--lime)">Change order created · '+decMoney(e.amount)+'</span>'+(e.note?' — '+decEsc(e.note):'') : '';
     var mine = e.role===decRole();
@@ -3367,6 +3399,7 @@ function sessToggleMenu(e){
       '<div style="font-size:10px;color:var(--w50);margin:2px 0 8px">'+decEsc(u.identifier)+'</div>'+
       '<div style="font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--sage);margin-bottom:6px">'+(CG_SESS.admin?'Admin · preview a view':'Your view')+'</div>'+
       (views ? '<div style="display:flex;gap:5px;margin-bottom:10px">'+views+'</div>' : '<div style="font-size:11px;color:var(--lime);margin-bottom:10px">'+(ROLE_LABEL[CG_SESS.role]||CG_SESS.role)+'</div>')+
+      (CG_SESS.admin ? '<a id="sess-admin-link" href="/admin" style="display:block;text-align:center;width:100%;padding:8px;margin-bottom:6px;background:var(--l10);border:1px solid var(--l20);border-radius:8px;font-size:11px;font-weight:700;color:var(--lime);text-decoration:none">Platform console ↗</a>' : '')+
       '<button onclick="sessSignOut()" style="width:100%;padding:8px;background:var(--d3);border:1px solid var(--w08);border-radius:8px;font-size:11px;font-weight:600;color:var(--w70);cursor:pointer;font-family:inherit">Sign out</button>'
     : '<div style="font-size:12px;font-weight:700;color:var(--white);margin-bottom:4px">Demo mode</div><div style="font-size:10px;color:var(--w50);line-height:1.5">Not signed in. Open the live link (/anita/gc, /anita/client or /anita/trade) to sign in.</div>';
   document.body.appendChild(m);
@@ -3470,7 +3503,671 @@ function teamUsageHtml(){
     bar('Database commands (est.)', u.estCommands, u.limits.commands, '', 'Upstash free tier. Pay-as-you-go is $0.20 per extra 100K.')+
     bar('Server requests', u.requests, u.limits.invocations, '', 'Vercel Hobby includes 1M function calls a month.')+
     bar('People with access', u.members, u.limits.membersSoft, '', 'Soft limit before moving to a full auth provider.')+
-    '<div style="font-size:9px;color:var(--w30);line-height:1.5">Stored keys: '+u.keys.toLocaleString()+'</div></div>';
+    '<div style="font-size:9px;color:var(--w30);line-height:1.5">Stored keys: '+u.keys.toLocaleString()+'</div>'+
+    '<div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--w08)"><div style="display:flex;align-items:center;gap:6px;margin-bottom:8px"><i class="ti ti-lifebuoy" style="font-size:13px;color:var(--lime)"></i><span style="font-size:11px;font-weight:700;color:var(--white)">Help requests · '+(u.supportTotal||0)+'</span><span style="font-size:9px;color:var(--w30);margin-left:auto">Also emailed to you when email is set up</span></div>'+
+    ((u.support||[]).length ? u.support.map(function(r){ return '<div style="padding:8px 10px;background:var(--d2);border:1px solid var(--w08);border-radius:8px;margin-bottom:6px">'+
+      '<div style="font-size:10px;color:var(--white);font-weight:600">'+decEsc(r.name)+' · <a href="mailto:'+decEsc(r.email)+'" style="color:var(--lime)">'+decEsc(r.email)+'</a>'+(r.phone?' · '+decEsc(r.phone):'')+'</div>'+
+      '<div style="font-size:9px;color:var(--sage);margin:2px 0">'+decEsc(r.topic)+' · '+decWhen(r.at)+'</div><div style="font-size:11px;color:var(--w70);line-height:1.5;white-space:pre-wrap">'+decEsc(r.message)+'</div></div>'; }).join('')
+      : '<div style="font-size:10px;color:var(--w30)">None yet.</div>')+'</div></div>';
+}
+
+
+/* ══════════════════════════════════════════════════
+   PROJECT LIFECYCLE — GC bidding → hire → kickoff checklist → start
+   Server: /api/project. Stage: bidding | kickoff | active
+   ══════════════════════════════════════════════════ */
+var PROJ = null;                 // server state
+var PROJ_LIVE = false;
+var PROJ_LAST_INVITE = '';
+var PROJ_TAGS = ['Permits Later', 'Change order', 'Owner decision', 'Blocked', 'Long lead'];
+var PROJ_DEMO = {stage:'bidding', hiredGc:null, startedAt:null, clientName:'the homeowner',
+  bids:[{id:'bid-trujillo', gcName:'Trujillo Construction', company:'Trujillo Construction', amount:136700, status:'submitted', submittedAt:'2026-09-18T17:00:00.000Z', source:'uploaded by owner', note:'Phase 1 demo + site clearing. Option 2 with GC overhead: $153,200.', file:{name:'Proposal.pdf'}}],
+  bidInvites:[], kickoff:{items:[]}};
+
+function pjRole(){ return window.CG_SESSION ? CG_SESSION.role : (typeof CG_ROLE!=='undefined' ? CG_ROLE : 'gc'); }
+function pjIsOwner(){ return window.CG_SESSION ? (CG_SESSION.memberRole==='client' || CG_SESSION.admin) : pjRole()==='client'; }
+function pjActor(){ // who acts on the checklist
+  if (!window.CG_SESSION) return pjRole()==='client' ? 'client' : 'gc';
+  if (CG_SESSION.memberRole==='client' && CG_SESSION.role==='client') return 'client';
+  if (CG_SESSION.role==='gc') return 'gc';
+  return null;
+}
+function pjFirst(n){ return String(n||'').trim().split(/\s+/)[0] || ''; }
+function pjGcFirst(){ return PROJ && PROJ.hiredGc ? pjFirst(PROJ.hiredGc.name || PROJ.hiredGc.company) : ''; }
+function gcLabel(){ var f = pjGcFirst(); return f ? 'GC · ' + f : 'GC'; }
+function pgTradeLabel(t){ return t === 'GC' ? gcLabel() : t; }
+function pjMoney(n){ return n ? '$' + Math.round(n).toLocaleString() : '—'; }
+function pjDate(iso){ try { return new Date(iso).toLocaleDateString('en-US',{month:'short',day:'numeric'}); } catch(e){ return ''; } }
+
+function pjLoad(){
+  return fetch('/api/project?project='+DEC_PROJECT+'&action=state', {credentials:'same-origin', cache:'no-store'})
+    .then(function(r){ if (!r.ok) throw new Error('status '+r.status); return r.json(); })
+    .then(function(j){ if (!j.ok) throw new Error('bad'); var changed = JSON.stringify(j) !== JSON.stringify(PROJ); PROJ = j; PROJ_LIVE = true; if (changed) pjApply(); })
+    .catch(function(){ if (!PROJ_LIVE) { PROJ = JSON.parse(JSON.stringify(PROJ_DEMO)); pjApply(); } });
+}
+function pjPost(body){
+  if (!PROJ_LIVE) return Promise.resolve({error:'demo'});
+  body.project = DEC_PROJECT;
+  return fetch('/api/project', {method:'POST', headers:{'Content-Type':'application/json'}, credentials:'same-origin', body:JSON.stringify(body)})
+    .then(function(r){ return r.json(); }).catch(function(){ return {error:'network'}; });
+}
+var PJ_ERR = {demo:'Sign in on the live site to do this.', network:'Could not reach the server. Try again.', owner_only:'Only the homeowner can do this.',
+  gc_only:'Only the hired GC can do this.', bidding_closed:'A GC has already been hired.', already_hired:'A GC has already been hired.', bad_email:'Enter a valid email address.',
+  name_required:'Enter the GC\'s full name.', contact_required:'Add the GC\'s email so they can get the hire notice.', checklist_incomplete:'Finish the required checklist items first.',
+  already_started:'The project already started.', text_required:'Add a description.', forbidden:'You can\'t change that item.'};
+function pjErr(j){ return PJ_ERR[j.error] || j.message || j.error || 'Something went wrong.'; }
+
+/* ── timeline phase 1 follows the real project stage ── */
+function pjApplyTimeline(){
+  if (typeof PG_PHASES === 'undefined' || !PROJ) return;
+  var st = PROJ.stage, hired = PROJ.hiredGc, active = st === 'active';
+  var contract = (typeof decAll === 'function') ? decAll().filter(function(d){ return d.type === 'contract'; })[0] : null;
+  var signed = !!(contract && contract.status === 'approved');
+  PG_PHASES[0] = {lbl:'GC + contract', state: active ? 'done' : 'active', items:[
+    {n:'Collect GC proposals' + (PROJ.bids ? ' — ' + PROJ.bids.length + ' received' : ''), s: st === 'bidding' ? 'prog' : 'done'},
+    {n:'Hire GC' + (hired ? ' — ' + (hired.company || hired.name) : ''), s: hired ? 'done' : 'rem'},
+    {n:'Contract signed', s: signed ? 'done' : hired ? 'urgent' : 'rem'},
+    {n:'Kickoff checklist complete', s: active ? 'done' : st === 'kickoff' ? 'prog' : 'rem'},
+    {n:'Project started' + (active ? ' — ' + pjDate(PROJ.startedAt) : ''), s: active ? 'done' : 'rem'}
+  ]};
+  if (PG_PHASES[1] && PG_PHASES[1].state !== 'done') PG_PHASES[1].state = active ? 'active' : 'future';
+  if (typeof pgRenderTimeline === 'function') {
+    pgRenderTimeline();
+    var det = document.getElementById('pg-phase-detail');
+    if (det && det.style.display !== 'none' && typeof pgSelectPhase === 'function') {
+      var cur = 0; for (var i = 0; i < PG_PHASES.length; i++) { if (det.innerHTML.indexOf('>' + PG_PHASES[i].lbl + '<') !== -1) cur = i; }
+      pgSelectPhase(cur);
+    }
+  }
+}
+
+/* ── apply state everywhere ── */
+function pjApply(){
+  pjApplyTimeline();
+  pjApplyLabels();
+  pjRenderNav();
+  pjRenderProposals();
+  pjRenderKickoff();
+  pjRenderBrief();
+  if (typeof decRenderAll === 'function') decRenderAll();
+}
+
+function pjApplyLabels(){
+  var gf = pjGcFirst(), hired = PROJ && PROJ.hiredGc;
+  // team list: GC slot shows who is (or isn't yet) hired
+  if (typeof teamData !== 'undefined' && teamData.length) {
+    teamData[0] = hired
+      ? {name: hired.company || hired.name, role:'GC', tag:'GC', contact: gcLabel() + (hired.phone ? ' · '+hired.phone : ''), rating:0, note:'Hired '+pjDate(hired.hiredAt)+(hired.amount?' · proposal '+pjMoney(hired.amount):'')}
+      : {name:'General contractor — not hired yet', role:'GC', tag:'GC', contact:'Collecting proposals', rating:0, note:(PROJ?PROJ.bids.length:0)+' proposal(s) received'};
+    if (typeof renderTeam === 'function') renderTeam();
+  }
+  if (typeof FP_ROOMS !== 'undefined') Object.keys(FP_ROOMS).forEach(function(k){
+    FP_ROOMS[k].trades.forEach(function(t){ if (/^GC( — | · )/.test(t.n)) t.n = gf ? 'GC · ' + gf : 'GC'; });
+  });
+  if (typeof wtRooms !== 'undefined') wtRooms.forEach(function(r){ r.trades.forEach(function(t){ if (t.label === 'GC' || /^GC · /.test(t.label)) t.label = gcLabel(); }); });
+  var tag = document.getElementById('sb-role-tag');
+  if (tag && pjRole()==='gc') tag.textContent = gcLabel();
+  if (typeof pgRenderPills==='function') { pgRenderPills(); pgRenderTradeBtns(); var sel = document.querySelector('#pg-trade-btns button[style*="var(--lime)"]'); pgSelectTrade(sel ? sel.id.replace('pg-tbtn-','') : 'GC'); }
+  if (typeof renderPunch==='function' && document.getElementById('punch-list')) renderPunch();
+  // finance reflects the stage
+  if (typeof INVOICES !== 'undefined' && PROJ) {
+    var trujillo = hired && hired.bidId === 'bid-trujillo';
+    INVOICES.forEach(function(inv){
+      if (inv.source !== 'seed') return;
+      if (!hired) inv.status = 'proposal';
+      else if (trujillo) inv.status = 'pending';
+      else inv.hidden = true;
+    });
+    if (hired && !trujillo && !INVOICES.some(function(i){return i.id==='contract-hired';})) {
+      INVOICES.push({id:'contract-hired',num:'Contract — '+(hired.company||hired.name),contractor:hired.company||hired.name,amount:hired.amount||0,paid:0,date:pjDate(hired.hiredAt),status:'pending',desc:'Hired proposal',balance:hired.amount||0,trade:'General/Other',uploadedBy:'gc',source:'hire'});
+    }
+    var hd = document.getElementById('fin-contract-label');
+    if (hd) hd.textContent = !hired ? 'Proposal on file — Trujillo Construction (9/18/26) · no GC hired yet'
+      : trujillo ? 'Phase 1 contract — Trujillo Construction proposal 9/18/26 · Option 2 · ' + gcLabel()
+      : 'Contract — ' + (hired.company||hired.name) + ' · ' + gcLabel();
+    if (typeof renderInvoices==='function' && document.getElementById('invoice-list')) renderInvoices();
+  }
+  var pill = document.querySelector('.top-pill');
+  if (pill && PROJ) {
+    var txt = PROJ.stage==='bidding' ? 'Collecting GC proposals · '+PROJ.bids.filter(function(b){return b.status!=='declined';}).length+' received'
+      : PROJ.stage==='kickoff' ? gcLabel()+' hired · kickoff in progress'
+      : 'Project started '+pjDate(PROJ.startedAt)+' · '+gcLabel();
+    pill.innerHTML = '<div class="top-dot"></div>' + txt;
+  }
+}
+
+function pjRenderNav(){
+  var btn = document.getElementById('nav-btn-proposals');
+  if (!btn) return;
+  var show = pjIsOwner();
+  btn.classList.toggle('role-hidden', !show);
+  var badge = document.getElementById('nav-proposals-badge');
+  if (badge && PROJ) {
+    var n = PROJ.bids ? PROJ.bids.filter(function(b){return b.status==='submitted';}).length : 0;
+    badge.textContent = PROJ.stage==='bidding' ? String(n) : 'Hired';
+  }
+}
+
+/* ── greeting + condensed brief (1–2 sentences) ── */
+function pjRenderBrief(){
+  var br = document.getElementById('pg-brief'), gr = document.getElementById('pg-greeting');
+  if (!br || !PROJ) return;
+  var h = new Date().getHours(), hi = h<12?'Good morning':h<17?'Good afternoon':'Good evening';
+  var me = window.CG_SESSION ? pjFirst(CG_SESSION.user.name) : (pjRole()==='gc' ? (pjGcFirst()||'Ben') : 'there');
+  if (gr) gr.textContent = hi + ', ' + me + '.';
+  var items = (PROJ.kickoff && PROJ.kickoff.items) || [];
+  var req = items.filter(function(i){return i.required;});
+  var done = req.filter(pjItemDone).length;
+  var needOwner = items.filter(function(i){ return i.type==='agreement' && !i.clientAgreed; }).length;
+  var needGc = items.filter(function(i){ return i.type==='agreement' && !i.gcAgreed; }).length;
+  var toConfirm = items.filter(function(i){ return i.needsClientConfirm && !i.clientConfirmed; }).length;
+  var nextItem = items.filter(function(i){ return i.required && !pjItemDone(i); })[0];
+  var openDecisions = typeof decOpenCount==='function' ? decOpenCount() : 0;
+  var gf = pjGcFirst(), role = pjRole(), s;
+  var nBids = (PROJ.bids||[]).filter(function(b){return b.status==='submitted';}).length;
+  if (PROJ.stage === 'bidding') {
+    s = role==='client' || pjIsOwner()
+      ? nBids + ' GC proposal' + (nBids===1?'':'s') + ' in for 141 N Anita. Review them in Proposals and choose your GC — invite more anytime.'
+      : 'The owner is collecting GC proposals for 141 N Anita. Work starts once a GC is hired and kickoff is complete.';
+  } else if (PROJ.stage === 'kickoff') {
+    s = role==='gc'
+      ? 'You\'re hired on 141 N Anita — ' + done + ' of ' + req.length + ' kickoff items done' + (needOwner ? ', ' + needOwner + ' waiting on the owner\'s agreement' : '') + '. ' + (nextItem ? 'Next: ' + nextItem.text + '.' : 'Everything\'s ready — tap Start Project.')
+      : gf + ' (' + (PROJ.hiredGc.company||'your GC') + ') is setting up your project — ' + done + ' of ' + req.length + ' kickoff items done. ' + (needOwner ? needOwner + ' item' + (needOwner===1?' needs':'s need') + ' your agreement below.' : 'Nothing needs you right now.');
+  } else {
+    var nextPhase = (typeof PG_PHASES!=='undefined') ? (function(){ for (var i=0;i<PG_PHASES.length;i++){ var it=(PG_PHASES[i].items||[]).filter(function(x){return x.s!=='done';})[0]; if(it) return it.n; } return ''; })() : '';
+    s = role==='gc'
+      ? 'Project live since ' + pjDate(PROJ.startedAt) + (openDecisions ? ' — ' + openDecisions + ' decision' + (openDecisions===1?'':'s') + ' waiting on the owner' : '') + '. ' + (nextPhase ? 'Next: ' + nextPhase + '.' : '')
+      : gf + ' started your project on ' + pjDate(PROJ.startedAt) + '. ' + ((openDecisions||toConfirm) ? (openDecisions+toConfirm) + ' item' + ((openDecisions+toConfirm)===1?' needs':'s need') + ' your approval.' : 'Nothing needs your approval right now.') + (nextPhase ? ' Next up: ' + nextPhase + '.' : '');
+  }
+  br.textContent = s;
+}
+
+/* ════════ PROPOSALS (owner) ════════ */
+function pjRenderProposals(){
+  var el = document.getElementById('pp-body'); if (!el || !PROJ) return;
+  var bidding = PROJ.stage === 'bidding';
+  var inp = 'width:100%;box-sizing:border-box;background:var(--d2);border:1px solid var(--w08);border-radius:8px;padding:9px 10px;font-size:12px;color:var(--white);font-family:inherit';
+  var h = '';
+  var st = document.getElementById('pp-stage');
+  if (st) st.innerHTML = bidding ? '<span style="font-size:9px;font-weight:700;padding:3px 10px;border-radius:20px;background:var(--am15);color:var(--amb);border:1px solid var(--am30)">Collecting proposals</span>'
+    : '<span style="font-size:9px;font-weight:700;padding:3px 10px;border-radius:20px;background:var(--ok15);color:var(--ok);border:1px solid var(--ok30)">Hired · ' + decEsc(PROJ.hiredGc.company || PROJ.hiredGc.name) + '</span>';
+  if (bidding && pjIsOwner()) {
+    h += '<div style="background:var(--d3);border:1px solid var(--l20);border-radius:var(--r);padding:14px;margin-bottom:12px">'+
+      '<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px"><i class="ti ti-send" style="font-size:14px;color:var(--lime)"></i><span style="font-size:12px;font-weight:700;color:var(--white)">Invite a GC to bid</span></div>'+
+      '<div style="font-size:10px;color:var(--w50);margin-bottom:10px;line-height:1.5">They get a link to upload their proposal and create an account in one step.</div>'+
+      '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:6px;margin-bottom:8px">'+
+        '<input id="pp-name" placeholder="Full name" style="'+inp+'"><input id="pp-email" type="email" placeholder="Email" style="'+inp+'"><input id="pp-phone" type="tel" placeholder="Phone" style="'+inp+'">'+
+      '</div>'+
+      '<div style="display:flex;gap:6px;flex-wrap:wrap"><button onclick="pjInvite()" id="pp-invite-btn" style="flex:1;min-width:140px;padding:9px;background:var(--lime);border:none;border-radius:8px;font-size:11px;font-weight:700;color:var(--dk);cursor:pointer;font-family:inherit">Send invite</button>'+
+      '<button onclick="pjOpenLink()" style="flex:1;min-width:140px;padding:9px;background:none;border:1px solid var(--l20);border-radius:8px;font-size:11px;font-weight:700;color:var(--lime);cursor:pointer;font-family:inherit"><i class="ti ti-link" style="font-size:11px"></i> Copy link</button></div>'+
+      '<div id="pp-invite-result">'+PROJ_LAST_INVITE+'</div>'+
+      ((PROJ.bidInvites||[]).length ? '<div style="margin-top:10px;border-top:1px solid var(--w08);padding-top:8px">'+PROJ.bidInvites.map(function(i){
+        return '<div style="display:flex;align-items:center;gap:8px;font-size:10px;padding:4px 0"><span style="color:var(--white);font-weight:600">'+decEsc(i.name)+'</span><span style="color:var(--w30)">'+decEsc(i.email)+'</span><span style="margin-left:auto;font-weight:700;color:'+(i.status==='submitted'?'var(--ok)':'var(--amb)')+'">'+(i.status==='submitted'?'Submitted ✓':'Invited')+'</span></div>';
+      }).join('')+'</div>' : '')+
+    '</div>';
+  }
+  var bids = PROJ.bids || [];
+  h += '<div style="background:var(--d3);border:1px solid var(--w08);border-radius:var(--r);overflow:hidden">'+
+    '<div style="display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr) minmax(0,.9fr);gap:8px;padding:9px 14px;border-bottom:1px solid var(--w08);font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--sage)"><span>General contractor</span><span>Proposal</span><span style="text-align:right">Decision</span></div>'+
+    (bids.length ? bids.map(function(b){
+      var hired = PROJ.hiredGc && PROJ.hiredGc.bidId === b.id;
+      var decision = hired ? '<span style="font-size:10px;font-weight:700;color:var(--ok)">Hired ✓</span>'
+        : b.status==='declined' ? '<span style="font-size:10px;font-weight:600;color:var(--w30)">Not hired</span>'
+        : bidding && pjIsOwner() ? '<button onclick="pjChoose(\''+b.id+'\')" style="padding:7px 12px;background:var(--lime);border:none;border-radius:7px;font-size:11px;font-weight:700;color:var(--dk);cursor:pointer;font-family:inherit">Choose</button>'
+        : '<span style="font-size:10px;color:var(--w30)">Not selected</span>';
+      return '<div data-bid="'+b.id+'" style="display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr) minmax(0,.9fr);gap:8px;align-items:center;padding:12px 14px;border-bottom:1px solid var(--w08)">'+
+        '<div style="min-width:0"><div style="font-size:12px;font-weight:600;color:var(--white);overflow-wrap:anywhere">'+decEsc(b.gcName)+'</div>'+
+          '<div style="font-size:10px;color:var(--w50);margin-top:2px">'+(b.amount?'<b style="color:var(--lime)">'+pjMoney(b.amount)+'</b> · ':'')+pjDate(b.submittedAt)+(b.contactName && b.contactName!==b.gcName?' · '+decEsc(b.contactName):'')+'</div></div>'+
+        '<div>'+(b.file ? '<button onclick="pjViewDoc(\''+b.id+'\')" style="display:inline-flex;align-items:center;gap:4px;padding:7px 10px;background:var(--d2);border:1px solid var(--w08);border-radius:7px;font-size:10px;font-weight:600;color:var(--w70);cursor:pointer;font-family:inherit"><i class="ti ti-file-text" style="font-size:12px"></i>View document</button>' : '<span style="font-size:10px;color:var(--w30)">No file</span>')+'</div>'+
+        '<div style="text-align:right">'+decision+'</div></div>';
+    }).join('') : '<div style="padding:22px 14px;text-align:center;font-size:11px;color:var(--w30)">No proposals yet. Invite GCs above.</div>')+
+  '</div>';
+  el.innerHTML = h;
+}
+
+function pjInvite(){
+  var g = function(id){ return ((document.getElementById(id)||{}).value||'').trim(); };
+  var name = g('pp-name'), email = g('pp-email'), phone = g('pp-phone');
+  var out = document.getElementById('pp-invite-result');
+  if (!name || !email) { out.innerHTML = '<div style="font-size:10px;color:#E07A5F;margin-top:8px">Add the GC\'s full name and email.</div>'; return; }
+  var btn = document.getElementById('pp-invite-btn'); btn.disabled = true; btn.textContent = 'Sending…';
+  pjPost({action:'bid-invite', name:name, email:email, phone:phone}).then(function(j){
+    btn.disabled = false; btn.textContent = 'Send invite';
+    if (!j.ok) { out.innerHTML = '<div style="font-size:10px;color:#E07A5F;margin-top:8px">'+decEsc(pjErr(j))+'</div>'; return; }
+    PROJ_LAST_INVITE = pjShareBox('Invite for <b style="color:var(--white)">'+decEsc(name)+'</b>'+(j.emailed?' · emailed ✓':''), j.link,
+      'Hi '+pjFirst(name)+', please submit your proposal for 141 N Anita on Common Ground: '+j.link, phone, email, 'Proposal request — 141 N Anita');
+    pjLoad();
+  });
+}
+function pjOpenLink(){
+  pjPost({action:'bid-link'}).then(function(j){
+    var out = document.getElementById('pp-invite-result');
+    if (!j.ok) { out.innerHTML = '<div style="font-size:10px;color:#E07A5F;margin-top:8px">'+decEsc(pjErr(j))+'</div>'; return; }
+    if (navigator.clipboard) navigator.clipboard.writeText(j.link).catch(function(){});
+    PROJ_LAST_INVITE = pjShareBox('Open proposal link copied — anyone with it can submit', j.link, 'Submit your proposal for 141 N Anita on Common Ground: '+j.link, '', '', 'Proposal request — 141 N Anita');
+    out.innerHTML = PROJ_LAST_INVITE;
+  });
+}
+function pjShareBox(title, link, msg, phone, email, subject){
+  var sms = 'sms:'+String(phone||'').replace(/[^\d+]/g,'')+'&body='+encodeURIComponent(msg);
+  var mail = 'mailto:'+(email||'')+'?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(msg);
+  return '<div style="margin-top:10px;background:var(--d2);border:1px solid var(--w08);border-radius:8px;padding:10px">'+
+    '<div style="font-size:10px;color:var(--w50);margin-bottom:6px">'+title+'</div>'+
+    '<input readonly value="'+decEsc(link)+'" onclick="this.select()" style="width:100%;box-sizing:border-box;background:var(--d3);border:1px solid var(--w08);border-radius:6px;padding:7px 9px;font-size:10px;color:var(--w70);font-family:monospace;margin-bottom:6px">'+
+    '<div style="display:flex;gap:6px;flex-wrap:wrap"><button onclick="navigator.clipboard&&navigator.clipboard.writeText(this.parentNode.previousSibling.value);this.textContent=\'Copied ✓\'" style="padding:6px 10px;background:var(--lime);border:none;border-radius:6px;font-size:10px;font-weight:700;color:var(--dk);cursor:pointer;font-family:inherit">Copy link</button>'+
+    '<a href="'+decEsc(sms)+'" style="padding:6px 10px;background:var(--d3);border:1px solid var(--w08);border-radius:6px;font-size:10px;font-weight:600;color:var(--w70);text-decoration:none">Text it</a>'+
+    '<a href="'+decEsc(mail)+'" style="padding:6px 10px;background:var(--d3);border:1px solid var(--w08);border-radius:6px;font-size:10px;font-weight:600;color:var(--w70);text-decoration:none">Email it</a></div></div>';
+}
+function pjViewDoc(id){
+  if (!PROJ_LIVE) { alert('Documents open on the live site after sign-in.'); return; }
+  window.open('/api/project?project='+DEC_PROJECT+'&action=file&bid='+encodeURIComponent(id), '_blank', 'noopener');
+}
+
+/* hire / don't hire popups (reuse the decision popup shell) */
+function pjModal(html){ var m=document.getElementById('dec-modal'); DEC_MODAL={id:null, view:'project'}; m.style.display='flex'; document.getElementById('dec-modal-body').innerHTML = html; }
+function pjBid(id){ return (PROJ.bids||[]).filter(function(b){return b.id===id;})[0]; }
+function pjChoose(id){
+  var b = pjBid(id); if (!b) return;
+  pjModal('<div style="font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--sage);margin-bottom:2px">Proposal</div>'+
+    '<div style="font-family:Syne,sans-serif;font-size:18px;font-weight:800;color:var(--white);margin-bottom:4px">'+decEsc(b.gcName)+'</div>'+
+    '<div style="font-size:11px;color:var(--w50);margin-bottom:12px">'+(b.amount?'<b style="color:var(--lime);font-size:14px">'+pjMoney(b.amount)+'</b> · ':'')+'Submitted '+pjDate(b.submittedAt)+'</div>'+
+    (b.note ? '<div style="font-size:11px;color:var(--w70);line-height:1.6;background:var(--d3);border:1px solid var(--w08);border-radius:9px;padding:10px 12px;margin-bottom:12px">'+decEsc(b.note)+'</div>' : '')+
+    (b.file ? '<button onclick="pjViewDoc(\''+b.id+'\')" style="width:100%;padding:10px;margin-bottom:14px;background:var(--d3);border:1px solid var(--w08);border-radius:9px;font-size:11px;font-weight:600;color:var(--w70);cursor:pointer;font-family:inherit"><i class="ti ti-file-text"></i> View document</button>' : '')+
+    '<div style="display:flex;gap:8px"><button onclick="pjHireConfirm(\''+b.id+'\')" style="flex:1;padding:13px;background:var(--lime);border:none;border-radius:9px;font-size:13px;font-weight:800;color:var(--dk);cursor:pointer;font-family:inherit">Hire</button>'+
+    '<button onclick="pjDeclineConfirm(\''+b.id+'\')" style="flex:1;padding:13px;background:none;border:1px solid rgba(224,122,95,.35);border-radius:9px;font-size:13px;font-weight:700;color:#E07A5F;cursor:pointer;font-family:inherit">Don\'t hire</button></div>');
+}
+function pjHireConfirm(id){
+  var b = pjBid(id); if (!b) return;
+  var needContact = !b.email;
+  var inp = 'width:100%;box-sizing:border-box;background:var(--d2);border:1px solid var(--w08);border-radius:8px;padding:10px;font-size:13px;color:var(--white);font-family:inherit;margin-bottom:8px';
+  pjModal('<div style="background:var(--l10);border:1px solid var(--l20);border-radius:10px;padding:14px">'+
+    '<div style="font-family:Syne,sans-serif;font-size:15px;font-weight:800;color:var(--white);margin-bottom:6px">Hire '+decEsc(b.gcName)+' as your GC?</div>'+
+    '<div style="font-size:11px;color:var(--w70);line-height:1.65;margin-bottom:12px">They get a congratulations email with a link to open the project and start the kickoff checklist. Other proposals stay on file as not selected.</div>'+
+    (needContact ? '<div style="font-size:9px;color:var(--sage);margin-bottom:4px">GC email (for the hire notice + their account)</div><input id="pj-hire-email" type="email" placeholder="name@company.com" style="'+inp+'">'+
+      '<div style="font-size:9px;color:var(--sage);margin-bottom:4px">GC mobile (optional, for a text)</div><input id="pj-hire-phone" type="tel" placeholder="(310) 555-0100" style="'+inp+'">' : '')+
+    '<div id="pj-err" style="display:none;font-size:10px;color:#E07A5F;margin-bottom:8px"></div>'+
+    '<div style="display:flex;gap:8px"><button id="pj-hire-btn" onclick="pjHire(\''+b.id+'\')" style="flex:1;padding:12px;background:var(--ok);border:none;border-radius:8px;font-size:12px;font-weight:800;color:var(--dk);cursor:pointer;font-family:inherit">✓ Yes, hire</button>'+
+    '<button onclick="pjChoose(\''+b.id+'\')" style="padding:12px 14px;background:var(--d4);border:1px solid var(--w08);border-radius:8px;font-size:11px;font-weight:600;color:var(--w70);cursor:pointer;font-family:inherit">Back</button></div></div>');
+}
+function pjHire(id){
+  var btn = document.getElementById('pj-hire-btn'); btn.disabled = true; btn.textContent = 'Hiring…';
+  var em = document.getElementById('pj-hire-email'), ph = document.getElementById('pj-hire-phone');
+  pjPost({action:'hire', bidId:id, email: em ? em.value.trim() : undefined, phone: ph ? ph.value.trim() : undefined}).then(function(j){
+    if (!j.ok) { btn.disabled=false; btn.textContent='✓ Yes, hire'; var e=document.getElementById('pj-err'); e.style.display='block'; e.textContent=pjErr(j); return; }
+    var b = pjBid(id);
+    pjModal('<div style="text-align:center;padding:6px 0 12px"><div style="font-size:30px">🎉</div>'+
+      '<div style="font-family:Syne,sans-serif;font-size:17px;font-weight:800;color:var(--ok);margin:4px 0">'+decEsc(j.hiredGc.company||j.hiredGc.name)+' hired</div>'+
+      '<div style="font-size:11px;color:var(--w60,rgba(253,255,254,.6));line-height:1.6">'+(j.emailed ? 'Congratulations email sent to '+decEsc(j.hiredGc.identifier)+'.' : 'Send them the link so they can open the project:')+'</div></div>'+
+      pjShareBox('Hire notice link for '+decEsc(pjFirst(j.hiredGc.name)), j.link, j.sms, j.phone, j.hiredGc.identifier, 'You\'ve been hired — 141 N Anita')+
+      '<button onclick="decClose()" style="width:100%;margin-top:12px;padding:11px;background:var(--d4);border:1px solid var(--w08);border-radius:8px;font-size:12px;font-weight:600;color:var(--w70);cursor:pointer;font-family:inherit">Done</button>');
+    pjLoad();
+  });
+}
+function pjDeclineConfirm(id){
+  var b = pjBid(id); if (!b) return;
+  pjModal('<div style="background:var(--d3);border:1px solid var(--w08);border-radius:10px;padding:14px">'+
+    '<div style="font-family:Syne,sans-serif;font-size:15px;font-weight:800;color:var(--white);margin-bottom:6px">Don\'t hire '+decEsc(b.gcName)+'?</div>'+
+    '<div style="font-size:11px;color:var(--w70);line-height:1.6;margin-bottom:12px">Their proposal stays on file, marked not hired.</div>'+
+    '<div style="display:flex;gap:8px"><button onclick="pjDecline(\''+b.id+'\',this)" style="flex:1;padding:12px;background:none;border:1px solid rgba(224,122,95,.4);border-radius:8px;font-size:12px;font-weight:700;color:#E07A5F;cursor:pointer;font-family:inherit">Yes, don\'t hire</button>'+
+    '<button onclick="pjChoose(\''+b.id+'\')" style="padding:12px 14px;background:var(--d4);border:1px solid var(--w08);border-radius:8px;font-size:11px;font-weight:600;color:var(--w70);cursor:pointer;font-family:inherit">Back</button></div></div>');
+}
+function pjDecline(id, btn){ btn.disabled=true; pjPost({action:'decline', bidId:id}).then(function(j){ if(!j.ok){ alert(pjErr(j)); btn.disabled=false; return; } decClose(); pjLoad(); }); }
+
+/* ════════ KICKOFF CHECKLIST (below Project Timeline) ════════ */
+function pjItemDone(i){ return i.type==='agreement' ? (i.gcAgreed && i.clientAgreed) : !!i.done; }
+function pjRenderKickoff(){
+  var el = document.getElementById('kickoff-card'); if (!el || !PROJ) return;
+  var role = pjRole(), actor = pjActor();
+  if (PROJ.stage === 'bidding') {
+    var n = (PROJ.bids||[]).filter(function(b){return b.status==='submitted';}).length;
+    el.innerHTML = '<div style="background:var(--d3);border:1px solid var(--w08);border-radius:var(--r);padding:16px 18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">'+
+      '<div style="font-size:26px">🤝</div><div style="flex:1;min-width:200px"><div style="font-family:Syne,sans-serif;font-size:14px;font-weight:800;color:var(--white)">Choosing your GC</div>'+
+      '<div style="font-size:11px;color:var(--w50);line-height:1.6;margin-top:2px">'+n+' proposal'+(n===1?'':'s')+' received. The kickoff checklist opens here once a GC is hired.</div></div>'+
+      (pjIsOwner() ? '<button onclick="sbNav(document.getElementById(\'nav-btn-proposals\'),\'proposals\')" style="padding:10px 16px;background:var(--lime);border:none;border-radius:8px;font-size:12px;font-weight:700;color:var(--dk);cursor:pointer;font-family:inherit">Review proposals</button>' : '')+
+    '</div>';
+    return;
+  }
+  if (role === 'trade') { el.innerHTML = ''; return; }
+  var items = (PROJ.kickoff && PROJ.kickoff.items) || [];
+  var req = items.filter(function(i){return i.required;});
+  var done = req.filter(pjItemDone).length;
+  var pct = req.length ? Math.round(done/req.length*100) : 0;
+  var groups = [];
+  items.forEach(function(i){ if (groups.indexOf(i.group) === -1) groups.push(i.group); });
+  var started = PROJ.stage === 'active';
+  var canStart = !started && actor === 'gc' && done === req.length;
+  var head = '<div style="display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:12px">'+
+    '<div style="flex:1;min-width:220px"><div style="font-family:Syne,sans-serif;font-size:15px;font-weight:800;color:rgba(253,255,254,.9);text-transform:uppercase;letter-spacing:-.01em">Kickoff checklist</div>'+
+    '<div style="font-size:11px;color:var(--w50);margin-top:3px">'+(started ? 'Project started '+pjDate(PROJ.startedAt)+' by '+decEsc(gcLabel())+'. New items still need the owner\'s confirmation.' : (actor==='gc' ? 'Review, edit and complete every required item, then start the project.' : decEsc(gcLabel())+' is working through kickoff. Items marked “Your agreement” need you.'))+'</div></div>'+
+    (started ? '<span style="font-size:10px;font-weight:700;padding:6px 12px;border-radius:20px;background:var(--ok15);color:var(--ok);border:1px solid var(--ok30)">✓ Project started</span>'
+      : actor==='gc' ? '<button id="pj-start-btn" onclick="pjStartConfirm()" '+(canStart?'':'disabled')+' style="padding:11px 18px;background:'+(canStart?'var(--lime)':'var(--d4)')+';border:'+(canStart?'none':'1px solid var(--w08)')+';border-radius:9px;font-size:12px;font-weight:800;color:'+(canStart?'var(--dk)':'var(--w30)')+';cursor:'+(canStart?'pointer':'default')+';font-family:inherit">'+(canStart?'▶ Start Project':'Start Project · '+(req.length-done)+' left')+'</button>' : '')+
+  '</div>'+
+  '<div style="display:flex;align-items:center;gap:8px;margin-bottom:14px"><div style="flex:1;height:5px;background:var(--w08);border-radius:3px;overflow:hidden"><div style="height:100%;width:'+pct+'%;background:var(--ok)"></div></div><span style="font-size:10px;font-weight:700;color:var(--ok)">'+done+' / '+req.length+' required</span></div>';
+
+  var body = groups.map(function(g){
+    return '<div style="margin-bottom:12px"><div style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--sage);margin-bottom:6px">'+decEsc(g)+'</div>'+
+      items.filter(function(i){return i.group===g;}).map(pjItemRow).join('')+'</div>';
+  }).join('');
+  var add = actor==='gc' ? '<div id="pj-add-wrap"><button onclick="pjAddForm()" style="width:100%;padding:10px;background:none;border:1.5px dashed var(--l20);border-radius:9px;color:var(--lime);font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">+ Add checklist item</button></div>' : '';
+  el.innerHTML = '<div style="background:var(--d3);border:1px solid var(--w08);border-radius:14px;padding:26px 28px">'+head+body+add+'</div>';
+}
+
+function pjItemRow(i){
+  var actor = pjActor(), done = pjItemDone(i);
+  var ownerTag = i.type==='agreement' ? 'GC + Owner' : i.owner==='client' ? 'Owner' : gcLabel();
+  var tags = (i.tags||[]).map(function(t){
+    var pl = t==='Permits Later';
+    return '<span style="font-size:8px;font-weight:700;padding:2px 7px;border-radius:20px;background:'+(pl?'rgba(91,155,213,.15)':'var(--w04)')+';color:'+(pl?'#8BBCE0':'var(--w50)')+';border:1px solid '+(pl?'rgba(91,155,213,.35)':'var(--w08)')+'">'+decEsc(t)+'</span>';
+  }).join(' ');
+  var control;
+  if (i.type === 'agreement') {
+    var mine = actor==='gc' ? i.gcAgreed : actor==='client' ? i.clientAgreed : null;
+    control = '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0">'+
+      '<div style="display:flex;gap:4px;font-size:9px;font-weight:700"><span style="padding:2px 6px;border-radius:20px;'+(i.gcAgreed?'background:var(--ok15);color:var(--ok)':'background:var(--w04);color:var(--w30)')+'">GC '+(i.gcAgreed?'✓':'○')+'</span>'+
+      '<span style="padding:2px 6px;border-radius:20px;'+(i.clientAgreed?'background:var(--ok15);color:var(--ok)':'background:var(--w04);color:var(--w30)')+'">Owner '+(i.clientAgreed?'✓':'○')+'</span></div>'+
+      (actor ? '<button onclick="pjOp(\''+(mine?'unagree':'agree')+'\',\''+i.id+'\',this)" style="padding:6px 11px;border-radius:7px;font-size:10px;font-weight:700;cursor:pointer;font-family:inherit;'+(mine?'background:none;border:1px solid var(--w08);color:var(--w50)':'background:var(--lime);border:none;color:var(--dk)')+'">'+(mine?'Agreed ✓':(actor==='client'?'Your agreement':'Agree'))+'</button>' : '')+
+    '</div>';
+  } else {
+    var can = actor==='gc' || (actor==='client' && i.owner==='client');
+    control = '<button '+(can?'onclick="pjOp(\'toggle\',\''+i.id+'\',this)"':'disabled')+' aria-label="Mark done" style="width:24px;height:24px;border-radius:7px;flex-shrink:0;cursor:'+(can?'pointer':'default')+';font-size:12px;font-weight:800;'+(done?'background:var(--ok);border:none;color:var(--dk)':'background:var(--d2);border:1.5px solid var(--w15);color:transparent')+'">✓</button>';
+  }
+  var confirm = (i.needsClientConfirm && !i.clientConfirmed)
+    ? (actor==='client' ? '<button onclick="pjOp(\'confirm\',\''+i.id+'\',this)" style="margin-top:6px;padding:5px 10px;background:var(--am15);border:1px solid var(--am30);border-radius:6px;font-size:9px;font-weight:700;color:var(--amb);cursor:pointer;font-family:inherit">Confirm this change</button>'
+      : '<div style="margin-top:5px;font-size:9px;font-weight:700;color:var(--amb)">Waiting on owner confirmation</div>') : '';
+  var gcTools = actor==='gc' ? '<div style="display:flex;gap:10px;margin-top:6px;flex-wrap:wrap">'+
+    '<button onclick="pjEdit(\''+i.id+'\')" style="background:none;border:none;padding:0;font-size:9px;font-weight:600;color:var(--w50);cursor:pointer;font-family:inherit">Edit</button>'+
+    '<button onclick="pjTagMenu(\''+i.id+'\')" style="background:none;border:none;padding:0;font-size:9px;font-weight:600;color:var(--w50);cursor:pointer;font-family:inherit">Tag</button>'+
+    '<button onclick="pjDelete(\''+i.id+'\')" style="background:none;border:none;padding:0;font-size:9px;font-weight:600;color:rgba(224,122,95,.8);cursor:pointer;font-family:inherit">Remove</button></div>' : '';
+  return '<div data-item="'+i.id+'" style="display:flex;align-items:flex-start;gap:12px;padding:14px 16px;margin-bottom:10px;border-radius:10px;background:var(--d2);border:1px solid '+(done?'rgba(74,155,111,.25)':'var(--w08)')+'">'+
+    (i.type==='agreement' ? '' : control)+
+    '<div style="flex:1;min-width:0">'+
+      '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap"><span style="font-size:12px;font-weight:600;color:'+(done?'var(--w50)':'var(--white)')+';'+(done && i.type!=='agreement'?'text-decoration:line-through;text-decoration-color:rgba(253,255,254,.25)':'')+'">'+decEsc(i.text)+'</span>'+
+      (i.required?'':'<span style="font-size:8px;color:var(--w30)">optional</span>')+'</div>'+
+      (i.detail ? '<div style="font-size:10px;color:var(--w50);line-height:1.5;margin-top:2px">'+decEsc(i.detail)+'</div>' : '')+
+      '<div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:5px;align-items:center"><span style="font-size:8px;font-weight:700;padding:2px 7px;border-radius:20px;background:var(--l10);color:var(--lime);border:1px solid var(--l20)">'+decEsc(ownerTag)+'</span>'+tags+'</div>'+
+      confirm + gcTools +
+    '</div>'+
+    (i.type==='agreement' ? control : '')+
+  '</div>';
+}
+
+function pjOp(op, id, btn, extra){
+  if (btn) { btn.disabled = true; btn.style.opacity = '.5'; }
+  return pjPost(Object.assign({action:'kickoff', op:op, id:id}, extra||{})).then(function(j){
+    if (!j.ok) { if (btn) { btn.disabled=false; btn.style.opacity='1'; } alert(pjErr(j)); return j; }
+    PROJ.kickoff = j.kickoff; pjRenderKickoff(); pjRenderBrief();
+    return j;
+  });
+}
+function pjEdit(id){
+  var i = PROJ.kickoff.items.filter(function(x){return x.id===id;})[0]; if (!i) return;
+  var inp = 'width:100%;box-sizing:border-box;background:var(--d2);border:1px solid var(--w08);border-radius:8px;padding:10px;font-size:12px;color:var(--white);font-family:inherit;margin-bottom:8px';
+  pjModal('<div style="font-family:Syne,sans-serif;font-size:15px;font-weight:800;color:var(--white);margin-bottom:10px">Edit checklist item</div>'+
+    '<div style="font-size:9px;color:var(--sage);margin-bottom:4px">Item</div><input id="pj-e-text" value="'+decEsc(i.text)+'" style="'+inp+'">'+
+    '<div style="font-size:9px;color:var(--sage);margin-bottom:4px">Details</div><textarea id="pj-e-detail" rows="3" style="'+inp+';resize:vertical">'+decEsc(i.detail||'')+'</textarea>'+
+    '<label style="display:flex;align-items:center;gap:8px;font-size:11px;color:var(--w70);margin-bottom:12px"><input id="pj-e-req" type="checkbox" '+(i.required?'checked':'')+' style="accent-color:var(--lime)"> Required before Start Project</label>'+
+    (PROJ.stage==='active' ? '<div style="font-size:10px;color:var(--amb);margin-bottom:10px">The project has started, so the owner gets a notification to confirm this change.</div>' : '')+
+    '<button onclick="pjOp(\'edit\',\''+i.id+'\',this,{text:document.getElementById(\'pj-e-text\').value,detail:document.getElementById(\'pj-e-detail\').value,required:document.getElementById(\'pj-e-req\').checked}).then(function(j){ if(j&&j.ok) decClose(); })" style="width:100%;padding:11px;background:var(--lime);border:none;border-radius:8px;font-size:12px;font-weight:700;color:var(--dk);cursor:pointer;font-family:inherit">Save</button>');
+}
+function pjTagMenu(id){
+  var i = PROJ.kickoff.items.filter(function(x){return x.id===id;})[0]; if (!i) return;
+  pjModal('<div style="font-family:Syne,sans-serif;font-size:15px;font-weight:800;color:var(--white);margin-bottom:4px">Tag item</div>'+
+    '<div style="font-size:11px;color:var(--w50);margin-bottom:12px">'+decEsc(i.text)+'</div><div style="display:flex;gap:6px;flex-wrap:wrap">'+
+    PROJ_TAGS.map(function(t){ var on=(i.tags||[]).indexOf(t)!==-1;
+      return '<button onclick="pjOp(\'tag\',\''+i.id+'\',this,{tag:\''+t+'\'}).then(function(j){ if(j&&j.ok) pjTagMenu(\''+i.id+'\'); })" style="padding:8px 12px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;'+(on?'background:var(--l10);border:1px solid var(--l20);color:var(--lime)':'background:var(--d3);border:1px solid var(--w08);color:var(--w50)')+'">'+(on?'✓ ':'')+t+'</button>'; }).join('')+
+    '</div><button onclick="decClose()" style="width:100%;margin-top:14px;padding:10px;background:var(--d4);border:1px solid var(--w08);border-radius:8px;font-size:12px;font-weight:600;color:var(--w70);cursor:pointer;font-family:inherit">Done</button>');
+}
+function pjDelete(id){
+  var i = PROJ.kickoff.items.filter(function(x){return x.id===id;})[0]; if (!i) return;
+  pjModal('<div style="font-family:Syne,sans-serif;font-size:15px;font-weight:800;color:var(--white);margin-bottom:6px">Remove this item?</div><div style="font-size:11px;color:var(--w50);margin-bottom:14px">'+decEsc(i.text)+'</div>'+
+    '<div style="display:flex;gap:8px"><button onclick="pjOp(\'delete\',\''+i.id+'\',this).then(function(j){ if(j&&j.ok) decClose(); })" style="flex:1;padding:11px;background:none;border:1px solid rgba(224,122,95,.4);border-radius:8px;font-size:12px;font-weight:700;color:#E07A5F;cursor:pointer;font-family:inherit">Remove</button>'+
+    '<button onclick="decClose()" style="padding:11px 14px;background:var(--d4);border:1px solid var(--w08);border-radius:8px;font-size:11px;color:var(--w70);cursor:pointer;font-family:inherit">Cancel</button></div>');
+}
+function pjAddForm(){
+  var inp = 'width:100%;box-sizing:border-box;background:var(--d2);border:1px solid var(--w08);border-radius:8px;padding:10px;font-size:12px;color:var(--white);font-family:inherit;margin-bottom:8px';
+  pjModal('<div style="font-family:Syne,sans-serif;font-size:15px;font-weight:800;color:var(--white);margin-bottom:10px">Add checklist item</div>'+
+    '<div style="font-size:9px;color:var(--sage);margin-bottom:4px">Item</div><input id="pj-a-text" placeholder="e.g. Unpermitted rear outbuilding — agree handling" style="'+inp+'">'+
+    '<div style="font-size:9px;color:var(--sage);margin-bottom:4px">Details (optional)</div><textarea id="pj-a-detail" rows="2" style="'+inp+';resize:vertical"></textarea>'+
+    '<div style="font-size:9px;color:var(--sage);margin-bottom:4px">Type</div><select id="pj-a-type" style="'+inp+'"><option value="task">Task (GC)</option><option value="client">Task (Owner)</option><option value="agreement">Agreement (GC + Owner)</option></select>'+
+    '<div style="font-size:9px;color:var(--sage);margin-bottom:4px">Tag (optional)</div><select id="pj-a-tag" style="'+inp+'"><option value="">None</option>'+PROJ_TAGS.map(function(t){return '<option>'+t+'</option>';}).join('')+'</select>'+
+    '<label style="display:flex;align-items:center;gap:8px;font-size:11px;color:var(--w70);margin-bottom:12px"><input id="pj-a-req" type="checkbox" checked style="accent-color:var(--lime)"> Required before Start Project</label>'+
+    (PROJ.stage==='active' ? '<div style="font-size:10px;color:var(--amb);margin-bottom:10px">The project has started, so the owner gets a notification to confirm this item.</div>' : '')+
+    '<div id="pj-err" style="display:none;font-size:10px;color:#E07A5F;margin-bottom:8px"></div>'+
+    '<button onclick="pjAdd(this)" style="width:100%;padding:11px;background:var(--lime);border:none;border-radius:8px;font-size:12px;font-weight:700;color:var(--dk);cursor:pointer;font-family:inherit">Add to checklist</button>');
+}
+function pjAdd(btn){
+  var g = function(id){ return (document.getElementById(id)||{}).value||''; };
+  var type = g('pj-a-type'), tag = g('pj-a-tag');
+  if (!g('pj-a-text').trim()) { var e=document.getElementById('pj-err'); e.style.display='block'; e.textContent='Add a description.'; return; }
+  pjOp('add', null, btn, {text:g('pj-a-text'), detail:g('pj-a-detail'), type: type==='agreement'?'agreement':'task', owner: type==='client'?'client':'gc',
+    required: document.getElementById('pj-a-req').checked, tags: (type!=='agreement' && tag) ? [tag] : [], agreeTag: type==='agreement' ? tag : ''})
+    .then(function(j){ if (j && j.ok) decClose(); });
+}
+function pjStartConfirm(){
+  pjModal('<div style="background:var(--l10);border:1px solid var(--l20);border-radius:10px;padding:14px">'+
+    '<div style="font-family:Syne,sans-serif;font-size:16px;font-weight:800;color:var(--white);margin-bottom:6px">Start the project?</div>'+
+    '<div style="font-size:11px;color:var(--w70);line-height:1.65;margin-bottom:12px">The homeowner is notified that the project has started. You can keep editing the checklist and add change orders anytime; the owner confirms each change.</div>'+
+    '<div id="pj-err" style="display:none;font-size:10px;color:#E07A5F;margin-bottom:8px"></div>'+
+    '<div style="display:flex;gap:8px"><button id="pj-start-go" onclick="pjStart(this)" style="flex:1;padding:12px;background:var(--lime);border:none;border-radius:8px;font-size:12px;font-weight:800;color:var(--dk);cursor:pointer;font-family:inherit">▶ Start Project</button>'+
+    '<button onclick="decClose()" style="padding:12px 14px;background:var(--d4);border:1px solid var(--w08);border-radius:8px;font-size:11px;color:var(--w70);cursor:pointer;font-family:inherit">Not yet</button></div></div>');
+}
+function pjStart(btn){
+  btn.disabled = true; btn.textContent = 'Starting…';
+  pjPost({action:'start'}).then(function(j){
+    if (!j.ok) { btn.disabled=false; btn.textContent='▶ Start Project'; var e=document.getElementById('pj-err'); e.style.display='block'; e.textContent=pjErr(j)+(j.open?' ('+j.open.slice(0,3).join(', ')+')':''); return; }
+    pjModal('<div style="text-align:center;padding:10px 0"><div style="font-size:30px">🚀</div><div style="font-family:Syne,sans-serif;font-size:17px;font-weight:800;color:var(--ok);margin:6px 0">Project started</div>'+
+      '<div style="font-size:11px;color:var(--w60,rgba(253,255,254,.6))">The homeowner has been notified.</div>'+
+      '<button onclick="decClose()" style="width:100%;margin-top:14px;padding:11px;background:var(--d4);border:1px solid var(--w08);border-radius:8px;font-size:12px;font-weight:600;color:var(--w70);cursor:pointer;font-family:inherit">Done</button></div>');
+    pjLoad();
+  });
+}
+
+function pjInit(){
+  pjLoad();
+  setInterval(function(){ if (document.visibilityState==='visible') pjLoad(); }, 60000);
+  document.addEventListener('visibilitychange', function(){ if (document.visibilityState==='visible') pjLoad(); });
+}
+
+
+/* ══════════════════════════════════════════════════
+   v05 — HOMEOWNER PERSPECTIVE (landing / Progress + Facts & features)
+   Later declarations override the earlier versions of these functions.
+   ══════════════════════════════════════════════════ */
+
+/* ── owner names: "Dave and Heather" ── */
+function hoJoinNames(list){
+  list = (list || []).filter(Boolean);
+  if (list.length <= 1) return list[0] || '';
+  return list.slice(0, -1).join(', ') + ' and ' + list[list.length - 1];
+}
+function hoOwnerNames(){
+  var names = (PROJ && PROJ.clientNames && PROJ.clientNames.length) ? PROJ.clientNames
+    : (window.CG_SESSION && CG_SESSION.memberRole === 'client') ? [CG_SESSION.user.name] : [];
+  var firsts = [];
+  names.forEach(function(n){ var f = pjFirst(n); if (f && firsts.indexOf(f) === -1) firsts.push(f); });
+  return hoJoinNames(firsts);
+}
+function hoMark(word, action){
+  return '<button onclick="' + action + '" style="display:inline;font:inherit;font-weight:700;color:var(--lime);background:var(--l10);border:1px solid var(--l20);border-radius:6px;padding:0 7px;margin:0 1px;cursor:pointer;line-height:1.6">' + word + '</button>';
+}
+function hoGoProposals(){ var b = document.getElementById('nav-btn-proposals'); sbNav(b, 'proposals'); }
+
+/* ── Box 1: greeting + trades on site + highlighted action items ── */
+function pjRenderBrief(){
+  var br = document.getElementById('pg-brief'), gr = document.getElementById('pg-greeting'), dl = document.getElementById('pg-date');
+  if (!br || !PROJ) return;
+  var h = new Date().getHours(), hi = h<12 ? 'Good morning' : h<17 ? 'Good afternoon' : 'Good evening';
+  var role = pjRole(), isClientView = role === 'client';
+  var me = isClientView ? (hoOwnerNames() || 'there') : (window.CG_SESSION ? pjFirst(CG_SESSION.user.name) : (pjGcFirst() || 'Ben'));
+  if (gr) gr.textContent = hi + ', ' + me + '.';
+
+  var items = (PROJ.kickoff && PROJ.kickoff.items) || [];
+  var req = items.filter(function(i){ return i.required; });
+  var done = req.filter(pjItemDone).length;
+  var needOwner = items.filter(function(i){ return i.type === 'agreement' && !i.clientAgreed; }).length;
+  var toConfirm = items.filter(function(i){ return i.needsClientConfirm && !i.clientConfirmed; }).length;
+  var nextItem = items.filter(function(i){ return i.required && !pjItemDone(i); })[0];
+  var openDecisions = typeof decOpenCount === 'function' ? decOpenCount() : 0;
+  var onsite = (typeof PG_ONSITE !== 'undefined' ? PG_ONSITE : []).map(pgTradeLabel);
+  var gf = pjGcFirst();
+
+  if (!isClientView) {
+    // GC / trade keep the condensed operational brief
+    var nBids = (PROJ.bids || []).filter(function(b){ return b.status === 'submitted'; }).length, s;
+    if (PROJ.stage === 'bidding') s = 'The owner is collecting GC proposals for 141 N Anita' + (nBids ? ' (' + nBids + ' in)' : '') + '. Work starts once a GC is hired and kickoff is complete.';
+    else if (PROJ.stage === 'kickoff') s = 'You\'re hired on 141 N Anita — ' + done + ' of ' + req.length + ' kickoff items done' + (needOwner ? ', ' + needOwner + ' waiting on the owner\'s agreement' : '') + '. ' + (nextItem ? 'Next: ' + nextItem.text + '.' : 'Everything\'s ready — tap Start Project.');
+    else {
+      var nextPhase = hoNextPhase();
+      s = 'Project live since ' + pjDate(PROJ.startedAt) + (openDecisions ? ' — ' + openDecisions + ' decision' + (openDecisions === 1 ? '' : 's') + ' waiting on the owner' : '') + '. ' + (nextPhase ? 'Next: ' + nextPhase + '.' : '');
+    }
+    br.textContent = s;
+    return;
+  }
+
+  // Owner: date only up top, then trades on site, then the action items
+  if (dl) {
+    var d = new Date(), days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'], months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    dl.textContent = days[d.getDay()] + ' · ' + months[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear();
+  }
+  var trades = onsite.length ? 'On site today: ' + onsite.join(', ') + '.' : 'There are no trades / subs on site today.';
+  var act = '', follow = '';
+  var testing = 'Followed by environmental testing to allow us to submit the LADBS demolition permit for approval.';
+  if (PROJ.stage === 'bidding') {
+    var bids = (PROJ.bids || []).filter(function(b){ return b.status === 'submitted'; });
+    if (bids.length === 1) {
+      var b = bids[0];
+      act = 'Phase 1 approval from ' + decEsc(b.gcName) + ' needs to be ' + hoMark('approved', "pjChoose('" + b.id + "')") + ' / ' + hoMark('clarified', 'hoGoProposals()') + ' further and ' + hoMark('signed', "pjChoose('" + b.id + "')") + '.';
+    } else if (bids.length > 1) {
+      act = bids.length + ' GC proposals are in — one needs to be ' + hoMark('approved', 'hoGoProposals()') + ' / ' + hoMark('clarified', 'hoGoProposals()') + ' further and ' + hoMark('signed', 'hoGoProposals()') + '.';
+    } else {
+      act = 'Invite GCs to ' + hoMark('bid', 'hoGoProposals()') + ' on Phase 1.';
+    }
+    follow = testing;
+  } else {
+    var contract = (typeof decAll === 'function') ? decAll().filter(function(x){ return x.type === 'contract' && x.status !== 'approved'; })[0] : null;
+    var parts = [];
+    if (contract) parts.push('Phase 1 contract with ' + decEsc((PROJ.hiredGc && (PROJ.hiredGc.company || PROJ.hiredGc.name)) || 'your GC') + ' needs to be ' + hoMark('approved', "decOpen('" + contract.id + "','review')") + ' / ' + hoMark('clarified', "decOpen('" + contract.id + "','discuss')") + ' further and ' + hoMark('signed', "decOpen('" + contract.id + "','review')") + '.');
+    if (PROJ.stage === 'kickoff' && needOwner) parts.push(needOwner + ' kickoff item' + (needOwner === 1 ? ' needs' : 's need') + ' your ' + hoMark('agreement', "document.getElementById('kickoff-card').scrollIntoView({behavior:'smooth'})") + '.');
+    if (toConfirm) parts.push(toConfirm + ' checklist change' + (toConfirm === 1 ? ' needs' : 's need') + ' your ' + hoMark('confirmation', "document.getElementById('kickoff-card').scrollIntoView({behavior:'smooth'})") + '.');
+    var otherDec = openDecisions - (contract ? 1 : 0);
+    if (otherDec > 0) parts.push(otherDec + ' decision' + (otherDec === 1 ? ' needs' : 's need') + ' to be ' + hoMark('approved', "rpTab('decisions',document.querySelector('.rpt'));if(window.innerWidth<=720)mobDrawerTab('decisions')") + '.');
+    act = parts.length ? parts.join(' ') : (PROJ.stage === 'active' ? (gf + ' started your project on ' + pjDate(PROJ.startedAt) + '. Nothing needs your approval right now.') : gf + ' is setting up your project. Nothing needs your approval right now.');
+    if (PROJ.stage !== 'active') follow = testing;
+    else { var np = hoNextPhase(); follow = np ? 'Next up: ' + np + '.' : ''; }
+  }
+  br.innerHTML = '<div style="margin-bottom:10px;color:var(--w70)">' + trades + '</div>' +
+    '<div style="color:var(--w70)">' + act + (follow ? ' ' + follow : '') + '</div>';
+}
+function hoNextPhase(){
+  if (typeof PG_PHASES === 'undefined') return '';
+  for (var i = 0; i < PG_PHASES.length; i++) {
+    var it = (PG_PHASES[i].items || []).filter(function(x){ return x.s !== 'done'; })[0];
+    if (it) return it.n;
+  }
+  return '';
+}
+
+/* ── Box 2: "0% Start" until the project starts ── */
+function hoRenderRing(){
+  var pct = document.getElementById('pg-pct'), lbl = document.getElementById('pg-pct-lbl'), ring = document.getElementById('pg-ring');
+  if (!pct || !lbl || !ring) return;
+  var started = PROJ && PROJ.stage === 'active';
+  var p = 0;                                   // real % comes from completed phases once work begins
+  pct.textContent = p + '%';
+  lbl.textContent = started ? 'complete' : 'Start';
+  ring.setAttribute('stroke-dashoffset', String(314 - Math.round(314 * p / 100)));
+}
+var _hoApply = pjApply;
+pjApply = function(){ _hoApply(); hoRenderRing(); hoSyncNav(); };
+
+/* ── left nav highlights the screen actually showing ── */
+function hoSyncNav(){
+  var on = document.querySelector('.screen.on'); if (!on) return;
+  var name = on.id.replace(/^sc-/, '');
+  var match = null;
+  document.querySelectorAll('.nav-btn').forEach(function(b){
+    var oc = b.getAttribute('onclick') || '';
+    if (!match && oc.indexOf("'" + name + "'") !== -1) match = b;
+  });
+  if (!match) return;
+  document.querySelectorAll('.nav-btn').forEach(function(b){ b.classList.remove('on'); });
+  match.classList.add('on');
+  var sec = match.closest('.nav-sec-items');
+  if (sec && !sec.classList.contains('open')) {
+    document.querySelectorAll('.nav-sec-items').forEach(function(s){ s.classList.remove('open'); });
+    sec.classList.add('open');
+  }
+}
+var _hoGoScreen = goScreen;
+goScreen = function(name){ _hoGoScreen(name); hoSyncNav(); };
+
+/* ── Facts & features: goal + address | photo, then Property tiles ── */
+PROPERTY_FACTS.goal = 'Tear this old house down';
+PROPERTY_FACTS.groups.forEach(function(g){ if (g.title === 'Property') g.title = 'Home details'; });
+function renderFacts(){
+  var el = document.getElementById('pf-body'); if (!el) return;
+  var F = PROPERTY_FACTS;
+  var up = document.getElementById('pf-updated');
+  if (up) up.textContent = 'Public records · pulled ' + F.pulled;
+  var showFin = (typeof CG_ROLE === 'undefined') || (CG_ROLE !== 'trade' && CG_ROLE !== 'javier');
+  var hero = (typeof PROJECT_PHOTOS !== 'undefined') ? PROJECT_PHOTOS.filter(function(p){ return p.phase === 'before'; })[0] : null;
+  var card = 'background:var(--d3);border:1px solid var(--w08);border-radius:14px';
+  var eyebrow = 'font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--sage);margin-bottom:10px';
+  var html = '';
+
+  // section 1 — two columns: [goal / address] | [photo]
+  html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;margin-bottom:22px">' +
+    '<div style="display:flex;flex-direction:column;gap:18px;min-height:360px">' +
+      '<div style="' + card + ';padding:26px 28px;flex:1;display:flex;flex-direction:column;justify-content:center">' +
+        '<div style="' + eyebrow + '">Our Goal</div>' +
+        '<div style="font-family:Syne,sans-serif;font-size:30px;font-weight:800;line-height:1.2;letter-spacing:-.02em;color:var(--white);padding-bottom:2px">' + decEsc(F.goal) + '</div>' +
+      '</div>' +
+      '<div style="' + card + ';padding:26px 28px;flex:1;display:flex;flex-direction:column;justify-content:center">' +
+        '<div style="' + eyebrow + '">Address</div>' +
+        '<div style="font-family:Syne,sans-serif;font-size:21px;font-weight:700;line-height:1.35;color:var(--white)">' + decEsc(F.address.replace(', Los Angeles', ',<br>Los Angeles')).replace('&lt;br&gt;', '<br>') + '</div>' +
+      '</div>' +
+    '</div>' +
+    (hero
+      ? '<div onclick="openPhoto(' + PROJECT_PHOTOS.indexOf(hero) + ')" style="' + card + ';overflow:hidden;cursor:zoom-in;min-height:360px;display:flex;align-items:center;justify-content:center;background:var(--d4)">' +
+          '<img src="' + hero.src + '" alt="' + decEsc(hero.title) + '" style="width:100%;height:100%;max-height:520px;object-fit:contain;display:block">' +
+        '</div>'
+      : '<div style="' + card + ';min-height:360px;display:flex;align-items:center;justify-content:center;color:var(--w30);font-size:12px">Add a before photo to show it here</div>') +
+  '</div>';
+
+  // section 2 — Property: tiles in one line across the width
+  html += '<div style="' + card + ';padding:24px 26px;margin-bottom:22px">' +
+    '<div style="font-family:Syne,sans-serif;font-size:17px;font-weight:800;color:var(--white);margin-bottom:16px">Property</div>' +
+    '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:12px">' +
+    F.tiles.map(function(t){
+      return '<div style="background:var(--d2);border:1px solid var(--w08);border-radius:10px;padding:14px 16px">' +
+        '<div style="font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--sage);margin-bottom:6px">' + t.k + '</div>' +
+        '<div style="font-size:17px;font-weight:700;color:var(--white)">' + t.v + '</div></div>';
+    }).join('') + '</div></div>';
+
+  // section 3 — detail cards (tax history removed)
+  html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:16px;margin-bottom:22px">';
+  F.groups.forEach(function(g){
+    if (g.financial && !showFin) return;
+    html += '<div style="' + card + ';padding:20px 22px">' +
+      '<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px"><i class="ti ' + g.icon + '" style="font-size:15px;color:var(--lime)"></i>' +
+      '<span style="font-size:13px;font-weight:700;color:var(--white)">' + g.title + '</span></div>' +
+      g.rows.map(function(r){
+        return '<div style="display:flex;justify-content:space-between;gap:14px;padding:9px 0;border-top:1px solid var(--w08);font-size:12px">' +
+          '<span style="color:var(--w50);flex-shrink:0">' + r[0] + '</span><span style="color:var(--white);text-align:right">' + r[1] + '</span></div>';
+      }).join('') + '</div>';
+  });
+  html += '</div>';
+
+  if (F.jobNotes && F.jobNotes.length) {
+    html += '<div style="background:var(--l10);border:1px solid var(--l20);border-radius:14px;padding:20px 22px;margin-bottom:22px">' +
+      '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><i class="ti ti-bulb" style="font-size:15px;color:var(--lime)"></i><span style="font-size:13px;font-weight:700;color:var(--lime)">What the records mean for this job</span></div>' +
+      F.jobNotes.map(function(n){ return '<div style="display:flex;gap:8px;font-size:12px;color:var(--w70);line-height:1.65;padding:4px 0"><span style="color:var(--lime);flex-shrink:0">›</span><span>' + n + '</span></div>'; }).join('') + '</div>';
+  }
+  html += '<div style="font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--sage);margin-bottom:8px">Sources</div>' +
+    '<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px">' +
+    F.sources.map(function(s){ return '<a href="' + s.url + '" target="_blank" rel="noopener" style="font-size:11px;font-weight:600;padding:6px 12px;border-radius:20px;background:var(--d3);border:1px solid var(--w08);color:var(--w70);text-decoration:none">' + s.label + ' ↗</a>'; }).join('') + '</div>' +
+    '<div style="font-size:10px;color:var(--w30);line-height:1.6">Public-record data can lag or differ between sources. Verify anything that affects scope against the survey and county records.</div>';
+  el.innerHTML = html;
 }
 
 /* ── INIT ── */
@@ -3497,7 +4194,10 @@ document.addEventListener('DOMContentLoaded',function(){
   initRole();
   sessInit();
   decInit();
+  pjInit();
   teamLoad();
+  hoRenderRing();
+  hoSyncNav();
   console.log('Common Ground — 141 N Anita — init OK' + (window.CG_SESSION ? ' · signed in as ' + CG_SESSION.role : ' · demo mode'));
 });
 
@@ -3749,7 +4449,7 @@ function pgRenderPills(){
     var dotC = live?'background:var(--ok);animation:blink 1.8s ease infinite':'background:rgba(253,255,254,.15)';
     return '<div style="display:flex;align-items:center;gap:8px;padding:8px 11px;border-radius:8px;background:var(--d2);border:1px solid '+bc+';font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:'+tc+'">'+
       '<div style="width:7px;height:7px;border-radius:50%;flex-shrink:0;'+dotC+'"></div>'+
-      '<span style="flex:1">'+t.n+'</span>'+
+      '<span style="flex:1">'+pgTradeLabel(t.n)+'</span>'+
       '<div style="flex:1;height:3px;background:var(--w08);border-radius:2px;overflow:hidden">'+
         '<div style="height:100%;border-radius:2px;background:var(--ok);width:'+t.pct+'%"></div>'+
       '</div></div>';
@@ -3826,7 +4526,7 @@ function pgRenderTradeBtns(){
     var tc=live?'rgba(253,255,254,.85)':'rgba(253,255,254,.5)';
     var dot=live?'<span style="position:absolute;top:5px;right:5px;width:6px;height:6px;border-radius:50%;background:var(--ok);animation:blink 1.8s ease infinite" aria-hidden="true"></span>':'';
     var oc="pgSelectTrade('"+t+"')";
-    return '<button style="padding:10px 6px;border-radius:8px;border:1.5px solid '+bc+';background:var(--d2);font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:'+tc+';cursor:pointer;position:relative;text-align:center;transition:all .18s;font-family:inherit;line-height:1.2" id="pg-tbtn-'+t+'" onclick="'+oc+'">'+t+dot+'</button>';
+    return '<button style="padding:10px 6px;border-radius:8px;border:1.5px solid '+bc+';background:var(--d2);font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:'+tc+';cursor:pointer;position:relative;text-align:center;transition:all .18s;font-family:inherit;line-height:1.2" id="pg-tbtn-'+t+'" onclick="'+oc+'">'+pgTradeLabel(t)+dot+'</button>';
   }).join('');
 }
 
@@ -3846,7 +4546,7 @@ function pgSelectTrade(name){
   var live=PG_ONSITE.indexOf(name)!==-1;
   var hd=document.getElementById('pg-tasks-hd');
   if(hd) hd.innerHTML=
-    '<div style="font-family:Syne,sans-serif;font-size:15px;font-weight:700;color:rgba(253,255,254,.9);letter-spacing:-.01em">'+name+'</div>'+
+    '<div style="font-family:Syne,sans-serif;font-size:15px;font-weight:700;color:rgba(253,255,254,.9);letter-spacing:-.01em">'+pgTradeLabel(name)+'</div>'+
     (live?'<div style="display:flex;align-items:center;gap:4px;background:var(--ok15);border:1px solid var(--ok30);border-radius:20px;padding:2px 8px;font-size:9px;font-weight:600;color:var(--ok)"><div style="width:5px;height:5px;border-radius:50%;background:var(--ok);animation:blink 1.5s infinite"></div>On site today</div>':'<span style="font-size:9px;color:var(--w30)">Scheduling</span>');
 
   var tasks=[];
@@ -4169,7 +4869,7 @@ function invSaveOverrides(map){ try{ localStorage.setItem('cg_anita_invoice_over
 
 function invAllInvoices(){
   var overrides=invLoadOverrides();
-  return INVOICES.concat(invLoadUploads()).map(function(inv){
+  return INVOICES.filter(function(inv){ return !inv.hidden; }).concat(invLoadUploads()).map(function(inv){
     var ov=overrides[inv.id];
     return ov ? Object.assign({}, inv, ov) : inv;
   });
@@ -4229,14 +4929,15 @@ function renderInvoices(){
 
   el.innerHTML=list.map(function(inv){
     var sc=inv.status==='paid'?'var(--ok)':inv.status==='partial'?'var(--amb)':inv.status==='pending'?'var(--w50)':'var(--del)';
-    var sl=inv.status==='paid'?'Paid ✓':inv.status==='partial'?'Partial':inv.status==='pending'?(inv.approved?'Approved · not invoiced':'Awaiting approval'):'Due';
+    var sl=inv.status==='paid'?'Paid ✓':inv.status==='partial'?'Partial':inv.status==='proposal'?'Proposal':inv.status==='pending'?(inv.approved?'Approved · not invoiced':'Awaiting approval'):'Due';
     var bg=inv.status==='paid'?'var(--ok15)':inv.status==='partial'?'var(--am15)':inv.status==='pending'?'var(--w04)':'var(--dl15)';
+    if(inv.status==='proposal'){sc='var(--w50)';bg='var(--w04)';}
     var uploaderTag = inv.uploadedBy==='client'
       ? '<span style="font-size:8px;font-weight:600;padding:1px 5px;border-radius:20px;background:var(--d2);border:1px solid var(--w08);color:var(--w50)">You</span>'
       : inv.uploadedBy==='gc'
       ? '<span style="font-size:8px;font-weight:600;padding:1px 5px;border-radius:20px;background:var(--d2);border:1px solid var(--w08);color:var(--w50)">GC</span>' : '';
     var tradeTag = inv.trade ? '<span style="font-size:8px;font-weight:600;padding:1px 6px;border-radius:20px;background:var(--d2);border:1px solid var(--w08);color:var(--w50)">'+inv.trade+'</span>' : '';
-    var confirmBtn = (inv.status!=='paid' && inv.status!=='pending')
+    var confirmBtn = (inv.status!=='paid' && inv.status!=='pending' && inv.status!=='proposal')
       ? '<button onclick="invConfirmPayment(\''+inv.id+'\')" style="font-size:9px;padding:2px 7px;background:var(--ok15);border:1px solid var(--ok30);border-radius:4px;color:var(--ok);cursor:pointer;font-family:inherit;margin-top:4px;margin-right:4px;display:block;width:100%">Confirm payment</button>' : '';
     var confirmNote = inv.confirmation
       ? '<div style="font-size:9px;color:var(--ok);margin-top:3px">'+

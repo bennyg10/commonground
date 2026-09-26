@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Common Ground — Platform console</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--black:#0B0B0E;--d1:#111015;--d2:#17161C;--d3:#1E1D24;--d4:#26252D;--white:#FDFFFE;--lime:#D5DC99;--sage:#737F73;
+  --w08:rgba(253,255,254,.08);--w15:rgba(253,255,254,.15);--w30:rgba(253,255,254,.3);--w50:rgba(253,255,254,.5);--w70:rgba(253,255,254,.7);
+  --l10:rgba(213,220,153,.1);--l20:rgba(213,220,153,.2);--ok:#4A9B6F;--del:#E07A5F;--amb:#C9A84C}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--d1);color:var(--white);font-family:"DM Sans",sans-serif;font-size:14px;line-height:1.55}
+a{color:var(--lime)}
+button,select,input,textarea{font-family:inherit}
+.top{position:sticky;top:0;z-index:20;background:rgba(17,16,21,.94);backdrop-filter:blur(10px);border-bottom:1px solid var(--w08)}
+.bar{max-width:1180px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;gap:12px}
+.mark{display:flex;align-items:center;gap:8px;min-width:0}
+.mark b{flex:none;width:28px;height:28px;border-radius:7px;background:var(--lime);color:var(--black);display:flex;align-items:center;justify-content:center;font-family:Syne,sans-serif;font-size:11px;font-weight:800}
+.mark span{font-family:Syne,sans-serif;font-size:14px;font-weight:700;color:var(--lime);white-space:nowrap}
+.mark em{font-style:normal;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--black);background:var(--lime);padding:2px 7px;border-radius:20px}
+.who{margin-left:auto;display:flex;align-items:center;gap:10px;font-size:12px;color:var(--w50);min-width:0}
+.who .nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tabs{max-width:1180px;margin:0 auto;padding:0 24px;display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:none;background:none;border:none;border-bottom:2px solid transparent;color:var(--w50);font-size:13px;font-weight:600;padding:10px 12px 12px;cursor:pointer}
+.tab.on{color:var(--lime);border-bottom-color:var(--lime)}
+.tab .ct{display:inline-block;min-width:18px;font-size:10px;font-weight:700;padding:1px 6px;border-radius:20px;background:var(--d4);color:var(--w70);margin-left:6px}
+main{max-width:1180px;margin:0 auto;padding:32px 24px 80px}
+h1{font-family:Syne,sans-serif;font-size:26px;font-weight:800;letter-spacing:-.03em;line-height:1.25;margin-bottom:6px}
+h2{font-family:Syne,sans-serif;font-size:17px;font-weight:700;letter-spacing:-.02em;line-height:1.3;margin:0 0 14px}
+.lede{color:var(--w50);font-size:13px;margin-bottom:28px;max-width:640px}
+.eyebrow{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--sage);margin-bottom:6px}
+.grid{display:grid;gap:16px}
+.stats{grid-template-columns:repeat(6,minmax(0,1fr));margin-bottom:32px}
+.stat{background:var(--d2);border:1px solid var(--w08);border-radius:14px;padding:16px 18px}
+.stat .v{font-family:Syne,sans-serif;font-size:26px;font-weight:800;letter-spacing:-.03em;line-height:1.2}
+.stat .l{font-size:11px;color:var(--w50);margin-top:2px}
+.card{background:var(--d2);border:1px solid var(--w08);border-radius:16px;padding:22px 24px;margin-bottom:20px}
+.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.muted{color:var(--w50)}
+.small{font-size:12px}
+.pill{display:inline-block;font-size:10px;font-weight:700;padding:2px 9px;border-radius:20px;border:1px solid var(--w15);color:var(--w70);white-space:nowrap}
+.pill.lime{background:var(--l10);border-color:var(--l20);color:var(--lime)}
+.pill.ok{background:rgba(74,155,111,.12);border-color:rgba(74,155,111,.35);color:#7fcf9f}
+.pill.amb{background:rgba(201,168,76,.12);border-color:rgba(201,168,76,.35);color:var(--amb)}
+.pill.del{background:rgba(224,122,95,.12);border-color:rgba(224,122,95,.35);color:var(--del)}
+.btn{padding:8px 13px;border-radius:9px;border:1px solid var(--w15);background:var(--d3);color:var(--w70);font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;text-decoration:none;display:inline-block}
+.btn:hover{border-color:var(--w30);color:var(--white)}
+.btn.pri{background:var(--lime);border-color:var(--lime);color:var(--black)}
+.btn.danger{color:var(--del);border-color:rgba(224,122,95,.35)}
+.btn:disabled{opacity:.45;cursor:default}
+.seg{display:inline-flex;border:1px solid var(--w15);border-radius:10px;overflow:hidden}
+.seg button{background:var(--d3);border:none;border-right:1px solid var(--w08);color:var(--w50);font-size:12px;font-weight:600;padding:8px 14px;cursor:pointer}
+.seg button:last-child{border-right:none}
+.seg button.on{background:var(--l10);color:var(--lime)}
+label{display:block;font-size:11px;color:var(--sage);margin:0 0 6px}
+input,select,textarea{width:100%;background:var(--d3);border:1px solid var(--w08);border-radius:9px;padding:10px 12px;font-size:14px;color:var(--white);outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--l20)}
+select.mini{width:auto;padding:6px 8px;font-size:12px}
+.form{display:grid;grid-template-columns:1.1fr .9fr 1.2fr 1.4fr auto;gap:12px;align-items:end}
+.person{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) auto;gap:18px;align-items:center;padding:18px 0;border-top:1px solid var(--w08)}
+.person:first-of-type{border-top:none;padding-top:4px}
+.pname{font-weight:700;font-size:14px}
+.pid{font-size:12px;color:var(--w50);word-break:break-all}
+.acts{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.item{display:flex;gap:14px;align-items:flex-start;padding:14px 0;border-top:1px solid var(--w08)}
+.item:first-child{border-top:none;padding-top:2px}
+.item .main{flex:1;min-width:0}
+.item .t{font-weight:600}
+.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+.bar-track{height:6px;background:var(--d4);border-radius:6px;overflow:hidden;margin-top:8px}
+.bar-fill{height:100%;background:var(--lime)}
+.alert{border-radius:12px;padding:12px 14px;font-size:13px;margin-bottom:10px;border:1px solid}
+.alert.now{background:rgba(224,122,95,.1);border-color:rgba(224,122,95,.35);color:#f0a996}
+.alert.soon{background:rgba(201,168,76,.08);border-color:rgba(201,168,76,.3);color:#e0c67a}
+.empty{color:var(--w30);font-size:13px;padding:6px 0}
+.linkbox{display:flex;gap:8px;margin-top:14px}
+.linkbox input{font-size:12px;color:var(--lime)}
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--d4);border:1px solid var(--w15);color:var(--white);font-size:13px;padding:10px 16px;border-radius:10px;z-index:60;display:none;max-width:calc(100vw - 32px)}
+#modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:50;display:none;align-items:center;justify-content:center;padding:16px}
+#modal{width:100%;max-width:440px;background:var(--d2);border:1px solid var(--w15);border-radius:16px;padding:24px;box-shadow:0 24px 60px rgba(0,0,0,.5)}
+#modal p{color:var(--w70);font-size:13px;margin:0 0 16px}
+#modal .fld{margin-bottom:14px}
+#modal .err{color:var(--del);font-size:12px;margin:-4px 0 12px;display:none}
+.hide{display:none!important}
+@media(max-width:980px){.stats{grid-template-columns:repeat(3,minmax(0,1fr))}.form{grid-template-columns:1fr 1fr}.form .full{grid-column:1/-1}}
+@media(max-width:720px){
+  .bar{padding:12px 16px}.tabs{padding:0 8px}main{padding:24px 16px 72px}
+  h1{font-size:22px}.stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  .card{padding:18px 16px}.two{grid-template-columns:1fr}
+  .form{grid-template-columns:1fr}.person{grid-template-columns:1fr;gap:10px}.acts{justify-content:flex-start}
+  .who .nm{display:none}
+}
+</style>
+</head>
+<body>
+<div class="top">
+  <div class="bar">
+    <div class="mark"><b>CG</b><span>Common Ground</span><em>Admin</em></div>
+    <div class="who"><span class="nm" id="me-name"></span><button class="btn" onclick="signOut()">Sign out</button></div>
+  </div>
+  <nav class="tabs" id="tabs"></nav>
+</div>
+<main id="main"><div class="muted">Loading the platform…</div></main>
+<div id="modal-bg"><div id="modal"></div></div>
+<div id="toast"></div>
+<script>
+var A = window.CG_ADMIN || {me:{name:'Admin'}, projects:[]};
+var D = null, STATS = null, TAB = 'overview', LAST_LINK = '';
+var ROLE = {client:'Owner', gc:'GC', trade:'Trade / Sub'};
+var STAGE = {bidding:'Bidding', kickoff:'Kickoff', active:'Active'};
+var ERR = {not_yourself:'You can’t do that to your own account.', no_gc_yet:'Hire a GC first — that stage needs one.', not_found:'Not found — refresh and try again.',
+  confirm_required:'Type the exact email / phone to confirm.', reason_required:'Add a short reason (3+ characters).', signature_required:'Enter who signed (3+ characters).',
+  bad_identifier:'Enter a valid email or phone.', name_required:'Add a name.', already_approved:'Already approved.', not_approved:'Only approved items can be voided.',
+  admin_only:'Admin only.', sign_in_required:'Your session ended — sign in again.', network:'Could not reach the server.'};
+var $ = function(id){ return document.getElementById(id); };
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+function jsq(s){ return esc(String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'")); }
+function money(n){ return n==null ? '—' : '$'+Math.round(n).toLocaleString('en-US'); }
+function when(t){ if(!t) return ''; var d=new Date(t); return d.toLocaleDateString('en-US',{month:'short',day:'numeric'})+' · '+d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'}); }
+function pname(slug){ var p=(A.projects||[]).filter(function(x){return x.slug===slug;})[0]; return p?p.name:slug; }
+function toast(t){ var e=$('toast'); e.textContent=t; e.style.display='block'; clearTimeout(toast.h); toast.h=setTimeout(function(){e.style.display='none';},3200); }
+
+function api(body){
+  return fetch('/api/admin',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify(body)})
+    .then(function(r){ return r.json().then(function(j){ j._status=r.status; return j; }); }).catch(function(){ return {error:'network'}; });
+}
+function load(){
+  return Promise.all([
+    fetch('/api/admin?action=overview',{credentials:'same-origin'}).then(function(r){return r.json();}).catch(function(){return {error:'network'};}),
+    fetch('/api/auth?action=stats',{credentials:'same-origin'}).then(function(r){return r.json();}).catch(function(){return null;})
+  ]).then(function(res){
+    if (res[0].error) { $('main').innerHTML='<div class="alert now">'+esc(ERR[res[0].error]||res[0].error)+'</div>'; if(res[0].error==='sign_in_required') setTimeout(function(){location.reload();},1500); return; }
+    D = res[0]; STATS = res[1] && res[1].ok ? res[1] : null; render();
+  });
+}
+function signOut(){ fetch('/api/auth',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify({action:'logout'})}).finally(function(){ location.href='/admin'; }); }
+
+/* ── derived ── */
+function allDecisions(){ var out=[]; D.projects.forEach(function(p){ p.decisions.forEach(function(d){ out.push(Object.assign({project:p.slug},d)); }); }); return out; }
+function openDecisions(){ return allDecisions().filter(function(d){ return d.status!=='approved'; }); }
+function pendingInvites(){
+  var out=[]; D.projects.forEach(function(p){ p.members.forEach(function(m){ if (m.status!=='active' && !D.accounts.some(function(a){return a.identifier===m.identifier;})) out.push(Object.assign({project:p.slug},m)); }); });
+  return out;
+}
+function activity(){
+  var out=[]; D.projects.forEach(function(p){ p.activity.forEach(function(n){ out.push(Object.assign({project:p.slug},n)); }); });
+  return out.sort(function(a,b){ return a.at<b.at?1:-1; });
+}
+
+/* ── shell ── */
+var TABS = [['overview','Overview'],['people','People'],['projects','Projects'],['activity','Activity'],['help','Help inbox'],['usage','Usage + upgrades']];
+function renderTabs(){
+  var counts = {people: D.accounts.length, projects: D.projects.length, help: D.supportTotal};
+  $('tabs').innerHTML = TABS.map(function(t){
+    return '<button class="tab'+(TAB===t[0]?' on':'')+'" data-tab="'+t[0]+'" onclick="go(\''+t[0]+'\')">'+t[1]+(counts[t[0]]!=null?'<span class="ct">'+counts[t[0]]+'</span>':'')+'</button>';
+  }).join('');
+}
+function go(t){ TAB=t; try{ history.replaceState(null,'','#'+t); }catch(e){} render(); window.scrollTo(0,0); }
+function render(){
+  $('me-name').textContent = D.me.name + ' · ' + D.me.identifier;
+  renderTabs();
+  $('main').innerHTML = ({overview:vOverview, people:vPeople, projects:vProjects, activity:vActivity, help:vHelp, usage:vUsage}[TAB] || vOverview)();
+}
+
+/* ── Overview ── */
+function vOverview(){
+  var od = openDecisions(), bids = 0; D.projects.forEach(function(p){ bids += p.bids.length; });
+  var stats = [[D.projects.length,'Projects'],[D.accounts.length,'Accounts'],[pendingInvites().length,'Pending invites'],[od.length,'Open decisions'],[bids,'Proposals'],[D.supportTotal,'Help requests']];
+  var alerts = STATS && STATS.alerts && STATS.alerts.length ? STATS.alerts.map(function(a){ return '<div class="alert '+a.level+'">'+(a.level==='now'?'<b>Upgrade now · </b>':'<b>Plan ahead · </b>')+esc(a.text)+'</div>'; }).join('') : '';
+  return '<div class="eyebrow">Platform console</div><h1>Good '+dayPart()+', '+esc(D.me.name.split(' ')[0])+'.</h1>'+
+    '<div class="lede">Every project, person, proposal and decision on Common Ground — and the controls for them.</div>'+
+    '<div class="grid stats">'+stats.map(function(s){ return '<div class="stat"><div class="v">'+s[0]+'</div><div class="l">'+s[1]+'</div></div>'; }).join('')+'</div>'+
+    (alerts ? '<h2>Upgrade watch</h2>'+alerts+'<div style="height:22px"></div>' : '')+
+    '<h2>Projects</h2>'+D.projects.map(projectSummary).join('')+
+    '<div class="two">'+
+      '<div class="card"><h2>Waiting on a decision</h2>'+(od.length ? od.slice(0,6).map(function(d){ return '<div class="item"><div class="main"><div class="t">'+esc(d.title)+'</div><div class="small muted">'+esc(pname(d.project))+' · '+money(d.amount)+'</div></div>'+statusPill(d.status)+'</div>'; }).join('') : '<div class="empty">Nothing waiting.</div>')+'</div>'+
+      '<div class="card"><h2>Latest activity</h2>'+(activity().length ? activity().slice(0,6).map(actRow).join('') : '<div class="empty">No activity yet.</div>')+'</div>'+
+    '</div>';
+}
+function dayPart(){ var h=new Date().getHours(); return h<12?'morning':h<17?'afternoon':'evening'; }
+function projectSummary(p){
+  var kp = p.kickoff.total ? Math.round(p.kickoff.done/p.kickoff.total*100) : 0;
+  var owners = p.members.filter(function(m){return m.role==='client';}).map(function(m){return m.name;});
+  return '<div class="card"><div class="row" style="justify-content:space-between;align-items:flex-start;gap:16px">'+
+    '<div style="min-width:0"><div class="eyebrow">'+esc(p.slug)+'</div><div style="font-family:Syne,sans-serif;font-size:19px;font-weight:800;letter-spacing:-.02em">'+esc(p.name)+'</div>'+
+    '<div class="small muted" style="margin-top:4px">Owner'+(owners.length>1?'s':'')+': '+(owners.length?esc(owners.join(' and ')):'none yet')+' · GC: '+(p.hiredGc?esc(p.hiredGc.company||p.hiredGc.name):'not hired yet')+'</div></div>'+
+    '<span class="pill '+(p.stage==='active'?'ok':p.stage==='kickoff'?'amb':'lime')+'">'+STAGE[p.stage]+'</span></div>'+
+    (p.stage!=='bidding' ? '<div class="small muted" style="margin-top:14px">Kickoff checklist · '+p.kickoff.done+' of '+p.kickoff.total+'</div><div class="bar-track"><div class="bar-fill" style="width:'+kp+'%"></div></div>' : '<div class="small muted" style="margin-top:14px">'+p.bids.length+' proposal'+(p.bids.length===1?'':'s')+' in</div>')+
+    '<div class="row" style="margin-top:16px"><span class="small muted">View as</span>'+
+      ['client','gc','trade'].map(function(r){ return '<a class="btn" href="/'+p.slug+'/'+r+'" target="_blank" rel="noopener">'+ROLE[r]+' ↗</a>'; }).join('')+
+      '<button class="btn" onclick="TAB_PROJECT=\''+p.slug+'\';go(\'projects\')">Manage</button></div></div>';
+}
+function statusPill(s){ return '<span class="pill '+(s==='approved'?'ok':s==='discussing'?'amb':'lime')+'">'+esc(s==='approved'?'Approved':s==='discussing'?'Discussing':'Pending')+'</span>'; }
+function actRow(n){ return '<div class="item"><div class="main"><div>'+esc(n.text)+'</div><div class="small muted">'+esc(pname(n.project))+' · '+when(n.at)+(n.by?' · '+esc(n.by):'')+'</div></div></div>'; }
+
+/* ── People ── */
+function vPeople(){
+  var opts = function(sel){ return (A.projects||[]).map(function(p){ return '<option value="'+esc(p.slug)+'"'+(p.slug===sel?' selected':'')+'>'+esc(p.name)+'</option>'; }).join(''); };
+  var inv = pendingInvites();
+  return '<div class="eyebrow">People</div><h1>Everyone on the platform</h1><div class="lede">Add people to any project, change what they can see, send a password-reset link, sign them out everywhere, pause or remove them.</div>'+
+    '<div class="card"><h2>Add someone to a project</h2><form id="add-f" class="form" onsubmit="addPerson(event)">'+
+      '<div><label for="ap-project">Project</label><select id="ap-project">'+opts()+'</select></div>'+
+      '<div><label for="ap-role">Role</label><select id="ap-role"><option value="client">Owner</option><option value="gc">GC</option><option value="trade">Trade / Sub</option></select></div>'+
+      '<div><label for="ap-name">Full name</label><input id="ap-name" required></div>'+
+      '<div><label for="ap-id">Email or phone</label><input id="ap-id" required></div>'+
+      '<div class="full"><button class="btn pri" id="ap-go" type="submit" style="padding:11px 16px">Create invite link</button></div></form>'+
+      (LAST_LINK ? linkBox(LAST_LINK) : '')+'</div>'+
+    '<div class="card"><h2>Accounts <span class="muted small" style="font-family:DM Sans,sans-serif;font-weight:500">· '+D.accounts.length+'</span></h2>'+
+      (D.accounts.length ? D.accounts.map(personRow).join('') : '<div class="empty">No accounts yet.</div>')+'</div>'+
+    '<div class="card"><h2>Invited, not joined yet</h2>'+(inv.length ? inv.map(function(m){
+      return '<div class="person"><div><div class="pname">'+esc(m.name)+'</div><div class="pid">'+esc(m.identifier)+'</div></div>'+
+        '<div class="small muted">'+esc(pname(m.project))+' · '+esc(ROLE[m.role]||m.role)+(m.invitedAt?' · invited '+when(m.invitedAt):'')+'</div>'+
+        '<div class="acts"><button class="btn" onclick="reinvite(\''+jsq(m.project)+'\',\''+jsq(m.role)+'\',\''+jsq(m.name)+'\',\''+jsq(m.identifier)+'\')">New link</button>'+
+        '<button class="btn danger" onclick="removeFrom(\''+jsq(m.project)+'\',\''+jsq(m.identifier)+'\',\''+jsq(m.name)+'\')">Cancel invite</button></div></div>';
+    }).join('') : '<div class="empty">No open invites.</div>')+'</div>';
+}
+function linkBox(l){ return '<div class="linkbox"><input id="link-out" readonly value="'+esc(l)+'" onclick="this.select()"><button class="btn" onclick="copyLink()">Copy</button></div><div class="small muted" style="margin-top:6px">Send this link by text or email. It lets them set their password and sign in.</div>'; }
+function copyLink(){ var i=$('link-out'); i.select(); try{ navigator.clipboard.writeText(i.value).then(function(){toast('Link copied');}, function(){ document.execCommand('copy'); toast('Link copied'); }); }catch(e){ document.execCommand('copy'); toast('Link copied'); } }
+function personRow(a){
+  var self = a.identifier===D.me.identifier;
+  var projs = Object.keys(a.projects||{});
+  var roles = projs.length ? projs.map(function(p){
+    return '<div class="row" style="gap:8px;margin-top:6px"><span class="small muted">'+esc(pname(p))+'</span>'+
+      '<select class="mini" aria-label="Role on '+esc(pname(p))+'" onchange="setRole(\''+jsq(p)+'\',\''+jsq(a.identifier)+'\',this.value)">'+
+      ['client','gc','trade'].map(function(r){ return '<option value="'+r+'"'+(a.projects[p]===r?' selected':'')+'>'+ROLE[r]+'</option>'; }).join('')+'</select>'+
+      (self?'':'<button class="btn" style="padding:5px 9px" onclick="removeFrom(\''+jsq(p)+'\',\''+jsq(a.identifier)+'\',\''+jsq(a.name)+'\')">Remove</button>')+'</div>';
+  }).join('') : '<div class="small muted">'+(Object.keys(a.bids||{}).length?'Bid account · no project access':'No project access')+'</div>';
+  return '<div class="person" data-id="'+esc(a.identifier)+'"><div><div class="row" style="gap:8px"><span class="pname">'+esc(a.name)+'</span>'+
+      (a.admin?'<span class="pill lime">Platform admin</span>':'')+(a.disabled?'<span class="pill del">Paused</span>':'')+(self?'<span class="pill">You</span>':'')+'</div>'+
+      '<div class="pid">'+esc(a.identifier)+(a.phone?' · '+esc(a.phone):'')+'</div>'+(a.createdAt?'<div class="small muted">Joined '+when(a.createdAt)+'</div>':'')+'</div>'+
+    '<div>'+roles+'</div>'+
+    '<div class="acts">'+
+      '<button class="btn" onclick="resetLink(\''+jsq(a.identifier)+'\',\''+jsq(a.name)+'\')">Reset password</button>'+
+      '<button class="btn" onclick="signoutAll(\''+jsq(a.identifier)+'\',\''+jsq(a.name)+'\')">Sign out everywhere</button>'+
+      (self?'':'<button class="btn" onclick="setAdmin(\''+jsq(a.identifier)+'\',\''+jsq(a.name)+'\','+(!a.admin)+')">'+(a.admin?'Remove admin':'Make admin')+'</button>'+
+        '<button class="btn" onclick="setDisabled(\''+jsq(a.identifier)+'\',\''+jsq(a.name)+'\','+(!a.disabled)+')">'+(a.disabled?'Unpause':'Pause')+'</button>'+
+        '<button class="btn danger" onclick="deleteUser(\''+jsq(a.identifier)+'\',\''+jsq(a.name)+'\')">Delete</button>')+
+    '</div></div>';
+}
+
+/* ── Projects ── */
+var TAB_PROJECT = null;
+function vProjects(){
+  var list = D.projects;
+  return '<div class="eyebrow">Projects</div><h1>Project controls</h1><div class="lede">Move a project between stages, open any proposal, and correct decisions. Owner approvals stay the owner’s — you can void one, or record a contract they signed on paper.</div>'+
+    list.map(function(p){
+      var gcLine = p.hiredGc ? esc(p.hiredGc.company||p.hiredGc.name)+' · '+money(p.hiredGc.amount)+' · hired '+when(p.hiredGc.hiredAt)+(p.hiredGc.hiredBy?' by '+esc(p.hiredGc.hiredBy):'') : 'No GC hired yet';
+      return '<div class="card" id="proj-'+esc(p.slug)+'"><div class="eyebrow">'+esc(p.slug)+'</div><div style="font-family:Syne,sans-serif;font-size:20px;font-weight:800;letter-spacing:-.02em;margin-bottom:6px">'+esc(p.name)+'</div>'+
+        '<div class="small muted" style="margin-bottom:18px">GC: '+gcLine+(p.startedAt?' · started '+when(p.startedAt):'')+'</div>'+
+        '<label>Stage</label><div class="seg" role="group" aria-label="Stage">'+['bidding','kickoff','active'].map(function(s){
+          return '<button class="'+(p.stage===s?'on':'')+'" data-stage="'+s+'" onclick="setStage(\''+jsq(p.slug)+'\',\''+s+'\')">'+STAGE[s]+'</button>'; }).join('')+'</div>'+
+        (p.stage!=='bidding' && p.kickoff.open.length ? '<div class="small muted" style="margin-top:10px">Kickoff still open: '+esc(p.kickoff.open.join(' · '))+'</div>' : '')+
+        '<div class="two" style="margin-top:24px">'+
+          '<div><h2>Proposals</h2>'+(p.bids.length ? p.bids.map(function(b){
+            return '<div class="item"><div class="main"><div class="t">'+esc(b.gcName)+'</div><div class="small muted">'+money(b.amount)+' · '+esc(b.email||b.source||'')+' · '+when(b.submittedAt)+'</div></div>'+
+              '<span class="pill '+(b.status==='hired'?'ok':b.status==='declined'?'del':'lime')+'">'+esc(b.status)+'</span>'+
+              (b.file?'<a class="btn" href="/api/project?action=file&project='+encodeURIComponent(p.slug)+'&bid='+encodeURIComponent(b.id)+'" target="_blank" rel="noopener">View</a>':'')+'</div>';
+          }).join('') : '<div class="empty">No proposals yet.</div>')+'</div>'+
+          '<div><h2>Decisions</h2>'+(p.decisions.length ? p.decisions.map(function(d){
+            var appr = d.approval ? '<div class="small muted">Signed “'+esc(d.approval.signature)+'”'+(d.approval.method==='offline'?' on paper · recorded by '+esc(d.approval.recordedBy):'')+' · '+when(d.approval.at)+' · '+esc(d.approval.ref)+'</div>' : '';
+            return '<div class="item" data-dec="'+esc(d.id)+'"><div class="main"><div class="t">'+esc(d.title)+'</div><div class="small muted">'+money(d.amount)+(d.area?' · '+esc(d.area):'')+'</div>'+appr+'</div>'+statusPill(d.status)+
+              (d.status==='approved' ? '<button class="btn danger" onclick="voidDec(\''+jsq(p.slug)+'\',\''+jsq(d.id)+'\',\''+jsq(d.title)+'\')">Void</button>'
+                : '<button class="btn" onclick="recordDec(\''+jsq(p.slug)+'\',\''+jsq(d.id)+'\',\''+jsq(d.title)+'\')">Record paper approval</button>')+'</div>';
+          }).join('') : '<div class="empty">'+(p.hiredGc?'No decisions yet.':'Contract decisions appear once a GC is hired.')+'</div>')+'</div>'+
+        '</div>'+
+        '<div class="row" style="margin-top:20px"><span class="small muted">Open as</span>'+['client','gc','trade'].map(function(r){ return '<a class="btn" href="/'+p.slug+'/'+r+'" target="_blank" rel="noopener">'+ROLE[r]+' ↗</a>'; }).join('')+'</div></div>';
+    }).join('');
+}
+
+/* ── Activity / Help / Usage ── */
+function vActivity(){ var a = activity(); return '<div class="eyebrow">Activity</div><h1>Everything that happened</h1><div class="lede">Every notification across all projects, newest first.</div><div class="card">'+(a.length?a.map(actRow).join(''):'<div class="empty">No activity yet.</div>')+'</div>'; }
+function vHelp(){
+  return '<div class="eyebrow">Help inbox</div><h1>Help requests</h1><div class="lede">Everything sent through the “Contact the platform” form. Each one is also emailed to you.</div><div class="card">'+
+    (D.support.length ? D.support.map(function(s){
+      return '<div class="item"><div class="main"><div class="row" style="gap:8px"><span class="t">'+esc(s.name)+'</span><span class="pill lime">'+esc(s.topic)+'</span></div>'+
+        '<div class="small muted">'+esc(s.email)+(s.phone?' · '+esc(s.phone):'')+(s.project?' · '+esc(pname(s.project)):'')+' · '+when(s.at)+'</div>'+
+        '<div style="margin-top:8px;white-space:pre-wrap;color:var(--w70)">'+esc(s.message)+'</div></div>'+
+        '<a class="btn" href="mailto:'+encodeURIComponent(s.email)+'?subject='+encodeURIComponent('Re: '+s.topic)+'">Reply</a></div>';
+    }).join('') : '<div class="empty">No help requests yet.</div>')+
+    (D.supportTotal > D.support.length ? '<div class="small muted" style="margin-top:12px">Showing the latest '+D.support.length+' of '+D.supportTotal+'.</div>' : '')+'</div>';
+}
+function vUsage(){
+  if (!STATS) return '<h1>Usage</h1><div class="empty">Usage isn’t available right now.</div>';
+  var S = STATS, L = S.limits;
+  function meter(label, v, max, note){ var pct=Math.min(100,Math.round(v/max*100)); return '<div class="card"><div class="row" style="justify-content:space-between"><b>'+label+'</b><span class="muted small">'+v.toLocaleString()+' of '+max.toLocaleString()+'</span></div><div class="bar-track"><div class="bar-fill" style="width:'+pct+'%;background:'+(pct>=80?'var(--del)':pct>=60?'var(--amb)':'var(--lime)')+'"></div></div><div class="small muted" style="margin-top:8px">'+note+'</div></div>'; }
+  return '<div class="eyebrow">Usage · '+esc(S.month)+'</div><h1>Usage + when to upgrade</h1><div class="lede">This month so far. You’ll see an “Upgrade now” note on the Overview before anything runs out.</div>'+
+    (S.alerts.length ? S.alerts.map(function(a){ return '<div class="alert '+a.level+'">'+(a.level==='now'?'<b>Upgrade now · </b>':'<b>Plan ahead · </b>')+esc(a.text)+'</div>'; }).join('') : '<div class="alert soon" style="color:#9fd4b4;background:rgba(74,155,111,.08);border-color:rgba(74,155,111,.3)">All clear — free tiers cover current use.</div>')+
+    '<div class="two" style="margin-top:18px">'+
+    meter('Database commands (est.)', S.estCommands, L.commands, 'Upstash free tier. Pay-as-you-go is about $0.20 per 100K after that.')+
+    meter('Server requests', S.requests, L.invocations, 'Vercel Hobby includes 1M. Pro ($20/mo) is also required for commercial use.')+
+    meter('Emails sent', S.emails, L.emails, 'Resend free tier: 3,000 / month, 100 / day. Pro is $20/mo for 50K.')+
+    meter('People with access', S.members, L.membersSoft, 'Past ~50, move sign-in to a full auth provider (self-serve reset, 2-factor).')+
+    '</div>';
+}
+
+/* ── modal ── */
+var MODAL = null;
+function modal(o){
+  MODAL = o;
+  $('modal').innerHTML = '<div class="eyebrow">'+esc(o.eyebrow||'Confirm')+'</div><h2 style="margin-bottom:10px">'+esc(o.title)+'</h2><p>'+o.body+'</p>'+
+    (o.fields||[]).map(function(f){ return '<div class="fld"><label for="mf-'+f.id+'">'+esc(f.label)+'</label>'+(f.area?'<textarea id="mf-'+f.id+'" rows="3"></textarea>':'<input id="mf-'+f.id+'" value="'+esc(f.value||'')+'" autocomplete="off">')+'</div>'; }).join('')+
+    '<div class="err" id="mf-err"></div>'+
+    (o.link ? linkBox(o.link) : '')+
+    '<div class="row" style="justify-content:flex-end;margin-top:6px">'+
+      (o.link ? '<button class="btn pri" onclick="closeModal()">Done</button>' :
+      '<button class="btn" onclick="closeModal()">Cancel</button><button class="btn '+(o.danger?'danger':'pri')+'" id="mf-go" onclick="modalGo()">'+esc(o.cta||'Confirm')+'</button>')+'</div>';
+  $('modal-bg').style.display='flex';
+  var first = (o.fields||[])[0]; if (first) setTimeout(function(){ var e=$('mf-'+first.id); if(e) e.focus(); }, 30);
+}
+function closeModal(){ $('modal-bg').style.display='none'; MODAL=null; }
+function modalGo(){
+  var vals = {}; (MODAL.fields||[]).forEach(function(f){ vals[f.id] = $('mf-'+f.id).value; });
+  var b = $('mf-go'); b.disabled = true; b.textContent = 'One moment…';
+  var o = MODAL;
+  api(o.req(vals)).then(function(j){
+    if (!j.ok) { b.disabled=false; b.textContent=o.cta||'Confirm'; var e=$('mf-err'); e.style.display='block'; e.textContent=ERR[j.error]||j.message||j.error||'That didn’t work.'; return; }
+    if (o.after) o.after(j);
+    if (j.link && o.showLink) { modal(Object.assign({}, o, {link:j.link, body:o.linkBody||o.body, fields:[]})); return load(); }
+    closeModal(); toast(o.done||'Done'); load();
+  });
+}
+document.addEventListener('keydown', function(e){ if (e.key==='Escape' && MODAL) closeModal(); });
+
+/* ── actions ── */
+function addPerson(e){
+  e.preventDefault(); var b=$('ap-go'); b.disabled=true;
+  api({action:'invite', project:$('ap-project').value, role:$('ap-role').value, name:$('ap-name').value, identifier:$('ap-id').value}).then(function(j){
+    b.disabled=false;
+    if (!j.ok) { toast(ERR[j.error]||j.error); return; }
+    LAST_LINK = j.link; toast('Invite link ready'); load();
+  });
+}
+function reinvite(p, role, name, id){
+  api({action:'invite', project:p, role:role, name:name, identifier:id}).then(function(j){ if(!j.ok) return toast(ERR[j.error]||j.error); LAST_LINK=j.link; render(); toast('New invite link ready'); });
+}
+function setRole(p, id, role){ api({action:'set-role', project:p, identifier:id, role:role}).then(function(j){ toast(j.ok?'Role updated':(ERR[j.error]||j.error)); load(); }); }
+function removeFrom(p, id, name){ modal({title:'Remove '+name+' from '+pname(p)+'?', body:'They lose access to this project right away. Their account stays.', cta:'Remove', danger:true, done:'Removed',
+  req:function(){ return {action:'remove', project:p, identifier:id}; }}); }
+function resetLink(id, name){ modal({eyebrow:'Password reset', title:'Reset '+name+'’s password?', body:'Creates a one-time link (valid 2 days) where they set a new password. Their current password keeps working until they use it.', cta:'Create reset link', showLink:true,
+  linkBody:'Send '+esc(name)+' this link by text or email.', req:function(){ return {action:'reset-link', identifier:id}; }}); }
+function signoutAll(id, name){ modal({title:'Sign '+name+' out everywhere?', body:'Every phone and computer they’re signed in on is signed out. They can sign back in with their password.', cta:'Sign out everywhere', done:'Signed out everywhere',
+  req:function(){ return {action:'signout-all', identifier:id}; }}); }
+function setAdmin(id, name, on){ modal({title:(on?'Make '+name+' a platform admin?':'Remove '+name+'’s admin access?'), body:on?'Admins can see every project and view, and use this console.':'They keep their normal project access.', cta:on?'Make admin':'Remove admin', danger:!on, done:'Updated',
+  req:function(){ return {action:'set-admin', identifier:id, admin:on}; }}); }
+function setDisabled(id, name, on){ modal({title:(on?'Pause '+name+'’s account?':'Unpause '+name+'’s account?'), body:on?'They’re signed out now and can’t sign in until you unpause them. Nothing is deleted.':'They can sign in again.', cta:on?'Pause':'Unpause', danger:on, done:on?'Account paused':'Account unpaused',
+  req:function(){ return {action:'disable', identifier:id, disabled:on}; }}); }
+function deleteUser(id, name){ modal({eyebrow:'Permanent', title:'Delete '+name+'’s account?', body:'Removes the account and their access to every project. Their past approvals and comments stay in the record. This can’t be undone.',
+  fields:[{id:'confirm', label:'Type '+id+' to confirm'}], cta:'Delete account', danger:true, done:'Account deleted',
+  req:function(v){ return {action:'delete-user', identifier:id, confirm:v.confirm}; }}); }
+function setStage(p, s){
+  var pr = D.projects.filter(function(x){return x.slug===p;})[0]; if (!pr || pr.stage===s) return;
+  var body = s==='bidding' ? 'Releases the hired GC: their proposal goes back to “submitted”, they lose access to this project, and the kickoff checklist is cleared. Owners see the proposals list again.'
+    : s==='kickoff' ? 'Puts the project back in kickoff. The GC can edit the checklist and press Start Project again.'
+    : 'Marks the project as started now, skipping any open kickoff items. The owner’s Progress page switches to the active view.';
+  modal({eyebrow:pname(p), title:'Move to '+STAGE[s]+'?', body:body, cta:'Move to '+STAGE[s], danger:s==='bidding', done:'Stage updated', req:function(){ return {action:'set-stage', project:p, stage:s}; }});
+}
+function voidDec(p, id, title){ modal({eyebrow:'Void approval', title:title, body:'The approval is cancelled and the item goes back to pending so the owner can sign again. The original signature stays in the history. The owner and GC are notified.',
+  fields:[{id:'reason', label:'Reason (shown to owner and GC)', area:true}], cta:'Void approval', danger:true, done:'Approval voided', req:function(v){ return {action:'void-decision', project:p, id:id, reason:v.reason}; }}); }
+function recordDec(p, id, title){ modal({eyebrow:'Record paper approval', title:title, body:'Use this only when the owner signed a paper or PDF copy. It’s labelled “signed on paper, recorded by platform admin” everywhere it appears.',
+  fields:[{id:'signedBy', label:'Signed by (owner’s full name)'},{id:'reason', label:'Where the signed copy is (e.g. “DocuSign 9/30, saved in Drive”)', area:true}], cta:'Record approval', done:'Approval recorded',
+  req:function(v){ return {action:'record-approval', project:p, id:id, signedBy:v.signedBy, reason:v.reason}; }}); }
+
+(function init(){
+  var h = (location.hash||'').slice(1); if (TABS.some(function(t){return t[0]===h;})) TAB = h;
+  load();
+  setInterval(function(){ if (!MODAL && document.visibilityState==='visible') load(); }, 60000);
+})();
+</script>
+</body>
+</html>

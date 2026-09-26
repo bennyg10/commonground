@@ -2,11 +2,11 @@
 import {
   storageReady, redis, getJSON, setJSON, clean, validProject, ROLES, normalizeIdentifier,
   hashPassword, verifyPassword, passwordProblem, token, createSession, destroySession,
-  currentUser, publicUser, rateLimited, ip, trackUsage, monthKey, PROJECTS,
+  currentUser, publicUser, rateLimited, ip, trackUsage, monthKey, PROJECTS, indexUser, siteOrigin,
 } from './_lib.js';
 
 const INVITE_DAYS = 14;
-const origin = (req) => `${(req.headers['x-forwarded-proto'] || 'https').split(',')[0]}://${req.headers['x-forwarded-host'] || req.headers.host}`;
+const origin = (req) => siteOrigin(req);
 const canManage = (u, project) => !!u && (u.admin || (u.projects || {})[project] === 'gc');
 
 export default async function handler(req, res) {
@@ -56,7 +56,7 @@ export default async function handler(req, res) {
       const limits = { commands: 500000, invocations: 1000000, membersSoft: 50, emails: 3000 };
       // days elapsed → projected month-end
       const now = new Date(); const day = now.getUTCDate(); const dim = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 0)).getUTCDate();
-      const estCommands = requests * 4;
+      const estCommands = requests * 7;   // ~7 database commands per request on average
       const proj = (v) => Math.round(v / Math.max(day, 1) * dim);
       const alerts = [];
       if ((process.env.CG_VERCEL_PLAN || '').toLowerCase() !== 'pro')
@@ -66,7 +66,9 @@ export default async function handler(req, res) {
       if (proj(requests) >= limits.invocations * 0.7) alerts.push({ level: 'soon', text: 'Server requests are trending toward the Vercel Hobby limit. Vercel Pro covers this.' });
       if (emails >= limits.emails * 0.6) alerts.push({ level: emails >= limits.emails * 0.85 ? 'now' : 'soon', text: `Email notifications: ${emails.toLocaleString()} of 3,000 free this month. Resend Pro is $20/mo for 50K.` });
       if (members >= 40) alerts.push({ level: 'soon', text: 'Approaching 50 people with access. Time to move sign-in to a full auth provider (self-serve password reset, 2-factor).' });
-      return res.status(200).json({ ok: true, month: monthKey(), requests, estCommands, emails, members, keys, limits, alerts });
+      const support = ((await redis(['LRANGE', 'cg:support', '0', '9'])) || []).map((r) => { try { const x = JSON.parse(r); delete x.ip; return x; } catch (e) { return null; } }).filter(Boolean);
+      const supportTotal = Number(await redis(['LLEN', 'cg:support'])) || 0;
+      return res.status(200).json({ ok: true, month: monthKey(), requests, estCommands, emails, members, keys, limits, alerts, support, supportTotal });
     }
 
     if (req.method !== 'POST') return res.status(405).json({ error: 'method_not_allowed' });
@@ -82,6 +84,7 @@ export default async function handler(req, res) {
       const name = clean(b.name, 80) || 'GC';
       const user = { name, identifier, hash: hashPassword(b.password), admin: true, projects: { anita: 'gc' }, createdAt: new Date().toISOString() };
       await setJSON(`cg:user:${identifier}`, user);
+      await indexUser(identifier);
       await redis(['SET', 'cg:admin:exists', identifier]);
       await redis(['HSET', 'cg:members:anita', identifier, JSON.stringify({ name, identifier, role: 'gc', status: 'active', admin: true })]);
       await createSession(req, res, identifier);
@@ -97,6 +100,7 @@ export default async function handler(req, res) {
       }
       const u = await getJSON(`cg:user:${identifier}`);
       if (!u || !verifyPassword(b.password, u.hash)) return res.status(401).json({ error: 'bad_login' });
+      if (u.disabled) return res.status(403).json({ error: 'account_disabled' });
       await createSession(req, res, identifier);
       return res.status(200).json({ ok: true, user: publicUser(u) });
     }
@@ -118,6 +122,7 @@ export default async function handler(req, res) {
       user.projects = Object.assign({}, user.projects, { [inv.project]: user.admin ? 'gc' : inv.role });
       if (clean(b.name, 80)) user.name = clean(b.name, 80);
       await setJSON(`cg:user:${inv.identifier}`, user);
+      await indexUser(inv.identifier);
       await redis(['DEL', `cg:invite:${t}`]);
       await redis(['DEL', `cg:invitefor:${inv.project}:${inv.identifier}`]);
       await redis(['HSET', `cg:members:${inv.project}`, inv.identifier, JSON.stringify({ name: user.name, identifier: inv.identifier, role: inv.role, status: 'active', joinedAt: new Date().toISOString() })]);

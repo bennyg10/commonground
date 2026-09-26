@@ -1,11 +1,45 @@
 {
   "functions": {
-    "api/analyze.js": { "maxDuration": 60 },
-    "api/page.js": { "includeFiles": "api/_pages/**" }
+    "api/analyze.js": {
+      "maxDuration": 60
+    },
+    "api/page.js": {
+      "includeFiles": "api/_pages/**"
+    },
+    "api/project.js": {
+      "includeFiles": "api/_pages/**"
+    },
+    "api/support.js": {
+      "includeFiles": "api/_pages/**"
+    },
+    "api/admin.js": {
+      "includeFiles": "api/_pages/**"
+    }
   },
   "rewrites": [
-    { "source": "/anita", "destination": "/api/page?project=anita" },
-    { "source": "/anita/", "destination": "/api/page?project=anita" },
-    { "source": "/anita/:role(client|gc|trade)", "destination": "/api/page?project=anita&role=:role" }
+    {
+      "source": "/anita",
+      "destination": "/api/page?project=anita"
+    },
+    {
+      "source": "/anita/",
+      "destination": "/api/page?project=anita"
+    },
+    {
+      "source": "/anita/bid",
+      "destination": "/api/page?project=anita&role=bid"
+    },
+    {
+      "source": "/anita/:role(client|gc|trade)",
+      "destination": "/api/page?project=anita&role=:role"
+    },
+    {
+      "source": "/help",
+      "destination": "/api/support"
+    },
+    {
+      "source": "/admin",
+      "destination": "/api/admin"
+    }
   ]
 }

@@ -1,0 +1,17 @@
+{
+  "bids": [
+    {
+      "id": "bid-trujillo",
+      "gcName": "Trujillo Construction",
+      "company": "Trujillo Construction",
+      "contactName": "",
+      "email": "",
+      "phone": "",
+      "amount": 136700,
+      "note": "Phase 1 demo + site clearing. Option 2 with GC overhead + management: $153,200. Extra soil hauling $1,500/load not included.",
+      "date": "2026-09-18T17:00:00.000Z",
+      "source": "uploaded by owner",
+      "file": { "name": "141 N Anita — Demolition + Excavation Proposal.pdf", "type": "application/pdf", "path": "anita-trujillo.pdf" }
+    }
+  ]
+}

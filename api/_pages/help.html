@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Common Ground — Contact us</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--black:#0B0B0E;--d1:#111015;--d2:#17161C;--d3:#1E1D24;--d4:#26252D;--white:#FDFFFE;--lime:#D5DC99;--sage:#737F73;
+  --w08:rgba(253,255,254,.08);--w15:rgba(253,255,254,.15);--w30:rgba(253,255,254,.3);--w50:rgba(253,255,254,.5);--w70:rgba(253,255,254,.7);
+  --l10:rgba(213,220,153,.1);--l20:rgba(213,220,153,.2);--ok:#4A9B6F;--ok15:rgba(74,155,111,.15);--del:#E07A5F;--amb:#C9A84C}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%;background:var(--d1);color:var(--white);font-family:"DM Sans",sans-serif}
+body{display:flex;justify-content:center;padding:28px 16px 40px}
+.card{width:100%;max-width:460px;background:var(--d2);border:1px solid var(--w08);border-radius:16px;padding:24px 22px;box-shadow:0 24px 60px rgba(0,0,0,.45)}
+.mark{display:flex;align-items:center;gap:8px;margin-bottom:20px}
+.mark b{width:28px;height:28px;border-radius:7px;background:var(--lime);color:var(--black);display:flex;align-items:center;justify-content:center;font-family:Syne,sans-serif;font-size:11px;font-weight:800}
+.mark span{font-family:Syne,sans-serif;font-size:13px;font-weight:700;color:var(--lime)}
+.eyebrow{font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--sage);margin-bottom:4px}
+h1{font-family:Syne,sans-serif;font-size:21px;font-weight:800;letter-spacing:-.03em;margin-bottom:6px;line-height:1.2}
+h2{font-family:Syne,sans-serif;font-size:15px;font-weight:800;letter-spacing:-.02em;margin-bottom:4px}
+.sub{font-size:12px;color:var(--w50);line-height:1.6;margin-bottom:18px}
+label{display:block;font-size:10px;color:var(--sage);margin:0 0 5px}
+input,select,textarea{width:100%;background:var(--d3);border:1px solid var(--w08);border-radius:9px;padding:11px 12px;font-size:14px;color:var(--white);font-family:inherit;outline:none;margin-bottom:12px}
+input:focus,select:focus,textarea:focus{border-color:var(--l20)}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.drop{border:1.5px dashed var(--w15);border-radius:12px;padding:26px 16px;text-align:center;cursor:pointer;background:var(--d3);margin-bottom:6px;transition:border-color .15s,background .15s}
+.drop:hover,.drop.over{border-color:var(--lime);background:var(--l10)}
+.drop .big{font-size:28px;margin-bottom:6px}
+.drop .t{font-size:13px;font-weight:600;margin-bottom:3px}
+.drop .s{font-size:10px;color:var(--w30)}
+.file{display:none;align-items:center;gap:10px;background:var(--ok15);border:1px solid rgba(74,155,111,.3);border-radius:10px;padding:10px 12px;margin-bottom:6px;font-size:12px}
+.file button{margin-left:auto;background:none;border:none;color:var(--w50);font-size:16px;cursor:pointer}
+.hint{font-size:10px;color:var(--w30);margin-bottom:18px}
+.divider{display:flex;align-items:center;gap:10px;margin:4px 0 14px;font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--sage)}
+.divider:before,.divider:after{content:"";flex:1;height:1px;background:var(--w08)}
+button.primary{width:100%;padding:13px;background:var(--lime);border:none;border-radius:10px;font-size:14px;font-weight:700;color:var(--black);cursor:pointer;font-family:inherit}
+button.primary:disabled{opacity:.5;cursor:default}
+button.ghost{width:100%;padding:11px;background:none;border:1px solid var(--l20);border-radius:10px;font-size:13px;font-weight:700;color:var(--lime);cursor:pointer;font-family:inherit}
+.msg{display:none;font-size:11px;line-height:1.5;border-radius:8px;padding:9px 11px;margin-bottom:12px}
+.msg.err{display:block;background:rgba(224,122,95,.12);border:1px solid rgba(224,122,95,.3);color:var(--del)}
+.msg.ok{display:block;background:var(--ok15);border:1px solid rgba(74,155,111,.3);color:#7FC89A}
+.check{width:54px;height:54px;border-radius:50%;background:var(--ok15);border:1px solid rgba(74,155,111,.35);display:flex;align-items:center;justify-content:center;font-size:24px;color:var(--ok);margin-bottom:14px}
+.help{margin-top:34px;padding-top:20px;border-top:1px solid var(--w08)}
+.foot{margin-top:14px;font-size:10px;color:var(--w30);line-height:1.6;text-align:center}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="mark"><b>CG</b><span>Common Ground</span></div>
+  <div id="view"></div>
+</div>
+<script>
+var H = window.CG_HELP || {};
+var B = {project: H.project || ''};
+var $ = function(id){ return document.getElementById(id); };
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+var ERR = {bad_email:'Enter a valid email address.', name_required:'Enter your name.', message_required:'Add a short message.', too_many_attempts:'Too many messages. Try again in an hour.', network:'Could not reach the server. Check your connection.'};
+function showErr(id, e){ var m=$(id); m.className='msg err'; m.textContent = ERR[e.error] || e.message || 'Something went wrong.'; }
+function helpForm(name, email, phone){
+  return '<div id="hmsg" class="msg"></div><form id="hf">'+
+    '<div class="row"><div><label for="hn">Name</label><input id="hn" value="'+esc(name||'')+'" required></div><div><label for="he">Email</label><input id="he" type="email" value="'+esc(email||'')+'" required></div></div>'+
+    '<label for="ht">Topic</label><select id="ht"><option>Account help</option><option>How to use the platform</option><option>Question about this project</option><option>Something else</option></select>'+
+    '<label for="hm">Message</label><textarea id="hm" rows="4" placeholder="How can we help?" required></textarea>'+
+    '<input id="hp" type="hidden" value="'+esc(phone||'')+'">'+
+    '<button class="ghost" id="hgo" type="submit">Send to Common Ground</button></form>';
+}
+function wireHelp(){
+  $('hf').onsubmit = function(e){
+    e.preventDefault(); var b=$('hgo'); b.disabled=true; b.textContent='Sending…';
+    fetch('/api/support',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:$('hn').value,email:$('he').value,phone:$('hp').value,topic:$('ht').value,message:$('hm').value,project:B.project})})
+      .then(function(r){return r.json();}).then(function(j){
+        if (!j.ok) { b.disabled=false; b.textContent='Send to Common Ground'; return showErr('hmsg', j); }
+        $('hf').outerHTML = '<div class="msg ok">Thanks. Your message was sent. We\'ll reply to '+esc($('he')?$('he').value:'your email')+' soon.</div>';
+      }).catch(function(){ b.disabled=false; b.textContent='Send to Common Ground'; showErr('hmsg',{error:'network'}); });
+  };
+}
+
+
+$('view').innerHTML = '<div class="eyebrow">Support</div><h1>Contact the platform</h1><div class="sub">Account help or questions about how to use Common Ground? We\'re here to help!</div>' + helpForm('', H.from && H.from.indexOf('@')>0 ? H.from : '', '');
+wireHelp();
+</script>
+</body>
+</html>
