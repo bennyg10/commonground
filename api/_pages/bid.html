@@ -140,6 +140,8 @@ function done(j, body){
     '<div class="sub" style="margin-bottom:12px">Welcome to Common Ground, '+esc(first)+'. We sent a confirmation to <b style="color:var(--white)">'+esc(body.email)+'</b>.</div>'+
     '<div class="sub" style="margin-bottom:8px;color:var(--w70)">Our goal is simple: give great GCs a faster path from proposal to signed contract to final walkthrough, with every scope, decision and payment documented in one place.</div>'+
     '<div class="sub" style="color:var(--w70)">We\'re here to help you close this project with speed and smooth communication.</div>'+
+    '<a id="go-dash" href="/dashboard" style="display:block;text-align:center;margin-top:18px;padding:13px;background:var(--lime);border-radius:10px;font-size:14px;font-weight:700;color:var(--black);text-decoration:none">Open your dashboard</a>'+
+    '<div class="sub" style="margin-top:8px;text-align:center">Track this proposal’s status and use our free project tools — code checks, plan analysis, 3D scans.</div>'+
     '<div class="help"><h2>Contact the platform</h2><div class="sub">Account help or questions about how to use the platform? We\'re here to help!</div>'+ helpForm(body.name, body.email, body.phone) +'</div>';
   wireHelp();
 }

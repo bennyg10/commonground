@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Common Ground — Project</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--black:#0B0B0E;--d1:#111015;--d2:#17161C;--d3:#1E1D24;--d4:#26252D;--white:#FDFFFE;--lime:#D5DC99;--sage:#737F73;
+  --w08:rgba(253,255,254,.08);--w15:rgba(253,255,254,.15);--w30:rgba(253,255,254,.3);--w50:rgba(253,255,254,.55);--w70:rgba(253,255,254,.75);
+  --l10:rgba(213,220,153,.1);--l20:rgba(213,220,153,.22);--ok:#4A9B6F;--del:#E07A5F;--amb:#C9A84C}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--d1);color:var(--white);font-family:"DM Sans",sans-serif;font-size:15px;line-height:1.55;overflow-x:hidden}
+a{color:var(--lime)}
+button,input,select,textarea{font-family:inherit}
+.top{position:sticky;top:0;z-index:20;background:rgba(17,16,21,.95);backdrop-filter:blur(10px);border-bottom:1px solid var(--w08)}
+.bar{max-width:1120px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:12px}
+.mark{display:flex;align-items:center;gap:8px;text-decoration:none;flex:none}
+.mark b{width:28px;height:28px;border-radius:7px;background:var(--lime);color:var(--black);display:flex;align-items:center;justify-content:center;font-family:Syne,sans-serif;font-size:11px;font-weight:800}
+.crumb{font-size:13px;color:var(--w50);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.crumb a{color:var(--w70);text-decoration:none}
+.right{margin-left:auto;display:flex;align-items:center;gap:8px;flex:none}
+.tabs{max-width:1120px;margin:0 auto;padding:0 20px;display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:none;background:none;border:none;border-bottom:2px solid transparent;color:var(--w50);font-size:14px;font-weight:600;padding:10px 12px 12px;cursor:pointer}
+.tab.on{color:var(--lime);border-bottom-color:var(--lime)}
+.tab .ct{display:inline-block;min-width:18px;font-size:10px;font-weight:700;padding:1px 6px;border-radius:20px;background:var(--d4);color:var(--w70);margin-left:5px}
+main{max-width:1120px;margin:0 auto;padding:34px 28px 90px}
+.eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--sage);margin-bottom:8px}
+h1{font-family:Syne,sans-serif;font-size:30px;font-weight:800;letter-spacing:-.03em;line-height:1.2}
+h2{font-family:Syne,sans-serif;font-size:18px;font-weight:700;letter-spacing:-.02em;line-height:1.3;margin-bottom:12px}
+.lede{color:var(--w70);margin-top:6px}
+.muted{color:var(--w50)}.small{font-size:13px}
+.card{background:var(--d2);border:1px solid var(--w08);border-radius:16px;padding:22px 24px;margin-bottom:18px}
+.card.hi{border-color:var(--l20);background:linear-gradient(135deg,rgba(213,220,153,.08),var(--d2) 60%)}
+.two{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:18px;align-items:start}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:10px 16px;border-radius:10px;border:1px solid var(--w15);background:var(--d3);color:var(--white);font-size:13.5px;font-weight:700;cursor:pointer;text-decoration:none;white-space:nowrap}
+.btn.pri{background:var(--lime);border-color:var(--lime);color:var(--black)}
+.btn.sm{padding:6px 11px;font-size:12px;border-radius:8px}
+.btn.danger{color:var(--del);border-color:rgba(224,122,95,.35)}
+.btn:disabled{opacity:.5;cursor:default}
+.pills{display:flex;gap:6px;flex-wrap:wrap}
+.pill{display:inline-block;font-size:11px;font-weight:700;padding:2px 9px;border-radius:20px;border:1px solid var(--w15);color:var(--w70);white-space:nowrap}
+.pill.lime{background:var(--l10);border-color:var(--l20);color:var(--lime)}
+.pill.ok{background:rgba(74,155,111,.14);border-color:rgba(74,155,111,.4);color:#8fd6ab}
+.pill.amb{background:rgba(201,168,76,.12);border-color:rgba(201,168,76,.38);color:#e0c67a}
+.pill.del{background:rgba(224,122,95,.12);border-color:rgba(224,122,95,.35);color:#f0a996}
+.pill.gray{background:var(--d3);color:var(--w50)}
+.stages{display:flex;gap:6px;margin-top:18px;flex-wrap:wrap}
+.stages span{font-size:12px;font-weight:700;padding:6px 12px;border-radius:20px;background:var(--d3);color:var(--w30);border:1px solid var(--w08)}
+.stages span.done{color:var(--w70)}
+.stages span.on{background:var(--l10);color:var(--lime);border-color:var(--l20)}
+.track{height:8px;background:var(--d4);border-radius:8px;overflow:hidden;margin:10px 0 6px}
+.fill{height:100%;background:var(--lime)}
+.big{font-family:Syne,sans-serif;font-size:40px;font-weight:800;letter-spacing:-.03em;line-height:1.1}
+label{display:block;font-size:12px;color:var(--sage);margin:0 0 6px}
+input,select,textarea{width:100%;background:var(--d3);border:1px solid var(--w08);border-radius:10px;padding:11px 12px;font-size:14.5px;color:var(--white);outline:none;margin-bottom:12px}
+input:focus,select:focus,textarea:focus{border-color:var(--l20)}
+input[type=range]{accent-color:#D5DC99;padding:0;border:none;background:none}
+input[type=file]{padding:10px;font-size:13px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.form3{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:10px;align-items:end}
+.form3 input{margin-bottom:0}
+.item{display:flex;gap:14px;align-items:center;padding:14px 0;border-top:1px solid var(--w08)}
+.item:first-child{border-top:none;padding-top:2px}
+.item .main{flex:1;min-width:0}
+.item .t{font-weight:700}
+.linkbox{display:flex;gap:8px;margin-top:6px}
+.linkbox input{margin:0;color:var(--lime);font-size:13px}
+.empty{color:var(--w50);font-size:14px;padding:6px 0}
+.msg{display:none;font-size:13px;border-radius:9px;padding:10px 12px;margin:0 0 12px;background:rgba(224,122,95,.12);border:1px solid rgba(224,122,95,.3);color:#f0a996}
+.ok-msg{font-size:13px;border-radius:9px;padding:10px 12px;margin:0 0 12px;background:rgba(74,155,111,.12);border:1px solid rgba(74,155,111,.35);color:#9fd4b4}
+.subtabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px}
+.subtabs button{background:var(--d2);border:1px solid var(--w08);border-radius:20px;padding:8px 14px;color:var(--w70);font-size:13px;font-weight:600;cursor:pointer}
+.subtabs button.on{border-color:var(--lime);background:var(--l10);color:var(--lime)}
+.find{display:flex;gap:12px;padding:14px 0;border-top:1px solid var(--w08)}
+.find:first-child{border-top:none}
+.find .st{flex:none;width:52px;text-align:center;font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;border-radius:6px;padding:3px 0;height:fit-content}
+.find .st.fail{background:rgba(224,122,95,.16);color:#f0a996}.find .st.warn{background:rgba(201,168,76,.16);color:#e0c67a}.find .st.pass{background:rgba(74,155,111,.16);color:#8fd6ab}
+.kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:14px 0}
+.kpi{background:var(--d3);border-radius:12px;padding:12px 14px}
+.kpi b{display:block;font-family:Syne,sans-serif;font-size:22px}
+.kpi span{font-size:12px;color:var(--w50)}
+.log{font-size:12.5px;color:var(--w50);margin-top:8px;min-height:18px}
+.steps3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:12px 0 18px}
+.steps3 div{background:var(--d3);border-radius:12px;padding:14px}
+.steps3 b{font-family:Syne,sans-serif;color:var(--lime);font-size:13px}
+.steps3 p{font-size:13px;color:var(--w70);margin-top:4px}
+.prog{height:6px;background:var(--d4);border-radius:6px;overflow:hidden;margin:8px 0;display:none}
+.prog i{display:block;height:100%;width:0;background:var(--lime);transition:width .2s}
+.srow{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr) minmax(0,1fr) minmax(0,1fr) minmax(0,1fr) auto;gap:8px;align-items:end;padding:8px 0;border-top:1px solid var(--w08)}
+model-viewer{width:100%;height:420px;background:#0d0d11;border-radius:14px;--poster-color:transparent}
+#m-bg{position:fixed;inset:0;background:rgba(5,5,8,.72);backdrop-filter:blur(4px);z-index:60;display:none;align-items:center;justify-content:center;padding:16px}
+#m{width:100%;max-width:500px;max-height:calc(100vh - 32px);overflow-y:auto;background:var(--d2);border:1px solid var(--w15);border-radius:20px;padding:26px;position:relative}
+#m h3{font-family:Syne,sans-serif;font-size:21px;letter-spacing:-.02em;line-height:1.25;margin-bottom:6px;padding-right:40px}
+#m p{color:var(--w70);font-size:14px;margin-bottom:14px}
+#m .x{position:absolute;top:14px;right:14px;width:34px;height:34px;border-radius:9px;border:1px solid var(--w08);background:var(--d3);color:var(--w70);font-size:18px;cursor:pointer}
+.acts{display:flex;justify-content:flex-end;gap:8px;margin-top:6px;flex-wrap:wrap}
+#toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--d4);border:1px solid var(--w15);color:var(--white);font-size:13px;padding:10px 16px;border-radius:10px;z-index:70;display:none;max-width:calc(100vw - 32px)}
+@media(max-width:860px){.two{grid-template-columns:1fr}.form3{grid-template-columns:1fr 1fr}}
+@media(max-width:640px){
+  .bar{padding:10px 14px}.tabs{padding:0 6px}main{padding:22px 16px 72px}h1{font-size:24px}
+  .card{padding:18px 16px}.form3,.steps3{grid-template-columns:1fr}.kpis{grid-template-columns:1fr 1fr 1fr}
+  .item{flex-wrap:wrap}.srow{grid-template-columns:1fr 1fr}#admin-views{display:none}.right .who{display:none}model-viewer{height:320px}
+}
+</style>
+</head>
+<body>
+<div class="top">
+  <div class="bar">
+    <a class="mark" href="/dashboard" title="Dashboard"><b>CG</b></a>
+    <div class="crumb"><a href="/dashboard">Dashboard</a> / <span id="crumb-name"></span></div>
+    <div class="right"><span class="pill lime" id="role-pill"></span><span id="admin-views"></span><button class="btn sm" onclick="signOut()">Sign out</button></div>
+  </div>
+  <nav class="tabs" id="tabs"></nav>
+</div>
+<main id="main"><div class="muted">Loading your project…</div></main>
+<div id="m-bg" role="dialog" aria-modal="true"><div id="m"></div></div>
+<div id="toast"></div>
+<script>
+var S = window.CG_SESSION || {user:{name:'You'}, project:'', path:'', role:'client', projectInfo:{}};
+var PID = S.project, ROLE = S.role, ME = S.user;
+var ST = null, DEC = [], NOTES = [], MEMBERS = [], RESULTS = [], SCANS = [], SCHED = {items:[]}, TASKS = {items:[]}, TAB = 'overview', TOOL = 'codecheck';
+var $ = function(id){ return document.getElementById(id); };
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+function jsq(s){ return esc(String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'")); }
+function decClosed(d){ return d.status==='approved'||d.status==='rejected'||d.status==='withdrawn'; }
+function money(n){ return n==null||n==='' ? '—' : '$'+Math.round(n).toLocaleString('en-US'); }
+function when(t){ if(!t) return ''; var d=new Date(t); return isNaN(d) ? String(t) : d.toLocaleDateString('en-US',{month:'short',day:'numeric'}); }
+function first(n){ return String(n||'').trim().split(/\s+/)[0]; }
+function dayPart(){ var h=new Date().getHours(); return h<12?'morning':h<17?'afternoon':'evening'; }
+function toast(t){ var e=$('toast'); e.textContent=t; e.style.display='block'; clearTimeout(toast.h); toast.h=setTimeout(function(){ e.style.display='none'; },3200); }
+var isOwner = ROLE==='client', isGC = ROLE==='gc', isTrade = ROLE==='trade';
+var ownerAccount = (ME.projects||{})[PID]==='client';
+var SCOPE = {'new-build':'New build', remodel:'Remodel', addition:'Addition', adu:'ADU', demolition:'Demolition', 'tenant-improvement':'Tenant improvement', repair:'Repair'};
+var SUB = {'single-family':'Single-family','multi-family':'Multi-family',adu:'ADU','condo-townhome':'Condo / townhome',office:'Office',retail:'Retail',restaurant:'Restaurant','mixed-use':'Mixed-use',industrial:'Industrial',other:'Other'};
+
+function api(url, body){
+  var opt = body ? {method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify(body)} : {credentials:'same-origin',cache:'no-store'};
+  return fetch(url, opt).then(function(r){ return r.json().then(function(j){ j._s=r.status; return j; }).catch(function(){ return {error:'server', _s:r.status}; }); }).catch(function(){ return {error:'network'}; });
+}
+var P = function(extra){ return '/api/project?project='+encodeURIComponent(PID)+(extra||''); };
+function load(){
+  return Promise.all([
+    api(P('&action=state')),
+    isTrade ? Promise.resolve({decisions:[],notifications:[]}) : api('/api/decisions?project='+encodeURIComponent(PID)),
+    (isOwner||isGC) ? api('/api/auth?action=members&project='+encodeURIComponent(PID)) : Promise.resolve({members:[]}),
+    isTrade ? Promise.resolve({results:[]}) : api('/api/tools?action=results&project='+encodeURIComponent(PID)),
+    api('/api/tools?action=scans&project='+encodeURIComponent(PID)),
+    api('/api/tools?action=schedule&project='+encodeURIComponent(PID))
+  ]).then(function(r){
+    if (r[0].error) { $('main').innerHTML='<div class="card">Couldn’t load this project. <a href="/dashboard">Back to dashboard</a></div>'; return; }
+    ST=r[0]; DEC=r[1].decisions||[]; NOTES=r[1].notifications||[]; MEMBERS=r[2].members||[]; RESULTS=r[3].results||[]; SCANS=r[4].scans||[]; SCHED=(r[5].schedule||{items:[]}); TASKS=(r[5].tasks||{items:[]});
+    render();
+  });
+}
+function signOut(){ api('/api/auth',{action:'logout'}).then(function(){ location.href='/'; }); }
+
+/* ── shell ── */
+function tabsFor(){
+  var t = [['overview','Overview']];
+  if ((isOwner && (ST.stage==='bidding' || (ST.bids||[]).length))) t.push(['proposals','Proposals']);
+  if (!isTrade) t.push(['decisions','Decisions']);
+  t.push(['schedule','Schedule']);
+  if (isOwner||isGC) t.push(['controls', ownerAccount ? 'Owner controls' : isGC ? 'GC controls' : 'Controls']);
+  if (!isTrade) t.push(['tools','Tools']); else t.push(['tools','3D scans']);
+  return t;
+}
+function go(t, tool){ TAB=t; if (tool) TOOL=tool; try{ history.replaceState(null,'', t==='overview'?location.pathname:'#'+(t==='tools'?'tool-'+TOOL:t)); }catch(e){} render(); window.scrollTo(0,0); }
+function render(){
+  var m = ST.meta || {};
+  document.title = 'Common Ground — '+(m.name||'Project');
+  $('crumb-name').textContent = m.name || '';
+  $('role-pill').textContent = {client:'Owner',gc:'GC',trade:'Trade'}[ROLE] || ROLE;
+  if (S.admin) $('admin-views').innerHTML = ['client','gc','trade'].filter(function(r){return r!==ROLE;}).map(function(r){ return '<a class="btn sm" href="/'+esc(S.path)+'/'+r+location.hash+'">'+({client:'Owner',gc:'GC',trade:'Trade'}[r])+' view</a>'; }).join(' ');
+  var tabs = tabsFor(); if (!tabs.some(function(x){return x[0]===TAB;})) TAB='overview';
+  var counts = {proposals:(ST.bids||[]).length, decisions:DEC.filter(function(d){return !decClosed(d);}).length, controls:MEMBERS.length, schedule:TASKS.items.filter(function(t){return !t.done;}).length};
+  $('tabs').innerHTML = tabs.map(function(t){ return '<button class="tab'+(TAB===t[0]?' on':'')+'" data-tab="'+t[0]+'" onclick="go(\''+t[0]+'\')">'+t[1]+(counts[t[0]]?'<span class="ct">'+counts[t[0]]+'</span>':'')+'</button>'; }).join('');
+  $('main').innerHTML = ({overview:vOverview, proposals:vProposals, decisions:vDecisions, controls:vControls, schedule:vSchedule, tools:vTools}[TAB])();
+  if (TAB==='tools' && TOOL==='scan') afterScanRender();
+}
+
+/* ── Overview ── */
+function codeBasis(m){
+  return m.classification==='commercial'
+    ? 'Commercial: building code (CBC / IBC), accessibility (CBC 11B / ADA), fire (CFC), energy (Title 24) + local code'
+    : 'Residential: residential code (CRC / IRC), energy (Title 24 Part 6), CALGreen + local code';
+}
+function vOverview(){
+  var m = ST.meta || {}, s = m.status, stages = [['bidding','Collecting bids'],['kickoff','Kickoff'],['active','In progress']];
+  var si = stages.map(function(x){return x[0];}).indexOf(ST.stage);
+  var h = '<div class="eyebrow">'+esc(m.address)+'</div><h1>Good '+dayPart()+', '+esc(first(ME.name))+'.</h1>'+
+    '<div class="lede">'+esc(briefLine())+'</div>'+
+    '<div class="pills" style="margin-top:14px"><span class="pill">'+(m.classification==='commercial'?'Commercial':'Residential')+(m.subtype?' · '+esc(SUB[m.subtype]||m.subtype):'')+'</span>'+(m.scope?'<span class="pill">'+esc(SCOPE[m.scope]||m.scope)+'</span>':'')+
+      (ST.hiredGc?'<span class="pill lime">GC · '+esc(ST.hiredGc.company||ST.hiredGc.name)+'</span>':'')+'</div>'+
+    (ST.hiredGc && ST.hiredGc.hiredBy==='self' ? '' : '<div class="stages" id="stages">')+(ST.hiredGc && ST.hiredGc.hiredBy==='self' ? '' : stages.map(function(x,i){ return '<span class="'+(i<si?'done':i===si?'on':'')+'">'+(i<si?'✓ ':'')+x[1]+'</span>'; }).join('')+'</div>');
+  h += '<div class="two" style="margin-top:26px"><div>';
+  // next step
+  if (ST.stage==='bidding' && (isOwner||S.admin)) {
+    var n = (ST.bids||[]).length;
+    h += '<div class="card hi" id="next-step"><div class="eyebrow">Next step</div><h2>'+(n?'You have '+n+' proposal'+(n>1?'s':'')+' to review':'Share your bid link with contractors')+'</h2>'+
+      '<p class="muted small" style="margin-bottom:14px">'+(n?'Open each one, then hire or pass. Every GC hears back automatically.':'One link for every GC. They upload their proposal and it lands in your Proposals list.')+'</p>'+
+      '<button class="btn pri" onclick="go(\'proposals\')">'+(n?'Review proposals':'Get your bid link')+'</button></div>';
+  }
+  if (ST.stage==='bidding' && isGC) h += '<div class="card">This project is collecting bids. You’ll see it here once the owner hires a GC.</div>';
+  // progress
+  if (s || ST.stage==='active') {
+    var pct = s ? s.percent : 0;
+    h += '<div class="card" id="progress-card"><div class="eyebrow">Progress</div><div class="row" style="justify-content:space-between;align-items:flex-end"><div><div class="big" id="pct">'+pct+'%</div><div class="muted small" id="phase">'+esc(s?s.phase:'Started')+'</div></div>'+
+      (s&&s.nextMilestone?'<div style="text-align:right"><div class="muted small">Next</div><div style="font-weight:700" id="next-ms">'+esc(s.nextMilestone)+'</div></div>':'')+'</div>'+
+      '<div class="track"><div class="fill" style="width:'+pct+'%"></div></div>'+
+      '<div class="muted small">'+(s&&s.startDate?'Started '+esc(when(s.startDate))+' · ':'')+(s&&s.updatedAt?'Updated '+esc(when(s.updatedAt)):'')+'</div>'+
+      (s&&s.note?'<p style="margin-top:10px;color:var(--w70)">'+esc(s.note)+'</p>':'')+
+      (isGC && !m.builtin ? statusForm(s) : '')+'</div>';
+  }
+  if (ST.stage==='kickoff') h += kickoffCard();
+  h += '</div><div>';
+  h += '<div class="card"><div class="eyebrow">Code basis</div><p style="color:var(--w70)">'+esc(codeBasis(m))+'</p>'+(isTrade?'':'<button class="btn sm" style="margin-top:12px" onclick="go(\'tools\',\'codecheck\')">Run a code check</button>')+'</div>';
+  h += '<div class="card"><div class="eyebrow">Recent activity</div>'+(NOTES.length ? NOTES.slice(0,6).map(function(n){ return '<div class="item"><div class="main"><div>'+esc(n.text)+'</div><div class="muted small">'+esc(when(n.at))+(n.by?' · '+esc(n.by):'')+'</div></div></div>'; }).join('') : '<div class="empty">Nothing yet.</div>')+'</div>';
+  h += '</div></div>';
+  return h;
+}
+function briefLine(){
+  var open = DEC.filter(function(d){ return !decClosed(d); }).length;
+  if (ST.stage==='bidding') return isOwner ? 'You’re collecting proposals. Share your bid link, compare, and hire when you’re ready.' : 'Collecting bids.';
+  if (ST.stage==='kickoff') return 'Kickoff: finish the checklist together, then the GC starts the project.';
+  var s = (ST.meta||{}).status;
+  return (s ? s.phase+' · '+s.percent+'% complete.' : 'Project in progress.') + (open ? ' '+open+' decision'+(open>1?'s':'')+' waiting.' : '');
+}
+function statusForm(s){
+  s = s || {phase:'Pre-construction', percent:0};
+  return '<details style="margin-top:14px"><summary class="btn sm" style="list-style:none">Update progress</summary><div style="margin-top:14px">'+
+    '<label for="u-phase">Phase</label><select id="u-phase">'+(ST.phases||[]).map(function(p){ return '<option'+(p===s.phase?' selected':'')+'>'+esc(p)+'</option>'; }).join('')+'</select>'+
+    '<label for="u-pct">Percent complete · <b id="u-pct-v" style="color:var(--white)">'+(s.percent||0)+'%</b></label><input id="u-pct" type="range" min="0" max="100" step="5" value="'+(s.percent||0)+'" oninput="$(\'u-pct-v\').textContent=this.value+\'%\'">'+
+    '<label for="u-next">Next milestone</label><input id="u-next" value="'+esc(s.nextMilestone||'')+'">'+
+    '<label for="u-note">Note for the owner (optional)</label><textarea id="u-note" rows="2">'+esc(s.note||'')+'</textarea>'+
+    '<button class="btn pri" id="u-save" onclick="saveStatus()">Save + notify owner</button></div></details>';
+}
+function saveStatus(){
+  api(P(), {project:PID, action:'status', phase:$('u-phase').value, percent:+$('u-pct').value, nextMilestone:$('u-next').value, note:$('u-note').value}).then(function(j){
+    if (!j.ok) return toast('Couldn’t save that.'); ST.meta.status = j.status; toast('Progress updated — owner notified'); render();
+  });
+}
+function kickoffCard(){
+  var items = (ST.kickoff||{}).items||[];
+  var done = function(i){ return i.type==='agreement' ? i.gcAgreed && i.clientAgreed : i.done; };
+  var open = items.filter(function(i){ return i.required && !done(i); }).length;
+  var h = '<div class="card" id="kickoff"><div class="eyebrow">Kickoff checklist · '+(items.length-open)+' of '+items.length+'</div>';
+  h += items.map(function(i){
+    var mineAgree = isGC ? i.gcAgreed : i.clientAgreed;
+    var btn = i.type==='agreement'
+      ? ((isGC||ownerAccount) ? '<button class="btn sm'+(mineAgree?'':' pri')+'" onclick="kick(\''+i.id+'\',\''+(mineAgree?'unagree':'agree')+'\')">'+(mineAgree?'Agreed ✓':'Agree')+'</button>' : '')
+      : ((isGC || (ownerAccount && i.owner==='client')) ? '<button class="btn sm" onclick="kick(\''+i.id+'\',\'toggle\')">'+(i.done?'Undo':'Mark done')+'</button>' : '');
+    var who = i.type==='agreement' ? '<span class="muted small">GC '+(i.gcAgreed?'✓':'…')+' · Owner '+(i.clientAgreed?'✓':'…')+'</span>' : '';
+    return '<div class="item" data-k="'+esc(i.id)+'"><div class="main"><div class="t" style="'+(done(i)?'color:var(--w50);text-decoration:line-through':'')+'">'+esc(i.text)+'</div><div class="muted small">'+esc(i.detail||'')+'</div>'+who+
+      ((i.tags||[]).length?'<div class="pills" style="margin-top:4px">'+i.tags.map(function(t){return '<span class="pill amb">'+esc(t)+'</span>';}).join('')+'</div>':'')+'</div>'+btn+'</div>';
+  }).join('');
+  if (isGC) h += '<div style="margin-top:16px"><button class="btn pri" id="start-project" '+(open?'disabled':'')+' onclick="startProject()">Start Project</button>'+(open?'<span class="muted small" style="margin-left:10px">'+open+' item'+(open>1?'s':'')+' left</span>':'')+'</div>';
+  return h+'</div>';
+}
+function kick(id, op){ api(P(), {project:PID, action:'kickoff', op:op, id:id}).then(function(j){ if (!j.ok) return toast('Couldn’t update that.'); load(); }); }
+function startProject(){ api(P(), {project:PID, action:'start'}).then(function(j){ if (!j.ok) return toast(j.error==='checklist_incomplete'?'Finish the checklist first.':'Couldn’t start.'); toast('Project started — owner notified'); load(); }); }
+
+/* ── Proposals (owner) ── */
+var BIDLINK = '', HIRE_RESULT = null;
+function vProposals(){
+  var bids = ST.bids||[], inv = ST.bidInvites||[];
+  var h = '<div class="eyebrow">Proposals</div><h1>Collect and compare bids</h1><div class="lede">Share one link with every contractor. Their proposals land here.</div><div class="two" style="margin-top:24px"><div>';
+  if (HIRE_RESULT) h += hireResultCard();
+  h += '<div class="card"><h2>Proposals <span class="muted small">· '+bids.length+'</span></h2>'+(bids.length ? bids.map(function(b){
+    var tag = b.status==='hired'?['ok','Hired']:b.status==='declined'?['gray','Passed']:ST.hiredGc?['gray','Not chosen']:['amb','New'];
+    return '<div class="item" data-bid="'+esc(b.id)+'"><div class="main"><div class="t">'+esc(b.gcName)+'</div><div class="muted small">'+money(b.amount)+' · '+esc(when(b.submittedAt))+(b.email?' · '+esc(b.email):'')+'</div>'+(b.note?'<div class="small" style="color:var(--w70);margin-top:3px">'+esc(b.note)+'</div>':'')+'</div>'+
+      '<span class="pill '+tag[0]+'">'+tag[1]+'</span>'+
+      (b.file?'<a class="btn sm" target="_blank" rel="noopener" href="'+P('&action=file&bid='+encodeURIComponent(b.id))+'">View document</a>':'')+
+      (ST.stage==='bidding' && b.status!=='declined' && ownerAccount ? '<button class="btn sm pri" onclick="choose(\''+jsq(b.id)+'\')">Choose</button>' : '')+'</div>';
+  }).join('') : '<div class="empty">No proposals yet. Share your bid link to get started.</div>')+'</div>';
+  h += '</div><div>';
+  if (ST.stage==='bidding') {
+    h += '<div class="card hi"><h2>Your bid link</h2><p class="muted small" style="margin-bottom:12px">Anyone with this link can upload a proposal and create a free account.</p>'+
+      (BIDLINK ? '<div class="linkbox"><input id="bid-link" readonly value="'+esc(BIDLINK)+'" onclick="this.select()"><button class="btn sm" onclick="copy(\'bid-link\')">Copy</button></div>'+
+        '<div class="row" style="margin-top:10px"><a class="btn sm" href="sms:?&body='+encodeURIComponent('Please submit your proposal for '+ST.meta.name+' here: '+BIDLINK)+'">Text it</a><a class="btn sm" href="mailto:?subject='+encodeURIComponent('Proposal request — '+ST.meta.name)+'&body='+encodeURIComponent('Please upload your proposal here: '+BIDLINK)+'">Email it</a></div>'
+        : '<button class="btn pri" id="make-link" onclick="makeLink()">Create bid link</button>')+'</div>';
+    h += '<div class="card"><h2>Invite a contractor</h2><div class="msg" id="inv-msg"></div><label for="bi-name">Name</label><input id="bi-name"><label for="bi-email">Email</label><input id="bi-email" type="email"><label for="bi-phone">Phone (optional)</label><input id="bi-phone" type="tel">'+
+      '<button class="btn pri" id="bi-go" onclick="inviteGC()">Send invite</button>'+
+      (inv.length?'<div style="margin-top:16px">'+inv.map(function(x){ return '<div class="item"><div class="main"><div class="t">'+esc(x.name)+'</div><div class="muted small">'+esc(x.email)+'</div></div><span class="pill '+(x.status==='submitted'?'ok':'gray')+'">'+(x.status==='submitted'?'Submitted':'Invited')+'</span></div>'; }).join('')+'</div>':'')+'</div>';
+  }
+  return h+'</div></div>';
+}
+function copy(id){ var i=$(id); i.select(); try{ navigator.clipboard.writeText(i.value).then(function(){toast('Copied');},function(){document.execCommand('copy');toast('Copied');}); }catch(e){ document.execCommand('copy'); toast('Copied'); } }
+function makeLink(){ api(P(), {project:PID, action:'bid-link'}).then(function(j){ if (!j.ok) return toast('Couldn’t create the link.'); BIDLINK=j.link; render(); }); }
+function inviteGC(){
+  var b=$('bi-go'); b.disabled=true;
+  api(P(), {project:PID, action:'bid-invite', name:$('bi-name').value, email:$('bi-email').value, phone:$('bi-phone').value}).then(function(j){
+    b.disabled=false;
+    if (!j.ok) { var m=$('inv-msg'); m.style.display='block'; m.textContent={name_required:'Add their name.', bad_email:'Enter a valid email.'}[j.error]||'Couldn’t send that.'; return; }
+    toast(j.emailed?'Invite emailed':'Invite link created'); BIDLINK = BIDLINK || ''; load();
+  });
+}
+function choose(id){
+  var b = (ST.bids||[]).filter(function(x){return x.id===id;})[0]; if (!b) return;
+  modal('<div class="eyebrow">'+esc(b.gcName)+' · '+money(b.amount)+'</div><h3>Hire '+esc(b.company||b.gcName)+'?</h3><p>Hiring moves the project to kickoff and invites them in. Other contractors see “going another direction.”</p>'+
+    (!b.email?'<label for="h-email">Their email</label><input id="h-email" type="email"><label for="h-phone">Phone (optional)</label><input id="h-phone">':'')+
+    '<div class="msg" id="h-msg"></div><div class="acts"><button class="btn" onclick="decline(\''+jsq(id)+'\')">Don’t hire</button><button class="btn pri" id="h-go" onclick="hire(\''+jsq(id)+'\')">Hire</button></div>');
+}
+function hire(id){
+  var b=$('h-go'); b.disabled=true;
+  api(P(), {project:PID, action:'hire', bidId:id, email:$('h-email')?$('h-email').value:'', phone:$('h-phone')?$('h-phone').value:''}).then(function(j){
+    if (!j.ok) { b.disabled=false; var m=$('h-msg'); m.style.display='block'; m.textContent={contact_required:'Add their email so we can send the project link.'}[j.error]||'Couldn’t hire — try again.'; return; }
+    HIRE_RESULT = j; closeModal(); toast('Hired — they’ve been notified'); load();
+  });
+}
+function decline(id){ api(P(), {project:PID, action:'decline', bidId:id}).then(function(j){ closeModal(); toast(j.ok?'Marked as passed':'Couldn’t update'); load(); }); }
+function hireResultCard(){
+  var j = HIRE_RESULT;
+  return '<div class="card hi"><h2>'+esc(j.hiredGc.company)+' is hired</h2><p class="muted small">'+(j.emailed?'We emailed them the project link. ':'')+'You can also text it:</p>'+
+    '<div class="linkbox"><input id="hire-link" readonly value="'+esc(j.link)+'"><button class="btn sm" onclick="copy(\'hire-link\')">Copy</button></div>'+
+    (j.phone?'<a class="btn sm" style="margin-top:10px" href="sms:'+esc(j.phone)+'?&body='+encodeURIComponent(j.sms)+'">Text '+esc(first(j.hiredGc.name))+'</a>':'')+'</div>';
+}
+
+/* ── Decisions ── */
+function vDecisions(){
+  var h = '<div class="eyebrow">Decisions</div><h1>Approvals + change orders</h1><div class="lede">'+(ownerAccount?'Every change is priced and waits for your approval before work starts.':isGC?'Send a change order — the owner approves it in writing.':'Decisions on this project.')+'</div><div class="two" style="margin-top:24px"><div><div class="card">';
+  h += DEC.length ? DEC.slice().sort(function(a,b){ return (a.status==='approved')-(b.status==='approved') || String(b.updatedAt||b.createdAt).localeCompare(String(a.updatedAt||a.createdAt)); }).map(function(d){
+    return '<div class="item" data-dec="'+esc(d.id)+'"><div class="main"><div class="t">'+esc(d.title)+'</div><div class="muted small">'+money(d.amount)+(d.area?' · '+esc(d.area):'')+' · '+esc(when(d.updatedAt||d.createdAt))+'</div></div>'+
+      decPill(d)+'<button class="btn sm" onclick="openDec(\''+jsq(d.id)+'\')">Open</button></div>';
+  }).join('') : '<div class="empty">No decisions yet.'+(isGC?' Create a change order when something changes.':'')+'</div>';
+  h += '</div></div><div>';
+  if (isGC) h += '<div class="card"><h2>New change order</h2><label for="co-title">What’s changing</label><input id="co-title" placeholder="e.g. Upgrade to 200A panel"><label for="co-amt">Price ($)</label><input id="co-amt" type="number" min="0" step="1"><label for="co-desc">Details</label><textarea id="co-desc" rows="3"></textarea><button class="btn pri" id="co-go" onclick="createCO()">Send to owner</button></div>';
+  return h+'</div></div>';
+}
+function decPill(d){
+  var m = {approved:['ok','Approved'], discussing:['amb','Discussing'], rejected:['del','Rejected'], withdrawn:['gray','Withdrawn']}[d.status] || ['lime','Pending'];
+  return '<span class="pill '+m[0]+'">'+m[1]+'</span>';
+}
+function createCO(){
+  var t=$('co-title').value.trim(); if (!t) return toast('Describe the change first.');
+  api('/api/decisions', {project:PID, action:'create', title:t, amount:$('co-amt').value?+$('co-amt').value:null, desc:$('co-desc').value, area:'Change order'}).then(function(j){
+    if (!j.ok) return toast('Couldn’t send that.'); toast('Sent — owner notified'); load();
+  });
+}
+function openDec(id){
+  var d = DEC.filter(function(x){return x.id===id;})[0]; if (!d) return;
+  var ev = (d.events||[]).map(function(e){
+    var t = e.type==='approved' ? '<span style="color:#8fd6ab">✓ Approved '+money(e.amount)+' · signed “'+esc(e.signature)+'”'+(e.method==='offline'?' on paper':'')+'</span>'
+      : e.type==='voided' ? '<span style="color:#f0a996">Approval voided by '+(e.role==='admin'?'platform admin':'the owner')+'</span>'+(e.note?' — '+esc(e.note):'')
+      : e.type==='rejected' ? '<span style="color:#f0a996">Rejected by the owner</span>'+(e.note?' — '+esc(e.note):'')
+      : e.type==='withdrawn' ? '<span class="muted">Withdrawn by the GC</span>'+(e.note?' — '+esc(e.note):'')
+      : e.type==='reopened' ? '<span style="color:#e0c67a">Reopened for review</span>'
+      : e.type==='revised' ? 'Revised to '+money(e.amount)+(e.note?' — '+esc(e.note):'')
+      : e.type==='created' ? 'Created · '+money(e.amount) : esc(e.note);
+    return '<div class="item"><div class="main"><div class="small"><b>'+esc(e.by)+'</b> · '+esc(when(e.at))+'</div><div class="small" style="color:var(--w70)">'+t+'</div></div></div>';
+  }).join('');
+  var approve = ownerAccount && !decClosed(d)
+    ? '<div class="card" style="margin:14px 0 0;padding:16px"><label style="display:flex;gap:8px;align-items:flex-start;color:var(--w70);font-size:13px"><input id="d-agree" type="checkbox" style="width:auto;margin:3px 0 0"> I approve '+esc(d.title)+(d.amount!=null?' for '+money(d.amount):'')+'.</label>'+
+      '<label for="d-sig">Type your full name to sign</label><input id="d-sig" autocomplete="name"><button class="btn pri" id="d-approve" onclick="approveDec(\''+jsq(id)+'\')">Approve + sign</button></div>' : '';
+  modal('<div class="eyebrow">'+esc(d.area||'Decision')+'</div><h3>'+esc(d.title)+'</h3><p>'+money(d.amount)+(d.desc?' · '+esc(d.desc):'')+'</p>'+(ev||'')+approve+
+    '<label for="d-note" style="margin-top:14px">Comment or question</label><textarea id="d-note" rows="2"></textarea><div class="msg" id="d-msg"></div>'+
+    '<div class="acts">'+
+      (ownerAccount ? '<button class="btn danger" id="d-override" onclick="overrideDec(\''+jsq(id)+'\',\''+(d.status==='approved'?'void':decClosed(d)?'reopen':'reject')+'\')">'+(d.status==='approved'?'Void my approval':decClosed(d)?'Reopen':'Reject')+'</button>' : '')+
+      (isGC && d.type==='co' && !decClosed(d) ? '<button class="btn danger" id="d-withdraw" onclick="overrideDec(\''+jsq(id)+'\',\'withdraw\')">Withdraw</button>' : '')+
+      '<button class="btn" onclick="closeModal()">Close</button><button class="btn" onclick="commentDec(\''+jsq(id)+'\')">Send comment</button></div>');
+}
+function approveDec(id){
+  if (!$('d-agree').checked) { var m=$('d-msg'); m.style.display='block'; m.textContent='Tick the box to approve.'; return; }
+  api('/api/decisions', {project:PID, action:'approve', id:id, agree:true, signature:$('d-sig').value}).then(function(j){
+    if (!j.ok) { var m=$('d-msg'); m.style.display='block'; m.textContent={signature_required:'Type your full name to sign.'}[j.error]||'Couldn’t approve.'; return; }
+    closeModal(); toast('Approved — GC notified'); load();
+  });
+}
+function overrideDec(id, action){
+  var n = $('d-note').value.trim();
+  if (action!=='reopen' && n.length<3) { var m=$('d-msg'); m.style.display='block'; m.textContent='Write the reason in the comment box first — '+(action==='withdraw'?'the owner':'the GC')+' sees it.'; return; }
+  api('/api/decisions', {project:PID, action:action, id:id, note:n}).then(function(j){
+    if (!j.ok) { var m=$('d-msg'); m.style.display='block'; m.textContent='Couldn’t do that.'; return; }
+    closeModal(); toast({reject:'Rejected — GC notified', void:'Approval voided — GC notified', withdraw:'Withdrawn — owner notified', reopen:'Reopened'}[action]); load();
+  });
+}
+function commentDec(id){ var n=$('d-note').value.trim(); if (!n) return; api('/api/decisions', {project:PID, action:'comment', id:id, note:n}).then(function(){ closeModal(); toast('Comment sent'); load(); }); }
+
+/* ── Controls: each role's own admin page (owner > GC > trade) ── */
+var TEAM_LINK = '';
+var RL = {client:'Owner', gc:'GC', trade:'Trade / Sub'};
+function myRank(){ return S.admin ? 9 : ({client:3, gc:2, trade:1}[(ME.projects||{})[PID]] || 0); }
+function canActOn(m){
+  if (m.identifier===ME.identifier) return false;
+  if (S.admin || ownerAccount) return true;
+  if (!isGC || m.role==='client') return false;
+  return !(ST.hiredGc && ST.hiredGc.identifier===m.identifier);
+}
+function rolesICanGive(){ return (S.admin||ownerAccount) ? ['client','gc','trade'] : isGC ? ['gc','trade'] : []; }
+function hasOwner(){ return MEMBERS.some(function(m){ return m.role==='client' && m.status==='active'; }); }
+function vControls(){
+  var m = ST.meta||{};
+  var h = '<div class="eyebrow">'+(ownerAccount?'Owner controls':'GC controls')+'</div><h1>'+(ownerAccount?'You have final say on this project':'Run your team and trades')+'</h1>'+
+    '<div class="lede">'+(ownerAccount ? 'Add or remove anyone, change roles, reject or void decisions, and release the GC if you need to.'
+      : hasOwner() ? 'Invite trades and your GC team, send change orders, and keep the schedule current. The homeowner has final say on approvals.'
+      : 'No homeowner has joined yet. Invite them below — once they join, they have final say on approvals.')+'</div>';
+  h += '<div class="two" style="margin-top:24px"><div>';
+  // team + roles
+  h += '<div class="card" id="team-card"><h2>Team + roles</h2>'+(MEMBERS.length ? MEMBERS.map(function(x){
+    var act = canActOn(x), roles = rolesICanGive();
+    var sel = act && roles.indexOf(x.role)>=0 && roles.length>1
+      ? '<select class="role-sel" data-id="'+esc(x.identifier)+'" style="width:auto;margin:0;padding:6px 8px;font-size:12.5px" onchange="setMemberRole(\''+jsq(x.identifier)+'\',this.value)">'+roles.map(function(r){ return '<option value="'+r+'"'+(x.role===r?' selected':'')+'>'+RL[r]+'</option>'; }).join('')+'</select>'
+      : '<span class="pill lime">'+esc(RL[x.role]||x.role)+'</span>';
+    return '<div class="item" data-member="'+esc(x.identifier)+'"><div class="main"><div class="t">'+esc(x.name)+(x.identifier===ME.identifier?' <span class="muted small">(you)</span>':'')+'</div><div class="muted small">'+esc(x.identifier)+(ST.hiredGc&&ST.hiredGc.identifier===x.identifier?' · hired GC':'')+'</div></div>'+
+      sel+'<span class="pill '+(x.status==='active'?'ok':'gray')+'">'+(x.status==='active'?'Active':'Invited')+'</span>'+
+      (act?'<button class="btn sm danger" onclick="removeMember(\''+jsq(x.identifier)+'\',\''+jsq(x.name)+'\')">Remove</button>':'')+'</div>';
+  }).join('') : '<div class="empty">Just you so far.</div>')+'</div>';
+  // overrides (owner)
+  if (ownerAccount) {
+    var od = DEC.slice().sort(function(a,b){ return decClosed(a)-decClosed(b); });
+    h += '<div class="card" id="override-card"><h2>Decisions — your final say</h2>'+(od.length ? od.map(function(d){
+      var a = d.status==='approved' ? ['void','Void approval'] : decClosed(d) ? ['reopen','Reopen'] : ['reject','Reject'];
+      return '<div class="item" data-ov="'+esc(d.id)+'"><div class="main"><div class="t">'+esc(d.title)+'</div><div class="muted small">'+money(d.amount)+'</div></div>'+decPill(d)+
+        '<button class="btn sm" onclick="openDec(\''+jsq(d.id)+'\')">Open</button><button class="btn sm danger" onclick="quickOverride(\''+jsq(d.id)+'\',\''+a[0]+'\')">'+a[1]+'</button></div>';
+    }).join('') : '<div class="empty">No decisions yet.</div>')+'</div>';
+  }
+  h += '</div><div>';
+  // invite
+  var give = (S.admin||ownerAccount||isGC) ? ['client','gc','trade'] : [];
+  h += '<div class="card"><h2>Invite someone</h2><p class="muted small" style="margin-bottom:12px">Choose who they are — that sets what they see and what they can approve.</p><div class="msg" id="t-msg"></div>'+
+    '<label for="t-role">They are the…</label><select id="t-role">'+give.map(function(r){ return '<option value="'+r+'"'+((isGC&&!hasOwner()&&r==='client')||(!isGC&&r==='gc')?' selected':'')+'>'+{client:'Homeowner (final say on approvals)', gc:'General contractor / GC team', trade:'Trade / sub'}[r]+'</option>'; }).join('')+'</select>'+
+    '<label for="t-name">Name</label><input id="t-name"><label for="t-id">Email or phone</label><input id="t-id"><button class="btn pri" id="t-go" onclick="teamInvite()">Create invite link</button>'+
+    (TEAM_LINK?'<div class="linkbox" style="margin-top:12px"><input id="team-link" readonly value="'+esc(TEAM_LINK)+'"><button class="btn sm" onclick="copy(\'team-link\')">Copy</button></div><div class="muted small" style="margin-top:6px">Text or email this link — it lets them set a password and join.</div>':'')+'</div>';
+  // project details
+  if (!m.builtin && (S.admin || ownerAccount || (isGC && !hasOwner()))) {
+    var SUBS = {residential:[['single-family','Single-family'],['multi-family','Multi-family'],['adu','ADU'],['condo-townhome','Condo / townhome']], commercial:[['office','Office'],['retail','Retail'],['restaurant','Restaurant'],['mixed-use','Mixed-use'],['industrial','Industrial'],['other','Other']]};
+    h += '<div class="card" id="details-card"><h2>Project details</h2><label for="pd-name">Name</label><input id="pd-name" value="'+esc(m.name)+'">'+
+      '<label for="pd-class">Property type</label><select id="pd-class" onchange="pdSubs()"><option value="residential"'+(m.classification==='residential'?' selected':'')+'>Residential</option><option value="commercial"'+(m.classification==='commercial'?' selected':'')+'>Commercial</option></select>'+
+      '<label for="pd-sub">Type</label><select id="pd-sub"></select>'+
+      '<label for="pd-scope">Work</label><select id="pd-scope">'+Object.keys(SCOPE).map(function(k){ return '<option value="'+k+'"'+(m.scope===k?' selected':'')+'>'+SCOPE[k]+'</option>'; }).join('')+'</select>'+
+      '<button class="btn pri" id="pd-save" onclick="saveDetails()">Save details</button></div>';
+    window.PD_SUBS = SUBS; setTimeout(function(){ pdSubs(m.subtype); }, 0);
+  }
+  // release GC (owner)
+  if (ownerAccount && ST.hiredGc && !m.builtin) h += '<div class="card" style="border-color:rgba(224,122,95,.3)" id="release-card"><h2>Release the GC</h2><p class="muted small" style="margin-bottom:12px">Ends '+esc(ST.hiredGc.company||ST.hiredGc.name)+'’s access and reopens the project for bids. Everything so far stays on record.</p><button class="btn danger" onclick="releaseGC()">Release '+esc(ST.hiredGc.company||ST.hiredGc.name)+'</button></div>';
+  return h+'</div></div>';
+}
+function pdSubs(cur){ var c=$('pd-class'), sel=$('pd-sub'); if (!c||!sel) return; var list=PD_SUBS[c.value]; sel.innerHTML=list.map(function(x){ return '<option value="'+x[0]+'"'+(x[0]===cur?' selected':'')+'>'+x[1]+'</option>'; }).join(''); }
+function saveDetails(){ api(P(), {project:PID, action:'update-meta', name:$('pd-name').value, classification:$('pd-class').value, subtype:$('pd-sub').value, scope:$('pd-scope').value}).then(function(j){ toast(j.ok?'Details saved':'Couldn’t save — '+(j.error==='owner_only'?'the homeowner manages details now':'try again')); if (j.ok) load(); }); }
+function teamInvite(){
+  api('/api/auth', {action:'invite', project:PID, role:$('t-role').value, name:$('t-name').value, identifier:$('t-id').value}).then(function(j){
+    if (!j.ok) { var m=$('t-msg'); m.style.display='block'; m.textContent={name_required:'Add their name.', bad_identifier:'Enter a valid email or phone.', forbidden:'You can’t invite that role.'}[j.error]||'Couldn’t create the invite.'; return; }
+    TEAM_LINK = j.link; load();
+  });
+}
+function setMemberRole(id, role){ api('/api/auth', {action:'set-role', project:PID, identifier:id, role:role}).then(function(j){ toast(j.ok?'Role updated':'You can’t make that change'); load(); }); }
+function removeMember(id, name){ modal('<h3>Remove '+esc(name)+'?</h3><p>They lose access to this project right away.</p><div class="acts"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn danger" id="rm-go" onclick="api(\'/api/auth\',{action:\'remove\',project:PID,identifier:\''+jsq(id)+'\'}).then(function(j){closeModal();toast(j.ok?\'Removed\':\'You can’t remove them\');load();})">Remove</button></div>'); }
+function quickOverride(id, action){
+  var d = DEC.filter(function(x){return x.id===id;})[0];
+  modal('<div class="eyebrow">'+({reject:'Reject',void:'Void approval',reopen:'Reopen'}[action])+'</div><h3>'+esc(d.title)+'</h3><p>'+(action==='reopen'?'Puts it back in front of you for a decision.':'The GC is notified with your reason.')+'</p>'+
+    (action!=='reopen'?'<label for="d-note">Reason</label><textarea id="d-note" rows="2"></textarea>':'<textarea id="d-note" style="display:none"></textarea>')+'<div class="msg" id="d-msg"></div>'+
+    '<div class="acts"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn danger" id="qo-go" onclick="overrideDec(\''+jsq(id)+'\',\''+action+'\')">Confirm</button></div>');
+}
+function releaseGC(){
+  modal('<div class="eyebrow">Release the GC</div><h3>Release '+esc(ST.hiredGc.company||ST.hiredGc.name)+'?</h3><p>They lose access and the project goes back to collecting bids. Tell them why — they’re notified.</p><label for="rel-why">Reason</label><textarea id="rel-why" rows="2"></textarea><div class="msg" id="rel-msg"></div>'+
+    '<div class="acts"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn danger" id="rel-go" onclick="doRelease()">Release GC</button></div>');
+}
+function doRelease(){ api(P(), {project:PID, action:'owner-release', reason:$('rel-why').value}).then(function(j){ if (!j.ok) { var m=$('rel-msg'); m.style.display='block'; m.textContent=j.error==='reason_required'?'Add a short reason.':'Couldn’t release — try again.'; return; } closeModal(); toast('GC released — back to collecting bids'); load(); }); }
+
+/* ── Schedule: timeline + tasks ── */
+var SCHED_EDIT = false, SCHED_DRAFT = null;
+var SCOL = {planned:'var(--w30)', 'in-progress':'var(--lime)', done:'#4A9B6F', delayed:'#E07A5F'};
+var SLBL = {planned:'Planned', 'in-progress':'In progress', done:'Done', delayed:'Delayed'};
+function canPlan(){ return isGC || ownerAccount || S.admin; }
+function dnum(d){ return d ? Date.parse(d+'T12:00:00Z') : NaN; }
+function vSchedule(){
+  var h = '<div class="eyebrow">Schedule</div><h1>Timeline + tasks</h1><div class="lede">'+(canPlan()?'Plan the phases, assign tasks, and everyone on the project sees the same schedule.':'The project schedule and the tasks assigned to you.')+'</div>';
+  h += '<div class="card" style="margin-top:22px" id="timeline-card"><div class="row" style="justify-content:space-between;margin-bottom:12px"><h2 style="margin:0">Timeline</h2>'+
+    (canPlan()&&!SCHED_EDIT?'<div class="row">'+(!SCHED.items.length?'<button class="btn sm" id="sched-template" onclick="schedTemplate()">Start from a template</button>':'')+'<button class="btn sm pri" id="sched-edit" onclick="schedEdit()">'+(SCHED.items.length?'Edit schedule':'Add phases')+'</button></div>':'')+'</div>';
+  h += SCHED_EDIT ? schedEditor() : gantt();
+  h += '</div>';
+  // tasks
+  var mine = TASKS.items.filter(function(t){ return canPlan() || t.assignee===ME.identifier; });
+  h += '<div class="two"><div class="card" id="tasks-card"><h2>Tasks <span class="muted small">· '+mine.filter(function(t){return !t.done;}).length+' open</span></h2>'+
+    (mine.length ? mine.map(function(t){
+      var mayToggle = canPlan() || t.assignee===ME.identifier, late = t.due && !t.done && dnum(t.due) < Date.now()-86400000;
+      return '<div class="item" data-task="'+esc(t.id)+'"><input type="checkbox" style="width:18px;height:18px;margin:0;flex:none;accent-color:#D5DC99" '+(t.done?'checked ':'')+(mayToggle?'':'disabled ')+'onchange="taskToggle(\''+jsq(t.id)+'\')" aria-label="Done">'+
+        '<div class="main"><div class="t" style="'+(t.done?'text-decoration:line-through;color:var(--w50)':'')+'">'+esc(t.title)+(t.priority==='high'?' <span class="pill del">High</span>':'')+'</div><div class="muted small">'+(t.assigneeName?esc(t.assigneeName)+' · ':'')+(t.due?'<span style="'+(late?'color:#f0a996':'')+'">due '+esc(when(t.due))+'</span> · ':'')+'from '+esc(t.createdBy)+'</div></div>'+
+        (canPlan()?'<button class="btn sm" aria-label="Delete task" onclick="taskDelete(\''+jsq(t.id)+'\')">×</button>':'')+'</div>';
+    }).join('') : '<div class="empty">'+(canPlan()?'No tasks yet.':'Nothing assigned to you.')+'</div>')+'</div><div>';
+  if (canPlan()) h += '<div class="card"><h2>Add a task</h2><label for="tk-title">Task</label><input id="tk-title" placeholder="e.g. Order 200A panel">'+
+    '<label for="tk-who">Assign to</label><select id="tk-who"><option value="">Unassigned</option>'+MEMBERS.map(function(x){ return '<option value="'+esc(x.identifier)+'" data-name="'+esc(x.name)+'">'+esc(x.name)+' · '+esc(RL[x.role]||x.role)+'</option>'; }).join('')+'</select>'+
+    '<div class="row" style="gap:10px;align-items:flex-end"><div style="flex:1;min-width:140px"><label for="tk-due">Due</label><input id="tk-due" type="date"></div><div style="flex:1;min-width:120px"><label for="tk-pri">Priority</label><select id="tk-pri"><option value="normal">Normal</option><option value="high">High</option></select></div></div>'+
+    '<button class="btn pri" id="tk-go" onclick="taskAdd()">Add task</button></div>';
+  return h+'</div></div>';
+}
+function gantt(){
+  var it = SCHED.items.filter(function(x){ return x.start && x.end; });
+  if (!SCHED.items.length) return '<div class="empty">No schedule yet.'+(canPlan()?' Add phases or start from a template.':'')+'</div>';
+  var min = Math.min.apply(null, it.map(function(x){return dnum(x.start);})), max = Math.max.apply(null, it.map(function(x){return dnum(x.end);}));
+  if (!it.length) { min = Date.now(); max = min + 86400000*30; }
+  var span = Math.max(max-min, 86400000), today = Date.now(), tpos = (today-min)/span*100;
+  var months = [], d = new Date(min); d.setUTCDate(1);
+  while (d.getTime() <= max) { var p=(d.getTime()-min)/span*100; if (p>=0) months.push([p, d.toLocaleDateString('en-US',{month:'short',timeZone:'UTC'})]); d.setUTCMonth(d.getUTCMonth()+1); }
+  var rows = SCHED.items.map(function(x){
+    var has = x.start && x.end, l = has?(dnum(x.start)-min)/span*100:0, w = has?Math.max((dnum(x.end)-dnum(x.start))/span*100, 1.5):0;
+    return '<div class="grow" data-phase="'+esc(x.id)+'" style="display:grid;grid-template-columns:minmax(120px,32%) 1fr;gap:12px;align-items:center;padding:8px 0;border-top:1px solid var(--w08)">'+
+      '<div style="min-width:0"><div style="font-weight:700;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+esc(x.name)+'</div><div class="muted" style="font-size:11.5px">'+(x.trade?esc(x.trade)+' · ':'')+'<span style="color:'+SCOL[x.status]+'">'+SLBL[x.status]+'</span>'+(has?' · '+esc(when(x.start))+'–'+esc(when(x.end)):'')+'</div></div>'+
+      '<div style="position:relative;height:22px;background:var(--d3);border-radius:6px;overflow:hidden">'+(has?'<div style="position:absolute;top:3px;bottom:3px;left:'+l+'%;width:'+w+'%;background:'+SCOL[x.status]+';border-radius:4px;opacity:'+(x.status==='planned'?'.55':'1')+'"></div>':'')+
+        (tpos>=0&&tpos<=100?'<div style="position:absolute;top:0;bottom:0;left:'+tpos+'%;width:2px;background:#E07A5F"></div>':'')+'</div></div>';
+  }).join('');
+  return '<div style="display:grid;grid-template-columns:minmax(120px,32%) 1fr;gap:12px;margin-bottom:4px"><div></div><div style="position:relative;height:16px">'+months.map(function(m){ return '<span class="muted" style="position:absolute;left:'+m[0]+'%;font-size:11px">'+m[1]+'</span>'; }).join('')+'</div></div>'+rows+
+    '<div class="muted small" style="margin-top:10px"><span style="display:inline-block;width:10px;height:10px;background:#E07A5F;border-radius:2px;vertical-align:middle"></span> today'+(SCHED.by?' · updated by '+esc(SCHED.by)+' '+esc(when(SCHED.updatedAt)):'')+'</div>';
+}
+function schedEdit(){ SCHED_DRAFT = JSON.parse(JSON.stringify(SCHED.items)); if (!SCHED_DRAFT.length) SCHED_DRAFT.push({name:'',trade:'',start:'',end:'',status:'planned'}); SCHED_EDIT = true; render(); }
+function schedTemplate(){
+  var base = new Date(); base.setUTCHours(12,0,0,0);
+  var steps = ((ST.meta||{}).classification==='commercial') ? [['Design + plans',21],['Permitting',42],['Demolition',10],['Rough-ins (MEP)',21],['Inspections',7],['Finishes',28],['Punch list',7],['Closeout',5]]
+    : [['Design + plans',21],['Permitting',35],['Demolition',7],['Framing',14],['Rough-ins (MEP)',14],['Inspections',5],['Insulation + drywall',10],['Finishes',21],['Punch list',7]];
+  var t = base.getTime(); SCHED_DRAFT = steps.map(function(sx){ var s0=new Date(t), e0=new Date(t+sx[1]*86400000); t = e0.getTime()+86400000; return {name:sx[0], trade:'', start:s0.toISOString().slice(0,10), end:e0.toISOString().slice(0,10), status:'planned'}; });
+  SCHED_EDIT = true; render();
+}
+function schedEditor(){
+  return '<div id="sched-rows">'+SCHED_DRAFT.map(function(x,i){
+    return '<div class="srow">'+
+      '<div><label>Phase</label><input data-f="name" data-i="'+i+'" value="'+esc(x.name)+'" style="margin:0"></div><div><label>Trade</label><input data-f="trade" data-i="'+i+'" value="'+esc(x.trade||'')+'" style="margin:0"></div>'+
+      '<div><label>Start</label><input type="date" data-f="start" data-i="'+i+'" value="'+esc(x.start||'')+'" style="margin:0"></div><div><label>End</label><input type="date" data-f="end" data-i="'+i+'" value="'+esc(x.end||'')+'" style="margin:0"></div>'+
+      '<div><label>Status</label><select data-f="status" data-i="'+i+'" style="margin:0">'+Object.keys(SLBL).map(function(k){ return '<option value="'+k+'"'+(x.status===k?' selected':'')+'>'+SLBL[k]+'</option>'; }).join('')+'</select></div>'+
+      '<button class="btn sm" aria-label="Remove phase" onclick="schedGrab();SCHED_DRAFT.splice('+i+',1);render()">×</button></div>';
+  }).join('')+'</div><div class="msg" id="sched-msg"></div><div class="row" style="margin-top:12px"><button class="btn sm" onclick="schedGrab();SCHED_DRAFT.push({name:\'\',trade:\'\',start:\'\',end:\'\',status:\'planned\'});render()">+ Add phase</button><span style="flex:1"></span><button class="btn sm" onclick="SCHED_EDIT=false;render()">Cancel</button><button class="btn sm pri" id="sched-save" onclick="schedSave()">Save + share</button></div>';
+}
+function schedGrab(){ document.querySelectorAll('#sched-rows [data-f]').forEach(function(el){ SCHED_DRAFT[+el.getAttribute('data-i')][el.getAttribute('data-f')] = el.value; }); }
+function schedSave(){
+  schedGrab();
+  api('/api/tools', {project:PID, action:'schedule-save', items:SCHED_DRAFT}).then(function(j){
+    if (!j.ok) { var m=$('sched-msg'); m.style.display='block'; m.textContent = j.error==='end_before_start' ? '“'+j.item+'” ends before it starts.' : 'Couldn’t save the schedule.'; return; }
+    SCHED = j.schedule; SCHED_EDIT = false; toast('Schedule saved — everyone on the project sees it'); render();
+  });
+}
+function taskAdd(){
+  var t=$('tk-title').value.trim(); if (!t) return toast('Describe the task first.');
+  var sel=$('tk-who'), opt=sel.options[sel.selectedIndex];
+  api('/api/tools', {project:PID, action:'task-add', title:t, assignee:sel.value, assigneeName:sel.value?opt.getAttribute('data-name'):'', due:$('tk-due').value, priority:$('tk-pri').value}).then(function(j){ if (!j.ok) return toast('Couldn’t add that.'); TASKS=j.tasks; render(); toast('Task added'); });
+}
+function taskToggle(id){ api('/api/tools', {project:PID, action:'task-toggle', id:id}).then(function(j){ if (j.ok) { TASKS=j.tasks; render(); } else toast('You can’t change that task.'); }); }
+function taskDelete(id){ api('/api/tools', {project:PID, action:'task-delete', id:id}).then(function(j){ if (j.ok) { TASKS=j.tasks; render(); } }); }
+
+/* ── Tools ── */
+function vTools(){
+  if (isTrade) { TOOL='scan'; return '<div class="eyebrow">3D scans</div><h1>Site scans</h1><div style="margin-top:20px">'+scanPanel()+'</div>'; }
+  var T = [['codecheck','Code check'],['plans','Plan analysis'],['scan','3D scan'],['history','Saved results']];
+  return '<div class="eyebrow">Tools</div><h1>Project tools</h1><div class="lede">Results save to this project so '+(isGC?'your client':'your GC')+' sees them too.</div>'+
+    '<div class="subtabs" style="margin-top:20px">'+T.map(function(t){ return '<button class="'+(TOOL===t[0]?'on':'')+'" data-tool="'+t[0]+'" onclick="go(\'tools\',\''+t[0]+'\')">'+t[1]+(t[0]==='history'&&RESULTS.length?' · '+RESULTS.length:'')+'</button>'; }).join('')+'</div>'+
+    ({codecheck:aiPanel, plans:aiPanel, scan:scanPanel, history:historyPanel}[TOOL])();
+}
+var LAST = {codecheck:null, plans:null};
+function cityFromAddress(a){ var p=String(a||'').split(','); return p.length>=2 ? p.slice(1).join(',').trim() : ''; }
+function aiPanel(){
+  var cc = TOOL==='codecheck', m = ST.meta||{};
+  var h = '<div class="two"><div><div class="card">'+
+    '<h2>'+(cc?'Check plans against code':'Analyze a plan set')+'</h2><p class="muted small" style="margin-bottom:14px">'+(cc?esc(codeBasis(m))+'.':'Pull out square footage, rooms, scope by trade, open questions and risks.')+'</p>'+
+    '<label for="ai-file">Plans (PDF, JPG or PNG · up to 3 MB)</label><input id="ai-file" type="file" accept="application/pdf,image/jpeg,image/png,image/webp">'+
+    (cc?'<label for="ai-jur">Jurisdiction</label><input id="ai-jur" value="'+esc(cityFromAddress(m.address))+'" placeholder="City, State">':'')+
+    '<button class="btn pri" id="ai-go" onclick="runAI()">'+(cc?'Run code check':'Analyze plans')+'</button><div class="log" id="ai-log"></div></div>'+
+    '<p class="muted small">AI-assisted review to catch issues early. It doesn’t replace plan check or a licensed professional’s review.</p></div><div id="ai-out">'+(LAST[TOOL]?renderResult(TOOL, LAST[TOOL]):'')+'</div></div>';
+  return h;
+}
+function readFile(f){ return new Promise(function(res, rej){ var r=new FileReader(); r.onload=function(){ res(String(r.result).split(',')[1]); }; r.onerror=rej; r.readAsDataURL(f); }); }
+function promptFor(tool, m, jur){
+  var prop = 'Property: '+m.address+'. Classification: '+m.classification+(m.subtype?' ('+m.subtype+')':'')+'. Scope of work: '+(SCOPE[m.scope]||m.scope||'not specified')+'.';
+  if (tool==='codecheck') return 'You are a building code compliance expert reviewing construction plans. '+prop+' Jurisdiction: '+(jur||'infer from the address')+'.\n'+
+    'Apply the right code basis for this classification: '+codeBasis(m)+'. Use the current adopted edition for this jurisdiction and note local amendments you know of.\n'+
+    'Read the attached plans. Extract measurable data (areas, heights, setbacks, egress, stairs, guards, smoke/CO alarms, energy notes, accessibility for commercial). Then check each against code.\n'+
+    'Return ONLY valid JSON, no other text: {"summary":"one or two sentences","codeBasis":"codes and editions applied","extracted":[{"label":"","value":""}],"findings":[{"status":"fail|warn|pass","item":"","code":"section reference","detail":"what the plans show","fix":"what to change, empty if pass"}]}. '+
+    'Order findings fail first, then warn, then pass. Be specific and cite sections. If the file is not a plan, say so in summary and return empty arrays.';
+  return 'You are a senior estimator and project manager. '+prop+'\nRead the attached plan set and return ONLY valid JSON, no other text: '+
+    '{"summary":"two sentences on what is being built","stats":[{"label":"e.g. Total area","value":""}],"rooms":["room names"],"trades":[{"trade":"e.g. Electrical","scope":"what this trade does on this job"}],"questions":["open questions to resolve before pricing"],"risks":["schedule or cost risks you see"]}. '+
+    'If the file is not a plan, say so in summary and return empty arrays.';
+}
+function runAI(){
+  var f = $('ai-file').files[0], log=$('ai-log'), btn=$('ai-go'), tool=TOOL, m=ST.meta||{};
+  if (!f) { log.textContent='Choose a plan file first.'; return; }
+  if (f.size > 3*1024*1024) { log.textContent='That file is over 3 MB. Export a smaller PDF or send just the relevant sheets.'; return; }
+  var jur = $('ai-jur') ? $('ai-jur').value : '';
+  btn.disabled=true; btn.textContent='Reading plans…'; log.textContent='Uploading '+f.name+'…';
+  readFile(f).then(function(b64){
+    var content = [f.type==='application/pdf' ? {type:'document', source:{type:'base64', media_type:'application/pdf', data:b64}} : {type:'image', source:{type:'base64', media_type:f.type, data:b64}},
+                   {type:'text', text:promptFor(tool, m, jur)}];
+    log.textContent = tool==='codecheck' ? 'Checking against '+(m.classification==='commercial'?'commercial':'residential')+' code… this takes about a minute.' : 'Analyzing plans… this takes about a minute.';
+    return fetch('/api/analyze',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify({max_tokens:4000, messages:[{role:'user', content:content}]})});
+  }).then(function(r){ return r.json().then(function(j){ return {ok:r.ok, j:j}; }); }).then(function(x){
+    if (!x.ok) throw new Error((x.j.error && (x.j.error.message || (x.j.error.error && x.j.error.error.message))) || 'The AI engine returned an error.');
+    var txt = (x.j.content||[]).map(function(b){return b.text||'';}).join(''); var mm = txt.match(/\{[\s\S]*\}/);
+    if (!mm) throw new Error('Couldn’t read the result. Try again.');
+    var result = JSON.parse(mm[0]); LAST[tool] = result;
+    $('ai-out').innerHTML = renderResult(tool, result); log.textContent = 'Done. Saved to this project.';
+    return api('/api/tools', {project:PID, action:'save-result', tool:tool, title:(tool==='codecheck'?'Code check':'Plan analysis')+' — '+f.name, fileName:f.name, jurisdiction:jur, result:result}).then(function(s){ if (s.ok) RESULTS.unshift(s.item); });
+  }).catch(function(e){ log.textContent = e.message || 'Something went wrong.'; }).then(function(){ btn.disabled=false; btn.textContent = tool==='codecheck'?'Run code check':'Analyze plans'; });
+}
+function renderResult(tool, r){
+  if (tool==='codecheck') {
+    var F = r.findings||[], c = {fail:0,warn:0,pass:0}; F.forEach(function(f){ c[f.status]=(c[f.status]||0)+1; });
+    return '<div class="card" id="result"><div class="eyebrow">Code check result</div><p style="color:var(--w70)">'+esc(r.summary)+'</p>'+
+      '<div class="kpis"><div class="kpi"><b style="color:#f0a996">'+c.fail+'</b><span>To fix</span></div><div class="kpi"><b style="color:#e0c67a">'+c.warn+'</b><span>To review</span></div><div class="kpi"><b style="color:#8fd6ab">'+c.pass+'</b><span>Passing</span></div></div>'+
+      (r.codeBasis?'<div class="muted small" style="margin-bottom:6px">Codes: '+esc(r.codeBasis)+'</div>':'')+
+      F.map(function(f){ return '<div class="find"><span class="st '+esc(f.status)+'">'+esc(f.status)+'</span><div><div class="t" style="font-weight:700">'+esc(f.item)+(f.code?' <span class="muted small">· '+esc(f.code)+'</span>':'')+'</div><div class="small" style="color:var(--w70)">'+esc(f.detail)+'</div>'+(f.fix?'<div class="small" style="color:var(--lime);margin-top:3px">Fix: '+esc(f.fix)+'</div>':'')+'</div></div>'; }).join('')+
+      ((r.extracted||[]).length?'<div class="eyebrow" style="margin-top:14px">From the plans</div>'+r.extracted.map(function(e){ return '<div class="small"><span class="muted">'+esc(e.label)+':</span> '+esc(e.value)+'</div>'; }).join(''):'')+'</div>';
+  }
+  return '<div class="card" id="result"><div class="eyebrow">Plan analysis</div><p style="color:var(--w70)">'+esc(r.summary)+'</p>'+
+    ((r.stats||[]).length?'<div class="kpis">'+r.stats.slice(0,6).map(function(s){ return '<div class="kpi"><b>'+esc(s.value)+'</b><span>'+esc(s.label)+'</span></div>'; }).join('')+'</div>':'')+
+    ((r.trades||[]).length?'<div class="eyebrow" style="margin-top:10px">Scope by trade</div>'+r.trades.map(function(t){ return '<div class="item"><div class="main"><div class="t">'+esc(t.trade)+'</div><div class="small" style="color:var(--w70)">'+esc(t.scope)+'</div></div></div>'; }).join(''):'')+
+    ((r.rooms||[]).length?'<div class="eyebrow" style="margin-top:12px">Rooms</div><div class="small" style="color:var(--w70)">'+r.rooms.map(esc).join(' · ')+'</div>':'')+
+    ((r.questions||[]).length?'<div class="eyebrow" style="margin-top:12px">Open questions</div>'+r.questions.map(function(q){ return '<div class="small" style="color:var(--w70)">• '+esc(q)+'</div>'; }).join(''):'')+
+    ((r.risks||[]).length?'<div class="eyebrow" style="margin-top:12px">Risks</div>'+r.risks.map(function(q){ return '<div class="small" style="color:#e0c67a">• '+esc(q)+'</div>'; }).join(''):'')+'</div>';
+}
+function historyPanel(){
+  if (!RESULTS.length) return '<div class="card"><div class="empty">No saved results yet. Run a code check or plan analysis.</div></div>';
+  return '<div class="card">'+RESULTS.map(function(r,i){ return '<div class="item"><div class="main"><div class="t">'+esc(r.title||r.tool)+'</div><div class="muted small">'+esc(r.by)+' · '+esc(when(r.at))+'</div></div><button class="btn sm" onclick="showSaved('+i+')">View</button></div>'; }).join('')+'</div><div id="saved-out"></div>';
+}
+function showSaved(i){ var r=RESULTS[i]; $('saved-out').innerHTML = renderResult(r.tool, r.result); $('saved-out').scrollIntoView({behavior:'smooth'}); }
+
+/* ── 3D scan ── */
+var SCAN_URLS = {}, SCAN_VIEW = null;
+function scanPanel(){
+  var canUp = isGC || ownerAccount;
+  var h = '<div class="two"><div>';
+  if (SCAN_VIEW) h += '<div class="card" id="scan-view"><div class="row" style="justify-content:space-between;margin-bottom:12px"><h2 style="margin:0">'+esc(SCAN_VIEW.label)+'</h2><button class="btn sm" onclick="SCAN_VIEW=null;render()">Close</button></div><div id="viewer-slot"><div class="muted small">Loading model…</div></div><div class="muted small" style="margin-top:8px">Drag to orbit · pinch or scroll to zoom'+(SCAN_VIEW.ext==='glb'?' · on iPhone, tap the AR button to place it in the room':'')+'</div></div>';
+  h += '<div class="card"><h2>Scans on this project</h2>'+(SCANS.length ? SCANS.map(function(s){ return '<div class="item" data-scan="'+esc(s.id)+'"><div class="main"><div class="t">'+esc(s.label)+'</div><div class="muted small">'+esc(s.ext.toUpperCase())+' · '+(s.size/1048576).toFixed(1)+' MB · '+esc(s.by)+' · '+esc(when(s.at))+'</div></div><button class="btn sm pri" onclick="viewScan(\''+jsq(s.id)+'\')">'+(s.ext==='usdz'?'Open':'View 3D')+'</button>'+(isGC?'<button class="btn sm danger" onclick="delScan(\''+jsq(s.id)+'\')">Delete</button>':'')+'</div>'; }).join('') : '<div class="empty">No scans yet.</div>')+'</div>';
+  h += '</div><div>';
+  if (canUp) h += '<div class="card hi"><h2>Scan the site in 3D</h2><div class="steps3"><div><b>1 · Capture</b><p>Walk the space with an iPhone or iPad Pro (LiDAR) using Polycam, Scaniverse or 3d Scanner App.</p></div><div><b>2 · Export</b><p>Export as <b>GLB</b> (or USDZ). Choose medium quality to keep it under 24 MB.</p></div><div><b>3 · Upload</b><p>Everyone on the project can view and walk around the model.</p></div></div>'+
+    '<label for="scan-label">Name</label><input id="scan-label" placeholder="e.g. Kitchen — existing conditions"><label for="scan-file">Scan file (.glb or .usdz · up to 24 MB)</label><input id="scan-file" type="file" accept=".glb,.usdz,model/gltf-binary,model/vnd.usdz+zip">'+
+    '<div class="prog" id="scan-prog"><i></i></div><button class="btn pri" id="scan-go" onclick="uploadScan()">Upload scan</button><div class="log" id="scan-log"></div></div>';
+  return h+'</div></div>';
+}
+function uploadScan(){
+  var f=$('scan-file').files[0], log=$('scan-log'), btn=$('scan-go'), bar=$('scan-prog');
+  if (!f) { log.textContent='Choose a .glb or .usdz file.'; return; }
+  var ext = (f.name.split('.').pop()||'').toLowerCase();
+  if (['glb','usdz'].indexOf(ext)<0) { log.textContent='Export your scan as .glb (or .usdz) and upload that.'; return; }
+  if (f.size > 24*1024*1024) { log.textContent='That scan is over 24 MB. Re-export at medium quality.'; return; }
+  btn.disabled=true; bar.style.display='block';
+  var label=$('scan-label').value.trim();
+  api('/api/tools', {project:PID, action:'scan-init', name:f.name, size:f.size, label:label}).then(function(j){
+    if (!j.ok) throw new Error({too_many_scans:'This project already has the maximum 12 scans. Delete one first.', file_too_large:'That scan is over 24 MB.', bad_file_type:'Upload a .glb or .usdz file.'}[j.error] || 'Couldn’t start the upload.');
+    return readFile(f).then(function(b64){
+      var n = 0, total = j.chunks;
+      function next(){
+        if (n >= total) return api('/api/tools', {project:PID, action:'scan-done', id:j.id});
+        var part = b64.slice(n*j.chunkChars, (n+1)*j.chunkChars);
+        log.textContent = 'Uploading… '+Math.round(n/total*100)+'%';
+        return api('/api/tools', {project:PID, action:'scan-chunk', id:j.id, n:n, data:part}).then(function(r){
+          if (!r.ok) throw new Error('Upload interrupted. Try again.');
+          n++; bar.firstChild.style.width = Math.round(n/total*100)+'%'; return next();
+        });
+      }
+      return next();
+    });
+  }).then(function(d){
+    if (!d.ok) throw new Error('Upload didn’t finish. Try again.');
+    toast('Scan uploaded'); return load();
+  }).catch(function(e){ log.textContent = e.message; btn.disabled=false; });
+}
+function fetchScan(s){
+  if (SCAN_URLS[s.id]) return Promise.resolve(SCAN_URLS[s.id]);
+  var parts = [], i = 0;
+  function next(){
+    if (i >= s.chunks) {
+      var bin = atob(parts.join('')), bytes = new Uint8Array(bin.length); for (var k=0;k<bin.length;k++) bytes[k]=bin.charCodeAt(k);
+      var url = URL.createObjectURL(new Blob([bytes], {type: s.ext==='usdz'?'model/vnd.usdz+zip':'model/gltf-binary'}));
+      SCAN_URLS[s.id] = url; window.SCAN_BYTES = bytes.length; return url;
+    }
+    return api('/api/tools?action=scan-chunk&project='+encodeURIComponent(PID)+'&id='+encodeURIComponent(s.id)+'&n='+i).then(function(r){ if (!r.ok) throw new Error('Couldn’t load the scan.'); parts.push(r.data); i++; return next(); });
+  }
+  return next();
+}
+function viewScan(id){ SCAN_VIEW = SCANS.filter(function(s){return s.id===id;})[0]; render(); window.scrollTo(0,0); }
+var MV_LOADED = false;
+function afterScanRender(){
+  if (!SCAN_VIEW) return;
+  var s = SCAN_VIEW;
+  fetchScan(s).then(function(url){
+    if (!$('viewer-slot') || SCAN_VIEW!==s) return;
+    if (s.ext==='usdz') { $('viewer-slot').innerHTML = '<a class="btn pri" rel="ar" href="'+url+'" download="'+esc(s.name)+'">Open in AR / download</a><div class="muted small" style="margin-top:8px">USDZ opens in AR Quick Look on iPhone and iPad. Export GLB to view it in the browser.</div>'; return; }
+    if (!MV_LOADED) { MV_LOADED = true; var sc=document.createElement('script'); sc.type='module'; sc.src='https://cdn.jsdelivr.net/npm/@google/model-viewer@3/dist/model-viewer.min.js'; document.head.appendChild(sc); }
+    $('viewer-slot').innerHTML = '<model-viewer id="mv" src="'+url+'" camera-controls touch-action="pan-y" auto-rotate ar shadow-intensity="0.6" exposure="1" alt="3D scan: '+esc(s.label)+'"></model-viewer><a class="btn sm" style="margin-top:10px" href="'+url+'" download="'+esc(s.name)+'">Download .glb</a>';
+  }).catch(function(e){ if ($('viewer-slot')) $('viewer-slot').innerHTML = '<div class="msg" style="display:block">'+esc(e.message)+'</div>'; });
+}
+function delScan(id){ modal('<h3>Delete this scan?</h3><p>Everyone on the project loses access to it.</p><div class="acts"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn danger" onclick="api(\'/api/tools\',{project:PID,action:\'scan-delete\',id:\''+jsq(id)+'\'}).then(function(){closeModal();SCAN_VIEW=null;load();})">Delete</button></div>'); }
+
+/* ── modal ── */
+function modal(html){ $('m').innerHTML = '<button class="x" onclick="closeModal()" aria-label="Close">×</button>'+html; $('m-bg').style.display='flex'; }
+function closeModal(){ $('m-bg').style.display='none'; }
+$('m-bg').addEventListener('click', function(e){ if (e.target===$('m-bg')) closeModal(); });
+document.addEventListener('keydown', function(e){ if (e.key==='Escape') closeModal(); });
+
+function fromHash(){
+  var h = (location.hash||'').slice(1);
+  if (h.indexOf('tool-')===0) { TAB='tools'; TOOL=h.slice(5) || 'codecheck'; if (['codecheck','plans','scan','history'].indexOf(TOOL)<0) TOOL='codecheck'; }
+  else if (h==='tools') TAB='tools'; else if (h==='team') TAB='controls'; else if (['proposals','decisions','controls','schedule'].indexOf(h)>=0) TAB=h; else if (!h) TAB='overview';
+}
+window.addEventListener('hashchange', function(){ fromHash(); if (ST) { render(); load(); } });
+(function init(){
+  fromHash();
+  load();
+  setInterval(function(){ if ($('m-bg').style.display!=='flex' && document.visibilityState==='visible' && !document.activeElement.matches('input,textarea,select')) load(); }, 60000);
+})();
+</script>
+</body>
+</html>

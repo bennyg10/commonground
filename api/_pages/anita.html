@@ -2831,7 +2831,9 @@ function renderPassportPhotos(){
    this-device-only demo mode when the API or storage isn't available.
    Reusable per project: set DEC_PROJECT + DEC_SEEDS.
    ══════════════════════════════════════════════════ */
-var DEC_PROJECT = 'anita';
+var DEC_PROJECT = (window.CG_SESSION && CG_SESSION.project) || (window.CG_PROJECT_CFG && CG_PROJECT_CFG.id) || 'anita';
+function cgTitle(){ return (window.CG_PROJECT_CFG && CG_PROJECT_CFG.title) || '141 N Anita'; }
+
 var DEC_API = '/api/decisions';
 var DEC_LIVE = false;            // true once the server answers
 var DEC_PIN_REQUIRED = false;    // owner PIN set in Vercel env
@@ -2853,6 +2855,7 @@ var DEC_SEEDS = [
    desc:'Soil hauling beyond the base scope is billed at $1,500 per load. The GC will tell you before any extra load is hauled.',
    lines:[['Per extra load',1500]], terms:['Not included in the base price','Billed only if extra loads are needed']}
 ];
+if (window.CG_PROJECT_CFG && CG_PROJECT_CFG.seeds) DEC_SEEDS = CG_PROJECT_CFG.seeds;
 
 function decEsc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
 function decMoney(n){ return (n==null||isNaN(n)) ? '—' : (n<0?'−$':'$') + Math.abs(Math.round(n)).toLocaleString(); }
@@ -2868,6 +2871,7 @@ function decSetActorName(n){ try { localStorage.setItem('cg_'+DEC_PROJECT+'_owne
 
 /* contract decisions follow the hired GC (none while collecting proposals) */
 function decSeedsForStage(){
+  if (window.CG_PROJECT_CFG && CG_PROJECT_CFG.seedsAlways) return DEC_SEEDS;
   if (typeof PROJ === 'undefined' || !PROJ || !PROJ.hiredGc) return [];
   if (PROJ.hiredGc.bidId === 'bid-trujillo') return DEC_SEEDS;
   var h = PROJ.hiredGc, who = h.company || h.name;
@@ -2978,7 +2982,8 @@ function decStatusPill(d){
   return '<span style="font-size:8px;font-weight:700;padding:2px 7px;border-radius:20px;white-space:nowrap;background:'+m[1]+';color:'+m[2]+';border:1px solid '+m[3]+'">'+m[0]+'</span>';
 }
 function decAmountLabel(d){ return d.unit ? d.unit : decMoney(d.amount); }
-function decOpenCount(){ return decAll().filter(function(d){return d.status!=='approved';}).length; }
+function decClosed(d){ return d.status==='approved' || d.status==='rejected' || d.status==='withdrawn'; }
+function decOpenCount(){ return decAll().filter(function(d){return !decClosed(d);}).length; }
 
 /* ── cards (right panel + mobile sheet) ── */
 function decCard(d, compact){
@@ -3011,8 +3016,8 @@ function decRenderSync(){ document.querySelectorAll('[id=dec-sync]').forEach(fun
 function decRenderAll(){
   var all = decAll();
   var role = decRole();
-  var open = all.filter(function(d){return d.status!=='approved';});
-  var done = all.filter(function(d){return d.status==='approved';});
+  var open = all.filter(function(d){return !decClosed(d);});
+  var done = all.filter(function(d){return decClosed(d);});
   var bidCard = '';
   if (typeof PROJ !== 'undefined' && PROJ && PROJ.stage === 'bidding' && role !== 'trade') {
     var nb = (PROJ.bids||[]).filter(function(b){return b.status==='submitted';}).length;
@@ -3089,8 +3094,11 @@ function decTimeline(d){
     var who = decEsc(e.by)+' <span style="color:var(--w30);font-weight:400">· '+(e.role==='client'?'Owner':e.role==='gc'?'GC':decEsc(e.role||''))+' · '+decWhen(e.at)+'</span>';
     var body = e.type==='comment' ? decEsc(e.note)
       : e.type==='approved' ? '<span style="color:var(--ok)">✓ Approved '+decMoney(e.amount)+' · signed "'+decEsc(e.signature)+'"'+(e.method==='offline'?' on paper (recorded by platform admin)':'')+' · ref '+decEsc(e.ref)+'</span>'+(e.method==='offline'&&e.note?' — '+decEsc(e.note):'')
-      : e.type==='voided' ? '<span style="color:var(--del)">Approval voided by platform admin'+(e.voidedRef?' · ref '+decEsc(e.voidedRef):'')+'</span>'+(e.note?' — '+decEsc(e.note):'')
+      : e.type==='voided' ? '<span style="color:var(--del)">Approval voided by '+(e.role==='admin'?'platform admin':'the owner')+(e.voidedRef?' · ref '+decEsc(e.voidedRef):'')+'</span>'+(e.note?' — '+decEsc(e.note):'')
       : e.type==='revised' ? '<span style="color:var(--amb)">Revised to '+decMoney(e.amount)+'</span>'+(e.note?' — '+decEsc(e.note):'')
+      : e.type==='rejected' ? '<span style="color:var(--del)">Rejected by the owner</span>'+(e.note?' — '+decEsc(e.note):'')
+      : e.type==='withdrawn' ? '<span style="color:var(--w50)">Withdrawn by the GC</span>'+(e.note?' — '+decEsc(e.note):'')
+      : e.type==='reopened' ? '<span style="color:var(--amb)">Reopened for review</span>'
       : e.type==='created' ? '<span style="color:var(--lime)">Change order created · '+decMoney(e.amount)+'</span>'+(e.note?' — '+decEsc(e.note):'') : '';
     var mine = e.role===decRole();
     return '<div style="padding:8px 10px;border-radius:8px;margin-bottom:6px;background:'+(mine?'var(--l10)':'var(--d3)')+';border:1px solid '+(mine?'var(--l20)':'var(--w08)')+'">'+
@@ -3178,7 +3186,8 @@ function decRenderModal(){
       '<textarea id="dec-note" rows="3" placeholder="'+(role==='client'?'Ask Ben a question or request a change…':'Reply to the owner…')+'" style="width:100%;box-sizing:border-box;background:var(--d2);border:1px solid var(--w08);border-radius:7px;padding:9px 10px;font-size:12px;color:var(--white);font-family:inherit;resize:vertical;margin-bottom:6px"></textarea>'+
       '<div id="dec-err" style="display:none;font-size:10px;color:#E07A5F;margin-bottom:8px"></div>'+
       '<div style="display:flex;gap:8px"><button id="dec-send-btn" onclick="decSubmitComment()" style="flex:1;padding:10px;background:var(--lime);border:none;border-radius:8px;font-size:12px;font-weight:700;color:var(--dk);cursor:pointer;font-family:inherit">Send</button>'+
-      (d.status!=='approved' && decCanSign() ? '<button onclick="decView(\'review\')" style="padding:10px 14px;background:var(--d4);border:1px solid var(--w08);border-radius:8px;font-size:11px;font-weight:600;color:var(--w70);cursor:pointer;font-family:inherit">Back to approve</button>' : '')+
+      (d.status!=='approved' && !decClosed(d) && decCanSign() ? '<button onclick="decView(\'review\')" style="padding:10px 14px;background:var(--d4);border:1px solid var(--w08);border-radius:8px;font-size:11px;font-weight:600;color:var(--w70);cursor:pointer;font-family:inherit">Back to approve</button>' : '')+
+      (decCanSign() && DEC_LIVE ? '<button id="dec-override-btn" onclick="decSubmitOverride(\''+(d.status==='approved'?'void':decClosed(d)?'reopen':'reject')+'\')" style="padding:10px 14px;background:none;border:1px solid rgba(224,122,95,.35);border-radius:8px;font-size:11px;font-weight:600;color:var(--del);cursor:pointer;font-family:inherit">'+(d.status==='approved'?'Void my approval':decClosed(d)?'Reopen':'Reject')+'</button>' : '')+
       '</div>';
     setTimeout(function(){ var t=document.getElementById('dec-thread'); if(t) t.scrollTop=t.scrollHeight; }, 0);
   }
@@ -3235,6 +3244,14 @@ function decSubmitComment(){
   });
 }
 
+/* owner has final say: reject, void their approval, or reopen — the note box is the reason */
+function decSubmitOverride(action){
+  var d = decGet(DEC_MODAL.id); if (!d) return;
+  var note = ((document.getElementById('dec-note')||{}).value || '').trim();
+  if (action !== 'reopen' && note.length < 3) { decShowErr({message:'Write the reason in the message box first — the GC sees it.'}); return; }
+  decPost({action:action, id:d.id, note:note, snapshot:{type:d.type,title:d.title,area:d.area,amount:d.amount,desc:d.desc}})
+  .then(function(j){ if (j.error) return decShowErr(j); DEC_MODAL.view='discuss'; decRenderAll(); decRenderModal(); });
+}
 function decSubmitRevise(){
   var d = decGet(DEC_MODAL.id); if (!d) return;
   var amt = parseFloat((document.getElementById('dec-rev-amt')||{}).value);
@@ -3348,6 +3365,7 @@ function notifToast(n){
    ══════════════════════════════════════════════════ */
 var CG_SESS = window.CG_SESSION || null;
 var CG_PROJECT_SLUG = (CG_SESS && CG_SESS.project) || 'anita';
+var CG_PROJECT_PATH = (CG_SESS && CG_SESS.path) || '141nanita';
 var ROLE_LABEL = {client:'Owner', gc:'General Contractor', trade:'Trade / Sub'};
 
 function sessFirstName(){ return CG_SESS && CG_SESS.user && CG_SESS.user.name ? CG_SESS.user.name.split(' ')[0] : 'Ben'; }
@@ -3356,7 +3374,7 @@ function sessInitials(){
   return CG_SESS.user.name.split(/\s+/).map(function(p){return p[0]||'';}).join('').slice(0,2).toUpperCase() || 'CG';
 }
 function sessCanSwitch(){ return !CG_SESS || !!CG_SESS.admin; }
-function sessGoRole(role){ location.href = '/' + CG_PROJECT_SLUG + '/' + role; }
+function sessGoRole(role){ location.href = '/' + CG_PROJECT_PATH + '/' + role; }
 
 function sessInit(){
   // avatar → account menu
@@ -3399,6 +3417,7 @@ function sessToggleMenu(e){
       '<div style="font-size:10px;color:var(--w50);margin:2px 0 8px">'+decEsc(u.identifier)+'</div>'+
       '<div style="font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--sage);margin-bottom:6px">'+(CG_SESS.admin?'Admin · preview a view':'Your view')+'</div>'+
       (views ? '<div style="display:flex;gap:5px;margin-bottom:10px">'+views+'</div>' : '<div style="font-size:11px;color:var(--lime);margin-bottom:10px">'+(ROLE_LABEL[CG_SESS.role]||CG_SESS.role)+'</div>')+
+      '<a id="sess-dash-link" href="/dashboard" style="display:block;text-align:center;width:100%;padding:8px;margin-bottom:6px;background:var(--d3);border:1px solid var(--w08);border-radius:8px;font-size:11px;font-weight:600;color:var(--w70);text-decoration:none">My dashboard · all projects</a>'+
       (CG_SESS.admin ? '<a id="sess-admin-link" href="/admin" style="display:block;text-align:center;width:100%;padding:8px;margin-bottom:6px;background:var(--l10);border:1px solid var(--l20);border-radius:8px;font-size:11px;font-weight:700;color:var(--lime);text-decoration:none">Platform console ↗</a>' : '')+
       '<button onclick="sessSignOut()" style="width:100%;padding:8px;background:var(--d3);border:1px solid var(--w08);border-radius:8px;font-size:11px;font-weight:600;color:var(--w70);cursor:pointer;font-family:inherit">Sign out</button>'
     : '<div style="font-size:12px;font-weight:700;color:var(--white);margin-bottom:4px">Demo mode</div><div style="font-size:10px;color:var(--w50);line-height:1.5">Not signed in. Open the live link (/anita/gc, /anita/client or /anita/trade) to sign in.</div>';
@@ -3407,13 +3426,14 @@ function sessToggleMenu(e){
 }
 function sessSignOut(){
   fetch('/api/auth', {method:'POST', headers:{'Content-Type':'application/json'}, credentials:'same-origin', body:JSON.stringify({action:'logout'})})
-    .finally(function(){ location.href = '/' + CG_PROJECT_SLUG + '/' + ((CG_SESS && CG_SESS.role) || ''); });
+    .finally(function(){ location.href = '/' + CG_PROJECT_PATH + '/' + ((CG_SESS && CG_SESS.role) || ''); });
 }
 
-/* ── Team access (GC / admin) ── */
+/* ── Team access — hierarchy: owner > GC > trade ── */
 var TEAM_MEMBERS = [];
 var TEAM_LAST_RESULT = '';
-function teamCanManage(){ return CG_SESS && (CG_SESS.admin || CG_SESS.memberRole === 'gc'); }
+function teamCanManage(){ return CG_SESS && (CG_SESS.admin || CG_SESS.memberRole === 'gc' || CG_SESS.memberRole === 'client'); }
+function teamCanAct(m){ return CG_SESS && (CG_SESS.admin || CG_SESS.memberRole === 'client' || (CG_SESS.memberRole === 'gc' && m.role !== 'client')); }
 function teamRenderAccess(){
   var el = document.getElementById('team-access'); if (!el) return;
   if (!CG_SESS) { el.innerHTML = '<div style="background:var(--d3);border:1px solid var(--w08);border-radius:var(--r);padding:12px 14px;font-size:11px;color:var(--w50);line-height:1.6;margin-bottom:12px"><b style="color:var(--white)">Team access</b> — invite owners, GCs and subs once the live site is set up. Open /anita/gc to manage access.</div>'; return; }
@@ -3425,7 +3445,7 @@ function teamRenderAccess(){
     return '<div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-top:1px solid var(--w08);flex-wrap:wrap">'+
       '<div style="flex:1;min-width:140px"><div style="font-size:11px;font-weight:600;color:var(--white)">'+decEsc(m.name)+(me?' <span style="color:var(--w30);font-weight:400">(you)</span>':'')+'</div>'+
       '<div style="font-size:10px;color:var(--w50)">'+decEsc(m.identifier)+' · '+(ROLE_LABEL[m.role]||m.role)+'</div></div>'+st+
-      (me ? '' : '<button onclick="teamInvite('+JSON.stringify(m.name).replace(/"/g,'&quot;')+','+JSON.stringify(m.identifier).replace(/"/g,'&quot;')+',\''+m.role+'\',this)" style="font-size:9px;padding:4px 8px;background:var(--d3);border:1px solid var(--w08);border-radius:6px;color:var(--w70);cursor:pointer;font-family:inherit">'+(m.status==='active'?'Reset password link':'Resend link')+'</button>'+
+      (me || !teamCanAct(m) ? '' : '<button onclick="teamInvite('+JSON.stringify(m.name).replace(/"/g,'&quot;')+','+JSON.stringify(m.identifier).replace(/"/g,'&quot;')+',\''+m.role+'\',this)" style="font-size:9px;padding:4px 8px;background:var(--d3);border:1px solid var(--w08);border-radius:6px;color:var(--w70);cursor:pointer;font-family:inherit">'+(m.status==='active'?'Reset password link':'Resend link')+'</button>'+
         '<button onclick="teamRemove('+JSON.stringify(m.identifier).replace(/"/g,'&quot;')+')" style="font-size:9px;padding:4px 8px;background:none;border:1px solid rgba(224,122,95,.3);border-radius:6px;color:#E07A5F;cursor:pointer;font-family:inherit">Remove</button>')+
       '</div>';
   }).join('');
@@ -3461,9 +3481,9 @@ function teamInvite(name, identifier, role, btn){
   .then(function(r){ return r.json(); }).then(function(j){
     if (!j.ok) { if (out) out.innerHTML = '<div style="font-size:10px;color:#E07A5F;margin-top:8px">'+(j.error==='bad_identifier'?'That email or phone number doesn\'t look right.':'Could not create the invite ('+decEsc(j.error)+').')+'</div>'; return; }
     var isPhone = identifier.indexOf('@') === -1;
-    var msg = 'Hi '+name.split(' ')[0]+', here is your Common Ground link for 141 N Anita. Tap it to set your password: '+j.link;
+    var msg = 'Hi '+name.split(' ')[0]+', here is your Common Ground link for '+cgTitle()+'. Tap it to set your password: '+j.link;
     var sms = 'sms:'+identifier.replace(/[^\d+]/g,'')+'&body='+encodeURIComponent(msg);
-    var mail = 'mailto:'+identifier+'?subject='+encodeURIComponent('Your Common Ground access — 141 N Anita')+'&body='+encodeURIComponent(msg);
+    var mail = 'mailto:'+identifier+'?subject='+encodeURIComponent('Your Common Ground access — '+cgTitle()+'')+'&body='+encodeURIComponent(msg);
     TEAM_LAST_RESULT = '<div style="margin-top:10px;background:var(--d2);border:1px solid var(--w08);border-radius:8px;padding:10px">'+
       '<div style="font-size:10px;color:var(--w50);margin-bottom:6px">Invite for <b style="color:var(--white)">'+decEsc(name)+'</b> · '+(ROLE_LABEL[role]||role)+' · expires in '+j.expiresInDays+' days</div>'+
       '<input readonly value="'+decEsc(j.link)+'" onclick="this.select()" style="width:100%;box-sizing:border-box;background:var(--d3);border:1px solid var(--w08);border-radius:6px;padding:7px 9px;font-size:10px;color:var(--w70);font-family:monospace;margin-bottom:6px">'+
@@ -3523,6 +3543,7 @@ var PROJ_TAGS = ['Permits Later', 'Change order', 'Owner decision', 'Blocked', '
 var PROJ_DEMO = {stage:'bidding', hiredGc:null, startedAt:null, clientName:'the homeowner',
   bids:[{id:'bid-trujillo', gcName:'Trujillo Construction', company:'Trujillo Construction', amount:136700, status:'submitted', submittedAt:'2026-09-18T17:00:00.000Z', source:'uploaded by owner', note:'Phase 1 demo + site clearing. Option 2 with GC overhead: $153,200.', file:{name:'Proposal.pdf'}}],
   bidInvites:[], kickoff:{items:[]}};
+if (window.CG_PROJECT_CFG && CG_PROJECT_CFG.demo) PROJ_DEMO = CG_PROJECT_CFG.demo;
 
 function pjRole(){ return window.CG_SESSION ? CG_SESSION.role : (typeof CG_ROLE!=='undefined' ? CG_ROLE : 'gc'); }
 function pjIsOwner(){ return window.CG_SESSION ? (CG_SESSION.memberRole==='client' || CG_SESSION.admin) : pjRole()==='client'; }
@@ -3560,6 +3581,7 @@ function pjErr(j){ return PJ_ERR[j.error] || j.message || j.error || 'Something 
 /* ── timeline phase 1 follows the real project stage ── */
 function pjApplyTimeline(){
   if (typeof PG_PHASES === 'undefined' || !PROJ) return;
+  if (window.CG_PROJECT_CFG && CG_PROJECT_CFG.keepTimeline && PROJ.stage === 'active') return;   // underway project: its own phases stay
   var st = PROJ.stage, hired = PROJ.hiredGc, active = st === 'active';
   var contract = (typeof decAll === 'function') ? decAll().filter(function(d){ return d.type === 'contract'; })[0] : null;
   var signed = !!(contract && contract.status === 'approved');
@@ -3610,7 +3632,7 @@ function pjApplyLabels(){
   if (typeof pgRenderPills==='function') { pgRenderPills(); pgRenderTradeBtns(); var sel = document.querySelector('#pg-trade-btns button[style*="var(--lime)"]'); pgSelectTrade(sel ? sel.id.replace('pg-tbtn-','') : 'GC'); }
   if (typeof renderPunch==='function' && document.getElementById('punch-list')) renderPunch();
   // finance reflects the stage
-  if (typeof INVOICES !== 'undefined' && PROJ) {
+  if (typeof INVOICES !== 'undefined' && PROJ && !window.CG_PROJECT_CFG) {
     var trujillo = hired && hired.bidId === 'bid-trujillo';
     INVOICES.forEach(function(inv){
       if (inv.source !== 'seed') return;
@@ -3667,11 +3689,11 @@ function pjRenderBrief(){
   var nBids = (PROJ.bids||[]).filter(function(b){return b.status==='submitted';}).length;
   if (PROJ.stage === 'bidding') {
     s = role==='client' || pjIsOwner()
-      ? nBids + ' GC proposal' + (nBids===1?'':'s') + ' in for 141 N Anita. Review them in Proposals and choose your GC — invite more anytime.'
-      : 'The owner is collecting GC proposals for 141 N Anita. Work starts once a GC is hired and kickoff is complete.';
+      ? nBids + ' GC proposal' + (nBids===1?'':'s') + ' in for '+cgTitle()+'. Review them in Proposals and choose your GC — invite more anytime.'
+      : 'The owner is collecting GC proposals for '+cgTitle()+'. Work starts once a GC is hired and kickoff is complete.';
   } else if (PROJ.stage === 'kickoff') {
     s = role==='gc'
-      ? 'You\'re hired on 141 N Anita — ' + done + ' of ' + req.length + ' kickoff items done' + (needOwner ? ', ' + needOwner + ' waiting on the owner\'s agreement' : '') + '. ' + (nextItem ? 'Next: ' + nextItem.text + '.' : 'Everything\'s ready — tap Start Project.')
+      ? 'You\'re hired on '+cgTitle()+' — ' + done + ' of ' + req.length + ' kickoff items done' + (needOwner ? ', ' + needOwner + ' waiting on the owner\'s agreement' : '') + '. ' + (nextItem ? 'Next: ' + nextItem.text + '.' : 'Everything\'s ready — tap Start Project.')
       : gf + ' (' + (PROJ.hiredGc.company||'your GC') + ') is setting up your project — ' + done + ' of ' + req.length + ' kickoff items done. ' + (needOwner ? needOwner + ' item' + (needOwner===1?' needs':'s need') + ' your agreement below.' : 'Nothing needs you right now.');
   } else {
     var nextPhase = (typeof PG_PHASES!=='undefined') ? (function(){ for (var i=0;i<PG_PHASES.length;i++){ var it=(PG_PHASES[i].items||[]).filter(function(x){return x.s!=='done';})[0]; if(it) return it.n; } return ''; })() : '';
@@ -3735,7 +3757,7 @@ function pjInvite(){
     btn.disabled = false; btn.textContent = 'Send invite';
     if (!j.ok) { out.innerHTML = '<div style="font-size:10px;color:#E07A5F;margin-top:8px">'+decEsc(pjErr(j))+'</div>'; return; }
     PROJ_LAST_INVITE = pjShareBox('Invite for <b style="color:var(--white)">'+decEsc(name)+'</b>'+(j.emailed?' · emailed ✓':''), j.link,
-      'Hi '+pjFirst(name)+', please submit your proposal for 141 N Anita on Common Ground: '+j.link, phone, email, 'Proposal request — 141 N Anita');
+      'Hi '+pjFirst(name)+', please submit your proposal for '+cgTitle()+' on Common Ground: '+j.link, phone, email, 'Proposal request — '+cgTitle()+'');
     pjLoad();
   });
 }
@@ -3744,7 +3766,7 @@ function pjOpenLink(){
     var out = document.getElementById('pp-invite-result');
     if (!j.ok) { out.innerHTML = '<div style="font-size:10px;color:#E07A5F;margin-top:8px">'+decEsc(pjErr(j))+'</div>'; return; }
     if (navigator.clipboard) navigator.clipboard.writeText(j.link).catch(function(){});
-    PROJ_LAST_INVITE = pjShareBox('Open proposal link copied — anyone with it can submit', j.link, 'Submit your proposal for 141 N Anita on Common Ground: '+j.link, '', '', 'Proposal request — 141 N Anita');
+    PROJ_LAST_INVITE = pjShareBox('Open proposal link copied — anyone with it can submit', j.link, 'Submit your proposal for '+cgTitle()+' on Common Ground: '+j.link, '', '', 'Proposal request — '+cgTitle()+'');
     out.innerHTML = PROJ_LAST_INVITE;
   });
 }
@@ -3798,7 +3820,7 @@ function pjHire(id){
     pjModal('<div style="text-align:center;padding:6px 0 12px"><div style="font-size:30px">🎉</div>'+
       '<div style="font-family:Syne,sans-serif;font-size:17px;font-weight:800;color:var(--ok);margin:4px 0">'+decEsc(j.hiredGc.company||j.hiredGc.name)+' hired</div>'+
       '<div style="font-size:11px;color:var(--w60,rgba(253,255,254,.6));line-height:1.6">'+(j.emailed ? 'Congratulations email sent to '+decEsc(j.hiredGc.identifier)+'.' : 'Send them the link so they can open the project:')+'</div></div>'+
-      pjShareBox('Hire notice link for '+decEsc(pjFirst(j.hiredGc.name)), j.link, j.sms, j.phone, j.hiredGc.identifier, 'You\'ve been hired — 141 N Anita')+
+      pjShareBox('Hire notice link for '+decEsc(pjFirst(j.hiredGc.name)), j.link, j.sms, j.phone, j.hiredGc.identifier, 'You\'ve been hired — '+cgTitle()+'')+
       '<button onclick="decClose()" style="width:100%;margin-top:12px;padding:11px;background:var(--d4);border:1px solid var(--w08);border-radius:8px;font-size:12px;font-weight:600;color:var(--w70);cursor:pointer;font-family:inherit">Done</button>');
     pjLoad();
   });
@@ -3817,6 +3839,7 @@ function pjDecline(id, btn){ btn.disabled=true; pjPost({action:'decline', bidId:
 function pjItemDone(i){ return i.type==='agreement' ? (i.gcAgreed && i.clientAgreed) : !!i.done; }
 function pjRenderKickoff(){
   var el = document.getElementById('kickoff-card'); if (!el || !PROJ) return;
+  if (PROJ.stage === 'active' && !((PROJ.kickoff && PROJ.kickoff.items) || []).length) { el.innerHTML = ''; return; }   // started without a checklist (e.g. joined mid-build)
   var role = pjRole(), actor = pjActor();
   if (PROJ.stage === 'bidding') {
     var n = (PROJ.bids||[]).filter(function(b){return b.status==='submitted';}).length;
@@ -4012,10 +4035,11 @@ function pjRenderBrief(){
   var gf = pjGcFirst();
 
   if (!isClientView) {
+    if (window.CG_PROJECT_CFG && CG_PROJECT_CFG.keepBrief && PROJ.stage === 'active') return;   // underway project: GC's own daily brief stays
     // GC / trade keep the condensed operational brief
     var nBids = (PROJ.bids || []).filter(function(b){ return b.status === 'submitted'; }).length, s;
-    if (PROJ.stage === 'bidding') s = 'The owner is collecting GC proposals for 141 N Anita' + (nBids ? ' (' + nBids + ' in)' : '') + '. Work starts once a GC is hired and kickoff is complete.';
-    else if (PROJ.stage === 'kickoff') s = 'You\'re hired on 141 N Anita — ' + done + ' of ' + req.length + ' kickoff items done' + (needOwner ? ', ' + needOwner + ' waiting on the owner\'s agreement' : '') + '. ' + (nextItem ? 'Next: ' + nextItem.text + '.' : 'Everything\'s ready — tap Start Project.');
+    if (PROJ.stage === 'bidding') s = 'The owner is collecting GC proposals for ' + cgTitle() + '' + (nBids ? ' (' + nBids + ' in)' : '') + '. Work starts once a GC is hired and kickoff is complete.';
+    else if (PROJ.stage === 'kickoff') s = 'You\'re hired on ' + cgTitle() + ' — ' + done + ' of ' + req.length + ' kickoff items done' + (needOwner ? ', ' + needOwner + ' waiting on the owner\'s agreement' : '') + '. ' + (nextItem ? 'Next: ' + nextItem.text + '.' : 'Everything\'s ready — tap Start Project.');
     else {
       var nextPhase = hoNextPhase();
       s = 'Project live since ' + pjDate(PROJ.startedAt) + (openDecisions ? ' — ' + openDecisions + ' decision' + (openDecisions === 1 ? '' : 's') + ' waiting on the owner' : '') + '. ' + (nextPhase ? 'Next: ' + nextPhase + '.' : '');
@@ -4031,7 +4055,7 @@ function pjRenderBrief(){
   }
   var trades = onsite.length ? 'On site today: ' + onsite.join(', ') + '.' : 'There are no trades / subs on site today.';
   var act = '', follow = '';
-  var testing = 'Followed by environmental testing to allow us to submit the LADBS demolition permit for approval.';
+  var testing = (window.CG_PROJECT_CFG && CG_PROJECT_CFG.followText !== undefined) ? CG_PROJECT_CFG.followText : 'Followed by environmental testing to allow us to submit the LADBS demolition permit for approval.';
   if (PROJ.stage === 'bidding') {
     var bids = (PROJ.bids || []).filter(function(b){ return b.status === 'submitted'; });
     if (bids.length === 1) {
@@ -4071,6 +4095,7 @@ function hoNextPhase(){
 function hoRenderRing(){
   var pct = document.getElementById('pg-pct'), lbl = document.getElementById('pg-pct-lbl'), ring = document.getElementById('pg-ring');
   if (!pct || !lbl || !ring) return;
+  if (window.CG_PROJECT_CFG && CG_PROJECT_CFG.keepRing) return;   // project already underway: keep its real %
   var started = PROJ && PROJ.stage === 'active';
   var p = 0;                                   // real % comes from completed phases once work begins
   pct.textContent = p + '%';
@@ -4102,8 +4127,10 @@ var _hoGoScreen = goScreen;
 goScreen = function(name){ _hoGoScreen(name); hoSyncNav(); };
 
 /* ── Facts & features: goal + address | photo, then Property tiles ── */
-PROPERTY_FACTS.goal = 'Tear this old house down';
-PROPERTY_FACTS.groups.forEach(function(g){ if (g.title === 'Property') g.title = 'Home details'; });
+if (typeof PROPERTY_FACTS !== 'undefined') {
+  PROPERTY_FACTS.goal = (window.CG_PROJECT_CFG && CG_PROJECT_CFG.goal) || 'Tear this old house down';
+  PROPERTY_FACTS.groups.forEach(function(g){ if (g.title === 'Property') g.title = 'Home details'; });
+}
 function renderFacts(){
   var el = document.getElementById('pf-body'); if (!el) return;
   var F = PROPERTY_FACTS;

@@ -29,10 +29,45 @@ export async function setJSON(key, obj, ttlSeconds) {
 }
 
 export const clean = (v, max = 500) => (typeof v === 'string' ? v.trim().slice(0, max) : '');
-export const PROJECTS = ['anita'];                 // add new project slugs here
-export const PROJECT_NAMES = { anita: '141 N Anita Ave' };
 export const ROLES = ['client', 'gc', 'trade'];
-export const validProject = (p) => PROJECTS.includes(p);
+
+// ── projects ──
+// Built-in projects have hand-built pages; everything else is created from the dashboard and
+// stored in Redis (cg:proj:<id>, id == its URL path). The internal id never changes, so live data
+// stays put when a project gets a new address (anita → /141nanita).
+export const BUILTIN = {
+  anita: { id: 'anita', path: '141nanita', name: '141 N Anita Ave', title: '141 N Anita', address: '141 N Anita Ave, Los Angeles, CA 90049',
+           classification: 'residential', scope: 'demolition', page: 'anita.html', builtin: true },
+  coolidge: { id: 'coolidge', path: '2560coolidge', name: '2560 Coolidge Ave', title: '2560 Coolidge', address: '2560 Coolidge Ave, Santa Monica, CA',
+              classification: 'residential', scope: 'remodel', page: 'coolidge.html', builtin: true },
+};
+export const PROJECTS = Object.keys(BUILTIN);        // built-ins only; use listProjects() for everything
+export const PROJECT_NAMES = Object.fromEntries(Object.values(BUILTIN).map((p) => [p.id, p.name]));
+export const RESERVED_PATHS = ['admin', 'help', 'dashboard', 'api', 'assets', 'index', 'login', 'signup', 'bid', 'anita', 'www', 'app', 'static', 'public', 'favicon'];
+const META_CACHE = {};
+const byPath = Object.fromEntries(Object.values(BUILTIN).map((p) => [p.path, p.id]));
+export async function getProjectMeta(id) {
+  if (!id) return null;
+  if (BUILTIN[id]) return BUILTIN[id];
+  if (!/^[a-z0-9][a-z0-9-]{1,60}$/.test(id) || !storageReady()) return null;
+  const m = await getJSON(`cg:proj:${id}`);
+  if (m) META_CACHE[id] = m;
+  return m;
+}
+export async function validProject(id) { return !!(await getProjectMeta(id)); }
+export async function projectIdFromPath(path) {
+  path = String(path || '').toLowerCase();
+  if (byPath[path]) return byPath[path];
+  if (BUILTIN[path]) return path;                                    // old /anita links
+  return (await getProjectMeta(path)) ? path : null;
+}
+export const projectPath = (id) => (BUILTIN[id] ? BUILTIN[id].path : id);
+export async function listProjects() {
+  const ids = storageReady() ? ((await redis(['SMEMBERS', 'cg:projects'])) || []) : [];
+  const out = Object.values(BUILTIN).slice();
+  for (const id of ids.sort()) { const m = await getProjectMeta(id); if (m) out.push(m); }
+  return out;
+}
 
 // email → lowercase; phone → +1XXXXXXXXXX (10 digits assumed US)
 export function normalizeIdentifier(raw) {
@@ -104,7 +139,7 @@ export async function currentUser(req) {
 // every account id, for the admin console (SADD wherever an account is created)
 export const indexUser = (identifier) => redis(['SADD', 'cg:users', identifier]).catch(() => {});
 // public shape sent to the browser (never the hash)
-export const publicUser = (u) => u && ({ name: u.name, identifier: u.identifier, admin: !!u.admin, projects: u.projects || {} });
+export const publicUser = (u) => u && ({ name: u.name, identifier: u.identifier, admin: !!u.admin, projects: u.projects || {}, accountType: u.accountType || '', company: u.company || '' });
 
 // role on a project: admin can act as any role; others get what they were invited as
 export function roleFor(u, project) {
@@ -129,17 +164,35 @@ export async function trackUsage(field = 'requests', by = 1) {
 
 // ── notifications: in-app feed + optional email (Resend) ──
 // Env (optional): RESEND_API_KEY, CG_NOTIFY_FROM (e.g. "Common Ground <updates@yourdomain.com>")
-const PROJECT_TITLES = { anita: '141 N Anita' };
 export async function notify(req, project, n) {
   const item = { id: token(8), at: new Date().toISOString(), text: clean(n.text, 300), targets: n.targets || ['gc'],
                  decision: n.decision || '', by: n.by || '', byAccount: n.byAccount || '' };
   await redis(['LPUSH', `cg:notify:${project}`, JSON.stringify(item)]);
   await redis(['LTRIM', `cg:notify:${project}`, '0', '199']);
-  if (!n.noEmail) await sendEmails(req, project, item).catch(() => {});
+  let emailed = [];
+  if (!n.noEmail) emailed = (await sendEmails(req, project, item).catch(() => [])) || [];
+  await platformCopy(req, project, item, emailed).catch(() => {});
   return item;
 }
+// Every notification on every project is also copied to the platform inbox (CG_SUPPORT_EMAIL).
+// Turn off with CG_PLATFORM_COPY=off.
+async function platformCopy(req, project, item, alreadyEmailed) {
+  if (!emailReady() || (process.env.CG_PLATFORM_COPY || '').toLowerCase() === 'off') return;
+  const inbox = SUPPORT_EMAIL().toLowerCase();
+  if (!inbox || alreadyEmailed.includes(inbox) || item.byAccount === inbox) return;
+  const who = item.by ? ` · by ${item.by}` : '';
+  await sendEmail({
+    to: inbox,
+    subject: `[Platform] ${projectTitle(project)}: ${item.text}`.slice(0, 150),
+    html: emailLayout(`Platform copy · ${projectTitle(project)}`,
+      `<p style="margin:0 0 10px">${escHtml(item.text)}</p><p style="margin:0;color:#8a8d88;font-size:12px">Sent to: ${escHtml(item.targets.map((r) => ({ client: 'Owner', gc: 'GC', trade: 'Trade' }[r] || r)).join(', '))}${escHtml(who)}</p>`,
+      { label: 'Open the platform console', url: `${siteOrigin(req)}/admin` }),
+    text: `${item.text}${who}\n\nPlatform console: ${siteOrigin(req)}/admin`,
+  });
+}
 async function sendEmails(req, project, item) {
-  if (!emailReady()) return;
+  if (!emailReady()) return [];
+  const sent = [];
   const flat = (await redis(['HGETALL', `cg:members:${project}`])) || [];
   const byRole = {};
   for (let i = 0; i < flat.length; i += 2) {
@@ -147,23 +200,24 @@ async function sendEmails(req, project, item) {
       const m = JSON.parse(flat[i + 1]);
       if (m.status !== 'active' || !m.identifier.includes('@') || m.identifier === item.byAccount) continue;
       if (!item.targets.includes(m.role)) continue;
-      (byRole[m.role] = byRole[m.role] || []).push(m.identifier);
+      (byRole[m.role] = byRole[m.role] || []).push(m.identifier); sent.push(m.identifier.toLowerCase());
     } catch (e) {}
   }
   for (const role of Object.keys(byRole)) {
     await sendEmail({
       to: byRole[role],
       subject: `${projectTitle(project)}: ${item.text}`.slice(0, 150),
-      html: emailLayout(projectTitle(project), `<p style="margin:0 0 14px">${escHtml(item.text)}</p>`, { label: 'Open the project', url: `${siteOrigin(req)}/${project}/${role}` }),
-      text: `${item.text}\n\nOpen the project: ${siteOrigin(req)}/${project}/${role}\n\n— Common Ground`,
+      html: emailLayout(projectTitle(project), `<p style="margin:0 0 14px">${escHtml(item.text)}</p>`, { label: 'Open the project', url: `${siteOrigin(req)}/${projectPath(project)}/${role}` }),
+      text: `${item.text}\n\nOpen the project: ${siteOrigin(req)}/${projectPath(project)}/${role}\n\n— Common Ground`,
     });
   }
+  return sent;
 }
 
 // ── email (Resend) ──
 export const emailReady = () => !!(process.env.RESEND_API_KEY && process.env.CG_NOTIFY_FROM);
-export const SUPPORT_EMAIL = () => process.env.CG_SUPPORT_EMAIL || 'bmgordon10@gmail.com';
-export const projectTitle = (p) => PROJECT_TITLES[p] || p;
+export const SUPPORT_EMAIL = () => (process.env.CG_SUPPORT_EMAIL || 'commonground.helpme@gmail.com').trim();
+export const projectTitle = (p) => (BUILTIN[p] ? BUILTIN[p].title : (META_CACHE[p] && META_CACHE[p].name) || p);
 // CG_SITE_URL (e.g. https://buildcommonground.io) makes every emailed/copied link use your own domain
 const SITE_URL = () => (process.env.CG_SITE_URL || '').trim().replace(/\/+$/, '');
 export const siteOrigin = (req) => SITE_URL() || `${(req.headers['x-forwarded-proto'] || 'https').split(',')[0]}://${req.headers['x-forwarded-host'] || req.headers.host}`;
@@ -187,7 +241,8 @@ export async function sendEmail({ to, subject, html, text, replyTo }) {
     const r = await fetch(process.env.CG_RESEND_URL || 'https://api.resend.com/emails', {
       method: 'POST',
       headers: { Authorization: `Bearer ${process.env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify(Object.assign({ from: process.env.CG_NOTIFY_FROM, to: list, subject, html, text }, replyTo ? { reply_to: replyTo } : {})),
+      // replies to any platform email land in the platform inbox unless a sender is given (help form → the user)
+      body: JSON.stringify({ from: process.env.CG_NOTIFY_FROM, to: list, subject, html, text, reply_to: replyTo || SUPPORT_EMAIL() }),
     });
     if (r.ok) await trackUsage('emails', list.length);
     return { ok: r.ok };

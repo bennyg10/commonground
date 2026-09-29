@@ -2,12 +2,32 @@
 import {
   storageReady, redis, getJSON, setJSON, clean, validProject, ROLES, normalizeIdentifier,
   hashPassword, verifyPassword, passwordProblem, token, createSession, destroySession,
-  currentUser, publicUser, rateLimited, ip, trackUsage, monthKey, PROJECTS, indexUser, siteOrigin,
+  currentUser, publicUser, rateLimited, ip, trackUsage, monthKey, PROJECTS, indexUser, siteOrigin, projectPath, listProjects, notify,
 } from './_lib.js';
 
 const INVITE_DAYS = 14;
 const origin = (req) => siteOrigin(req);
 const canManage = (u, project) => !!u && (u.admin || (u.projects || {})[project] === 'gc');
+// owners can see the team and add co-owners (e.g. a spouse); GCs/admins manage everyone
+const canSeeTeam = (u, project) => canManage(u, project) || (!!u && (u.projects || {})[project] === 'client');
+const ACCOUNT_TYPES = ['homeowner', 'contractor'];
+// ── project hierarchy: owner (client) > GC > trade ──
+// Owners have final say: they can invite, re-role or remove anyone. A GC can start a project and invite
+// any role (including the homeowner, who then sits above them), and manages trades + GC team.
+const RANK = { client: 3, gc: 2, trade: 1 };
+const myRole = (u, project) => (u && (u.projects || {})[project]) || (u && u.admin ? 'admin' : null);
+function canInviteRole(u, project, role) {
+  const me = myRole(u, project);
+  return me === 'admin' || me === 'client' || (me === 'gc' && ['client', 'gc', 'trade'].includes(role));
+}
+async function canActOn(u, project, target) {       // remove / re-role another member
+  const me = myRole(u, project);
+  if (!target || target.identifier === u.identifier) return false;
+  if (me === 'admin' || me === 'client') return true;
+  if (me !== 'gc' || target.role === 'client') return false;
+  const st = (await getJSON(`cg:project:${project}`)) || {};
+  return !(st.hiredGc && st.hiredGc.identifier === target.identifier);   // only the owner can remove the hired GC
+}
 
 export default async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store');
@@ -35,9 +55,9 @@ export default async function handler(req, res) {
 
     // ── members list (GC / admin)
     if (req.method === 'GET' && action === 'members') {
-      const project = clean(q.project, 40);
+      const project = clean(q.project, 60);
       const u = await currentUser(req);
-      if (!validProject(project) || !canManage(u, project)) return res.status(403).json({ error: 'forbidden' });
+      if (!(await validProject(project)) || !canSeeTeam(u, project)) return res.status(403).json({ error: 'forbidden' });
       const flat = (await redis(['HGETALL', `cg:members:${project}`])) || [];
       const members = [];
       for (let i = 0; i < flat.length; i += 2) { try { members.push(JSON.parse(flat[i + 1])); } catch (e) {} }
@@ -50,7 +70,7 @@ export default async function handler(req, res) {
       if (!u || !u.admin) return res.status(403).json({ error: 'forbidden' });
       const flat = (await redis(['HGETALL', `cg:usage:${monthKey()}`])) || [];
       const usage = {}; for (let i = 0; i < flat.length; i += 2) usage[flat[i]] = Number(flat[i + 1]) || 0;
-      let members = 0; for (const p of PROJECTS) members += Number(await redis(['HLEN', `cg:members:${p}`])) || 0;
+      let members = 0; for (const p of (await listProjects()).map((x) => x.id)) members += Number(await redis(['HLEN', `cg:members:${p}`])) || 0;
       const keys = Number(await redis(['DBSIZE'])) || 0;
       const requests = usage.requests || 0, emails = usage.emails || 0;
       const limits = { commands: 500000, invocations: 1000000, membersSoft: 50, emails: 3000 };
@@ -105,6 +125,35 @@ export default async function handler(req, res) {
       return res.status(200).json({ ok: true, user: publicUser(u) });
     }
 
+    // ── self sign-up from the landing page ("Use Tool")
+    if (action === 'signup') {
+      if (await rateLimited(`cg:rl:signup:${ip(req)}`, 10, 3600)) return res.status(429).json({ error: 'too_many_attempts' });
+      const identifier = normalizeIdentifier(b.identifier);
+      if (!identifier) return res.status(400).json({ error: 'bad_identifier' });
+      const name = clean(b.name, 80);
+      if (name.length < 2) return res.status(400).json({ error: 'name_required' });
+      const accountType = clean(b.accountType, 20);
+      if (!ACCOUNT_TYPES.includes(accountType)) return res.status(400).json({ error: 'account_type_required' });
+      const pp = passwordProblem(b.password); if (pp) return res.status(400).json({ error: 'weak_password', message: pp });
+      if (await getJSON(`cg:user:${identifier}`)) return res.status(409).json({ error: 'account_exists' });
+      const user = { name, identifier, hash: hashPassword(b.password), admin: false, projects: {}, accountType,
+                     company: clean(b.company, 80), createdAt: new Date().toISOString(), source: 'signup' };
+      await setJSON(`cg:user:${identifier}`, user);
+      await indexUser(identifier);
+      await createSession(req, res, identifier);
+      return res.status(200).json({ ok: true, user: publicUser(user), next: '/dashboard' });
+    }
+
+    // ── choose homeowner / contractor later (accounts made from invites)
+    if (action === 'set-type') {
+      const u = await currentUser(req);
+      if (!u) return res.status(401).json({ error: 'sign_in_required' });
+      const accountType = clean(b.accountType, 20);
+      if (!ACCOUNT_TYPES.includes(accountType)) return res.status(400).json({ error: 'account_type_required' });
+      u.accountType = accountType; await setJSON(`cg:user:${u.identifier}`, u);
+      return res.status(200).json({ ok: true, user: publicUser(u) });
+    }
+
     if (action === 'logout') {
       await destroySession(req, res);
       return res.status(200).json({ ok: true });
@@ -127,15 +176,20 @@ export default async function handler(req, res) {
       await redis(['DEL', `cg:invitefor:${inv.project}:${inv.identifier}`]);
       await redis(['HSET', `cg:members:${inv.project}`, inv.identifier, JSON.stringify({ name: user.name, identifier: inv.identifier, role: inv.role, status: 'active', joinedAt: new Date().toISOString() })]);
       await createSession(req, res, inv.identifier);
+      if (inv.role === 'client') {
+        const owners = (await redis(['HGETALL', `cg:members:${inv.project}`])) || [];
+        let active = 0; for (let i = 1; i < owners.length; i += 2) { try { const m = JSON.parse(owners[i]); if (m.role === 'client' && m.status === 'active') active++; } catch (e) {} }
+        if (active === 1) await notify(req, inv.project, { text: `${user.name} joined as the homeowner — they now have final say on approvals`, targets: ['gc'], by: user.name, byAccount: user.identifier });
+      }
       return res.status(200).json({ ok: true, user: publicUser(user), project: inv.project, role: user.projects[inv.project] });
     }
 
     // ── invite someone (GC / admin) — also used to reset a password
     if (action === 'invite') {
       const u = await currentUser(req);
-      const project = clean(b.project, 40);
+      const project = clean(b.project, 60);
       const role = clean(b.role, 10);
-      if (!validProject(project) || !canManage(u, project)) return res.status(403).json({ error: 'forbidden' });
+      if (!(await validProject(project)) || !canInviteRole(u, project, role)) return res.status(403).json({ error: 'forbidden' });
       if (!ROLES.includes(role)) return res.status(400).json({ error: 'bad_role' });
       const identifier = normalizeIdentifier(b.identifier);
       if (!identifier) return res.status(400).json({ error: 'bad_identifier' });
@@ -149,16 +203,37 @@ export default async function handler(req, res) {
       const prev = await redis(['HGET', `cg:members:${project}`, identifier]);
       const status = prev ? (JSON.parse(prev).status === 'active' ? 'active' : 'invited') : 'invited';
       await redis(['HSET', `cg:members:${project}`, identifier, JSON.stringify({ name, identifier, role, status, invitedAt: new Date().toISOString() })]);
-      return res.status(200).json({ ok: true, link: `${origin(req)}/${project}/${role}?invite=${t}`, expiresInDays: INVITE_DAYS });
+      return res.status(200).json({ ok: true, link: `${origin(req)}/${projectPath(project)}/${role}?invite=${t}`, expiresInDays: INVITE_DAYS });
     }
 
     // ── remove someone from a project (GC / admin)
+    // ── change someone's role on a project (hierarchy-checked)
+    if (action === 'set-role') {
+      const u = await currentUser(req);
+      const project = clean(b.project, 60), role = clean(b.role, 10);
+      if (!u || !(await validProject(project)) || !ROLES.includes(role)) return res.status(400).json({ error: 'bad_request' });
+      const identifier = normalizeIdentifier(b.identifier);
+      const raw = identifier && await redis(['HGET', `cg:members:${project}`, identifier]);
+      const target = raw ? JSON.parse(raw) : null;
+      if (!target) return res.status(404).json({ error: 'not_found' });
+      if (!(await canActOn(u, project, target)) || !canInviteRole(u, project, role) || (myRole(u, project) === 'gc' && role === 'client')) return res.status(403).json({ error: 'forbidden' });
+      target.role = role;
+      await redis(['HSET', `cg:members:${project}`, identifier, JSON.stringify(target)]);
+      const tu = await getJSON(`cg:user:${identifier}`);
+      if (tu) { tu.projects = Object.assign({}, tu.projects, { [project]: tu.admin ? 'gc' : role }); await setJSON(`cg:user:${identifier}`, tu); }
+      const pend = await redis(['GET', `cg:invitefor:${project}:${identifier}`]);
+      if (pend) { const inv = await getJSON(`cg:invite:${pend}`); if (inv) { inv.role = role; await setJSON(`cg:invite:${pend}`, inv, INVITE_DAYS * 86400); } }
+      return res.status(200).json({ ok: true });
+    }
+
     if (action === 'remove') {
       const u = await currentUser(req);
-      const project = clean(b.project, 40);
-      if (!validProject(project) || !canManage(u, project)) return res.status(403).json({ error: 'forbidden' });
+      const project = clean(b.project, 60);
+      if (!u || !(await validProject(project))) return res.status(403).json({ error: 'forbidden' });
       const identifier = normalizeIdentifier(b.identifier);
       if (!identifier || identifier === u.identifier) return res.status(400).json({ error: 'bad_identifier' });
+      const raw = await redis(['HGET', `cg:members:${project}`, identifier]);
+      if (!(await canActOn(u, project, raw ? JSON.parse(raw) : { identifier, role: 'trade' }))) return res.status(403).json({ error: 'forbidden' });
       await redis(['HDEL', `cg:members:${project}`, identifier]);
       const pendTok = await redis(['GET', `cg:invitefor:${project}:${identifier}`]);
       if (pendTok) { await redis(['DEL', `cg:invite:${pendTok}`]); await redis(['DEL', `cg:invitefor:${project}:${identifier}`]); }

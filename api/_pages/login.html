@@ -41,9 +41,9 @@ button.primary:disabled{opacity:.5;cursor:default}
 </div>
 <script>
 var L = window.CG_LOGIN || {project:'anita', role:'', invite:'', message:'', storage:false};
-var PROJECT_NAMES = {anita:'141 N Anita'};
+var PROJECT_NAMES = {};
 var ROLE_NAMES = {client:'Owner', gc:'General Contractor', trade:'Trade / Sub'};
-var pname = PROJECT_NAMES[L.project] || L.project;
+var pname = L.projectName || L.project;
 var $ = function(id){ return document.getElementById(id); };
 function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
 var ERR = {bad_login:'That email/phone and password don\'t match.', account_disabled:'This account is paused. Contact the platform for help.', too_many_attempts:'Too many attempts. Wait 15 minutes and try again.',
@@ -51,7 +51,7 @@ var ERR = {bad_login:'That email/phone and password don\'t match.', account_disa
   bad_identifier:'Enter a valid email or phone number.', bad_setup_code:'That setup code is not right.', admin_exists:'Setup is already done — sign in instead.',
   storage_not_configured:'Sign-in isn\'t connected yet. The database needs to be set up in Vercel.', network:'Could not reach the server. Check your connection.'};
 function showMsg(t, kind){ var m=$('msg'); if(!m) return; m.className='msg '+(kind||'err'); m.textContent=t; }
-function dest(role){ return (!role && L.next && /^\/[a-z]/.test(L.next)) ? L.next : '/'+L.project+'/'+(role||L.role||''); }
+function dest(role){ return (!role && L.next && /^\/[a-z]/.test(L.next)) ? L.next : '/'+(L.path||L.project)+'/'+(role||L.role||''); }
 function post(body){
   return fetch('/api/auth',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify(body)})
     .then(function(r){ return r.json().then(function(j){ j._status=r.status; return j; }); })
@@ -68,6 +68,7 @@ function viewSignIn(){
     '<label for="pw">Password</label><input id="pw" type="password" name="password" autocomplete="current-password" required>'+
     '<button class="primary" id="go" type="submit">Sign in</button></form>'+
     '<div class="foot">Forgot your password? Ask your GC to resend your invite link and set a new one.'+
+    (L.adminPage ? '' : '<br><a href="/" style="color:var(--w50)">Common Ground home</a>')+
     (L.adminExists===false ? '<br><br><button class="link" onclick="viewSetup()">First-time setup (GC)</button>' : '')+
     (L.signedIn ? '<br><br>Signed in as '+esc(L.signedIn.name)+' · <button class="link" onclick="signOut()">Sign out</button>' : '')+'</div>';
   if (L.message) showMsg(L.message, L.signedIn ? 'err' : 'info');
@@ -86,7 +87,7 @@ function viewInvite(){
     if (!j.ok) { $('view').innerHTML = '<h1>Invite link expired</h1><div class="sub">'+esc(ERR[j.error]||'This link can\'t be used.')+'</div><button class="primary" onclick="viewSignIn()">Go to sign in</button>'; return; }
     var inv = j.invite;
     $('view').innerHTML =
-      '<div class="eyebrow">'+esc(PROJECT_NAMES[inv.project]||inv.project)+'<span class="role">'+esc(ROLE_NAMES[inv.role]||inv.role)+'</span></div>'+
+      '<div class="eyebrow">'+esc(pname)+'<span class="role">'+esc(ROLE_NAMES[inv.role]||inv.role)+'</span></div>'+
       '<h1>Welcome, '+esc(inv.name.split(' ')[0])+'</h1>'+
       '<div class="sub">'+(inv.hasAccount ? 'Set a new password to join this project.' : 'Create your password to join the project.')+'</div>'+
       '<div id="msg" class="msg"></div>'+
@@ -122,7 +123,7 @@ function viewSetup(){
   $('f').onsubmit = function(e){
     e.preventDefault(); var b=$('go'); busy(b,true,'Create admin account');
     post({action:'setup', code:$('code').value, name:$('nm').value, identifier:$('id').value, password:$('pw').value}).then(function(j){
-      if (j.ok) { location.href = L.next || ('/'+L.project+'/gc'); return; }
+      if (j.ok) { location.href = L.next || ('/'+(L.path||L.project)+'/gc'); return; }
       busy(b,false,'Create admin account'); showMsg(ERR[j.error]||j.message||'Setup failed.');
     });
   };

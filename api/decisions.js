@@ -12,8 +12,8 @@ const num = (v) => (typeof v === 'number' && isFinite(v) ? Math.round(v * 100) /
 
 export default async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store');
-  const project = clean((req.method === 'GET' ? req.query.project : req.body?.project) || '', 40).toLowerCase();
-  if (!validProject(project)) return res.status(400).json({ error: 'bad_project' });
+  const project = clean((req.method === 'GET' ? req.query.project : req.body?.project) || '', 60).toLowerCase();
+  if (!(await validProject(project))) return res.status(400).json({ error: 'bad_project' });
   if (!storageReady()) return res.status(503).json({ error: 'storage_not_configured' });
 
   await trackUsage();
@@ -47,7 +47,8 @@ export default async function handler(req, res) {
     if (!/^[a-z0-9-]{1,60}$/.test(id)) return res.status(400).json({ error: 'bad_id' });
 
     // permission checks before anything is looked up or stored
-    if (action === 'approve' && (u.projects || {})[project] !== 'client') return res.status(403).json({ error: 'owner_only' });
+    if (['approve', 'reject', 'void'].includes(action) && (u.projects || {})[project] !== 'client') return res.status(403).json({ error: 'owner_only' });
+    if (action === 'withdraw' && role !== 'gc') return res.status(403).json({ error: 'gc_only' });
     if ((action === 'create' || action === 'revise') && role !== 'gc') return res.status(403).json({ error: 'gc_only' });
 
     const raw = await redis(['HGET', key, id]);
@@ -81,8 +82,25 @@ export default async function handler(req, res) {
     } else if (action === 'comment') {
       const note = clean(b.note, 1000);
       if (!note) return res.status(400).json({ error: 'note_required' });
-      if (d.status !== 'approved') d.status = 'discussing';
+      if (d.status === 'pending') d.status = 'discussing';
       d.events.push({ type: 'comment', note, ...ev });
+    } else if (action === 'reject' || action === 'void' || action === 'withdraw') {
+      // owner has final say: reject a pending item or void their own approval; the GC can withdraw its own change order
+      const note = clean(b.note, 1000);
+      if (note.length < 3) return res.status(400).json({ error: 'reason_required' });
+      if (action === 'void') {
+        if (d.status !== 'approved') return res.status(409).json({ error: 'not_approved' });
+        d.events.push({ type: 'voided', note, voidedRef: d.approval && d.approval.ref, ...ev });
+        d.voidedApproval = d.approval; delete d.approval; d.status = 'pending';
+      } else {
+        if (d.status === 'approved') return res.status(409).json({ error: 'already_approved', decision: d });
+        if (action === 'withdraw' && d.type !== 'co') return res.status(400).json({ error: 'not_change_order' });
+        d.status = action === 'reject' ? 'rejected' : 'withdrawn';
+        d.events.push({ type: d.status, note, ...ev });
+      }
+    } else if (action === 'reopen') {
+      if (!['rejected', 'withdrawn'].includes(d.status)) return res.status(409).json({ error: 'not_closed' });
+      d.status = 'pending'; d.events.push({ type: 'reopened', note: clean(b.note, 1000), ...ev });
     } else if (action === 'revise') {
       if (role !== 'gc') return res.status(403).json({ error: 'gc_only' });
       if (d.status === 'approved') return res.status(409).json({ error: 'already_approved', decision: d });
@@ -103,6 +121,10 @@ export default async function handler(req, res) {
     const n = action === 'approve' ? { text: `${u.name} (Owner) approved: ${d.title}${money} · ref ${d.approval.ref}`, targets: ['gc'] }
       : action === 'create' ? { text: `New change order to review: ${d.title}${money}`, targets: ['client'] }
       : action === 'revise' ? { text: `Change order revised: ${d.title}${money}`, targets: ['client'] }
+      : action === 'reject' ? { text: `${u.name} (Owner) rejected: ${d.title} — ${clean(b.note, 140)}`, targets: ['gc'] }
+      : action === 'void' ? { text: `${u.name} (Owner) voided their approval: ${d.title} — ${clean(b.note, 140)}`, targets: ['gc'] }
+      : action === 'withdraw' ? { text: `Change order withdrawn: ${d.title} — ${clean(b.note, 140)}`, targets: ['client'] }
+      : action === 'reopen' ? { text: `Reopened for review: ${d.title}`, targets: role === 'gc' ? ['client'] : ['gc'] }
       : action === 'comment' ? { text: `${u.name} (${who}) on "${d.title}": ${clean(b.note, 140)}`, targets: role === 'gc' ? ['client'] : ['gc'] }
       : null;
     if (n) await notify(req, project, Object.assign(n, { decision: d.id, by: u.name, byAccount: u.identifier }));

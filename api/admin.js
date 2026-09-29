@@ -8,7 +8,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import {
   storageReady, redis, getJSON, setJSON, clean, validProject, ROLES, PROJECTS, PROJECT_NAMES, normalizeIdentifier,
-  createSession, currentUser, publicUser, trackUsage, notify, createInvite, addMember, projectMembers, siteOrigin, indexUser, canonicalRedirect,
+  createSession, currentUser, publicUser, trackUsage, notify, createInvite, addMember, projectMembers, siteOrigin, indexUser, canonicalRedirect, listProjects, projectPath, getProjectMeta,
 } from './_lib.js';
 import { seedProject } from './project.js';
 
@@ -44,6 +44,11 @@ function seedDecisions(p, state) {
     Object.assign({ id: 'p1-gc-option', type: 'contract', area: 'Phase 1 · GC', title: 'Option 2 — GC overhead + management', amount: 16500 }, base),
     Object.assign({ id: 'soil-allowance', type: 'allowance', area: 'Grading · Hauling', title: 'Extra soil hauling allowance — $1,500 / load', amount: null }, base),
   ];
+  if (p === 'coolidge' && h.hiredBy === 'seed') return [
+    Object.assign({ id: 'c-cabinets', type: 'decision', area: 'Bedroom 3 · Cabinets', title: 'Wrong cabinet color — confirm full reinstall', amount: null }, base),
+    Object.assign({ id: 'c-fireplace', type: 'decision', area: 'Living room · Fireplace', title: 'Install fireplace cooling registers', amount: null }, base),
+    Object.assign({ id: 'c-liliput-p1', type: 'decision', area: 'Landscape · Liliput', title: 'Liliput Phase I landscape contract', amount: 110829 }, base),
+  ];
   const who = h.company || h.name;
   return [Object.assign({ id: 'contract-' + h.bidId, type: 'contract', area: 'Contract · ' + who, title: 'Construction contract — ' + who, amount: h.amount || null }, base)];
 }
@@ -60,7 +65,8 @@ async function projectSnapshot(p) {
   const activity = ((await redis(['LRANGE', `cg:notify:${p}`, '0', '39'])) || [])
     .map((r) => { try { return JSON.parse(r); } catch (e) { return null; } }).filter(Boolean);
   return {
-    slug: p, name: PROJECT_NAMES[p] || p, stage: state.stage, hiredGc: state.hiredGc || null, startedAt: state.startedAt || null,
+    slug: p, path: projectPath(p), name: ((await getProjectMeta(p)) || {}).name || p, address: ((await getProjectMeta(p)) || {}).address || '',
+    classification: ((await getProjectMeta(p)) || {}).classification || '', builtin: !!((await getProjectMeta(p)) || {}).builtin, stage: state.stage, hiredGc: state.hiredGc || null, startedAt: state.startedAt || null,
     members, bids, decisions,
     kickoff: { total: items.length, done: items.filter(done).length, open: items.filter((i) => i.required && !done(i)).map((i) => i.text) },
     activity,
@@ -98,7 +104,7 @@ export default async function handler(req, res) {
     const adminExists = !!(await redis(['GET', 'cg:admin:exists']));
     if (!u) return sendPage(res, 'login.html', 'CG_LOGIN', loginData('', { adminExists }));
     if (!u.admin) return sendPage(res, 'login.html', 'CG_LOGIN', loginData('The platform console is for the platform admin only.', { adminExists, signedIn: publicUser(u) }), 403);
-    return sendPage(res, 'admin.html', 'CG_ADMIN', { me: publicUser(u), projects: PROJECTS.map((p) => ({ slug: p, name: PROJECT_NAMES[p] || p })) });
+    return sendPage(res, 'admin.html', 'CG_ADMIN', { me: publicUser(u), projects: (await listProjects()).map((p) => ({ slug: p.id, path: projectPath(p.id), name: p.name })) });
   }
 
   if (!storageReady()) return res.status(503).json({ error: 'storage_not_configured' });
@@ -110,7 +116,7 @@ export default async function handler(req, res) {
   try {
     if (req.method === 'GET' && action === 'overview') {
       const projects = [];
-      for (const p of PROJECTS) { await seedProject(p); projects.push(await projectSnapshot(p)); }
+      for (const p of (await listProjects()).map((x) => x.id)) { await seedProject(p); projects.push(await projectSnapshot(p)); }
       const accounts = await allAccounts(projects);
       const support = ((await redis(['LRANGE', 'cg:support', '0', '49'])) || []).map((r) => { try { return JSON.parse(r); } catch (e) { return null; } }).filter(Boolean);
       const supportTotal = Number(await redis(['LLEN', 'cg:support'])) || 0;
@@ -118,8 +124,9 @@ export default async function handler(req, res) {
     }
 
     if (req.method !== 'POST') return res.status(405).json({ error: 'method_not_allowed' });
-    const project = clean(b.project, 40).toLowerCase();
-    const needProject = () => validProject(project);
+    const project = clean(b.project, 60).toLowerCase();
+    const projectOk = await validProject(project);
+    const needProject = () => projectOk;
     const identifier = normalizeIdentifier(b.identifier);
     const self = identifier && identifier === me.identifier;
     const log = (text, targets = ['gc']) => notify(req, project, { text, targets, by: me.name, byAccount: me.identifier, noEmail: true });
@@ -134,7 +141,7 @@ export default async function handler(req, res) {
       const t = await createInvite(project, role, name, identifier, me.identifier);
       const prev = (await projectMembers(project)).find((m) => m.identifier === identifier);
       await addMember(project, identifier, { name, role, status: prev && prev.status === 'active' ? 'active' : 'invited', invitedAt: now() });
-      return res.status(200).json({ ok: true, link: `${siteOrigin(req)}/${project}/${role}?invite=${t}`, expiresInDays: 14 });
+      return res.status(200).json({ ok: true, link: `${siteOrigin(req)}/${projectPath(project)}/${role}?invite=${t}`, expiresInDays: 14 });
     }
 
     if (action === 'set-role') {
@@ -165,11 +172,12 @@ export default async function handler(req, res) {
       if (!identifier) return res.status(400).json({ error: 'bad_identifier' });
       const u = await getJSON(`cg:user:${identifier}`);
       if (!u) return res.status(404).json({ error: 'not_found' });
-      const entries = Object.entries(u.projects || {}).filter(([p]) => validProject(p));
+      const entries = [];
+      for (const e of Object.entries(u.projects || {})) if (await validProject(e[0])) entries.push(e);
       const [p, role] = entries.find(([pp]) => pp === project) || entries[0] || [PROJECTS[0], u.admin ? 'gc' : ''];
       if (!role) return res.status(409).json({ error: 'no_project_access' });
       const t = await createInvite(p, role, u.name, identifier, me.identifier, 2);
-      return res.status(200).json({ ok: true, link: `${siteOrigin(req)}/${p}/${role}?invite=${t}`, expiresInDays: 2 });
+      return res.status(200).json({ ok: true, link: `${siteOrigin(req)}/${projectPath(p)}/${role}?invite=${t}`, expiresInDays: 2 });
     }
 
     if (action === 'signout-all') {
@@ -196,7 +204,7 @@ export default async function handler(req, res) {
       if (!identifier) return res.status(400).json({ error: 'bad_identifier' });
       if (self) return res.status(400).json({ error: 'not_yourself' });
       if (clean(b.confirm, 120).toLowerCase() !== identifier) return res.status(400).json({ error: 'confirm_required' });
-      for (const p of PROJECTS) {
+      for (const p of (await listProjects()).map((x) => x.id)) {
         await redis(['HDEL', `cg:members:${p}`, identifier]);
         const pend = await redis(['GET', `cg:invitefor:${p}:${identifier}`]);
         if (pend) { await redis(['DEL', `cg:invite:${pend}`]); await redis(['DEL', `cg:invitefor:${p}:${identifier}`]); }
@@ -230,7 +238,7 @@ export default async function handler(req, res) {
       if (stage === 'kickoff') next.startedAt = null;
       if (stage === 'active' && !next.startedAt) { next.startedAt = now(); next.startedBy = me.name; }
       await setJSON(`cg:project:${project}`, next);
-      await log(`Platform admin set ${PROJECT_NAMES[project] || project} to "${stage}"`, ['gc']);
+      await log(`Platform admin set ${((await getProjectMeta(project)) || {}).name || project} to "${stage}"`, ['gc']);
       return res.status(200).json({ ok: true, stage });
     }
 
