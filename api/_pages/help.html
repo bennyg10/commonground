@@ -69,7 +69,8 @@ h1,h2,h3.never{font-family:'Bungee',sans-serif!important;font-weight:400!importa
 </style>
 </head>
 <body>
-<div class="card">
+<div class="card" style="position:relative">
+  <button id="help-x" type="button" onclick="helpClose()" aria-label="Close and go back" title="Close" style="position:absolute;top:14px;right:14px;width:36px;height:36px;border-radius:50%;background:var(--d3);border:1px solid var(--w15);color:var(--w70);font-size:20px;line-height:1;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center">×</button>
   <div class="mark"><b>CG</b><span>Common Ground</span></div>
   <div id="view"></div>
 </div>
@@ -79,6 +80,16 @@ var B = {project: H.project || ''};
 var $ = function(id){ return document.getElementById(id); };
 function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
 var ERR = {bad_email:'Enter a valid email address.', name_required:'Enter your name.', message_required:'Add a short message.', too_many_attempts:'Too many messages. Try again in an hour.', network:'Could not reach the server. Check your connection.'};
+/* × and "Back": return to the page they came from (or the home page); a half-written message is kept for next time */
+var HELP_DRAFT = 'cg_help_draft';
+function helpClose(){
+  var ref = document.referrer || '';
+  var same = ref && ref.indexOf(location.origin + '/') === 0 && ref.indexOf('/help') === -1;
+  if (same && history.length > 1) history.back();
+  else location.href = same ? ref : '/';
+}
+function helpSave(){ try { var d={}; ['hn','he','ht','hm'].forEach(function(k){ var e=$(k); if(e) d[k]=e.value; }); localStorage.setItem(HELP_DRAFT, JSON.stringify(d)); } catch(e){} }
+function helpRestore(){ try { var d=JSON.parse(localStorage.getItem(HELP_DRAFT)||'null'); if(!d) return; ['hn','he','ht','hm'].forEach(function(k){ var e=$(k); if(e && d[k] && !e.value) e.value=d[k]; }); } catch(e){} }
 function showErr(id, e){ var m=$(id); m.className='msg err'; m.textContent = ERR[e.error] || e.message || 'Something went wrong.'; }
 function helpForm(name, email, phone){
   return '<div id="hmsg" class="msg"></div><form id="hf">'+
@@ -89,12 +100,16 @@ function helpForm(name, email, phone){
     '<button class="ghost" id="hgo" type="submit">Send to Common Ground</button></form>';
 }
 function wireHelp(){
+  helpRestore();
+  $('hf').addEventListener('input', helpSave); $('hf').addEventListener('change', helpSave);
   $('hf').onsubmit = function(e){
     e.preventDefault(); var b=$('hgo'); b.disabled=true; b.textContent='Sending…';
     fetch('/api/support',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:$('hn').value,email:$('he').value,phone:$('hp').value,topic:$('ht').value,message:$('hm').value,project:B.project})})
       .then(function(r){return r.json();}).then(function(j){
         if (!j.ok) { b.disabled=false; b.textContent='Send to Common Ground'; return showErr('hmsg', j); }
-        $('hf').outerHTML = '<div class="msg ok">Thanks. Your message was sent. We\'ll reply to '+esc($('he')?$('he').value:'your email')+' soon.</div>';
+        try { localStorage.removeItem(HELP_DRAFT); } catch(e){}
+        $('hf').outerHTML = '<div class="msg ok">Thanks. Your message was sent. We\'ll reply to '+esc($('he')?$('he').value:'your email')+' soon.</div>'+
+          '<button class="ghost" type="button" onclick="helpClose()" style="margin-top:4px">Back to Common Ground</button>';
       }).catch(function(){ b.disabled=false; b.textContent='Send to Common Ground'; showErr('hmsg',{error:'network'}); });
   };
 }
