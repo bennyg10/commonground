@@ -64,7 +64,8 @@ var ERR = {bad_login:'That email/phone and password don\'t match.', account_disa
   bad_identifier:'Enter a valid email or phone number.', bad_setup_code:'That setup code is not right.', admin_exists:'Setup is already done — sign in instead.',
   storage_not_configured:'Sign-in isn\'t connected yet. The database needs to be set up in Vercel.', network:'Could not reach the server. Check your connection.'};
 function showMsg(t, kind){ var m=$('msg'); if(!m) return; m.className='msg '+(kind||'err'); m.textContent=t; }
-function dest(role){ return (!role && L.next && /^\/[a-z]/.test(L.next)) ? L.next : '/'+(L.path||L.project)+'/'+(role||L.role||''); }
+function roleUrl(r){ return r==='client' ? 'homeowner' : (r||''); }
+function dest(role){ return (!role && L.next && /^\/[a-z]/.test(L.next)) ? L.next : '/'+(L.path||L.project)+'/'+roleUrl(role||L.role||''); }
 function post(body){
   return fetch('/api/auth',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify(body)})
     .then(function(r){ return r.json().then(function(j){ j._status=r.status; return j; }); })
@@ -115,7 +116,7 @@ function viewInvite(){
       if ($('pw').value.length < 8) return showMsg(ERR.weak_password);
       var b=$('go'); busy(b,true,'Join project');
       post({action:'accept', token:L.invite, password:$('pw').value, name:$('nm').value}).then(function(j){
-        if (j.ok) { location.href = '/'+j.project+'/'+j.role; return; }
+        if (j.ok) { location.href = dest(j.role); return; }
         busy(b,false,'Join project'); showMsg(ERR[j.error]||j.message||'Could not join.');
       });
     };

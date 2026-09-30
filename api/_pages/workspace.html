@@ -174,7 +174,7 @@ function tabsFor(){
   if ((isOwner && (ST.stage==='bidding' || (ST.bids||[]).length))) t.push(['proposals','Proposals']);
   if (!isTrade) t.push(['decisions','Decisions']);
   t.push(['schedule','Schedule']);
-  if (isOwner||isGC) t.push(['controls', ownerAccount ? 'Owner controls' : isGC ? 'GC controls' : 'Controls']);
+  if (isOwner||isGC) t.push(['controls', ownerAccount ? 'Homeowner controls' : isGC ? 'GC controls' : 'Controls']);
   if (!isTrade) t.push(['tools','Tools']); else t.push(['tools','3D scans']);
   return t;
 }
@@ -183,8 +183,8 @@ function render(){
   var m = ST.meta || {};
   document.title = 'Common Ground — '+(m.name||'Project');
   $('crumb-name').textContent = m.name || '';
-  $('role-pill').textContent = {client:'Owner',gc:'GC',trade:'Trade'}[ROLE] || ROLE;
-  if (S.admin) $('admin-views').innerHTML = ['client','gc','trade'].filter(function(r){return r!==ROLE;}).map(function(r){ return '<a class="btn sm" href="/'+esc(S.path)+'/'+r+location.hash+'">'+({client:'Owner',gc:'GC',trade:'Trade'}[r])+' view</a>'; }).join(' ');
+  $('role-pill').textContent = {client:'Homeowner',gc:'GC',trade:'Trade'}[ROLE] || ROLE;
+  if (S.admin) $('admin-views').innerHTML = ['client','gc','trade'].filter(function(r){return r!==ROLE;}).map(function(r){ return '<a class="btn sm" href="/'+esc(S.path)+'/'+(r==='client'?'homeowner':r)+location.hash+'">'+({client:'Homeowner',gc:'GC',trade:'Trade'}[r])+' view</a>'; }).join(' ');
   var tabs = tabsFor(); if (!tabs.some(function(x){return x[0]===TAB;})) TAB='overview';
   var counts = {proposals:(ST.bids||[]).length, decisions:DEC.filter(function(d){return !decClosed(d);}).length, controls:MEMBERS.length, schedule:TASKS.items.filter(function(t){return !t.done;}).length};
   $('tabs').innerHTML = tabs.map(function(t){ return '<button class="tab'+(TAB===t[0]?' on':'')+'" data-tab="'+t[0]+'" onclick="go(\''+t[0]+'\')">'+t[1]+(counts[t[0]]?'<span class="ct">'+counts[t[0]]+'</span>':'')+'</button>'; }).join('');
@@ -333,22 +333,40 @@ function hireResultCard(){
 function vDecisions(){
   var h = '<div class="eyebrow">Decisions</div><h1>Approvals + change orders</h1><div class="lede">'+(ownerAccount?'Every change is priced and waits for your approval before work starts.':isGC?'Send a change order — the owner approves it in writing.':'Decisions on this project.')+'</div><div class="two" style="margin-top:24px"><div><div class="card">';
   h += DEC.length ? DEC.slice().sort(function(a,b){ return (a.status==='approved')-(b.status==='approved') || String(b.updatedAt||b.createdAt).localeCompare(String(a.updatedAt||a.createdAt)); }).map(function(d){
-    return '<div class="item" data-dec="'+esc(d.id)+'"><div class="main"><div class="t">'+esc(d.title)+'</div><div class="muted small">'+money(d.amount)+(d.area?' · '+esc(d.area):'')+' · '+esc(when(d.updatedAt||d.createdAt))+'</div></div>'+
+    return '<div class="item" data-dec="'+esc(d.id)+'">'+((d.photos||[]).length?'<img src="'+photoUrl(d.photos[0].id)+'" alt="" style="width:52px;height:52px;object-fit:cover;border-radius:8px;flex:none;background:var(--d3)">':'')+'<div class="main"><div class="t">'+esc(d.title)+'</div><div class="muted small">'+money(d.amount)+(d.area?' · '+esc(d.area):'')+' · '+esc(when(d.updatedAt||d.createdAt))+'</div></div>'+
       decPill(d)+'<button class="btn sm" onclick="openDec(\''+jsq(d.id)+'\')">Open</button></div>';
   }).join('') : '<div class="empty">No decisions yet.'+(isGC?' Create a change order when something changes.':'')+'</div>';
   h += '</div></div><div>';
-  if (isGC) h += '<div class="card"><h2>New change order</h2><label for="co-title">What’s changing</label><input id="co-title" placeholder="e.g. Upgrade to 200A panel"><label for="co-amt">Price ($)</label><input id="co-amt" type="number" min="0" step="1"><label for="co-desc">Details</label><textarea id="co-desc" rows="3"></textarea><button class="btn pri" id="co-go" onclick="createCO()">Send to owner</button></div>';
+  if (isGC) h += '<div class="card"><h2>New change order</h2><label for="co-title">What’s changing</label><input id="co-title" placeholder="e.g. Upgrade to 200A panel"><label for="co-amt">Price ($)</label><input id="co-amt" type="number" min="0" step="1"><label for="co-desc">Details</label><textarea id="co-desc" rows="3"></textarea><label for="co-photos">Photos (optional, up to 3)</label><input id="co-photos" type="file" accept="image/*" multiple><button class="btn pri" id="co-go" onclick="createCO()">Send to homeowner</button></div>';
   return h+'</div></div>';
 }
 function decPill(d){
   var m = {approved:['ok','Approved'], discussing:['amb','Discussing'], rejected:['del','Rejected'], withdrawn:['gray','Withdrawn']}[d.status] || ['lime','Pending'];
   return '<span class="pill '+m[0]+'">'+m[1]+'</span>';
 }
+function photoUrl(pid){ return '/api/decisions?project='+encodeURIComponent(PID)+'&action=photo&photo='+encodeURIComponent(pid); }
+function shrinkPhoto(file){
+  return new Promise(function(res, rej){
+    var img = new Image(), url = URL.createObjectURL(file);
+    img.onload = function(){ var s = Math.min(1, 1280/Math.max(img.width, img.height)), c = document.createElement('canvas'); c.width = Math.round(img.width*s); c.height = Math.round(img.height*s);
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height); URL.revokeObjectURL(url); res({type:'image/jpeg', data:c.toDataURL('image/jpeg', .82).split(',')[1]}); };
+    img.onerror = function(){ rej(new Error('That file isn’t an image we can read.')); }; img.src = url;
+  });
+}
+function addDecPhoto(id, input){
+  var f = input.files[0]; if (!f) return; toast('Uploading photo…');
+  shrinkPhoto(f).then(function(photo){ return api('/api/decisions', {project:PID, action:'add-photo', id:id, photo:photo}); })
+    .then(function(j){ if (!j.ok) return toast(j.error==='too_many_photos'?'Already 6 photos on this one.':'Couldn’t add that photo.'); var k = DEC.findIndex(function(x){return x.id===id;}); if (k>=0) DEC[k] = j.decision; openDec(id); toast('Photo added'); render(); })
+    .catch(function(e){ toast(e.message); });
+}
 function createCO(){
   var t=$('co-title').value.trim(); if (!t) return toast('Describe the change first.');
-  api('/api/decisions', {project:PID, action:'create', title:t, amount:$('co-amt').value?+$('co-amt').value:null, desc:$('co-desc').value, area:'Change order'}).then(function(j){
-    if (!j.ok) return toast('Couldn’t send that.'); toast('Sent — owner notified'); load();
-  });
+  var b=$('co-go'); b.disabled=true; b.textContent='Sending…';
+  Promise.all([].slice.call($('co-photos').files, 0, 3).map(shrinkPhoto)).then(function(photos){
+    return api('/api/decisions', {project:PID, action:'create', title:t, amount:$('co-amt').value?+$('co-amt').value:null, desc:$('co-desc').value, area:'Change order', photos:photos});
+  }).then(function(j){ b.disabled=false; b.textContent='Send to homeowner';
+    if (!j.ok) return toast('Couldn’t send that.'); toast('Sent — homeowner notified'); load();
+  }).catch(function(e){ b.disabled=false; b.textContent='Send to homeowner'; toast(e.message); });
 }
 function openDec(id){
   var d = DEC.filter(function(x){return x.id===id;})[0]; if (!d) return;
@@ -358,6 +376,7 @@ function openDec(id){
       : e.type==='rejected' ? '<span style="color:#f0a996">Rejected by the owner</span>'+(e.note?' — '+esc(e.note):'')
       : e.type==='withdrawn' ? '<span class="muted">Withdrawn by the GC</span>'+(e.note?' — '+esc(e.note):'')
       : e.type==='reopened' ? '<span style="color:#e0c67a">Reopened for review</span>'
+      : e.type==='photo' ? 'Added a photo'
       : e.type==='revised' ? 'Revised to '+money(e.amount)+(e.note?' — '+esc(e.note):'')
       : e.type==='created' ? 'Created · '+money(e.amount) : esc(e.note);
     return '<div class="item"><div class="main"><div class="small"><b>'+esc(e.by)+'</b> · '+esc(when(e.at))+'</div><div class="small" style="color:var(--w70)">'+t+'</div></div></div>';
@@ -365,7 +384,9 @@ function openDec(id){
   var approve = ownerAccount && !decClosed(d)
     ? '<div class="card" style="margin:14px 0 0;padding:16px"><label style="display:flex;gap:8px;align-items:flex-start;color:var(--w70);font-size:13px"><input id="d-agree" type="checkbox" style="width:auto;margin:3px 0 0"> I approve '+esc(d.title)+(d.amount!=null?' for '+money(d.amount):'')+'.</label>'+
       '<label for="d-sig">Type your full name to sign</label><input id="d-sig" autocomplete="name"><button class="btn pri" id="d-approve" onclick="approveDec(\''+jsq(id)+'\')">Approve + sign</button></div>' : '';
-  modal('<div class="eyebrow">'+esc(d.area||'Decision')+'</div><h3>'+esc(d.title)+'</h3><p>'+money(d.amount)+(d.desc?' · '+esc(d.desc):'')+'</p>'+(ev||'')+approve+
+  var ph = d.photos||[], gal = ph.length ? '<div style="display:grid;grid-template-columns:repeat('+Math.min(ph.length,2)+',1fr);gap:8px;margin-bottom:12px">'+ph.map(function(p){ return '<a href="'+photoUrl(p.id)+'" target="_blank" rel="noopener"><img src="'+photoUrl(p.id)+'" alt="Photo" style="width:100%;height:'+(ph.length===1?'220px':'130px')+';object-fit:cover;border-radius:10px;background:var(--d3)"></a>'; }).join('')+'</div>' : '';
+  var addPh = (!isTrade && ph.length<6) ? '<label class="btn sm" style="margin-bottom:12px;cursor:pointer">+ Add photo<input type="file" accept="image/*" style="display:none" onchange="addDecPhoto(\''+jsq(id)+'\',this)"></label>' : '';
+  modal('<div class="eyebrow">'+esc(d.area||'Decision')+'</div><h3>'+esc(d.title)+'</h3><p>'+money(d.amount)+(d.desc?' · '+esc(d.desc):'')+'</p>'+gal+addPh+(ev||'')+approve+
     '<label for="d-note" style="margin-top:14px">Comment or question</label><textarea id="d-note" rows="2"></textarea><div class="msg" id="d-msg"></div>'+
     '<div class="acts">'+
       (ownerAccount ? '<button class="btn danger" id="d-override" onclick="overrideDec(\''+jsq(id)+'\',\''+(d.status==='approved'?'void':decClosed(d)?'reopen':'reject')+'\')">'+(d.status==='approved'?'Void my approval':decClosed(d)?'Reopen':'Reject')+'</button>' : '')+
@@ -391,7 +412,7 @@ function commentDec(id){ var n=$('d-note').value.trim(); if (!n) return; api('/a
 
 /* ── Controls: each role's own admin page (owner > GC > trade) ── */
 var TEAM_LINK = '';
-var RL = {client:'Owner', gc:'GC', trade:'Trade / Sub'};
+var RL = {client:'Homeowner', gc:'GC', trade:'Trade / Sub'};
 function myRank(){ return S.admin ? 9 : ({client:3, gc:2, trade:1}[(ME.projects||{})[PID]] || 0); }
 function canActOn(m){
   if (m.identifier===ME.identifier) return false;
@@ -403,7 +424,7 @@ function rolesICanGive(){ return (S.admin||ownerAccount) ? ['client','gc','trade
 function hasOwner(){ return MEMBERS.some(function(m){ return m.role==='client' && m.status==='active'; }); }
 function vControls(){
   var m = ST.meta||{};
-  var h = '<div class="eyebrow">'+(ownerAccount?'Owner controls':'GC controls')+'</div><h1>'+(ownerAccount?'You have final say on this project':'Run your team and trades')+'</h1>'+
+  var h = '<div class="eyebrow">'+(ownerAccount?'Homeowner controls':'GC controls')+'</div><h1>'+(ownerAccount?'You have final say on this project':'Run your team and trades')+'</h1>'+
     '<div class="lede">'+(ownerAccount ? 'Add or remove anyone, change roles, reject or void decisions, and release the GC if you need to.'
       : hasOwner() ? 'Invite trades and your GC team, send change orders, and keep the schedule current. The homeowner has final say on approvals.'
       : 'No homeowner has joined yet. Invite them below — once they join, they have final say on approvals.')+'</div>';
@@ -472,7 +493,7 @@ function doRelease(){ api(P(), {project:PID, action:'owner-release', reason:$('r
 
 /* ── Schedule: timeline + tasks ── */
 var SCHED_EDIT = false, SCHED_DRAFT = null;
-var SCOL = {planned:'var(--w30)', 'in-progress':'var(--lime)', done:'#4A9B6F', delayed:'#E07A5F'};
+var SCOL = {planned:'var(--w30)', 'in-progress':'var(--lime)', done:'#6D604F', delayed:'#E07A5F'};
 var SLBL = {planned:'Planned', 'in-progress':'In progress', done:'Done', delayed:'Delayed'};
 function canPlan(){ return isGC || ownerAccount || S.admin; }
 function dnum(d){ return d ? Date.parse(d+'T12:00:00Z') : NaN; }

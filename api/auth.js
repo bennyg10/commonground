@@ -2,7 +2,7 @@
 import {
   storageReady, redis, getJSON, setJSON, clean, validProject, ROLES, normalizeIdentifier,
   hashPassword, verifyPassword, passwordProblem, token, createSession, destroySession,
-  currentUser, publicUser, rateLimited, ip, trackUsage, monthKey, PROJECTS, indexUser, siteOrigin, projectPath, listProjects, notify,
+  currentUser, publicUser, rateLimited, ip, trackUsage, monthKey, PROJECTS, indexUser, siteOrigin, projectPath, listProjects, notify, roleSlug,
 } from './_lib.js';
 
 const INVITE_DAYS = 14;
@@ -203,7 +203,7 @@ export default async function handler(req, res) {
       const prev = await redis(['HGET', `cg:members:${project}`, identifier]);
       const status = prev ? (JSON.parse(prev).status === 'active' ? 'active' : 'invited') : 'invited';
       await redis(['HSET', `cg:members:${project}`, identifier, JSON.stringify({ name, identifier, role, status, invitedAt: new Date().toISOString() })]);
-      return res.status(200).json({ ok: true, link: `${origin(req)}/${projectPath(project)}/${role}?invite=${t}`, expiresInDays: INVITE_DAYS });
+      return res.status(200).json({ ok: true, link: `${origin(req)}/${projectPath(project)}/${roleSlug(role)}?invite=${t}`, expiresInDays: INVITE_DAYS });
     }
 
     // ── remove someone from a project (GC / admin)

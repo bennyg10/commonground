@@ -1658,14 +1658,9 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;
 <!-- ══ RIGHT PANEL ══ -->
 <div class="rp">
   <div class="rp-head">
-    <div class="role-row">
-      <button class="role-btn" onclick="setRole(this)">Client</button>
-      <button class="role-btn on" onclick="setRole(this)">GC</button>
-      <button class="role-btn" onclick="setRole(this)">Trade</button>
-    </div>
+    <div class="apn-head" style="display:flex;align-items:center;gap:8px;font-family:Syne,sans-serif;font-size:14px;font-weight:800;color:var(--white);letter-spacing:-.01em;margin:2px 0 10px">Approvals Needed<span id="apn-count" style="display:none;align-items:center;justify-content:center;min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:var(--lime);color:var(--black);font-size:10px;font-weight:800"></span></div>
     <div class="rp-tabs">
-      <button class="rpt on" onclick="rpTab('decisions',this)"><i class="ti ti-alert-circle"></i>Decide</button>
-      <button class="rpt" onclick="rpTab('approvals',this)"><i class="ti ti-check"></i>Approve</button>
+      <button class="rpt on" onclick="rpTab('decisions',this)"><i class="ti ti-alert-circle"></i>Approvals</button>
       <button class="rpt" onclick="rpTab('chat',this)"><i class="ti ti-message"></i>Chat</button>
       <button class="rpt" id="rp-tab-finance" onclick="rpTab('finance',this)"><i class="ti ti-coin"></i>$</button>
     </div>
@@ -3099,6 +3094,7 @@ function decTimeline(d){
       : e.type==='rejected' ? '<span style="color:var(--del)">Rejected by the owner</span>'+(e.note?' — '+decEsc(e.note):'')
       : e.type==='withdrawn' ? '<span style="color:var(--w50)">Withdrawn by the GC</span>'+(e.note?' — '+decEsc(e.note):'')
       : e.type==='reopened' ? '<span style="color:var(--amb)">Reopened for review</span>'
+      : e.type==='photo' ? '<span style="color:var(--w70)">Added a photo</span>'+(e.note?' — '+decEsc(e.note):'')
       : e.type==='created' ? '<span style="color:var(--lime)">Change order created · '+decMoney(e.amount)+'</span>'+(e.note?' — '+decEsc(e.note):'') : '';
     var mine = e.role===decRole();
     return '<div style="padding:8px 10px;border-radius:8px;margin-bottom:6px;background:'+(mine?'var(--l10)':'var(--d3)')+';border:1px solid '+(mine?'var(--l20)':'var(--w08)')+'">'+
@@ -3366,7 +3362,7 @@ function notifToast(n){
 var CG_SESS = window.CG_SESSION || null;
 var CG_PROJECT_SLUG = (CG_SESS && CG_SESS.project) || 'anita';
 var CG_PROJECT_PATH = (CG_SESS && CG_SESS.path) || '141nanita';
-var ROLE_LABEL = {client:'Owner', gc:'General Contractor', trade:'Trade / Sub'};
+var ROLE_LABEL = {client:'Homeowner', gc:'General Contractor', trade:'Trade / Sub'};
 
 function sessFirstName(){ return CG_SESS && CG_SESS.user && CG_SESS.user.name ? CG_SESS.user.name.split(' ')[0] : 'Ben'; }
 function sessInitials(){
@@ -3374,7 +3370,8 @@ function sessInitials(){
   return CG_SESS.user.name.split(/\s+/).map(function(p){return p[0]||'';}).join('').slice(0,2).toUpperCase() || 'CG';
 }
 function sessCanSwitch(){ return !CG_SESS || !!CG_SESS.admin; }
-function sessGoRole(role){ location.href = '/' + CG_PROJECT_PATH + '/' + role; }
+function sessRoleUrl(r){ return r === 'client' ? 'homeowner' : r; }
+function sessGoRole(role){ location.href = '/' + CG_PROJECT_PATH + '/' + sessRoleUrl(role); }
 
 function sessInit(){
   // avatar → account menu
@@ -3390,14 +3387,14 @@ function sessInit(){
     else if (window.innerWidth <= 720) fb.style.bottom = '40px';
   }
   if (!CG_SESS) return;
-  // non-admins can't switch views
+  // nobody switches views from the page: your account decides your role (admins preview from the account menu)
+  document.querySelectorAll('.role-row').forEach(function(el){ el.classList.add('role-hidden'); });
+  var d = document.querySelector('#mob-d-client'); if (d && d.parentElement) d.parentElement.classList.add('role-hidden');
   if (!CG_SESS.admin) {
-    document.querySelectorAll('.role-row').forEach(function(el){ el.classList.add('role-hidden'); });
-    var d = document.querySelector('#mob-d-client'); if (d && d.parentElement) d.parentElement.classList.add('role-hidden');
     var ph = document.querySelector('.sb-proj-header'); if (ph) { ph.onclick = null; ph.style.cursor = 'default'; }
   }
   var tag = document.getElementById('sb-role-tag');
-  if (tag) tag.textContent = CG_SESS.role === 'gc' ? 'GC' : CG_SESS.role === 'trade' ? 'Trade' : 'Owner';
+  if (tag) tag.textContent = CG_SESS.role === 'gc' ? 'GC' : CG_SESS.role === 'trade' ? 'Trade' : 'Homeowner';
 }
 
 function sessToggleMenu(e){
@@ -3426,7 +3423,7 @@ function sessToggleMenu(e){
 }
 function sessSignOut(){
   fetch('/api/auth', {method:'POST', headers:{'Content-Type':'application/json'}, credentials:'same-origin', body:JSON.stringify({action:'logout'})})
-    .finally(function(){ location.href = '/' + CG_PROJECT_PATH + '/' + ((CG_SESS && CG_SESS.role) || ''); });
+    .finally(function(){ location.href = '/' + CG_PROJECT_PATH + '/' + sessRoleUrl((CG_SESS && CG_SESS.role) || ''); });
 }
 
 /* ── Team access — hierarchy: owner > GC > trade ── */
@@ -3455,7 +3452,7 @@ function teamRenderAccess(){
       '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:6px;margin-bottom:8px">'+
         '<input id="ti-name" placeholder="Full name" style="'+inp+'">'+
         '<input id="ti-id" placeholder="Email or mobile number" style="'+inp+'">'+
-        '<select id="ti-role" style="'+inp+'"><option value="client">Owner (can approve)</option><option value="trade">Trade / Sub</option><option value="gc">GC</option></select>'+
+        '<select id="ti-role" style="'+inp+'"><option value="client">Homeowner (final say)</option><option value="trade">Trade / Sub</option><option value="gc">GC</option></select>'+
       '</div>'+
       '<button onclick="teamInvite()" style="width:100%;padding:9px;background:var(--lime);border:none;border-radius:8px;font-size:11px;font-weight:700;color:var(--dk);cursor:pointer;font-family:inherit">Create invite link</button>'+
       '<div id="ti-result">'+TEAM_LAST_RESULT+'</div>'+
@@ -4197,6 +4194,184 @@ function renderFacts(){
   el.innerHTML = html;
 }
 
+/* ══════════════════════════════════════════════════
+   COLUMN 3 — "APPROVALS NEEDED"
+   One list, grouped by who has to act (Homeowner / GC / Trades). The signed-in
+   person's own group comes first and is actionable; everyone else's is shown so
+   the whole team can see what's waiting. No view switching: each person sees
+   their own role (the server enforces it). Photos attach to any approval.
+   Later declarations override decRenderAll / decSubmitCreate from the decisions module.
+   ══════════════════════════════════════════════════ */
+var APN_TASKS = [];
+var APN_LABEL = {client:'Homeowner', gc:'General contractor', trade:'Trades'};
+function apnMe(){ return window.CG_SESSION ? (CG_SESSION.role || 'client') : decRole(); }
+function apnLoadTasks(){
+  if (!window.CG_SESSION) return;
+  fetch('/api/tools?action=schedule&project=' + encodeURIComponent(DEC_PROJECT), {credentials:'same-origin', cache:'no-store'})
+    .then(function(r){ return r.ok ? r.json() : null; })
+    .then(function(j){ if (!j || !j.ok) return; var t = (j.tasks && j.tasks.items) || []; if (JSON.stringify(t) !== JSON.stringify(APN_TASKS)) { APN_TASKS = t; decRenderAll(); } })
+    .catch(function(){});
+}
+function apnPhotoUrl(pid){ return '/api/decisions?project=' + encodeURIComponent(DEC_PROJECT) + '&action=photo&photo=' + encodeURIComponent(pid); }
+function apnLastComment(d){ return (d.events||[]).filter(function(e){ return e.type==='comment'; }).slice(-1)[0]; }
+
+/* who has to act on what */
+function apnGroups(){
+  var g = {client:[], gc:[], trade:[]}, me = apnMe();
+  if (me !== 'trade') {
+    decAll().forEach(function(d){
+      if (decClosed(d)) return;
+      var last = apnLastComment(d);
+      if (d.status === 'discussing' && last && last.role === 'client') g.gc.push({kind:'dec', d:d, why:'The homeowner asked a question — reply or revise'});
+      else g.client.push({kind:'dec', d:d, why: d.status === 'discussing' ? 'The GC replied — review and approve' : ''});
+    });
+    var items = (typeof PROJ !== 'undefined' && PROJ && PROJ.stage === 'kickoff' && PROJ.kickoff && PROJ.kickoff.items) || [];
+    items.forEach(function(i){
+      if (i.type !== 'agreement') return;
+      if (!i.clientAgreed) g.client.push({kind:'agree', i:i, actor:'client'});
+      if (!i.gcAgreed) g.gc.push({kind:'agree', i:i, actor:'gc'});
+    });
+  }
+  var me_id = window.CG_SESSION && CG_SESSION.user ? CG_SESSION.user.identifier : '';
+  APN_TASKS.forEach(function(t){
+    if (t.done || !t.assignee) return;
+    if (me === 'trade' && t.assignee !== me_id) return;
+    g.trade.push({kind:'task', t:t});
+  });
+  return g;
+}
+
+/* cards */
+function apnPhotos(d){
+  var ph = d.photos || [];
+  if (!ph.length) return '';
+  return '<div style="display:flex;gap:5px;margin:0 0 8px;overflow:hidden">' + ph.slice(0,3).map(function(p, k){
+    return '<img src="' + apnPhotoUrl(p.id) + '" alt="Photo ' + (k+1) + ' for ' + decEsc(d.title) + '" onclick="decOpen(\'' + d.id + '\',\'review\')" style="width:' + (ph.length === 1 ? '100%' : '33%') + ';height:' + (ph.length === 1 ? '120px' : '62px') + ';object-fit:cover;border-radius:6px;cursor:zoom-in;background:var(--d3)">';
+  }).join('') + (ph.length > 3 ? '<span style="align-self:center;font-size:10px;color:var(--w50)">+' + (ph.length-3) + '</span>' : '') + '</div>';
+}
+function apnDecCard(d, why){
+  var html = decCard(d);
+  if (why) html = html.replace('<div class="dc-body">', '<div class="dc-body"><div style="font-size:9.5px;font-weight:700;color:var(--amb);margin-bottom:4px">' + decEsc(why) + '</div>');
+  var ph = apnPhotos(d);
+  if (ph) html = html.replace(/<div class="dc-img"[\s\S]*?<\/div><\/div>/, '<div style="position:relative;padding:8px 8px 0">' + ph + '<div style="position:absolute;top:12px;right:12px">' + decStatusPill(d) + '</div></div>');
+  return html;
+}
+function apnAgreeCard(x, mine){
+  var i = x.i, other = x.actor === 'client' ? 'the homeowner' : 'the GC';
+  return '<div class="dc" data-agree="' + i.id + '"><div class="dc-body"><div class="dc-room">Kickoff agreement</div><div class="dc-title">' + decEsc(i.text) + '</div>' +
+    '<div class="dc-desc">' + decEsc(i.detail || '') + '</div>' +
+    (mine ? '<div class="dc-btns"><button class="dc-btn dc-ok" onclick="pjOp(\'agree\',\'' + i.id + '\',this)">Agree</button><button class="dc-btn dc-dis" onclick="var k=document.getElementById(\'kickoff-card\');if(k)k.scrollIntoView({behavior:\'smooth\'})">See checklist</button></div>'
+          : '<div style="font-size:9.5px;color:var(--w50)">Waiting on ' + other + '</div>') + '</div></div>';
+}
+function apnTaskCard(t, mine){
+  var late = t.due && new Date(t.due + 'T23:59:00') < new Date();
+  return '<div class="dc" data-task="' + t.id + '"><div class="dc-body"><div class="dc-room">Task · ' + decEsc(t.assigneeName || 'Trade') + '</div><div class="dc-title">' + decEsc(t.title) + '</div>' +
+    '<div class="dc-desc">' + (t.due ? '<span style="' + (late ? 'color:var(--del)' : '') + '">Due ' + decEsc(t.due) + '</span> · ' : '') + 'from ' + decEsc(t.createdBy || '') + (t.priority === 'high' ? ' · <b style="color:var(--del)">High</b>' : '') + '</div>' +
+    (mine ? '<div class="dc-btns"><button class="dc-btn dc-ok" onclick="apnTaskDone(\'' + t.id + '\',this)">Mark done</button></div>' : '<div style="font-size:9.5px;color:var(--w50)">Waiting on ' + decEsc(t.assigneeName || 'the trade') + '</div>') + '</div></div>';
+}
+function apnTaskDone(id, btn){
+  if (btn) { btn.disabled = true; btn.textContent = 'Saving…'; }
+  fetch('/api/tools', {method:'POST', headers:{'Content-Type':'application/json'}, credentials:'same-origin', body:JSON.stringify({project:DEC_PROJECT, action:'task-toggle', id:id})})
+    .then(function(r){ return r.json(); }).then(function(j){ if (j.ok) APN_TASKS = j.tasks.items; decRenderAll(); }).catch(function(){ if (btn) { btn.disabled = false; btn.textContent = 'Mark done'; } });
+}
+
+/* the list */
+function decRenderAll(){
+  var me = apnMe(), g = apnGroups();
+  var order = [me].concat(['client','gc','trade'].filter(function(r){ return r !== me; }));
+  if (me === 'trade') order = ['trade'];
+  var mineCount = (g[me] || []).length;
+  var head = decSyncBadge();
+  var bidCard = '';
+  if (typeof PROJ !== 'undefined' && PROJ && PROJ.stage === 'bidding' && me !== 'trade') {
+    var nb = (PROJ.bids||[]).filter(function(b){return b.status==='submitted';}).length;
+    bidCard = '<div class="dc"><div class="dc-body"><div class="dc-room">Project · General contractor</div><div class="dc-title">Choose your GC</div><div class="dc-desc">' + nb + ' proposal' + (nb===1?'':'s') + ' received. Contract approvals appear here once a GC is hired.</div>' +
+      (typeof pjIsOwner==='function' && pjIsOwner() ? '<div class="dc-btns"><button class="dc-btn dc-ok" onclick="sbNav(document.getElementById(\'nav-btn-proposals\'),\'proposals\')">Review proposals</button></div>' : '') + '</div></div>';
+  }
+  var create = (me === 'gc' && !(typeof PROJ !== 'undefined' && PROJ && PROJ.stage === 'bidding'))
+    ? '<button onclick="decOpenCreate()" style="width:100%;padding:9px;margin-bottom:10px;background:none;border:1.5px dashed var(--l20);border-radius:8px;color:var(--lime);font-size:10.5px;font-weight:700;cursor:pointer;font-family:inherit">+ New change order or approval</button>' : '';
+  var body = order.map(function(r){
+    var list = g[r] || [], mine = r === me;
+    var title = '<div style="display:flex;align-items:center;gap:6px;font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:' + (mine ? 'var(--lime)' : 'var(--sage)') + ';margin:' + (r === order[0] ? '2px' : '14px') + ' 0 8px">' +
+      APN_LABEL[r] + ' · ' + list.length + (mine && list.length ? '<span style="font-size:8.5px;font-weight:800;padding:1px 7px;border-radius:20px;background:var(--lime);color:var(--black);letter-spacing:.04em">Needs you</span>' : '') + '</div>';
+    var cards = list.map(function(x){
+      return x.kind === 'dec' ? apnDecCard(x.d, x.why) : x.kind === 'agree' ? apnAgreeCard(x, mine) : apnTaskCard(x.t, mine);
+    }).join('');
+    return '<div data-apn-group="' + r + '">' + title + (cards || '<div style="font-size:10.5px;color:var(--w30);padding:2px 0 4px">' + (mine ? 'Nothing needs you right now.' : 'Nothing waiting.') + '</div>') + '</div>';
+  }).join('');
+  var closed = me === 'trade' ? [] : decAll().filter(decClosed);
+  var done = closed.length ? '<div style="font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--sage);margin:16px 0 8px">Decided · ' + closed.length + '</div>' + closed.map(function(d){ return apnDecCard(d); }).join('') : '';
+  var html = head + bidCard + create + body + done;
+  var rp = document.getElementById('rpp-decisions'); if (rp) rp.innerHTML = html;
+  var sheet = document.getElementById('mob-approvals-list'); if (sheet) sheet.innerHTML = html;
+  var cnt = document.getElementById('apn-count');
+  if (cnt) { cnt.textContent = mineCount ? mineCount : ''; cnt.style.display = mineCount ? 'inline-flex' : 'none'; }
+  var mb = document.getElementById('mob-approvals-btn');
+  if (mb) mb.innerHTML = '<i class="ti ti-check" style="font-size:11px"></i> Approvals' + (mineCount ? ' · ' + mineCount : '');
+  var dst = document.getElementById('mob-drawer-content'), src = document.querySelector('.rp-body');
+  if (dst && src && dst.innerHTML) dst.innerHTML = src.innerHTML;
+  decApplyToProject();
+  if (DEC_MODAL.id && document.getElementById('dec-modal').style.display !== 'none' && ['review','discuss','done'].indexOf(DEC_MODAL.view) !== -1) {
+    var ta = document.getElementById('dec-note');
+    if (!(ta && ta.value) && DEC_MODAL.view !== 'review') decRenderModal();
+  }
+}
+
+/* photos in the popup: gallery + "Add photo" for the homeowner and GC */
+function apnShrink(file){
+  return new Promise(function(res, rej){
+    var img = new Image(), url = URL.createObjectURL(file);
+    img.onload = function(){
+      var s = Math.min(1, 1280 / Math.max(img.width, img.height)), c = document.createElement('canvas');
+      c.width = Math.round(img.width * s); c.height = Math.round(img.height * s);
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height); URL.revokeObjectURL(url);
+      res({type:'image/jpeg', data:c.toDataURL('image/jpeg', 0.82).split(',')[1]});
+    };
+    img.onerror = function(){ rej(new Error('That file isn’t an image we can read.')); };
+    img.src = url;
+  });
+}
+var _apnRenderModal = decRenderModal;
+decRenderModal = function(){
+  _apnRenderModal();
+  var box = document.getElementById('dec-modal-body'); if (!box) return;
+  var me = apnMe();
+  if (DEC_MODAL.view === 'create') {
+    var b = document.getElementById('dec-co-btn');
+    if (b && !document.getElementById('dec-co-photos')) b.insertAdjacentHTML('beforebegin', '<label for="dec-co-photos" style="display:block;font-size:10px;color:var(--sage);margin:4px 0 5px">Photos (optional, up to 3)</label><input id="dec-co-photos" type="file" accept="image/*" multiple style="width:100%;font-size:11px;color:var(--w70);margin-bottom:10px">');
+    return;
+  }
+  var d = DEC_MODAL.id && decGet(DEC_MODAL.id); if (!d) return;
+  var ph = d.photos || [];
+  var gal = ph.length ? '<div style="display:grid;grid-template-columns:repeat(' + Math.min(ph.length, 2) + ',1fr);gap:6px;margin-bottom:12px">' + ph.map(function(p, k){
+      return '<a href="' + apnPhotoUrl(p.id) + '" target="_blank" rel="noopener"><img src="' + apnPhotoUrl(p.id) + '" alt="Photo ' + (k+1) + '" style="width:100%;height:' + (ph.length === 1 ? '220px' : '120px') + ';object-fit:cover;border-radius:8px;background:var(--d3)"></a>'; }).join('') + '</div>' : '';
+  var add = (me !== 'trade' && window.CG_SESSION && DEC_LIVE && ph.length < 6)
+    ? '<label style="display:inline-flex;align-items:center;gap:6px;font-size:10.5px;font-weight:700;color:var(--lime);cursor:pointer;margin-bottom:10px"><i class="ti ti-camera"></i> Add photo<input id="dec-add-photo" type="file" accept="image/*" style="display:none" onchange="apnAddPhoto(this)"></label><span id="dec-photo-msg" style="font-size:10px;color:var(--w50);margin-left:8px"></span>' : '';
+  if (gal || add) box.insertAdjacentHTML('afterbegin', '<div id="dec-photos">' + gal + add + '</div>');
+};
+function apnAddPhoto(input){
+  var f = input.files[0], d = decGet(DEC_MODAL.id), m = document.getElementById('dec-photo-msg'); if (!f || !d) return;
+  if (m) m.textContent = 'Uploading…';
+  apnShrink(f).then(function(photo){
+    return decPost({action:'add-photo', id:d.id, photo:photo, snapshot:{type:d.type, title:d.title, area:d.area, amount:d.amount, desc:d.desc}});
+  }).then(function(j){ if (j.error) throw new Error(j.error === 'too_many_photos' ? 'This approval already has 6 photos.' : 'Couldn’t add that photo.'); decRenderAll(); decRenderModal(); })
+    .catch(function(e){ if (m) m.textContent = e.message; });
+}
+function decSubmitCreate(){
+  var g = function(id){ return ((document.getElementById(id)||{}).value||'').trim(); };
+  var title = g('dec-co-title'); if (!title) return decShowErr({error:'x', message:'Add a title.'});
+  var amt = parseFloat(g('dec-co-amt'));
+  var btn = document.getElementById('dec-co-btn'); if (btn){ btn.disabled = true; btn.textContent = 'Sending…'; }
+  var files = [].slice.call((document.getElementById('dec-co-photos')||{}).files || [], 0, 3);
+  Promise.all(files.map(apnShrink)).then(function(photos){
+    return decPost({action:'create', title:title, area:g('dec-co-area')||'Change order', amount:isNaN(amt)?null:amt, desc:g('dec-co-desc'), pin:g('dec-co-pin'), photos:photos, actor:{name:decActorName(), role:'gc'}});
+  }).then(function(j){
+    if (j.error) { decShowErr(j); if (btn){ btn.disabled = false; btn.textContent = 'Send to owner for approval'; } return; }
+    DEC_MODAL = {id:j.decision.id, view:'review'}; decRenderAll(); decRenderModal();
+  }).catch(function(e){ decShowErr({message:e.message}); if (btn){ btn.disabled = false; btn.textContent = 'Send to owner for approval'; } });
+}
+function apnInit(){ apnLoadTasks(); setInterval(function(){ if (document.visibilityState === 'visible') apnLoadTasks(); }, 60000); }
+
 /* ── INIT ── */
 document.addEventListener('DOMContentLoaded',function(){
   animateBars();
@@ -4225,6 +4400,7 @@ document.addEventListener('DOMContentLoaded',function(){
   teamLoad();
   hoRenderRing();
   hoSyncNav();
+  apnInit();
   console.log('Common Ground — 141 N Anita — init OK' + (window.CG_SESSION ? ' · signed in as ' + CG_SESSION.role : ' · demo mode'));
 });
 
@@ -4488,12 +4664,12 @@ function pgRenderTimeline(){
   el.innerHTML = PG_PHASES.map(function(p,i){
     var icon = p.state==='done'?'✓':p.state==='passport'?'🏠':p.state==='active'?'●':String(i+1);
     var ds='width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;z-index:1;cursor:pointer;transition:transform .2s;';
-    if(p.state==='done') ds+='background:var(--ok);color:var(--black)';
-    else if(p.state==='active') ds+='background:var(--amb);color:var(--black)';
+    if(p.state==='done') ds+='background:#6D604F;color:#D9DAD4';
+    else if(p.state==='active') ds+='background:var(--lime);color:var(--black);box-shadow:0 0 0 4px rgba(213,220,153,.18)';
     else if(p.state==='passport') ds+='background:var(--l10);color:var(--lime);border:2px solid var(--lime)';
     else ds+='background:var(--d4);color:var(--w30);border:2px solid var(--w08)';
-    var lc = p.state==='done'?'var(--ok)':p.state==='active'?'var(--amb)':'var(--w08)';
-    var tc = p.state==='done'?'rgba(74,155,111,.8)':p.state==='active'?'var(--amb)':p.state==='passport'?'var(--lime)':'var(--w30)';
+    var lc = p.state==='done'?'#6D604F':'var(--w08)';
+    var tc = p.state==='done'?'rgba(217,218,212,.75)':p.state==='active'?'var(--lime)':p.state==='passport'?'var(--lime)':'var(--w30)';
     var fw = (p.state==='active'||p.state==='passport')?'600':'400';
     return '<div style="flex:1;display:flex;flex-direction:column;align-items:center;cursor:pointer" id="pg-tln-'+i+'" onclick="pgSelectPhase('+i+')" role="button" tabindex="0">'+
       '<div style="position:relative;width:100%;display:flex;align-items:center;justify-content:center">'+
@@ -6670,8 +6846,7 @@ closeGCPipeline = function() {
     </div>
     <!-- 4 sub-tabs -->
     <div style="display:flex;align-items:center;gap:6px;flex:1;overflow:hidden">
-      <button onclick="event.stopPropagation();mobDrawerTab('decisions')"  id="mob-dt-decisions"  style="display:flex;align-items:center;gap:4px;padding:4px 8px;border-radius:20px;border:none;font-size:9px;font-weight:600;cursor:pointer;font-family:inherit;background:var(--l10);color:var(--lime);flex-shrink:0"><i class="ti ti-alert-circle" style="font-size:10px"></i>Decide</button>
-      <button onclick="event.stopPropagation();mobDrawerTab('approvals')"  id="mob-dt-approvals"  style="display:flex;align-items:center;gap:4px;padding:4px 8px;border-radius:20px;border:none;font-size:9px;font-weight:600;cursor:pointer;font-family:inherit;background:var(--d4);color:var(--w50);flex-shrink:0"><i class="ti ti-check" style="font-size:10px"></i>Approve</button>
+      <button onclick="event.stopPropagation();mobDrawerTab('decisions')"  id="mob-dt-decisions"  style="display:flex;align-items:center;gap:4px;padding:4px 8px;border-radius:20px;border:none;font-size:9px;font-weight:600;cursor:pointer;font-family:inherit;background:var(--l10);color:var(--lime);flex-shrink:0"><i class="ti ti-alert-circle" style="font-size:10px"></i>Approvals</button>
       <button onclick="event.stopPropagation();mobDrawerTab('chat')"       id="mob-dt-chat"       style="display:flex;align-items:center;gap:4px;padding:4px 8px;border-radius:20px;border:none;font-size:9px;font-weight:600;cursor:pointer;font-family:inherit;background:var(--d4);color:var(--w50);flex-shrink:0"><i class="ti ti-message" style="font-size:10px"></i>Chat</button>
       <button onclick="event.stopPropagation();mobDrawerTab('finance')"    id="mob-dt-finance"    style="display:flex;align-items:center;gap:4px;padding:4px 8px;border-radius:20px;border:none;font-size:9px;font-weight:600;cursor:pointer;font-family:inherit;background:var(--d4);color:var(--w50);flex-shrink:0"><i class="ti ti-currency-dollar" style="font-size:10px"></i>$</button>
     </div>

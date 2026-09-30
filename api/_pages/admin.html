@@ -120,7 +120,7 @@ select.mini{width:auto;padding:6px 8px;font-size:12px}
 <script>
 var A = window.CG_ADMIN || {me:{name:'Admin'}, projects:[]};
 var D = null, STATS = null, TAB = 'overview', LAST_LINK = '';
-var ROLE = {client:'Owner', gc:'GC', trade:'Trade / Sub'};
+var ROLE = {client:'Homeowner', gc:'GC', trade:'Trade / Sub'};
 var STAGE = {bidding:'Bidding', kickoff:'Kickoff', active:'Active'};
 var ERR = {not_yourself:'You can’t do that to your own account.', no_gc_yet:'Hire a GC first — that stage needs one.', not_found:'Not found — refresh and try again.',
   confirm_required:'Type the exact email / phone to confirm.', reason_required:'Add a short reason (3+ characters).', signature_required:'Enter who signed (3+ characters).',
@@ -201,7 +201,7 @@ function projectSummary(p){
     '<span class="pill '+(p.stage==='active'?'ok':p.stage==='kickoff'?'amb':'lime')+'">'+STAGE[p.stage]+'</span></div>'+
     (p.stage!=='bidding' ? '<div class="small muted" style="margin-top:14px">Kickoff checklist · '+p.kickoff.done+' of '+p.kickoff.total+'</div><div class="bar-track"><div class="bar-fill" style="width:'+kp+'%"></div></div>' : '<div class="small muted" style="margin-top:14px">'+p.bids.length+' proposal'+(p.bids.length===1?'':'s')+' in</div>')+
     '<div class="row" style="margin-top:16px"><span class="small muted">View as</span>'+
-      ['client','gc','trade'].map(function(r){ return '<a class="btn" href="/'+(p.path||p.slug)+'/'+r+'" target="_blank" rel="noopener">'+ROLE[r]+' ↗</a>'; }).join('')+
+      ['client','gc','trade'].map(function(r){ return '<a class="btn" href="/'+(p.path||p.slug)+'/'+(r==='client'?'homeowner':r)+'" target="_blank" rel="noopener">'+ROLE[r]+' ↗</a>'; }).join('')+
       '<button class="btn" onclick="TAB_PROJECT=\''+p.slug+'\';go(\'projects\')">Manage</button></div></div>';
 }
 function statusPill(s){ return '<span class="pill '+(s==='approved'?'ok':s==='discussing'?'amb':'lime')+'">'+esc(s==='approved'?'Approved':s==='discussing'?'Discussing':'Pending')+'</span>'; }
@@ -277,7 +277,7 @@ function vProjects(){
                 : '<button class="btn" onclick="recordDec(\''+jsq(p.slug)+'\',\''+jsq(d.id)+'\',\''+jsq(d.title)+'\')">Record paper approval</button>')+'</div>';
           }).join('') : '<div class="empty">'+(p.hiredGc?'No decisions yet.':'Contract decisions appear once a GC is hired.')+'</div>')+'</div>'+
         '</div>'+
-        '<div class="row" style="margin-top:20px"><span class="small muted">Open as</span>'+['client','gc','trade'].map(function(r){ return '<a class="btn" href="/'+(p.path||p.slug)+'/'+r+'" target="_blank" rel="noopener">'+ROLE[r]+' ↗</a>'; }).join('')+'</div></div>';
+        '<div class="row" style="margin-top:20px"><span class="small muted">Open as</span>'+['client','gc','trade'].map(function(r){ return '<a class="btn" href="/'+(p.path||p.slug)+'/'+(r==='client'?'homeowner':r)+'" target="_blank" rel="noopener">'+ROLE[r]+' ↗</a>'; }).join('')+'</div></div>';
     }).join('');
 }
 

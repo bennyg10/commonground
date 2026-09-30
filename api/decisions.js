@@ -8,6 +8,16 @@ function stripAudit(d) {
   if (d.approval) { delete d.approval.ip; delete d.approval.ua; delete d.approval.account; }
   return d;
 }
+// photos on decisions (GC or homeowner attach them; everyone but trades can view). Stored downsized by the browser.
+const PHOTO_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+const MAX_PHOTO_B64 = 1400000, MAX_PHOTOS = 6;
+async function savePhoto(project, p) {
+  const type = clean(p && p.type, 30), data = p && typeof p.data === 'string' ? p.data : '';
+  if (!PHOTO_TYPES.includes(type) || !data || data.length > MAX_PHOTO_B64 || !/^[A-Za-z0-9+/=]+$/.test(data)) return null;
+  const id = 'ph' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+  await redis(['SET', `cg:dphoto:${project}:${id}`, JSON.stringify({ type, data })]);
+  return id;
+}
 const num = (v) => (typeof v === 'number' && isFinite(v) ? Math.round(v * 100) / 100 : null);
 
 export default async function handler(req, res) {
@@ -27,6 +37,13 @@ export default async function handler(req, res) {
       // trades don't see owner contracts / change-order pricing
       if (req.method === 'GET') return res.status(200).json({ ok: true, live: true, role, decisions: [], notifications: [] });
       return res.status(403).json({ error: 'not_allowed' });
+    }
+    if (req.method === 'GET' && req.query.action === 'photo') {
+      const raw = await redis(['GET', `cg:dphoto:${project}:${clean(req.query.photo, 40)}`]);
+      if (!raw) return res.status(404).json({ error: 'not_found' });
+      const ph = JSON.parse(raw);
+      res.setHeader('Content-Type', ph.type); res.setHeader('Cache-Control', 'private, max-age=86400');
+      return res.status(200).send(Buffer.from(ph.data, 'base64'));
     }
     if (req.method === 'GET') {
       const flat = (await redis(['HGETALL', key])) || [];
@@ -67,7 +84,8 @@ export default async function handler(req, res) {
       const title = clean(b.title, 160);
       if (!title) return res.status(400).json({ error: 'title_required' });
       d = { id, type: 'co', title, area: clean(b.area, 80), amount: num(b.amount), desc: clean(b.desc, 1000), status: 'pending',
-            createdBy: u.name, createdAt: ev.at, events: [{ type: 'created', amount: num(b.amount), note: clean(b.desc, 1000), ...ev }] };
+            createdBy: u.name, createdAt: ev.at, events: [{ type: 'created', amount: num(b.amount), note: clean(b.desc, 1000), ...ev }], photos: [] };
+      for (const p of (Array.isArray(b.photos) ? b.photos.slice(0, 3) : [])) { const pid = await savePhoto(project, p); if (pid) d.photos.push({ id: pid, by: u.name, at: ev.at }); }
     } else if (action === 'approve') {
       // Owner account only — an admin previewing the client view cannot sign for the owner.
       if ((u.projects || {})[project] !== 'client') return res.status(403).json({ error: 'owner_only' });
@@ -98,6 +116,14 @@ export default async function handler(req, res) {
         d.status = action === 'reject' ? 'rejected' : 'withdrawn';
         d.events.push({ type: d.status, note, ...ev });
       }
+    } else if (action === 'add-photo') {
+      if (role === 'trade') return res.status(403).json({ error: 'not_allowed' });
+      d.photos = d.photos || [];
+      if (d.photos.length >= MAX_PHOTOS) return res.status(409).json({ error: 'too_many_photos' });
+      const pid = await savePhoto(project, b.photo);
+      if (!pid) return res.status(400).json({ error: 'bad_photo' });
+      d.photos.push({ id: pid, by: u.name, at: ev.at });
+      d.events.push({ type: 'photo', note: clean(b.note, 200), ...ev });
     } else if (action === 'reopen') {
       if (!['rejected', 'withdrawn'].includes(d.status)) return res.status(409).json({ error: 'not_closed' });
       d.status = 'pending'; d.events.push({ type: 'reopened', note: clean(b.note, 1000), ...ev });
@@ -124,6 +150,7 @@ export default async function handler(req, res) {
       : action === 'reject' ? { text: `${u.name} (Owner) rejected: ${d.title} — ${clean(b.note, 140)}`, targets: ['gc'] }
       : action === 'void' ? { text: `${u.name} (Owner) voided their approval: ${d.title} — ${clean(b.note, 140)}`, targets: ['gc'] }
       : action === 'withdraw' ? { text: `Change order withdrawn: ${d.title} — ${clean(b.note, 140)}`, targets: ['client'] }
+      : action === 'add-photo' ? { text: `${u.name} added a photo to "${d.title}"`, targets: role === 'gc' ? ['client'] : ['gc'] }
       : action === 'reopen' ? { text: `Reopened for review: ${d.title}`, targets: role === 'gc' ? ['client'] : ['gc'] }
       : action === 'comment' ? { text: `${u.name} (${who}) on "${d.title}": ${clean(b.note, 140)}`, targets: role === 'gc' ? ['client'] : ['gc'] }
       : null;

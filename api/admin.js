@@ -8,7 +8,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import {
   storageReady, redis, getJSON, setJSON, clean, validProject, ROLES, PROJECTS, PROJECT_NAMES, normalizeIdentifier,
-  createSession, currentUser, publicUser, trackUsage, notify, createInvite, addMember, projectMembers, siteOrigin, indexUser, canonicalRedirect, listProjects, projectPath, getProjectMeta,
+  createSession, currentUser, publicUser, trackUsage, notify, createInvite, addMember, projectMembers, siteOrigin, indexUser, canonicalRedirect, listProjects, projectPath, getProjectMeta, roleSlug,
 } from './_lib.js';
 import { seedProject } from './project.js';
 
@@ -141,7 +141,7 @@ export default async function handler(req, res) {
       const t = await createInvite(project, role, name, identifier, me.identifier);
       const prev = (await projectMembers(project)).find((m) => m.identifier === identifier);
       await addMember(project, identifier, { name, role, status: prev && prev.status === 'active' ? 'active' : 'invited', invitedAt: now() });
-      return res.status(200).json({ ok: true, link: `${siteOrigin(req)}/${projectPath(project)}/${role}?invite=${t}`, expiresInDays: 14 });
+      return res.status(200).json({ ok: true, link: `${siteOrigin(req)}/${projectPath(project)}/${roleSlug(role)}?invite=${t}`, expiresInDays: 14 });
     }
 
     if (action === 'set-role') {
@@ -177,7 +177,7 @@ export default async function handler(req, res) {
       const [p, role] = entries.find(([pp]) => pp === project) || entries[0] || [PROJECTS[0], u.admin ? 'gc' : ''];
       if (!role) return res.status(409).json({ error: 'no_project_access' });
       const t = await createInvite(p, role, u.name, identifier, me.identifier, 2);
-      return res.status(200).json({ ok: true, link: `${siteOrigin(req)}/${projectPath(p)}/${role}?invite=${t}`, expiresInDays: 2 });
+      return res.status(200).json({ ok: true, link: `${siteOrigin(req)}/${projectPath(p)}/${roleSlug(role)}?invite=${t}`, expiresInDays: 2 });
     }
 
     if (action === 'signout-all') {

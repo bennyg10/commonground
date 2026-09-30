@@ -8,7 +8,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import {
   storageReady, clean, ROLES, currentUser, publicUser, roleFor, canView, redis, getJSON, trackUsage, canonicalRedirect,
-  projectIdFromPath, getProjectMeta, projectPath, listProjects,
+  projectIdFromPath, getProjectMeta, projectPath, listProjects, roleSlug,
 } from './_lib.js';
 
 const cache = {};
@@ -67,7 +67,8 @@ async function dashboardData(u) {
 export default async function handler(req, res) {
   const q = req.query || {};
   const view = clean(q.view, 20);
-  const role = clean(q.role, 10).toLowerCase();
+  const urlRole = clean(q.role, 12).toLowerCase();
+  const role = urlRole === 'homeowner' ? 'client' : urlRole;          // /homeowner in the address, 'client' inside
   const invite = clean(q.invite, 80);
 
   // ── dashboard
@@ -90,10 +91,10 @@ export default async function handler(req, res) {
   if (role && role !== 'bid' && !ROLES.includes(role)) return notFound(res);
   {
     const qs = new URLSearchParams(); if (invite) qs.set('invite', invite); if (q.t) qs.set('t', clean(q.t, 80));
-    const target = `/${P}${role ? '/' + role : ''}${qs.toString() ? '?' + qs : ''}`;
+    const target = `/${P}${role ? '/' + roleSlug(role) : ''}${qs.toString() ? '?' + qs : ''}`;
     if (canonicalRedirect(req, res, target)) return;
-    // old address (/anita/...) → new one (/141nanita/...)
-    if (rawPath && rawPath !== P) return redirect(res, target);
+    // old addresses (/anita/..., /…/client) → current ones (/141nanita/..., /…/homeowner)
+    if ((rawPath && rawPath !== P) || urlRole === 'client') return redirect(res, target);
   }
   const projInfo = { id: project, path: P, name: meta.name, address: meta.address || '', classification: meta.classification || '' };
 
@@ -101,7 +102,7 @@ export default async function handler(req, res) {
   if (role === 'bid') return send(res, inject(readPage('bid.html'), 'CG_BID', { project, path: P, projectName: meta.name, t: clean(q.t, 80), storage: storageReady() }));
 
   const login = (message, extra) => send(res, inject(readPage('login.html'), 'CG_LOGIN',
-    Object.assign({ project, path: P, projectName: meta.title || meta.name, role: role || '', invite, message: message || '', storage: storageReady() }, extra || {})));
+    Object.assign({ project, path: P, projectName: meta.title || meta.name, role: role || '', roleUrl: role ? roleSlug(role) : '', invite, message: message || '', storage: storageReady() }, extra || {})));
 
   if (storageReady()) await trackUsage();
   if (!storageReady()) return login('Sign-in isn\'t connected yet. The database needs to be set up in Vercel.');
@@ -115,14 +116,14 @@ export default async function handler(req, res) {
     const mine = roleFor(u, project);
     if (!role) {
       if (!mine) return login('Your account doesn\'t have access to this project.', { adminExists, signedIn: publicUser(u) });
-      return redirect(res, `/${P}/${mine}`);
+      return redirect(res, `/${P}/${roleSlug(mine)}`);
     }
     if (!canView(u, project, role)) {
-      if (mine) return redirect(res, `/${P}/${mine}`);
+      if (mine) return redirect(res, `/${P}/${roleSlug(mine)}`);
       return login('Your account doesn\'t have access to this project.', { adminExists, signedIn: publicUser(u) });
     }
 
-    const session = { user: publicUser(u), project, path: P, projectInfo: projInfo, role, admin: !!u.admin, memberRole: mine };
+    const session = { user: publicUser(u), project, path: P, projectInfo: projInfo, role, roleSlug: roleSlug(role), admin: !!u.admin, memberRole: mine };
     return send(res, inject(readPage(meta.builtin ? meta.page : 'workspace.html'), 'CG_SESSION', session));
   } catch (err) {
     return send(res, '<h1>Something went wrong</h1><p>' + String(err.message || err).replace(/</g, '&lt;').slice(0, 200) + '</p>', 500);

@@ -167,7 +167,7 @@ async function createProject(req, res, b) {
   if (as === 'gc' && cEmail && cName) {
     const t = await createInvite(id, 'client', cName, cEmail, u.identifier, 14);
     await addMember(id, cEmail, { name: cName, role: 'client', status: 'invited', invitedAt: now() });
-    clientInvite = { name: cName, identifier: cEmail, link: `${siteOrigin(req)}/${id}/client?invite=${t}` };
+    clientInvite = { name: cName, identifier: cEmail, link: `${siteOrigin(req)}/${id}/homeowner?invite=${t}` };
     if (cEmail.includes('@')) {
       const sent = await sendEmail({ to: cEmail, subject: `${u.name} set up ${meta.name} on Common Ground`,
         html: emailLayout('Your project', `<h1 style="font-size:20px;line-height:1.3;margin:0 0 12px;color:#FDFFFE">Hi ${escHtml(firstName(cName))},</h1>
@@ -177,7 +177,7 @@ async function createProject(req, res, b) {
       clientInvite.emailed = !!sent.ok;
     }
   }
-  return res.status(200).json({ ok: true, project: Object.assign({ id, path: id }, meta), url: `/${id}/${as}`, clientInvite });
+  return res.status(200).json({ ok: true, project: Object.assign({ id, path: id }, meta), url: `/${id}/${as === 'client' ? 'homeowner' : as}`, clientInvite });
 }
 
 export default async function handler(req, res) {

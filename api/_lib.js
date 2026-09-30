@@ -30,6 +30,8 @@ export async function setJSON(key, obj, ttlSeconds) {
 
 export const clean = (v, max = 500) => (typeof v === 'string' ? v.trim().slice(0, max) : '');
 export const ROLES = ['client', 'gc', 'trade'];
+// URL name for each role: the homeowner's address says /homeowner (the role is stored as 'client')
+export const roleSlug = (r) => (r === 'client' ? 'homeowner' : r);
 
 // ── projects ──
 // Built-in projects have hand-built pages; everything else is created from the dashboard and
@@ -207,8 +209,8 @@ async function sendEmails(req, project, item) {
     await sendEmail({
       to: byRole[role],
       subject: `${projectTitle(project)}: ${item.text}`.slice(0, 150),
-      html: emailLayout(projectTitle(project), `<p style="margin:0 0 14px">${escHtml(item.text)}</p>`, { label: 'Open the project', url: `${siteOrigin(req)}/${projectPath(project)}/${role}` }),
-      text: `${item.text}\n\nOpen the project: ${siteOrigin(req)}/${projectPath(project)}/${role}\n\n— Common Ground`,
+      html: emailLayout(projectTitle(project), `<p style="margin:0 0 14px">${escHtml(item.text)}</p>`, { label: 'Open the project', url: `${siteOrigin(req)}/${projectPath(project)}/${roleSlug(role)}` }),
+      text: `${item.text}\n\nOpen the project: ${siteOrigin(req)}/${projectPath(project)}/${roleSlug(role)}\n\n— Common Ground`,
     });
   }
   return sent;

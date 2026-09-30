@@ -142,7 +142,8 @@ function initials(){ return String(U.name||'?').trim().split(/\s+/).map(function
 function money(n){ return n==null ? '' : '$'+Math.round(n).toLocaleString('en-US'); }
 function dayPart(){ var h=new Date().getHours(); return h<12?'morning':h<17?'afternoon':'evening'; }
 function isGC(){ return U.accountType==='contractor'; }
-var ROLE = {client:'Owner', gc:'GC', trade:'Trade'};
+var ROLE = {client:'Homeowner', gc:'GC', trade:'Trade'};
+function roleUrl(r){ return r==='client' ? 'homeowner' : r; }
 var SCOPE = {'new-build':'New build', remodel:'Remodel', addition:'Addition', adu:'ADU', demolition:'Demolition', 'tenant-improvement':'Tenant improvement', repair:'Repair'};
 
 /* ── header ── */
@@ -195,7 +196,7 @@ function stageLabel(p){
 }
 function projCard(p){
   var pct = p.status && p.status.percent!=null ? p.status.percent : null;
-  return '<a class="pcard" href="/'+esc(p.path)+'/'+esc(p.role||'client')+'" data-path="'+esc(p.path)+'">'+
+  return '<a class="pcard" href="/'+esc(p.path)+'/'+roleUrl(p.role||'client')+'" data-path="'+esc(p.path)+'">'+
     '<div class="pills">'+(p.role?'<span class="pill lime">'+esc(ROLE[p.role]||p.role)+'</span>':'')+(p.member?'':'<span class="pill gray">Admin</span>')+
       (p.classification?'<span class="pill">'+esc(p.classification==='commercial'?'Commercial':'Residential')+'</span>':'')+(p.scope?'<span class="pill">'+esc(SCOPE[p.scope]||p.scope)+'</span>':'')+'</div>'+
     '<div><div class="nm">'+esc(p.name)+'</div><div class="ad">'+esc(p.address)+'</div></div>'+
@@ -224,9 +225,9 @@ function openTool(t){
   var mine = D.projects.filter(function(p){ return p.member && (p.role==='gc'||p.role==='client'); });
   if (!mine.length) { if (!U.accountType) return setType('contractor', true); return openCreate(t); }
   var hash = t==='schedule' ? '#schedule' : '#tool-'+t;
-  if (mine.length===1) { location.href='/'+mine[0].path+'/'+mine[0].role+hash; return; }
+  if (mine.length===1) { location.href='/'+mine[0].path+'/'+roleUrl(mine[0].role)+hash; return; }
   showModal('<div class="eyebrow">Choose a project</div><h3>Which project?</h3><div class="s">Tools save their results to the project so everyone on it can see them.</div>'+
-    mine.map(function(p){ return '<a class="btn" style="width:100%;justify-content:flex-start;margin-bottom:8px" href="/'+esc(p.path)+'/'+esc(p.role)+hash+'">'+esc(p.name)+'</a>'; }).join(''));
+    mine.map(function(p){ return '<a class="btn" style="width:100%;justify-content:flex-start;margin-bottom:8px" href="/'+esc(p.path)+'/'+roleUrl(p.role)+hash+'">'+esc(p.name)+'</a>'; }).join(''));
 }
 function setType(t, thenCreate){
   fetch('/api/auth',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify({action:'set-type', accountType:t})})
