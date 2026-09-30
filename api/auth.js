@@ -202,7 +202,10 @@ export default async function handler(req, res) {
       await redis(['SET', `cg:invitefor:${project}:${identifier}`, t, 'EX', String(INVITE_DAYS * 86400)]);
       const prev = await redis(['HGET', `cg:members:${project}`, identifier]);
       const status = prev ? (JSON.parse(prev).status === 'active' ? 'active' : 'invited') : 'invited';
-      await redis(['HSET', `cg:members:${project}`, identifier, JSON.stringify({ name, identifier, role, status, invitedAt: new Date().toISOString() })]);
+      const specialty = role === 'trade' ? clean(b.trade, 60) : '';
+      const entry = { name, identifier, role, status, invitedAt: new Date().toISOString() };
+      if (specialty) entry.trade = specialty; else if (prev && role === 'trade' && JSON.parse(prev).trade) entry.trade = JSON.parse(prev).trade;
+      await redis(['HSET', `cg:members:${project}`, identifier, JSON.stringify(entry)]);
       return res.status(200).json({ ok: true, link: `${origin(req)}/${projectPath(project)}/${roleSlug(role)}?invite=${t}`, expiresInDays: INVITE_DAYS });
     }
 

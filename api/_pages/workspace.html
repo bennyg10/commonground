@@ -190,6 +190,7 @@ function render(){
   $('tabs').innerHTML = tabs.map(function(t){ return '<button class="tab'+(TAB===t[0]?' on':'')+'" data-tab="'+t[0]+'" onclick="go(\''+t[0]+'\')">'+t[1]+(counts[t[0]]?'<span class="ct">'+counts[t[0]]+'</span>':'')+'</button>'; }).join('');
   $('main').innerHTML = ({overview:vOverview, proposals:vProposals, decisions:vDecisions, controls:vControls, schedule:vSchedule, tools:vTools}[TAB])();
   if (TAB==='tools' && TOOL==='scan') afterScanRender();
+  if (TAB==='overview' && typeof subRenderList==='function') subRenderList();
 }
 
 /* ── Overview ── */
@@ -226,6 +227,9 @@ function vOverview(){
       (isGC && !m.builtin ? statusForm(s) : '')+'</div>';
   }
   if (ST.stage==='kickoff') h += kickoffCard();
+  if (!isTrade && typeof subCan==='function' && subCan()) h += '<div class="card" id="find-sub"><div class="eyebrow">Your team</div><h2>Need a sub?</h2>'+
+    '<p class="muted small" style="margin-bottom:14px">Invite a tradesperson you already trust, or ask us for 3–5 of the best-rated, licensed options near the job. We send them within 12 hours.</p>'+
+    '<button class="btn pri" onclick="subOpen()">Find a sub</button></div><div id="sub-list"></div>';
   h += '</div><div>';
   h += '<div class="card"><div class="eyebrow">Code basis</div><p style="color:var(--w70)">'+esc(codeBasis(m))+'</p>'+(isTrade?'':'<button class="btn sm" style="margin-top:12px" onclick="go(\'tools\',\'codecheck\')">Run a code check</button>')+'</div>';
   h += '<div class="card"><div class="eyebrow">Recent activity</div>'+(NOTES.length ? NOTES.slice(0,6).map(function(n){ return '<div class="item"><div class="main"><div>'+esc(n.text)+'</div><div class="muted small">'+esc(when(n.at))+(n.by?' · '+esc(n.by):'')+'</div></div></div>'; }).join('') : '<div class="empty">Nothing yet.</div>')+'</div>';
@@ -728,8 +732,243 @@ window.addEventListener('hashchange', function(){ fromHash(); if (ST) { render()
 (function init(){
   fromHash();
   load();
+  if (typeof subInit==='function') subInit();
   setInterval(function(){ if ($('m-bg').style.display!=='flex' && document.visibilityState==='visible' && !document.activeElement.matches('input,textarea,select')) load(); }, 60000);
 })();
 </script>
+<script id="subs-front">/* SUBS_FRONT_START */
+/* ══════════════════════════════════════════════════
+   FIND A SUB — invite your own trade, or ask Common Ground for
+   top-rated options near the job (within 12 hours).
+   Shared by the built-in project pages and the workspace page.
+   ══════════════════════════════════════════════════ */
+var SUB_TRADES = ['Environmental testing (asbestos / lead)','Surveyor','Demolition','Plumber','Electrician','HVAC','Roofer','Framer',
+  'Drywall','Painter','Tile setter','Flooring','Cabinets','Countertops','Windows & doors','Concrete','Landscaper','Structural engineer','Architect / designer'];
+var SUB_TIMING = ['As soon as possible','Within 2 weeks','Within a month','Just planning ahead'];
+var SUB_REQS = [], SUB_STATE = null, SUB_LOADED = false;
+
+function subEsc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+function subS(){ return window.CG_SESSION || null; }
+function subProject(){ var s = subS(); return s ? s.project : ''; }
+function subCan(){ var s = subS(); return !!(s && s.user && (s.role === 'client' || s.role === 'gc')); }
+function subZipGuess(){ var s = subS(), a = (s && s.projectInfo && s.projectInfo.address) || ''; var m = a.match(/\b(\d{5})(?:-\d{4})?\b/); return m ? m[1] : ''; }
+function subWhen(iso){ try { return new Date(iso).toLocaleString([], {weekday:'short', hour:'numeric', minute:'2-digit'}); } catch (e) { return ''; } }
+function subDraftKey(){ return 'cg_sub_draft_' + subProject(); }
+function subSaveDraft(){ try { if (SUB_STATE && SUB_STATE.step !== 'done') localStorage.setItem(subDraftKey(), JSON.stringify(SUB_STATE)); } catch (e) {} }
+function subClearDraft(){ try { localStorage.removeItem(subDraftKey()); } catch (e) {} }
+
+/* ── data ── */
+function subLoad(){
+  if (!subCan()) return;
+  fetch('/api/project?action=sub-requests&project=' + encodeURIComponent(subProject()), {credentials:'same-origin', cache:'no-store'})
+    .then(function(r){ return r.json(); }).then(function(j){ SUB_REQS = (j.requests || []).slice().reverse(); SUB_LOADED = true; subRenderList(); })
+    .catch(function(){});
+}
+function subPost(body){
+  body.project = subProject();
+  return fetch('/api/project', {method:'POST', headers:{'Content-Type':'application/json'}, credentials:'same-origin', body:JSON.stringify(body)})
+    .then(function(r){ return r.json().then(function(j){ j._s = r.status; return j; }); });
+}
+
+/* ── the modal (only the × closes it; progress is remembered) ── */
+function subOpen(opts){
+  if (!subCan()) return;
+  opts = opts || {};
+  var saved = null; try { saved = JSON.parse(localStorage.getItem(subDraftKey()) || 'null'); } catch (e) {}
+  if (opts.fresh || opts.option || (opts.trade && saved && saved.trade !== opts.trade)) saved = null;
+  SUB_STATE = saved || { step: opts.step || 'choose', trade: opts.trade || '', tradeOther: '', scope: '', zip: subZipGuess(), timing: SUB_TIMING[0], budget: '', phone: '',
+    name: '', contact: '', fromReq: '', fromOpt: '' };
+  if (opts.option) {
+    var o = opts.option;
+    SUB_STATE.step = 'invite'; SUB_STATE.name = o.name || o.company || ''; SUB_STATE.contact = o.email || o.phone || '';
+    SUB_STATE.trade = opts.trade || ''; SUB_STATE.fromReq = opts.reqId || ''; SUB_STATE.fromOpt = o.id || '';
+  }
+  if (!document.getElementById('sub-modal')) {
+    var m = document.createElement('div'); m.id = 'sub-modal';
+    m.setAttribute('role', 'dialog'); m.setAttribute('aria-modal', 'true');
+    m.style.cssText = 'position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,.62);display:flex;align-items:flex-start;justify-content:center;padding:6vh 16px 16px;overflow-y:auto;box-sizing:border-box';
+    m.innerHTML = '<div id="sub-card" style="position:relative;width:100%;max-width:520px;background:var(--d2);border:1px solid var(--w15);border-radius:16px;padding:26px 24px 22px;box-sizing:border-box;box-shadow:0 24px 60px rgba(0,0,0,.5);color:var(--white)"></div>';
+    document.body.appendChild(m);
+  }
+  subRenderModal();
+}
+function subClose(){ var m = document.getElementById('sub-modal'); if (m) m.remove(); if (SUB_STATE && SUB_STATE.step === 'done') subClearDraft(); SUB_STATE = null; }
+function subGo(step){ subCollect(); SUB_STATE.step = step; SUB_STATE.err = ''; subSaveDraft(); subRenderModal(); }
+function subCollect(){
+  if (!SUB_STATE) return;
+  ['trade','tradeOther','scope','zip','timing','budget','phone','name','contact'].forEach(function(k){ var e = document.getElementById('sub-f-' + k); if (e) SUB_STATE[k] = e.value; });
+  subSaveDraft();
+}
+function subTradeValue(){ return SUB_STATE.trade === '__other' ? (SUB_STATE.tradeOther || '').trim() : SUB_STATE.trade; }
+
+function subRenderModal(){
+  var c = document.getElementById('sub-card'); if (!c || !SUB_STATE) return;
+  var st = SUB_STATE;
+  var lbl = 'display:block;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--sage);margin:14px 0 6px';
+  var inp = 'width:100%;box-sizing:border-box;background:var(--d3);border:1px solid var(--w15);border-radius:9px;padding:11px 12px;font-size:14px;color:var(--white);font-family:inherit;outline:none';
+  var btn = 'flex:1;min-height:44px;padding:12px 16px;border-radius:10px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;';
+  var primary = btn + 'background:var(--lime);border:1px solid var(--lime);color:#111015';
+  var grey = btn + 'background:var(--d4);border:1px solid var(--w15);color:var(--w70)';
+  var x = '<button id="sub-x" onclick="subClose()" aria-label="Close" style="position:absolute;top:12px;right:12px;width:36px;height:36px;border-radius:50%;background:var(--d3);border:1px solid var(--w08);color:var(--w70);font-size:18px;line-height:1;cursor:pointer;font-family:inherit">×</button>';
+  var head = function(eye, title, sub){ return '<div style="font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--sage);margin-bottom:8px">' + eye + '</div>' +
+    '<div style="font-family:Syne,sans-serif;font-size:22px;font-weight:800;line-height:1.25;letter-spacing:-.01em;margin-bottom:6px;padding-right:36px">' + title + '</div>' +
+    (sub ? '<div style="font-size:13px;color:var(--w50);line-height:1.6">' + sub + '</div>' : ''); };
+  var tradeSel = function(){
+    var known = SUB_TRADES.indexOf(st.trade) >= 0 || !st.trade || st.trade === '__other';
+    if (!known) { st.tradeOther = st.trade; st.trade = '__other'; }
+    return '<label style="' + lbl + '" for="sub-f-trade">Trade</label><select id="sub-f-trade" onchange="subCollect();subRenderModal()" style="' + inp + '">' +
+      '<option value="">Choose a trade…</option>' + SUB_TRADES.map(function(t){ return '<option' + (st.trade === t ? ' selected' : '') + '>' + subEsc(t) + '</option>'; }).join('') +
+      '<option value="__other"' + (st.trade === '__other' ? ' selected' : '') + '>Something else…</option></select>' +
+      (st.trade === '__other' ? '<input id="sub-f-tradeOther" oninput="subCollect()" value="' + subEsc(st.tradeOther) + '" placeholder="e.g. Pool contractor" style="' + inp + ';margin-top:8px">' : '');
+  };
+  var err = st.err ? '<div style="margin-top:12px;font-size:12px;color:var(--del)">' + subEsc(st.err) + '</div>' : '';
+  var h = x;
+
+  if (st.step === 'choose') {
+    var card = function(onclick, icon, title, sub, tag){ return '<button onclick="' + onclick + '" style="display:flex;gap:14px;align-items:flex-start;width:100%;text-align:left;background:var(--d3);border:1px solid var(--w15);border-radius:12px;padding:16px;margin-top:12px;cursor:pointer;font-family:inherit;color:var(--white)">' +
+      '<span style="flex-shrink:0;width:38px;height:38px;border-radius:10px;background:var(--l10);border:1px solid var(--l20);display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--lime)">' + icon + '</span>' +
+      '<span style="flex:1"><span style="display:block;font-size:14px;font-weight:700;margin-bottom:4px">' + title + (tag ? ' <span style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--lime);background:var(--l10);border:1px solid var(--l20);border-radius:20px;padding:2px 7px;margin-left:4px;vertical-align:2px">' + tag + '</span>' : '') + '</span>' +
+      '<span style="display:block;font-size:12px;color:var(--w50);line-height:1.55">' + sub + '</span></span></button>'; };
+    h += head('Find a sub', 'Who do you need on this job?', 'Bring someone you already trust, or let us find a few great options for you.') +
+      card("subGo('recommend')", '★', 'Get recommendations', 'Tell us the trade and the job. We send 3–5 of the best-rated, licensed options near you within 12 hours.', '12 hrs') +
+      card("subGo('invite')", '+', 'Invite my own', 'Already have an environmental tester, tile setter or anyone else? Send them a link to join this project.', '');
+  }
+
+  else if (st.step === 'invite') {
+    h += head('Invite your own', st.fromOpt ? 'Invite ' + subEsc(st.name) : 'Add a trade to this project', 'They get their own sign-in with the trades view: their tasks and scope, no pricing.') +
+      tradeSel() +
+      '<label style="' + lbl + '" for="sub-f-name">Name or company</label><input id="sub-f-name" oninput="subCollect()" value="' + subEsc(st.name) + '" autocomplete="off" style="' + inp + '">' +
+      '<label style="' + lbl + '" for="sub-f-contact">Email or mobile number</label><input id="sub-f-contact" oninput="subCollect()" value="' + subEsc(st.contact) + '" autocomplete="off" inputmode="email" style="' + inp + '">' +
+      err + '<div style="display:flex;gap:10px;margin-top:20px">' + (st.fromOpt ? '' : '<button onclick="subGo(\'choose\')" style="' + grey + '">Back</button>') +
+      '<button id="sub-invite-btn" onclick="subSendInvite()" style="' + primary + '">Create invite link</button></div>';
+  }
+
+  else if (st.step === 'invited') {
+    var link = st.link || '', isPhone = (st.contact || '').indexOf('@') === -1;
+    var first = (st.name || '').split(' ')[0];
+    var msg = 'Hi ' + first + ', I\'d like you on our project at ' + ((subS() && subS().projectInfo && subS().projectInfo.name) || 'our home') + '. Here is your Common Ground link — tap it to set your password: ' + link;
+    var href = isPhone ? 'sms:' + st.contact.replace(/[^\d+]/g, '') + '&body=' + encodeURIComponent(msg)
+                       : 'mailto:' + st.contact + '?subject=' + encodeURIComponent('Join our project on Common Ground') + '&body=' + encodeURIComponent(msg);
+    h += head('Invite ready', subEsc(st.name) + ' can join now', 'Send them this link. It expires in 14 days.') +
+      '<input readonly value="' + subEsc(link) + '" onclick="this.select()" style="' + inp + ';font-family:monospace;font-size:12px;margin-top:16px">' +
+      '<div style="display:flex;gap:10px;margin-top:12px"><button onclick="navigator.clipboard&&navigator.clipboard.writeText(' + subEsc(JSON.stringify(link)) + ');this.textContent=\'Copied ✓\'" style="' + grey + '">Copy link</button>' +
+      '<a href="' + subEsc(href) + '" style="' + primary + ';text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center">' + (isPhone ? 'Text it' : 'Email it') + '</a></div>' +
+      '<div style="display:flex;gap:10px;margin-top:10px"><button onclick="subOpen({fresh:true,step:\'invite\'})" style="' + grey + ';background:none">Invite someone else</button><button onclick="subClose()" style="' + grey + ';background:none">Done</button></div>';
+  }
+
+  else if (st.step === 'recommend') {
+    h += head('Get recommendations', 'Tell us about the job', 'We check ratings, reviews and licenses near you and send a short list within 12 hours.') +
+      tradeSel() +
+      '<label style="' + lbl + '" for="sub-f-scope">What\'s the job?</label><textarea id="sub-f-scope" oninput="subCollect()" rows="3" placeholder="e.g. Asbestos and lead survey before demolishing a 1950s house" style="' + inp + ';resize:vertical">' + subEsc(st.scope) + '</textarea>' +
+      '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:0 12px">' +
+        '<div><label style="' + lbl + '" for="sub-f-zip">Zip code</label><input id="sub-f-zip" oninput="subCollect()" value="' + subEsc(st.zip) + '" inputmode="numeric" maxlength="10" style="' + inp + '"></div>' +
+        '<div><label style="' + lbl + '" for="sub-f-timing">When</label><select id="sub-f-timing" onchange="subCollect()" style="' + inp + '">' + SUB_TIMING.map(function(t){ return '<option' + (st.timing === t ? ' selected' : '') + '>' + t + '</option>'; }).join('') + '</select></div>' +
+        '<div><label style="' + lbl + '" for="sub-f-budget">Budget <span style="text-transform:none;letter-spacing:0;color:var(--w30)">(optional)</span></label><input id="sub-f-budget" oninput="subCollect()" value="' + subEsc(st.budget) + '" placeholder="e.g. $1,500" style="' + inp + '"></div>' +
+        '<div><label style="' + lbl + '" for="sub-f-phone">Your phone <span style="text-transform:none;letter-spacing:0;color:var(--w30)">(optional)</span></label><input id="sub-f-phone" oninput="subCollect()" value="' + subEsc(st.phone) + '" inputmode="tel" style="' + inp + '"></div>' +
+      '</div>' + err +
+      '<div style="display:flex;gap:10px;margin-top:20px"><button onclick="subGo(\'choose\')" style="' + grey + '">Back</button><button id="sub-req-btn" onclick="subSendRequest()" style="' + primary + '">Send request</button></div>';
+  }
+
+  else if (st.step === 'done') {
+    h += head('Request sent', 'We\'re on it', 'You\'ll have ' + subEsc((st.doneTrade || 'trade').toLowerCase()) + ' options on this page by <b style="color:var(--white)">' + subEsc(subWhen(st.dueAt)) + '</b>. We\'ll email you when they\'re ready.') +
+      '<div style="display:flex;gap:10px;margin-top:20px"><button onclick="subClose()" style="' + primary + '">Done</button></div>';
+  }
+  c.innerHTML = h;
+}
+
+function subSendInvite(){
+  subCollect();
+  var st = SUB_STATE, trade = subTradeValue(), name = (st.name || '').trim(), contact = (st.contact || '').trim();
+  if (!trade) { st.err = 'Choose the trade.'; return subRenderModal(); }
+  if (!name || !contact) { st.err = 'Add their name and an email or mobile number.'; return subRenderModal(); }
+  var b = document.getElementById('sub-invite-btn'); if (b) { b.disabled = true; b.textContent = 'Creating…'; }
+  fetch('/api/auth', {method:'POST', headers:{'Content-Type':'application/json'}, credentials:'same-origin',
+    body:JSON.stringify({action:'invite', project:subProject(), role:'trade', trade:trade, name:name, identifier:contact})})
+  .then(function(r){ return r.json(); }).then(function(j){
+    if (!j.ok) { st.err = j.error === 'bad_identifier' ? 'That email or phone number doesn\'t look right.' : 'Could not create the invite (' + (j.error || 'error') + ').'; return subRenderModal(); }
+    if (st.fromReq) subPost({action:'sub-invited', id:st.fromReq, option:st.fromOpt, identifier:contact}).then(subLoad);
+    st.link = j.link; st.step = 'invited'; st.err = ''; subClearDraft(); subRenderModal();
+    if (typeof teamLoad === 'function') teamLoad();
+  }).catch(function(){ st.err = 'Network problem — try again.'; subRenderModal(); });
+}
+function subSendRequest(){
+  subCollect();
+  var st = SUB_STATE, trade = subTradeValue();
+  if (!trade) { st.err = 'Choose the trade.'; return subRenderModal(); }
+  if ((st.scope || '').trim().length < 5) { st.err = 'Add a sentence about the job.'; return subRenderModal(); }
+  if (!/\b\d{5}\b/.test(st.zip || '')) { st.err = 'Add the 5-digit zip code for the job.'; return subRenderModal(); }
+  var b = document.getElementById('sub-req-btn'); if (b) { b.disabled = true; b.textContent = 'Sending…'; }
+  subPost({action:'sub-request', trade:trade, scope:st.scope, zip:st.zip, timing:st.timing, budget:st.budget, phone:st.phone}).then(function(j){
+    if (!j.ok) { st.err = j.error === 'too_many' ? 'That\'s a lot of requests today — email us at commonground.helpme@gmail.com.' : 'Could not send the request (' + (j.error || 'error') + ').'; return subRenderModal(); }
+    subClearDraft();
+    SUB_STATE = { step:'done', dueAt:j.request.dueAt, doneTrade:j.request.trade };
+    subRenderModal(); subLoad();
+  }).catch(function(){ st.err = 'Network problem — try again.'; subRenderModal(); });
+}
+function subCancel(id){
+  if (!confirm('Cancel this request?')) return;
+  subPost({action:'sub-cancel', id:id}).then(subLoad);
+}
+function subInviteOption(reqId, optId){
+  var r = SUB_REQS.filter(function(x){ return x.id === reqId; })[0]; if (!r) return;
+  var o = (r.options || []).filter(function(x){ return x.id === optId; })[0]; if (!o) return;
+  subOpen({option:o, reqId:reqId, trade:r.trade});
+}
+
+/* ── list of requests + results (on the Progress / Overview page) ── */
+function subCard(r){
+  var open = r.status === 'searching', late = open && new Date(r.dueAt) < new Date();
+  var pill = open ? '<span style="font-size:10px;font-weight:700;color:var(--amb,#C9A84C);background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.3);border-radius:20px;padding:3px 9px">' + (late ? 'Almost there' : 'Searching · ready by ' + subEsc(subWhen(r.dueAt))) + '</span>'
+    : r.status === 'ready' ? '<span style="font-size:10px;font-weight:700;color:var(--lime);background:var(--l10);border:1px solid var(--l20);border-radius:20px;padding:3px 9px">' + r.options.length + ' option' + (r.options.length === 1 ? '' : 's') + ' ready</span>'
+    : '<span style="font-size:10px;font-weight:700;color:var(--w50);border:1px solid var(--w15);border-radius:20px;padding:3px 9px">Closed</span>';
+  var h = '<div data-subreq="' + r.id + '" style="border-top:1px solid var(--w08);padding:16px 0 4px">' +
+    '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px"><span style="font-size:14px;font-weight:700;color:var(--white)">' + subEsc(r.trade) + '</span>' + pill +
+    '<span style="font-size:11px;color:var(--w30);margin-left:auto">near ' + subEsc(r.zip) + '</span></div>' +
+    '<div style="font-size:12px;color:var(--w50);line-height:1.6;margin-bottom:8px">' + subEsc(r.scope) + '</div>';
+  if (open) h += '<div style="font-size:12px;color:var(--w50);line-height:1.6">' + (late ? 'This one is taking a little longer than usual — we\'ll email you the moment it\'s ready.' : 'We\'re checking ratings, reviews and licenses near ' + subEsc(r.zip) + '.') +
+    ' <button onclick="subCancel(\'' + r.id + '\')" style="background:none;border:none;color:var(--w30);font-size:11px;text-decoration:underline;cursor:pointer;font-family:inherit;padding:0 0 0 4px">Cancel request</button></div>';
+  if (r.status === 'ready') {
+    if (r.message) h += '<div style="font-size:12px;color:var(--w70);line-height:1.6;margin-bottom:10px;padding:10px 12px;background:var(--l10);border:1px solid var(--l20);border-radius:9px">' + subEsc(r.message) + '</div>';
+    h += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px;margin-bottom:10px">' + r.options.map(function(o){
+      var title = o.company || o.name, who = o.company && o.name ? o.name : '';
+      var stars = o.rating != null ? '<span style="color:var(--lime);font-weight:700">★ ' + Number(o.rating).toFixed(1) + '</span>' + (o.reviews != null ? ' <span style="color:var(--w50)">(' + o.reviews + (o.reviewSource ? ' on ' + subEsc(o.reviewSource) : ' reviews') + ')</span>' : '') : '';
+      var links = [];
+      if (o.phone) links.push('<a href="tel:' + subEsc(o.phone.replace(/[^\d+]/g, '')) + '" style="color:var(--w70)">' + subEsc(o.phone) + '</a>');
+      if (o.website) links.push('<a href="' + subEsc(o.website) + '" target="_blank" rel="noopener" style="color:var(--w70)">Website ↗</a>');
+      if (o.source) links.push('<a href="' + subEsc(o.source) + '" target="_blank" rel="noopener" style="color:var(--w50)">Reviews ↗</a>');
+      return '<div data-subopt="' + o.id + '" style="background:var(--d2);border:1px solid var(--w08);border-radius:10px;padding:14px">' +
+        '<div style="font-size:13px;font-weight:700;color:var(--white);line-height:1.35">' + subEsc(title) + '</div>' +
+        (who ? '<div style="font-size:11px;color:var(--w50);margin-top:2px">' + subEsc(who) + '</div>' : '') +
+        (stars ? '<div style="font-size:12px;margin-top:6px">' + stars + '</div>' : '') +
+        (o.license ? '<div style="font-size:11px;color:var(--w50);margin-top:4px">' + subEsc(o.license) + '</div>' : '') +
+        (o.why ? '<div style="font-size:12px;color:var(--w70);line-height:1.55;margin-top:8px">' + subEsc(o.why) + '</div>' : '') +
+        (links.length ? '<div style="display:flex;gap:12px;flex-wrap:wrap;font-size:11px;margin-top:8px">' + links.join('') + '</div>' : '') +
+        (o.invited ? '<div style="margin-top:10px;font-size:11px;font-weight:700;color:var(--ok,#4A9B6F)">Invited ✓</div>'
+                   : '<button onclick="subInviteOption(\'' + r.id + '\',\'' + o.id + '\')" style="margin-top:10px;width:100%;min-height:38px;background:var(--lime);border:none;border-radius:8px;font-size:12px;font-weight:700;color:#111015;cursor:pointer;font-family:inherit">Invite to project</button>') +
+        '</div>';
+    }).join('') + '</div>';
+  }
+  return h + '</div>';
+}
+function subRenderList(){
+  var el = document.getElementById('sub-list'); if (!el) return;
+  var reqs = SUB_REQS.filter(function(r){ return r.status === 'searching' || r.status === 'ready'; });
+  if (!reqs.length) { el.innerHTML = ''; el.style.display = 'none'; return; }
+  el.style.display = '';
+  el.innerHTML = '<div style="background:var(--d3);border:1px solid var(--w08);border-radius:14px;padding:24px 26px;margin-bottom:18px">' +
+    '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px"><div style="font-family:Syne,sans-serif;font-size:15px;font-weight:800;color:rgba(253,255,254,.9);text-transform:uppercase;letter-spacing:-.01em">Sub recommendations</div>' +
+    '<button onclick="subOpen()" style="margin-left:auto;background:none;border:1px solid var(--w15);border-radius:8px;padding:7px 12px;font-size:11px;font-weight:600;color:var(--w70);cursor:pointer;font-family:inherit">+ Find another sub</button></div>' +
+    reqs.map(subCard).join('') + '</div>';
+}
+/* Put the list on the page: after the first row of the Progress screen, or into #sub-list if the page has one */
+function subMount(){
+  if (!subCan() || document.getElementById('sub-list')) return;
+  var host = document.querySelector('#sc-progress .scrl');
+  if (!host || !host.firstElementChild) return;
+  var d = document.createElement('div'); d.id = 'sub-list'; d.style.display = 'none';
+  host.insertBefore(d, host.firstElementChild.nextElementSibling);
+}
+function subInit(){ if (!subCan()) return; subMount(); subLoad(); setInterval(subLoad, 120000); }
+/* SUBS_FRONT_END */</script>
 </body>
 </html>

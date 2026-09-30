@@ -8,6 +8,7 @@ import {
   sendEmail, emailLayout, escHtml, siteOrigin, projectTitle, createInvite, addMember, projectMembers, SUPPORT_EMAIL,
   indexUser, projectPath, getProjectMeta, RESERVED_PATHS, BUILTIN, ROLES,
 } from './_lib.js';
+import { createSubRequest, listSubRequests, publicSubRequest, cancelSubRequest, markSubInvited } from './_subs.js';
 
 export const config = { api: { bodyParser: { sizeLimit: '4.5mb' } } };
 
@@ -281,6 +282,16 @@ export default async function handler(req, res) {
     const isOwner = (u.projects || {})[project] === 'client' || !!u.admin;
     const isGC = role === 'gc';                           // hired GC, or admin
     const p = await getProject(project);
+
+    // ════════ SUB RECOMMENDATIONS (homeowner / GC) ════════
+    if (action === 'sub-requests' || action === 'sub-request' || action === 'sub-cancel' || action === 'sub-invited') {
+      if (role === 'trade') return res.status(403).json({ error: 'forbidden' });
+      if (req.method === 'GET') return res.status(200).json({ ok: true, requests: (await listSubRequests(project)).filter((r) => r.status !== 'cancelled').map(publicSubRequest) });
+      if (action === 'sub-request') { const out = await createSubRequest(req, project, u, role, b); return res.status(out.status).json(out.body); }
+      if (action === 'sub-cancel') { const out = await cancelSubRequest(project, u, role, clean(b.id, 20)); return res.status(out.status).json(out.body); }
+      await markSubInvited(project, clean(b.id, 20), clean(b.option, 20), clean(b.identifier, 120));
+      return res.status(200).json({ ok: true });
+    }
 
     if (req.method === 'GET' && action === 'state') {
       const owners = (await projectMembers(project)).filter((m) => m.role === 'client' && m.status === 'active').map((m) => m.name);

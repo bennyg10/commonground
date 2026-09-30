@@ -11,6 +11,7 @@ import {
   createSession, currentUser, publicUser, trackUsage, notify, createInvite, addMember, projectMembers, siteOrigin, indexUser, canonicalRedirect, listProjects, projectPath, getProjectMeta, roleSlug,
 } from './_lib.js';
 import { seedProject } from './project.js';
+import { subQueue, saveSubOptions, draftSubOptions, listSubRequests } from './_subs.js';
 
 const now = () => new Date().toISOString();
 const STAGES = ['bidding', 'kickoff', 'active'];
@@ -123,7 +124,22 @@ export default async function handler(req, res) {
       return res.status(200).json({ ok: true, me: publicUser(me), projects, accounts, support, supportTotal, at: now() });
     }
 
+    if (req.method === 'GET' && action === 'sub-queue') return res.status(200).json({ ok: true, requests: await subQueue(), at: now() });
+
     if (req.method !== 'POST') return res.status(405).json({ error: 'method_not_allowed' });
+
+    // ── sub recommendations: save / send / AI research draft ──
+    if (action === 'sub-save' || action === 'sub-draft') {
+      const project = clean(b.project, 60).toLowerCase();
+      if (!(await validProject(project))) return res.status(400).json({ error: 'bad_project' });
+      const id = clean(b.id, 20);
+      if (action === 'sub-save') { const out = await saveSubOptions(req, me, project, id, b); return res.status(out.status).json(out.body); }
+      const r = (await listSubRequests(project)).find((x) => x.id === id);
+      if (!r) return res.status(404).json({ error: 'not_found' });
+      await trackUsage('ai');
+      const out = await draftSubOptions(r, ((await getProjectMeta(project)) || {}).address || '');
+      return res.status(out.status).json(out.body);
+    }
     const project = clean(b.project, 60).toLowerCase();
     const projectOk = await validProject(project);
     const needProject = () => projectOk;

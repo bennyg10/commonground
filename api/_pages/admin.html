@@ -119,7 +119,7 @@ select.mini{width:auto;padding:6px 8px;font-size:12px}
 <div id="toast"></div>
 <script>
 var A = window.CG_ADMIN || {me:{name:'Admin'}, projects:[]};
-var D = null, STATS = null, TAB = 'overview', LAST_LINK = '';
+var D = null, STATS = null, TAB = 'overview', LAST_LINK = '', SUBQ = [], SUBQ_EDIT = {};
 var ROLE = {client:'Homeowner', gc:'GC', trade:'Trade / Sub'};
 var STAGE = {bidding:'Bidding', kickoff:'Kickoff', active:'Active'};
 var ERR = {not_yourself:'You can’t do that to your own account.', no_gc_yet:'Hire a GC first — that stage needs one.', not_found:'Not found — refresh and try again.',
@@ -141,8 +141,10 @@ function api(body){
 function load(){
   return Promise.all([
     fetch('/api/admin?action=overview',{credentials:'same-origin'}).then(function(r){return r.json();}).catch(function(){return {error:'network'};}),
-    fetch('/api/auth?action=stats',{credentials:'same-origin'}).then(function(r){return r.json();}).catch(function(){return null;})
+    fetch('/api/auth?action=stats',{credentials:'same-origin'}).then(function(r){return r.json();}).catch(function(){return null;}),
+    fetch('/api/admin?action=sub-queue',{credentials:'same-origin'}).then(function(r){return r.json();}).catch(function(){return null;})
   ]).then(function(res){
+    SUBQ = res[2] && res[2].ok ? res[2].requests : SUBQ;
     if (res[0].error) { $('main').innerHTML='<div class="alert now">'+esc(ERR[res[0].error]||res[0].error)+'</div>'; if(res[0].error==='sign_in_required') setTimeout(function(){location.reload();},1500); return; }
     D = res[0]; STATS = res[1] && res[1].ok ? res[1] : null; render();
   });
@@ -162,18 +164,18 @@ function activity(){
 }
 
 /* ── shell ── */
-var TABS = [['overview','Overview'],['people','People'],['projects','Projects'],['activity','Activity'],['help','Help inbox'],['usage','Usage + upgrades']];
+var TABS = [['overview','Overview'],['subs','Sub requests'],['people','People'],['projects','Projects'],['activity','Activity'],['help','Help inbox'],['usage','Usage + upgrades']];
 function renderTabs(){
-  var counts = {people: D.accounts.length, projects: D.projects.length, help: D.supportTotal};
+  var counts = {people: D.accounts.length, projects: D.projects.length, help: D.supportTotal, subs: subOpenList().length || null};
   $('tabs').innerHTML = TABS.map(function(t){
     return '<button class="tab'+(TAB===t[0]?' on':'')+'" data-tab="'+t[0]+'" onclick="go(\''+t[0]+'\')">'+t[1]+(counts[t[0]]!=null?'<span class="ct">'+counts[t[0]]+'</span>':'')+'</button>';
   }).join('');
 }
-function go(t){ TAB=t; try{ history.replaceState(null,'','#'+t); }catch(e){} render(); window.scrollTo(0,0); }
+function go(t){ TAB=t; try{ history.replaceState(null,'','#'+t); }catch(e){} render(); window.scrollTo(0,0); if (t==='subs') load(); }
 function render(){
   $('me-name').textContent = D.me.name + ' · ' + D.me.identifier;
   renderTabs();
-  $('main').innerHTML = ({overview:vOverview, people:vPeople, projects:vProjects, activity:vActivity, help:vHelp, usage:vUsage}[TAB] || vOverview)();
+  $('main').innerHTML = ({overview:vOverview, subs:vSubs, people:vPeople, projects:vProjects, activity:vActivity, help:vHelp, usage:vUsage}[TAB] || vOverview)();
 }
 
 /* ── Overview ── */
@@ -185,11 +187,68 @@ function vOverview(){
     '<div class="lede">Every project, person, proposal and decision on Common Ground — and the controls for them.</div>'+
     '<div class="grid stats">'+stats.map(function(s){ return '<div class="stat"><div class="v">'+s[0]+'</div><div class="l">'+s[1]+'</div></div>'; }).join('')+'</div>'+
     (alerts ? '<h2>Upgrade watch</h2>'+alerts+'<div style="height:22px"></div>' : '')+
+    (subOpenList().length ? '<div class="alert '+(subOpenList().some(subLate)?'now':'soon')+'" style="cursor:pointer" onclick="go(\'subs\')"><b>Sub requests · </b>'+subOpenList().length+' open — next due '+esc(when(subOpenList()[0].dueAt))+(subOpenList().some(subLate)?' (overdue)':'')+'. Open the queue →</div><div style="height:22px"></div>' : '')+
     '<h2>Projects</h2>'+D.projects.map(projectSummary).join('')+
     '<div class="two">'+
       '<div class="card"><h2>Waiting on a decision</h2>'+(od.length ? od.slice(0,6).map(function(d){ return '<div class="item"><div class="main"><div class="t">'+esc(d.title)+'</div><div class="small muted">'+esc(pname(d.project))+' · '+money(d.amount)+'</div></div>'+statusPill(d.status)+'</div>'; }).join('') : '<div class="empty">Nothing waiting.</div>')+'</div>'+
       '<div class="card"><h2>Latest activity</h2>'+(activity().length ? activity().slice(0,6).map(actRow).join('') : '<div class="empty">No activity yet.</div>')+'</div>'+
     '</div>';
+}
+/* ── Sub requests (12-hour promise) ── */
+function subOpenList(){ return (SUBQ||[]).filter(function(r){ return r.status==='searching'; }); }
+function subLate(r){ return r.status==='searching' && new Date(r.dueAt) < new Date(); }
+var SUB_FIELDS = [['company','Business'],['name','Contact'],['rating','Rating (0–5)'],['reviews','# reviews'],['reviewSource','Review site'],['phone','Phone'],['email','Email'],['website','Website (https://)'],['license','License #'],['source','Reviews link (https://)'],['why','Why they fit this job']];
+function subEd(r){ var k=r.project+':'+r.id; if (!SUBQ_EDIT[k]) SUBQ_EDIT[k] = {options:JSON.parse(JSON.stringify(r.options||[])), message:r.message||'', adminNote:r.adminNote||'', draft:false}; return SUBQ_EDIT[k]; }
+function subSet(k, i, f, v){ var e=SUBQ_EDIT[k]; if (!e) return; if (i<0) e[f]=v; else e.options[i][f]=v; }
+function subAdd(k){ SUBQ_EDIT[k].options.push({}); render(); }
+function subDel(k, i){ SUBQ_EDIT[k].options.splice(i,1); render(); }
+function vSubs(){
+  var list = SUBQ || [];
+  var h = '<div class="eyebrow">Promise: options within 12 hours</div><h1>Sub requests</h1><div class="lede">Homeowners and GCs ask for top-rated trades near their job. Research, add 3–5 options, then send. The AI draft searches the web — verify every business, rating and phone number before sending.</div>';
+  if (!list.length) return h + '<div class="card"><div class="empty">No requests yet.</div></div>';
+  return h + list.map(function(r){
+    var k = r.project+':'+r.id, e = subEd(r), late = subLate(r);
+    var pill = r.status==='searching' ? '<span class="pill '+(late?'del':'amb')+'">'+(late?'Overdue':'Due')+' '+esc(when(r.dueAt))+'</span>' : r.status==='ready' ? '<span class="pill ok">Sent '+esc(when(r.sentAt))+'</span>' : '<span class="pill">'+esc(r.status)+'</span>';
+    var rows = e.options.map(function(o,i){
+      return '<div class="card" style="background:var(--d3);padding:14px 16px;margin-bottom:10px" data-subopt-ed="'+i+'"><div class="row" style="justify-content:space-between;margin-bottom:8px"><b>Option '+(i+1)+(o.invited?' · <span style="color:var(--ok)">invited</span>':'')+'</b><button class="btn sm" onclick="subDel(\''+jsq(k)+'\','+i+')">Remove</button></div>'+
+        '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px">'+SUB_FIELDS.map(function(f){
+          var v = o[f[0]]==null?'':o[f[0]];
+          return '<label style="display:block;font-size:10px;color:var(--w50)'+(f[0]==='why'?';grid-column:1/-1':'')+'">'+f[1]+
+            '<input data-f="'+f[0]+'" value="'+esc(v)+'" oninput="subSet(\''+jsq(k)+'\','+i+',\''+f[0]+'\',this.value)" style="display:block;width:100%;box-sizing:border-box;margin-top:3px;background:var(--d2);border:1px solid var(--w15);border-radius:7px;padding:7px 9px;color:var(--white);font-size:12px"></label>';
+        }).join('')+'</div></div>';
+    }).join('');
+    return '<div class="card" data-subreq="'+esc(r.id)+'"><div class="row" style="justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap">'+
+      '<div style="min-width:0"><div class="eyebrow">'+esc(r.projectName)+' · '+esc(r.address||'')+'</div><div style="font-family:Syne,sans-serif;font-size:19px;font-weight:800">'+esc(r.trade)+' near '+esc(r.zip)+'</div>'+
+      '<div class="small muted" style="margin-top:4px">'+esc(r.byName)+' ('+(r.byRole==='client'?'homeowner':'GC')+') · '+esc([r.contactEmail,r.phone].filter(Boolean).join(' · '))+' · asked '+esc(when(r.at))+'</div></div>'+pill+'</div>'+
+      '<p style="margin:12px 0 4px;color:var(--w70)">'+esc(r.scope)+'</p><div class="small muted" style="margin-bottom:14px">When: '+esc(r.timing||'—')+' · Budget: '+esc(r.budget||'—')+'</div>'+
+      (e.draft ? '<div class="alert soon">AI draft loaded — check each business, rating, license and phone before sending.</div>' : '')+
+      rows+
+      '<div class="row" style="gap:8px;flex-wrap:wrap;margin:6px 0 14px"><button class="btn" onclick="subAdd(\''+jsq(k)+'\')">+ Add option</button><button class="btn" id="draft-'+esc(r.id)+'" onclick="subDraft(\''+jsq(r.project)+'\',\''+jsq(r.id)+'\',this)">Draft with AI web search</button></div>'+
+      '<label style="display:block;font-size:10px;color:var(--w50);margin-bottom:10px">Note to the requester (optional)<textarea oninput="subSet(\''+jsq(k)+'\',-1,\'message\',this.value)" rows="2" style="display:block;width:100%;box-sizing:border-box;margin-top:3px;background:var(--d3);border:1px solid var(--w15);border-radius:7px;padding:8px 10px;color:var(--white);font-size:12px">'+esc(e.message)+'</textarea></label>'+
+      '<label style="display:block;font-size:10px;color:var(--w50);margin-bottom:12px">Internal note (only you see this)<input value="'+esc(e.adminNote)+'" oninput="subSet(\''+jsq(k)+'\',-1,\'adminNote\',this.value)" style="display:block;width:100%;box-sizing:border-box;margin-top:3px;background:var(--d3);border:1px solid var(--w15);border-radius:7px;padding:8px 10px;color:var(--white);font-size:12px"></label>'+
+      '<div class="row" style="gap:8px;flex-wrap:wrap"><button class="btn" onclick="subSave(\''+jsq(r.project)+'\',\''+jsq(r.id)+'\',false,this)">Save</button><button class="btn pri" onclick="subSave(\''+jsq(r.project)+'\',\''+jsq(r.id)+'\',true,this)">'+(r.sentAt?'Send update':'Send to '+esc(String(r.byName||'them').split(' ')[0]))+'</button>'+
+      '<a class="btn" href="/'+esc(r.projectPath)+'/'+(r.byRole==='client'?'homeowner':'gc')+'" target="_blank">View their page ↗</a></div></div>';
+  }).join('');
+}
+function subDraft(p, id, btn){
+  btn.disabled = true; btn.textContent = 'Searching the web… (up to a minute)';
+  api({action:'sub-draft', project:p, id:id}).then(function(j){
+    btn.disabled = false; btn.textContent = 'Draft with AI web search';
+    if (!j.ok) { toast(j.error==='ai_not_configured' ? 'Set ANTHROPIC_API_KEY in Vercel to use the AI draft.' : 'AI draft failed: '+(j.message||j.error)); return; }
+    var e = SUBQ_EDIT[p+':'+id]; e.options = e.options.filter(function(o){ return o.company||o.name; }).concat(j.options); e.draft = true; render();
+  });
+}
+function subSave(p, id, send, btn){
+  var e = SUBQ_EDIT[p+':'+id]; if (!e) return;
+  var opts = e.options.filter(function(o){ return (o.company||'').trim() || (o.name||'').trim(); });
+  if (send && !opts.length) { toast('Add at least one option first.'); return; }
+  btn.disabled = true;
+  api({action:'sub-save', project:p, id:id, options:opts, message:e.message, adminNote:e.adminNote, send:send}).then(function(j){
+    btn.disabled = false;
+    if (!j.ok) { toast(ERR[j.error]||j.error||'Could not save'); return; }
+    delete SUBQ_EDIT[p+':'+id];
+    toast(send ? 'Sent — they were notified' : 'Saved'); load();
+  });
 }
 function dayPart(){ var h=new Date().getHours(); return h<12?'morning':h<17?'afternoon':'evening'; }
 function projectSummary(p){
@@ -377,7 +436,8 @@ function recordDec(p, id, title){ modal({eyebrow:'Record paper approval', title:
 (function init(){
   var h = (location.hash||'').slice(1); if (TABS.some(function(t){return t[0]===h;})) TAB = h;
   load();
-  setInterval(function(){ if (!MODAL && document.visibilityState==='visible') load(); }, 60000);
+  window.addEventListener('hashchange', function(){ var h=(location.hash||'').slice(1); if (h!==TAB && TABS.some(function(t){return t[0]===h;})) { TAB=h; if (D) render(); if (h==='subs') load(); } });
+  setInterval(function(){ if (!MODAL && document.visibilityState==='visible' && !(document.activeElement && document.activeElement.matches('input,textarea,select'))) load(); }, 60000);
 })();
 </script>
 </body>

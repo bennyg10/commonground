@@ -13,7 +13,8 @@
       "includeFiles": "api/_pages/**"
     },
     "api/admin.js": {
-      "includeFiles": "api/_pages/**"
+      "includeFiles": "api/_pages/**",
+      "maxDuration": 60
     }
   },
   "redirects": [
