@@ -682,8 +682,10 @@ function delScan(id){ modal('<h3>Delete this scan?</h3><p>Everyone on the projec
 /* ── modal ── */
 function modal(html){ $('m').innerHTML = '<button class="x" onclick="closeModal()" aria-label="Close">×</button>'+html; $('m-bg').style.display='flex'; }
 function closeModal(){ $('m-bg').style.display='none'; }
-$('m-bg').addEventListener('click', function(e){ if (e.target===$('m-bg')) closeModal(); });
-document.addEventListener('keydown', function(e){ if (e.key==='Escape') closeModal(); });
+// Windows never close from a tap outside them or a stray key — only the × does, so nobody loses a half-finished
+// sign-up or project by accident.
+function mTyped(){ return [].some.call(document.querySelectorAll('#m input:not([readonly]):not([type=checkbox]):not([type=range]):not([type=hidden]), #m textarea'), function(i){ return String(i.value).trim() !== ''; }); }
+document.addEventListener('keydown', function(e){ if (e.key === 'Escape' && !mTyped() && !(window.C && $('c-next-btn'))) closeModal(); });   // small confirm popups only
 
 function fromHash(){
   var h = (location.hash||'').slice(1);

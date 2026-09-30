@@ -318,6 +318,9 @@ function drawTools(){
 
 /* ── Use Tool: sign up / sign in ── */
 var FORM = {type:'', mode:'new'};
+function focusIfIdle(id){ var a = document.activeElement; if (!a || !a.matches || !a.matches('#m input, #m textarea')) { var el = $(id); if (el) el.focus(); } }   // never steal the cursor from a field someone is typing in
+try { var sv = JSON.parse(localStorage.getItem('cg_signup_draft') || 'null'); if (sv) { FORM.type = sv.type || ''; FORM.nm = sv.nm || ''; FORM.co = sv.co || ''; FORM.id = sv.id || ''; } } catch(e){}
+function signupSave(){ try { if ($('nm')) { FORM.nm=$('nm').value; FORM.id=$('id').value; if ($('co')) FORM.co=$('co').value; } localStorage.setItem('cg_signup_draft', JSON.stringify({type:FORM.type, nm:FORM.nm||'', co:FORM.co||'', id:FORM.id||''})); } catch(e){} }
 var ERR = {bad_login:'That email/phone and password don’t match.', account_exists:'You already have an account with that email or phone — sign in instead.',
   bad_identifier:'Enter a valid email or phone number.', weak_password:'Use at least 8 characters.', name_required:'Add your name.',
   account_type_required:'Choose homeowner or contractor.', too_many_attempts:'Too many attempts. Try again in a bit.', account_disabled:'This account is paused. Contact us for help.',
@@ -332,7 +335,10 @@ function openTool(mode){
   if (ME && mode==='signin') { location.href='/dashboard'; return; }
   FORM.mode = mode; $('m-bg').style.display='flex'; document.body.style.overflow='hidden'; drawModal();
 }
-function closeTool(){ $('m-bg').style.display='none'; document.body.style.overflow=''; }
+function closeTool(){
+  if (FORM.mode==='new' && $('nm')) signupSave();   // reopening (even after a reload) picks up where they left off
+  $('m-bg').style.display='none'; document.body.style.overflow='';
+}
 function drawModal(){
   var x = '<button class="x" onclick="closeTool()" aria-label="Close">×</button>';
   if (FORM.mode==='signin') {
@@ -342,7 +348,7 @@ function drawModal(){
       '<button class="btn pri lg full" id="go" type="submit">Sign in</button></form>'+
       '<div class="alt">New here? <button class="linkbtn" onclick="FORM.mode=\'new\';drawModal()">Use the tool free</button><br>Forgot your password? <a href="/help" style="color:var(--w70)">Contact us</a></div>';
     $('f').onsubmit = function(e){ e.preventDefault(); submit({action:'login', identifier:$('id').value, password:$('pw').value}, 'Sign in'); };
-    setTimeout(function(){ $('id').focus(); }, 30); return;
+    setTimeout(function(){ focusIfIdle('id'); }, 30); return;
   }
   var t = FORM.type;
   $('m').innerHTML = x+'<h3>Use Common Ground free</h3><div class="s">Tell us who you are so we set up the right tools.</div><div class="msg" id="msg"></div>'+
@@ -356,20 +362,22 @@ function drawModal(){
       '<label for="pw">Create a password (8+ characters)</label><input id="pw" type="password" autocomplete="new-password" minlength="8" required>'+
       '<button class="btn pri lg full" id="go" type="submit">Use Tool</button></form>'+
     '<div class="alt">Already have an account? <button class="linkbtn" onclick="FORM.mode=\'signin\';drawModal()">Sign in</button></div>';
+  $('f').oninput = signupSave;
   $('f').onsubmit = function(e){ e.preventDefault();
     submit({action:'signup', accountType:FORM.type, name:$('nm').value, company:$('co')?$('co').value:'', identifier:$('id').value, password:$('pw').value}, 'Use Tool'); };
 }
-function pickType(t){ FORM.type=t; if($('nm')){ FORM.nm=$('nm').value; FORM.id=$('id').value; FORM.co=$('co')?$('co').value:FORM.co; } drawModal(); setTimeout(function(){ $('nm').focus(); },30); }
+function pickType(t){ FORM.type=t; setTimeout(signupSave,0); if($('nm')){ FORM.nm=$('nm').value; FORM.id=$('id').value; FORM.co=$('co')?$('co').value:FORM.co; } drawModal(); setTimeout(function(){ focusIfIdle('nm'); },30); }
 function submit(body, label){
   var b=$('go'); b.disabled=true; b.textContent='One moment…';
   post(body).then(function(j){
-    if (j.ok) { location.href = '/dashboard'; return; }
+    if (j.ok) { try { localStorage.removeItem('cg_signup_draft'); } catch(e){} location.href = '/dashboard'; return; }
     b.disabled=false; b.textContent=label; var m=$('msg'); m.style.display='block'; m.textContent = ERR[j.error] || j.message || 'That didn’t work. Try again.';
     if (j.error==='account_exists') { m.innerHTML = esc(ERR.account_exists)+' <button class="linkbtn" onclick="FORM.mode=\'signin\';drawModal()">Sign in</button>'; }
   });
 }
-$('m-bg').addEventListener('click', function(e){ if (e.target===$('m-bg')) closeTool(); });
-document.addEventListener('keydown', function(e){ if (e.key==='Escape') closeTool(); });
+// Windows never close from a tap outside them or a stray key — only the × does, so nobody loses a half-finished
+// sign-up or project by accident.
+function mTyped(){ return [].some.call(document.querySelectorAll('#m input:not([readonly]):not([type=checkbox]):not([type=range]):not([type=hidden]), #m textarea'), function(i){ return String(i.value).trim() !== ''; }); }
 
 /* ── init ── */
 drawTracks(true); setSide('home'); drawTools();

@@ -94,6 +94,11 @@ h2{font-family:Syne,sans-serif;font-size:19px;font-weight:700;letter-spacing:-.0
 .chips button.on{border-color:var(--lime);background:var(--l10);color:var(--lime)}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .acts{display:flex;justify-content:space-between;gap:10px;margin-top:8px}
+.acts .btn{flex:1;padding:13px 16px;font-size:14.5px}
+.btn.back{background:var(--d4);border-color:var(--w15);color:var(--w70)}
+.stepno{font-size:11.5px;color:var(--w50);margin-bottom:6px}
+.resume{background:var(--d2);border:1px solid var(--l20);border-radius:16px;padding:18px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:22px}
+.resume .t{flex:1;min-width:200px}
 .msg{display:none;font-size:13px;border-radius:9px;padding:10px 12px;margin-bottom:14px;background:rgba(224,122,95,.12);border:1px solid rgba(224,122,95,.3);color:#f0a996}
 .note{font-size:12.5px;color:var(--w50);margin:-6px 0 14px;line-height:1.5}
 input[type=range]{accent-color:#D5DC99;padding:0!important;border:none!important;background:none!important}
@@ -151,6 +156,9 @@ function render(){
   }
   // bidders see their proposals first
   if (D.bids.length) h += bidsSection();
+  var dr = (C && !C.created) ? C : draftLoad();
+  if (dr && U.accountType) { C = dr; h += '<div class="resume" id="resume-card"><div class="t"><div class="eyebrow" style="margin:0 0 4px">Pick up where you left off</div><div style="font-weight:700">'+esc(dr.address || (dr.mode==='underway'?'Project already underway':'New project'))+'</div><div class="muted" style="font-size:13px;color:var(--w50)">Step '+(steps().indexOf(dr.step)+1)+' of '+steps().length+' · your answers are saved</div></div>'+
+    '<button class="btn" onclick="draftDiscard()">Start over</button><button class="btn pri" id="resume-btn" onclick="openCreate()">Continue</button></div>'; }
   if (U.accountType && !D.bids.length) h += startCard();   // bidders get the upsell card instead
   h += '<div class="sec"><div class="sec-h"><h2>Your projects</h2><span class="ct">'+mine.length+'</span></div>'+
        (mine.length ? '<div class="grid" id="proj-grid">'+mine.map(projCard).join('')+'</div>'
@@ -216,11 +224,18 @@ function setType(t, thenCreate){
 
 /* ── create project ── */
 var C = null;
-function showModal(html){ $('m').innerHTML = '<button class="x" onclick="closeModal()" aria-label="Close">×</button>'+html; $('m-bg').style.display='flex'; document.body.style.overflow='hidden'; }
-function closeModal(){ $('m-bg').style.display='none'; document.body.style.overflow=''; }
-$('m-bg').addEventListener('click', function(e){ if (e.target===$('m-bg')) closeModal(); });
-document.addEventListener('keydown', function(e){ if (e.key==='Escape') closeModal(); });
+function showModal(html){ $('m').oninput = null; $('m').innerHTML = '<button class="x" onclick="closeModal()" aria-label="Close">×</button>'+html; $('m-bg').style.display='flex'; document.body.style.overflow='hidden'; }
+function closeModal(){ var wasFlow = C && !C.created && $('c-next-btn'); if (wasFlow) { grab(); draftSave(); } $('m-bg').style.display='none'; document.body.style.overflow=''; if (wasFlow) render(); }
+// Windows never close from a tap outside them or a stray key — only the × does, so nobody loses a half-finished
+// sign-up or project by accident.
+function mTyped(){ return [].some.call(document.querySelectorAll('#m input:not([readonly]):not([type=checkbox]):not([type=range]):not([type=hidden]), #m textarea'), function(i){ return String(i.value).trim() !== ''; }); }
+var DRAFT_KEY = 'cg_project_draft_' + (U.identifier || '');
+function draftSave(){ try { if (C && !C.created) localStorage.setItem(DRAFT_KEY, JSON.stringify(C)); } catch(e){} }
+function draftClear(){ try { localStorage.removeItem(DRAFT_KEY); } catch(e){} }
+function draftLoad(){ try { var d = JSON.parse(localStorage.getItem(DRAFT_KEY) || 'null'); return d && !d.created && (d.address || d.classification || d.scope || d.mode==='underway') ? d : null; } catch(e){ return null; } }
+function draftDiscard(){ C = null; draftClear(); render(); }
 function openCreate(tool){
+  if (C && !C.created && (C.address || C.classification || C.scope || C.mode==='underway')) { if (tool) C.tool = tool; return drawCreate(); }   // resume where they left off
   C = {step: isGC() ? 0 : 1, mode:'new', address:'', name:'', classification:'', subtype:'', scope:'', phase:'Pre-construction', percent:0, startDate:'', nextMilestone:'', clientName:'', clientEmail:'', tool:tool||''};
   drawCreate();
 }
@@ -230,7 +245,8 @@ var SUBS = {residential:[['single-family','Single-family'],['multi-family','Mult
             commercial:[['office','Office'],['retail','Retail'],['restaurant','Restaurant'],['mixed-use','Mixed-use'],['industrial','Industrial'],['other','Other']]};
 var PHASES = ['Pre-construction','Design + plans','Permitting','Demolition','Site work + grading','Foundation','Framing','Rough-ins (MEP)','Inspections','Insulation + drywall','Finishes','Punch list','Closeout'];
 function drawCreate(msg){
-  var s = C.step, h = dots();
+  draftSave();
+  var s = C.step, h = dots() + '<div class="stepno">Step '+(steps().indexOf(C.step)+1)+' of '+steps().length+'</div>';
   if (s===0) {
     h += '<h3>New project or already underway?</h3><div class="s">Either way you can use every tool right away.</div>'+
       '<div class="cards2" style="margin:0 0 18px"><button class="opt'+(C.mode==='new'?' on':'')+'" id="mode-new" onclick="C.mode=\'new\';drawCreate()"><b>New project</b><span>Pre-construction: code check, plan analysis, 3D scan</span></button>'+
@@ -258,9 +274,10 @@ function drawCreate(msg){
   }
   var last = steps()[steps().length-1] === s;
   h += '<div class="msg" id="c-msg"'+(msg?' style="display:block"':'')+'>'+esc(msg||'')+'</div>'+
-    '<div class="acts">'+(steps()[0]!==s?'<button class="btn" onclick="stepBack()">Back</button>':'<span></span>')+
+    '<div class="acts">'+(steps()[0]!==s?'<button class="btn back" id="c-back-btn" onclick="stepBack()">Back</button>':'')+
     '<button class="btn pri" id="c-next-btn" onclick="stepNext()">'+(last?'Create project':'Continue')+'</button></div>';
   showModal(h);
+  $('m').oninput = function(){ grab(); draftSave(); };   // every keystroke is kept
 }
 function clientFields(){
   return '<div class="row2"><div><label for="c-cname">Client name</label><input id="c-cname" value="'+esc(C.clientName)+'"></div><div><label for="c-cemail">Client email</label><input id="c-cemail" type="email" value="'+esc(C.clientEmail)+'"></div></div>'+
@@ -285,6 +302,7 @@ function stepNext(){
   fetch('/api/project',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify(body)})
     .then(function(r){ return r.json(); }).catch(function(){ return {error:'network'}; }).then(function(j){
       if (!j.ok) return drawCreate({address_required:'Enter the property address.', classification_required:'Choose residential or commercial.', too_many_attempts:'You’ve created a lot of projects today. Try again tomorrow.', network:'Could not reach the server.'}[j.error] || 'That didn’t work. Try again.');
+      C.created = true; draftClear();
       var dest = j.url + (C.tool ? (C.tool==='schedule'?'#schedule':'#tool-'+C.tool) : isGC() ? (C.mode==='underway'?'':'#tools') : '#proposals');
       if (j.clientInvite) {
         showModal('<div class="eyebrow">Project created</div><h3>'+esc(j.project.name)+' is ready</h3><div class="s">'+(j.clientInvite.emailed?'We emailed '+esc(j.clientInvite.name)+' an invite. You can also text them this link:':'Send '+esc(j.clientInvite.name)+' this link to join:')+'</div>'+
