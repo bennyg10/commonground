@@ -94,7 +94,12 @@ h2{font-family:Syne,sans-serif;font-size:40px;line-height:1.15;letter-spacing:-.
 .calc .out p{color:var(--w70);font-size:15px;margin-top:10px}
 .calc .out small{color:var(--w50);font-size:12px;margin-top:12px;display:block}
 /* tools */
-.tools{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-top:40px;align-items:start}
+.tools{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-top:36px;align-items:start}
+.for-who{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:22px}
+.for-who span{font-size:13px;font-weight:600;padding:6px 12px;border-radius:20px;border:1px solid var(--w15);color:var(--w70)}
+.for-who .lbl{border:none;padding:6px 4px 6px 0;color:var(--sage);font-size:12px;text-transform:uppercase;letter-spacing:.1em;font-weight:500}
+.soon-card{display:inline-block;vertical-align:3px;margin-left:4px;font-family:'DM Sans',sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#C9B5FF;background:rgba(183,156,255,.14);border:1px solid rgba(183,156,255,.38);border-radius:20px;padding:1px 8px}
+@media(max-width:1100px){.tools{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .tool{background:var(--d2);border:1px solid var(--w08);border-radius:18px;padding:24px;display:flex;flex-direction:column;gap:10px}
 .tool .ic{width:42px;height:42px;border-radius:11px;background:var(--l10);border:1px solid var(--l20);display:flex;align-items:center;justify-content:center;color:var(--lime)}
 .tool h4{font-family:Syne,sans-serif;font-size:18px;letter-spacing:-.02em}
@@ -248,7 +253,8 @@ h1,h2,.compare h3,.free h3,#m h3,.calc .big{font-family:'Bungee',sans-serif!impo
 <section class="block" id="tools"><div class="wrap">
   <div class="eyebrow">Free tools</div>
   <h2>Useful on day one.</h2>
-  <p class="sub">No sales call and no setup fee, although we’re happy to help! Open it, add your project, and use whatever helps.</p>
+  <p class="sub">Features for every phase and every member of the project. Whether it’s a new project or you’ve already started, our simple onboarding builds your project’s profile up to where it is today.</p>
+  <div class="for-who" aria-label="Who it’s for"><span class="lbl">Who it’s for</span><span>Homeowners</span><span>General contractors</span><span>Architects</span><span>Interior + exterior designers</span><span>Specialty trades</span></div>
   <div class="tools" id="tool-grid"></div>
   <div class="steps">
     <div class="step"><b>01</b><h4>Add your project</h4><p>Address and property type. Residential or commercial sets which codes we check against.</p></div>
@@ -369,32 +375,43 @@ var ICON = {
   cube:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8l-9-5-9 5v8l9 5 9-5z"/><path d="M3.3 7L12 12l8.7-5M12 22V12"/></svg>',
   bid:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 15h6M9 11h2"/></svg>',
   sign:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>',
+  start:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22V4"/><path d="M4 4h12l-2 4 2 4H4"/></svg>',
+  prep:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 3v2h6V3"/><path d="M9 11h6M9 15h4"/></svg>',
+  layout:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="1"/><path d="M3 12h9V3M12 12v9M12 16h9"/></svg>',
   pulse:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>'
 };
-var TOOLS = [
-  ['check','Code check','Upload plans and get findings with code references, set to your property type and city.', [
-    ['Homeowners','Know your plans are code-ready before you pay for bids, so the scope you approve doesn’t change at plan check.'],
-    ['Contractors','Bid on plans you know will pass, and stop eating the cost of redesigns and resubmittals.'],
+var TOOLS = [   // [icon, title, description, [[who, line, comingNext?]], comingNextCard?] · tags in order: GCs, Homeowners, Designers
+  ['start','Easy onboarding','Set up fast. Simple steps map out everything your project needs, from day one or mid-build.', [
+    ['GCs','Set up a project for a client, or bring a job that’s already underway, and bid your proposals more accurately.'],
+    ['Homeowners','It looks like a lot of tools. We guide you step by step, so setup takes minutes, not a weekend.'],
+    ['Designers','Brought on early to design with the architect? Join the project and work from the same plans and measurements.']]],
+  ['plan','Plan analysis','Upload your architectural plans and get rooms, square footage and scope by trade in about a minute.', [
+    ['GCs','Skip the manual takeoff and price from clean quantities in minutes, not days.'],
+    ['Homeowners','See exactly what’s in your plans, so you can tell a fair bid from a padded one.'],
+    ['Designers','Room sizes and square footage instantly, to spec finishes and furniture without re-measuring.']]],
+  ['cube','3D scan','Scan your whole home yourself and get a to-scale 3D model with room measurements.', [
+    ['GCs','Flatten the scan to a 2D plan and measure from it, saved per room and wall, without another site visit.'],
+    ['Homeowners','Skip paying for a measure-up: scan with an iPhone and check the model against your architect’s drawings.'],
+    ['Designers','Design against the real room: every wall, window and ceiling height from one scan.']]],
+  ['bid','Bid collection','Every proposal in one place. Compare real numbers side by side and hire in a tap.', [
+    ['GCs','Prepare bids with the code check behind them, so the RFIs you send specialty trades are accurate.'],
+    ['Homeowners','One link to every GC. Compare real numbers side by side and hire in a single tap.']]],
+  ['prep','Pre-project phase','Organize, analyze and line up the next steps before anyone breaks ground.', [
+    ['GCs','Line up permits, testing and trades before day one, so the schedule starts on time.'],
+    ['Homeowners','Know what has to happen first, like contracts, testing and permits, and what you can start now to save time.'],
+    ['Designers','Lock in measurements, selections and approvals before construction, not during it.']]],
+  ['pulse','In-progress phase','Live progress, placement approvals and change orders, so the day-to-day moves fast and the goal stays in focus.', [
+    ['GCs','Change orders and approvals signed the same day, and progress updated once for everyone.'],
+    ['Homeowners','See today’s progress and approve placements and changes from your phone, before anything is built.'],
+    ['Designers','Sign off placements and selections on site in real time, before anything is installed.']]],
+  ['check','Code check','Catch code problems before you bid or permit, and start the job with a scope everyone trusts.', [
+    ['GCs','Bid on plans you know will pass, and stop eating the cost of redesigns and resubmittals.'],
+    ['Homeowners','Know your plans are code-ready before you pay for bids, so the scope doesn’t change at plan check.'],
     ['Designers','Check clearances, egress and layout against code before your client falls for a design that can’t be permitted.']]],
-  ['plan','Plan analysis','Pull square footage, rooms and scope by trade out of a plan set in about a minute.', [
-    ['Homeowners','See exactly what’s in your plans (square footage, rooms, trade scope) so you can tell a fair bid from a padded one.'],
-    ['Contractors','Skip the manual takeoff and price from clean quantities in minutes, not days.'],
-    ['Designers','Pull room sizes and square footage instantly to spec finishes and furniture without re-measuring the plans.']]],
-  ['cube','3D scan','Upload an iPhone LiDAR scan: walk it in 3D, see it as a 2D plan and measure any wall.', [
-    ['Homeowners','Scan your home with an iPhone instead of paying for a measure-up, get a 3D model of the house and property, and cross-check it against your architect’s drawings to catch the small fixes early.'],
-    ['Contractors','Flatten the scan to a 2D plan and measure from it, save measurements per room and wall, or type your own in, all without another site visit.'],
-    ['Designers','Design against the real room: measure every wall, window and ceiling height from one scan, and check it against the drawings.']]],
-  ['bid','Bid collection','Share one link with GCs. Proposals land in one list — hire or pass in a tap.', [
-    ['Homeowners','One link to every GC and every proposal side by side, so you compare real numbers and hire in a tap.'],
-    ['Contractors','Submit your proposal in minutes and always know where you stand: pending, hired or passed.']]],
-  ['sign','Approvals + change orders','Contracts and changes approved in writing, with a signed, timestamped record.', [
-    ['Homeowners','Nothing is added to your bill until you’ve seen the price and signed.'],
-    ['Contractors','Get every change signed before you build it, and get paid for the work you did.'],
-    ['Designers','Get selections and design changes signed off in writing, so there’s no second-guessing at install.']]],
-  ['pulse','Live progress','Phase, percent complete and what’s next, visible to everyone on the project.', [
-    ['Homeowners','See what’s happening on your job today without texting your GC.'],
-    ['Contractors','Update once and everyone’s informed: fewer calls, fewer interruptions, more building.'],
-    ['Designers','Know when the job is ready for your finishes, so installs are scheduled at the right time, not guessed.']]]
+  ['layout','Interactive site plan','Upload plans and we lay out the house room by room, with dimensions, in 2D or 3D.', [
+    ['GCs','Work from one dimensioned layout of every room, the same one everyone else sees.'],
+    ['Homeowners','Click through your home room by room and see every dimension before work starts.'],
+    ['Designers','Export the 2D layout to design on, then upload new designs back for review.']], true]
 ];
 /* Easter egg: tap a who-tag on a card to see what that feature does for that person. Tap again to close. */
 var TOOL_WHO = {};
@@ -406,7 +423,7 @@ function drawTools(){
       ans = '<div class="who-ans" role="status"><span class="for">For '+esc(w[0].toLowerCase())+'</span>'+esc(w[1])+
         (w[2] ? '<span class="nx-line"><span class="soon">Coming next</span>'+esc(w[2])+'</span>' : '')+'</div>';
     }
-    return '<div class="tool" data-tool="'+ti+'"><div class="ic">'+ICON[t[0]]+'</div><h4>'+esc(t[1])+'</h4><p>'+esc(t[2])+'</p>'+
+    return '<div class="tool" data-tool="'+ti+'"><div class="ic">'+ICON[t[0]]+'</div><h4>'+esc(t[1])+(t[4]?' <span class="soon-card">Coming next</span>':'')+'</h4><p>'+esc(t[2])+'</p>'+
       '<div class="who">'+t[3].map(function(w, wi){
         return '<button type="button" class="'+(on === wi ? 'on' : '')+'" aria-pressed="'+(on === wi)+'" title="What this does for '+esc(w[0].toLowerCase())+'" onclick="toolWho('+ti+','+wi+')">'+esc(w[0])+'</button>';
       }).join('')+'</div>'+ans+'</div>';
