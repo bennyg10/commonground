@@ -17,6 +17,7 @@
 <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=2">
 <meta name="theme-color" content="#111015">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script type="importmap" id="three-map">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
 <style>
 :root{--black:#0B0B0E;--d1:#111015;--d2:#17161C;--d3:#1E1D24;--d4:#26252D;--white:#FDFFFE;--lime:#D5DC99;--sage:#737F73;
   --w08:rgba(253,255,254,.08);--w15:rgba(253,255,254,.15);--w30:rgba(253,255,254,.3);--w50:rgba(253,255,254,.55);--w70:rgba(253,255,254,.75);
@@ -151,7 +152,7 @@ function when(t){ if(!t) return ''; var d=new Date(t); return isNaN(d) ? String(
 function first(n){ return String(n||'').trim().split(/\s+/)[0]; }
 function dayPart(){ var h=new Date().getHours(); return h<12?'morning':h<17?'afternoon':'evening'; }
 function toast(t){ var e=$('toast'); e.textContent=t; e.style.display='block'; clearTimeout(toast.h); toast.h=setTimeout(function(){ e.style.display='none'; },3200); }
-var isOwner = ROLE==='client', isGC = ROLE==='gc', isTrade = ROLE==='trade';
+var isOwner = ROLE==='client', isGC = ROLE==='gc', isTrade = ROLE==='trade', isDesigner = ROLE==='designer';
 var ownerAccount = (ME.projects||{})[PID]==='client';
 var SCOPE = {'new-build':'New build', remodel:'Remodel', addition:'Addition', adu:'ADU', demolition:'Demolition', 'tenant-improvement':'Tenant improvement', repair:'Repair'};
 var SUB = {'single-family':'Single-family','multi-family':'Multi-family',adu:'ADU','condo-townhome':'Condo / townhome',office:'Office',retail:'Retail',restaurant:'Restaurant','mixed-use':'Mixed-use',industrial:'Industrial',other:'Other'};
@@ -165,7 +166,7 @@ function load(){
   return Promise.all([
     api(P('&action=state')),
     isTrade ? Promise.resolve({decisions:[],notifications:[]}) : api('/api/decisions?project='+encodeURIComponent(PID)),
-    (isOwner||isGC) ? api('/api/auth?action=members&project='+encodeURIComponent(PID)) : Promise.resolve({members:[]}),
+    (isOwner||isGC||isDesigner) ? api('/api/auth?action=members&project='+encodeURIComponent(PID)) : Promise.resolve({members:[]}),
     isTrade ? Promise.resolve({results:[]}) : api('/api/tools?action=results&project='+encodeURIComponent(PID)),
     api('/api/tools?action=scans&project='+encodeURIComponent(PID)),
     api('/api/tools?action=schedule&project='+encodeURIComponent(PID))
@@ -183,7 +184,7 @@ function tabsFor(){
   if ((isOwner && (ST.stage==='bidding' || (ST.bids||[]).length))) t.push(['proposals','Proposals']);
   if (!isTrade) t.push(['decisions','Decisions']);
   t.push(['schedule','Schedule']);
-  if (isOwner||isGC) t.push(['controls', ownerAccount ? 'Homeowner controls' : isGC ? 'GC controls' : 'Controls']);
+  if (isOwner||isGC||isDesigner) t.push(['controls', ownerAccount ? 'Homeowner controls' : isGC ? 'GC controls' : isDesigner ? 'Team' : 'Controls']);
   if (!isTrade) t.push(['tools','Tools']); else t.push(['tools','3D scans']);
   return t;
 }
@@ -192,8 +193,8 @@ function render(){
   var m = ST.meta || {};
   document.title = 'Common Ground — '+(m.name||'Project');
   $('crumb-name').textContent = m.name || '';
-  $('role-pill').textContent = {client:'Homeowner',gc:'GC',trade:'Trade'}[ROLE] || ROLE;
-  if (S.admin) $('admin-views').innerHTML = ['client','gc','trade'].filter(function(r){return r!==ROLE;}).map(function(r){ return '<a class="btn sm" href="/'+esc(S.path)+'/'+(r==='client'?'homeowner':r)+location.hash+'">'+({client:'Homeowner',gc:'GC',trade:'Trade'}[r])+' view</a>'; }).join(' ');
+  $('role-pill').textContent = {client:'Homeowner',gc:'GC',trade:'Trade',designer:'Designer'}[ROLE] || ROLE;
+  if (S.admin) $('admin-views').innerHTML = ['client','gc','designer','trade'].filter(function(r){return r!==ROLE;}).map(function(r){ return '<a class="btn sm" href="/'+esc(S.path)+'/'+(r==='client'?'homeowner':r)+location.hash+'">'+({client:'Homeowner',gc:'GC',trade:'Trade'}[r])+' view</a>'; }).join(' ');
   var tabs = tabsFor(); if (!tabs.some(function(x){return x[0]===TAB;})) TAB='overview';
   var counts = {proposals:(ST.bids||[]).length, decisions:DEC.filter(function(d){return !decClosed(d);}).length, controls:MEMBERS.length, schedule:TASKS.items.filter(function(t){return !t.done;}).length};
   $('tabs').innerHTML = tabs.map(function(t){ return '<button class="tab'+(TAB===t[0]?' on':'')+'" data-tab="'+t[0]+'" onclick="go(\''+t[0]+'\')">'+t[1]+(counts[t[0]]?'<span class="ct">'+counts[t[0]]+'</span>':'')+'</button>'; }).join('');
@@ -225,6 +226,9 @@ function vOverview(){
       '<button class="btn pri" onclick="go(\'proposals\')">'+(n?'Review proposals':'Get your bid link')+'</button></div>';
   }
   if (ST.stage==='bidding' && isGC) h += '<div class="card">This project is collecting bids. You’ll see it here once the owner hires a GC.</div>';
+  if (isDesigner) h += hasOwner()
+    ? '<div class="card hi" id="next-step"><div class="eyebrow">Next step</div><h2>Scan and measure the rooms</h2><p class="muted small" style="margin-bottom:14px">Upload a LiDAR scan, measure walls in 3D or on the 2D plan, check them against the drawings, then send design approvals for your client to sign.</p><button class="btn pri" onclick="go(\'tools\',\'scan\')">Open 3D scan + measure</button></div>'
+    : '<div class="card hi" id="next-step"><div class="eyebrow">Next step</div><h2>Bring your client in</h2><p class="muted small" style="margin-bottom:14px">Your client gets their own sign-in to see your measurements and sign off on design approvals.</p><button class="btn pri" onclick="go(\'controls\')">Invite your client</button></div>';
   // progress
   if (s || ST.stage==='active') {
     var pct = s ? s.percent : 0;
@@ -247,7 +251,7 @@ function vOverview(){
 }
 function briefLine(){
   var open = DEC.filter(function(d){ return !decClosed(d); }).length;
-  if (ST.stage==='bidding') return isOwner ? 'You’re collecting proposals. Share your bid link, compare, and hire when you’re ready.' : 'Collecting bids.';
+  if (ST.stage==='bidding') return isOwner ? 'You’re collecting proposals. Share your bid link, compare, and hire when you’re ready.' : isDesigner ? 'Design phase: scan and measure the rooms, and get selections approved in writing.' : 'Collecting bids.';
   if (ST.stage==='kickoff') return 'Kickoff: finish the checklist together, then the GC starts the project.';
   var s = (ST.meta||{}).status;
   return (s ? s.phase+' · '+s.percent+'% complete.' : 'Project in progress.') + (open ? ' '+open+' decision'+(open>1?'s':'')+' waiting.' : '');
@@ -344,13 +348,20 @@ function hireResultCard(){
 
 /* ── Decisions ── */
 function vDecisions(){
-  var h = '<div class="eyebrow">Decisions</div><h1>Approvals + change orders</h1><div class="lede">'+(ownerAccount?'Every change is priced and waits for your approval before work starts.':isGC?'Send a change order — the owner approves it in writing.':'Decisions on this project.')+'</div><div class="two" style="margin-top:24px"><div><div class="card">';
+  var h = '<div class="eyebrow">Decisions</div><h1>Approvals + change orders</h1><div class="lede">'+(ownerAccount?'Every change is priced and waits for your approval before work starts.':isGC?'Send a change order — the owner approves it in writing.':isDesigner?'Send a design approval — your client signs off in writing before anything is ordered.':'Decisions on this project.')+'</div><div class="two" style="margin-top:24px"><div><div class="card">';
   h += DEC.length ? DEC.slice().sort(function(a,b){ return (a.status==='approved')-(b.status==='approved') || String(b.updatedAt||b.createdAt).localeCompare(String(a.updatedAt||a.createdAt)); }).map(function(d){
-    return '<div class="item" data-dec="'+esc(d.id)+'">'+((d.photos||[]).length?'<img src="'+photoUrl(d.photos[0].id)+'" alt="" style="width:52px;height:52px;object-fit:cover;border-radius:8px;flex:none;background:var(--d3)">':'')+'<div class="main"><div class="t">'+esc(d.title)+'</div><div class="muted small">'+money(d.amount)+(d.area?' · '+esc(d.area):'')+' · '+esc(when(d.updatedAt||d.createdAt))+'</div></div>'+
+    return '<div class="item" data-dec="'+esc(d.id)+'">'+((d.photos||[]).length?'<img src="'+photoUrl(d.photos[0].id)+'" alt="" style="width:52px;height:52px;object-fit:cover;border-radius:8px;flex:none;background:var(--d3)">':'')+'<div class="main"><div class="t">'+esc(d.title)+'</div><div class="muted small">'+(d.type==='design'?'Design approval · ':'')+money(d.amount)+(d.area?' · '+esc(d.area):'')+' · '+esc(when(d.updatedAt||d.createdAt))+'</div></div>'+
       decPill(d)+'<button class="btn sm" onclick="openDec(\''+jsq(d.id)+'\')">Open</button></div>';
-  }).join('') : '<div class="empty">No decisions yet.'+(isGC?' Create a change order when something changes.':'')+'</div>';
+  }).join('') : '<div class="empty">No decisions yet.'+(isGC?' Create a change order when something changes.':isDesigner?' Send a design approval when a selection or layout needs sign-off.':'')+'</div>';
   h += '</div></div><div>';
   if (isGC) h += '<div class="card"><h2>New change order</h2><label for="co-title">What’s changing</label><input id="co-title" placeholder="e.g. Upgrade to 200A panel"><label for="co-amt">Price ($)</label><input id="co-amt" type="number" min="0" step="1"><label for="co-desc">Details</label><textarea id="co-desc" rows="3"></textarea><label for="co-photos">Photos (optional, up to 3)</label><input id="co-photos" type="file" accept="image/*" multiple><button class="btn pri" id="co-go" onclick="createCO()">Send to homeowner</button></div>';
+  if (isDesigner) h += '<div class="card" id="da-card"><h2>New design approval</h2><p class="muted small" style="margin-bottom:12px">Selections, finishes, layouts: anything your client should sign off on before it’s ordered.</p>'+
+    '<label for="da-title">What needs sign-off</label><input id="da-title" placeholder="e.g. Kitchen backsplash: 3×12 white zellige">'+
+    '<label for="da-area">Room or area</label><input id="da-area" placeholder="e.g. Kitchen">'+
+    '<label for="da-amt">Cost ($, optional)</label><input id="da-amt" type="number" min="0" step="1">'+
+    '<label for="da-desc">Details</label><textarea id="da-desc" rows="3" placeholder="Specs, supplier, lead time"></textarea>'+
+    '<label for="da-photos">Photos or renderings (optional, up to 3)</label><input id="da-photos" type="file" accept="image/*" multiple>'+
+    '<button class="btn pri" id="da-go" onclick="createDA()">Send to homeowner</button></div>';
   return h+'</div></div>';
 }
 function decPill(d){
@@ -381,13 +392,22 @@ function createCO(){
     if (!j.ok) return toast('Couldn’t send that.'); toast('Sent — homeowner notified'); load();
   }).catch(function(e){ b.disabled=false; b.textContent='Send to homeowner'; toast(e.message); });
 }
+function createDA(){
+  var t=$('da-title').value.trim(); if (!t) return toast('Describe what needs sign-off first.');
+  var b=$('da-go'); b.disabled=true; b.textContent='Sending…';
+  Promise.all([].slice.call($('da-photos').files, 0, 3).map(shrinkPhoto)).then(function(photos){
+    return api('/api/decisions', {project:PID, action:'create', title:t, amount:$('da-amt').value?+$('da-amt').value:null, desc:$('da-desc').value, area:$('da-area').value.trim(), photos:photos});
+  }).then(function(j){ b.disabled=false; b.textContent='Send to homeowner';
+    if (!j.ok) return toast('Couldn’t send that.'); toast('Sent — homeowner notified'); load();
+  }).catch(function(e){ b.disabled=false; b.textContent='Send to homeowner'; toast(e.message); });
+}
 function openDec(id){
   var d = DEC.filter(function(x){return x.id===id;})[0]; if (!d) return;
   var ev = (d.events||[]).map(function(e){
     var t = e.type==='approved' ? '<span style="color:#8fd6ab">✓ Approved '+money(e.amount)+' · signed “'+esc(e.signature)+'”'+(e.method==='offline'?' on paper':'')+'</span>'
       : e.type==='voided' ? '<span style="color:#f0a996">Approval voided by '+(e.role==='admin'?'platform admin':'the owner')+'</span>'+(e.note?' — '+esc(e.note):'')
       : e.type==='rejected' ? '<span style="color:#f0a996">Rejected by the owner</span>'+(e.note?' — '+esc(e.note):'')
-      : e.type==='withdrawn' ? '<span class="muted">Withdrawn by the GC</span>'+(e.note?' — '+esc(e.note):'')
+      : e.type==='withdrawn' ? '<span class="muted">Withdrawn by '+(e.role==='designer'?'the designer':'the GC')+'</span>'+(e.note?' — '+esc(e.note):'')
       : e.type==='reopened' ? '<span style="color:#e0c67a">Reopened for review</span>'
       : e.type==='photo' ? 'Added a photo'
       : e.type==='revised' ? 'Revised to '+money(e.amount)+(e.note?' — '+esc(e.note):'')
@@ -403,7 +423,7 @@ function openDec(id){
     '<label for="d-note" style="margin-top:14px">Comment or question</label><textarea id="d-note" rows="2"></textarea><div class="msg" id="d-msg"></div>'+
     '<div class="acts">'+
       (ownerAccount ? '<button class="btn danger" id="d-override" onclick="overrideDec(\''+jsq(id)+'\',\''+(d.status==='approved'?'void':decClosed(d)?'reopen':'reject')+'\')">'+(d.status==='approved'?'Void my approval':decClosed(d)?'Reopen':'Reject')+'</button>' : '')+
-      (isGC && d.type==='co' && !decClosed(d) ? '<button class="btn danger" id="d-withdraw" onclick="overrideDec(\''+jsq(id)+'\',\'withdraw\')">Withdraw</button>' : '')+
+      (((isGC && d.type==='co') || (isDesigner && d.type==='design' && d.createdByAccount===ME.identifier)) && !decClosed(d) ? '<button class="btn danger" id="d-withdraw" onclick="overrideDec(\''+jsq(id)+'\',\'withdraw\')">Withdraw</button>' : '')+
       '<button class="btn" onclick="closeModal()">Close</button><button class="btn" onclick="commentDec(\''+jsq(id)+'\')">Send comment</button></div>');
 }
 function approveDec(id){
@@ -425,20 +445,21 @@ function commentDec(id){ var n=$('d-note').value.trim(); if (!n) return; api('/a
 
 /* ── Controls: each role's own admin page (owner > GC > trade) ── */
 var TEAM_LINK = '';
-var RL = {client:'Homeowner', gc:'GC', trade:'Trade / Sub'};
-function myRank(){ return S.admin ? 9 : ({client:3, gc:2, trade:1}[(ME.projects||{})[PID]] || 0); }
+var RL = {client:'Homeowner', gc:'GC', trade:'Trade / Sub', designer:'Designer'};
+function myRank(){ return S.admin ? 9 : ({client:3, gc:2, designer:2, trade:1}[(ME.projects||{})[PID]] || 0); }
 function canActOn(m){
   if (m.identifier===ME.identifier) return false;
   if (S.admin || ownerAccount) return true;
-  if (!isGC || m.role==='client') return false;
+  if (!isGC || m.role==='client' || m.role==='designer') return false;
   return !(ST.hiredGc && ST.hiredGc.identifier===m.identifier);
 }
-function rolesICanGive(){ return (S.admin||ownerAccount) ? ['client','gc','trade'] : isGC ? ['gc','trade'] : []; }
+function rolesICanGive(){ return (S.admin||ownerAccount) ? ['client','gc','designer','trade'] : isGC ? ['gc','designer','trade'] : []; }
 function hasOwner(){ return MEMBERS.some(function(m){ return m.role==='client' && m.status==='active'; }); }
 function vControls(){
   var m = ST.meta||{};
-  var h = '<div class="eyebrow">'+(ownerAccount?'Homeowner controls':'GC controls')+'</div><h1>'+(ownerAccount?'You have final say on this project':'Run your team and trades')+'</h1>'+
+  var h = '<div class="eyebrow">'+(ownerAccount?'Homeowner controls':isDesigner?'Team':'GC controls')+'</div><h1>'+(ownerAccount?'You have final say on this project':isDesigner?'Your client and trades':'Run your team and trades')+'</h1>'+
     '<div class="lede">'+(ownerAccount ? 'Add or remove anyone, change roles, reject or void decisions, and release the GC if you need to.'
+      : isDesigner ? (hasOwner() ? 'Invite the trades you work with. Your client has final say on approvals.' : 'No homeowner has joined yet. Invite your client below — once they join, they sign off on your design approvals.')
       : hasOwner() ? 'Invite trades and your GC team, send change orders, and keep the schedule current. The homeowner has final say on approvals.'
       : 'No homeowner has joined yet. Invite them below — once they join, they have final say on approvals.')+'</div>';
   h += '<div class="two" style="margin-top:24px"><div>';
@@ -463,9 +484,9 @@ function vControls(){
   }
   h += '</div><div>';
   // invite
-  var give = (S.admin||ownerAccount||isGC) ? ['client','gc','trade'] : [];
+  var give = (S.admin||ownerAccount||isGC) ? ['client','gc','designer','trade'] : isDesigner ? ['client','trade'] : [];
   h += '<div class="card"><h2>Invite someone</h2><p class="muted small" style="margin-bottom:12px">Choose who they are — that sets what they see and what they can approve.</p><div class="msg" id="t-msg"></div>'+
-    '<label for="t-role">They are the…</label><select id="t-role">'+give.map(function(r){ return '<option value="'+r+'"'+((isGC&&!hasOwner()&&r==='client')||(!isGC&&r==='gc')?' selected':'')+'>'+{client:'Homeowner (final say on approvals)', gc:'General contractor / GC team', trade:'Trade / sub'}[r]+'</option>'; }).join('')+'</select>'+
+    '<label for="t-role">They are the…</label><select id="t-role">'+give.map(function(r){ return '<option value="'+r+'"'+((isDesigner ? r===(hasOwner()?'trade':'client') : (isGC&&!hasOwner()&&r==='client')||(!isGC&&r==='gc'))?' selected':'')+'>'+{client:'Homeowner (final say on approvals)', gc:'General contractor / GC team', designer:'Designer (interior / architectural)', trade:'Trade / sub'}[r]+'</option>'; }).join('')+'</select>'+
     '<label for="t-name">Name</label><input id="t-name"><label for="t-id">Email or phone</label><input id="t-id"><button class="btn pri" id="t-go" onclick="teamInvite()">Create invite link</button>'+
     (TEAM_LINK?'<div class="linkbox" style="margin-top:12px"><input id="team-link" readonly value="'+esc(TEAM_LINK)+'"><button class="btn sm" onclick="copy(\'team-link\')">Copy</button></div><div class="muted small" style="margin-top:6px">Text or email this link — it lets them set a password and join.</div>':'')+'</div>';
   // project details
@@ -586,7 +607,7 @@ function taskDelete(id){ api('/api/tools', {project:PID, action:'task-delete', i
 function vTools(){
   if (isTrade) { TOOL='scan'; return '<div class="eyebrow">3D scans</div><h1>Site scans</h1><div style="margin-top:20px">'+scanPanel()+'</div>'; }
   var T = [['codecheck','Code check'],['plans','Plan analysis'],['scan','3D scan'],['history','Saved results']];
-  return '<div class="eyebrow">Tools</div><h1>Project tools</h1><div class="lede">Results save to this project so '+(isGC?'your client':'your GC')+' sees them too.</div>'+
+  return '<div class="eyebrow">Tools</div><h1>Project tools</h1><div class="lede">Results save to this project so '+(isGC?'your client':isDesigner?'your client and GC':'your GC')+' see'+(isDesigner?'':'s')+' them too.</div>'+
     '<div class="subtabs" style="margin-top:20px">'+T.map(function(t){ return '<button class="'+(TOOL===t[0]?'on':'')+'" data-tool="'+t[0]+'" onclick="go(\'tools\',\''+t[0]+'\')">'+t[1]+(t[0]==='history'&&RESULTS.length?' · '+RESULTS.length:'')+'</button>'; }).join('')+'</div>'+
     ({codecheck:aiPanel, plans:aiPanel, scan:scanPanel, history:historyPanel}[TOOL])();
 }
@@ -759,7 +780,7 @@ var SUB_REQS = [], SUB_STATE = null, SUB_LOADED = false;
 function subEsc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
 function subS(){ return window.CG_SESSION || null; }
 function subProject(){ var s = subS(); return s ? s.project : ''; }
-function subCan(){ var s = subS(); return !!(s && s.user && (s.role === 'client' || s.role === 'gc')); }
+function subCan(){ var s = subS(); return !!(s && s.user && (s.role === 'client' || s.role === 'gc' || s.role === 'designer')); }
 function subZipGuess(){ var s = subS(), a = (s && s.projectInfo && s.projectInfo.address) || ''; var m = a.match(/\b(\d{5})(?:-\d{4})?\b/); return m ? m[1] : ''; }
 function subWhen(iso){ try { return new Date(iso).toLocaleString([], {weekday:'short', hour:'numeric', minute:'2-digit'}); } catch (e) { return ''; } }
 function subDraftKey(){ return 'cg_sub_draft_' + subProject(); }
@@ -979,5 +1000,377 @@ function subMount(){
 }
 function subInit(){ if (!subCan()) return; subMount(); subLoad(); setInterval(subLoad, 120000); }
 /* SUBS_FRONT_END */</script>
+<script id="scan3d-front">/* SCAN3D_START */
+/* ══════════════════════════════════════════════════
+   3D SCAN WORKBENCH — 3D view, 2D plan (scan cut at a height, seen from above),
+   tap-to-measure, saved measurements per room + wall, typed-in measurements,
+   and an AI cross-check of the measurements against architectural drawings.
+   three.js loads on demand through the page's import map. Lengths are stored in meters.
+   Later declarations override the page's original scanPanel / afterScanRender.
+   ══════════════════════════════════════════════════ */
+var MEASURES = [], M3 = { dollhouse: true, mode: '3d', measuring: false, pts: [], pending: null, units: 'ft', cut: 1.2, showSaved: true, scanId: null, dom: null, xc: null, xcBusy: false };
+try { M3.units = localStorage.getItem('cg_units') === 'm' ? 'm' : 'ft'; } catch (e) {}
+function m3CanWrite(){ return !isTrade; }
+
+/* ── lengths ── */
+function m3Fmt(m, units){
+  units = units || M3.units;
+  if (units === 'm') return (Math.round(m * 100) / 100).toFixed(2) + ' m';
+  var inches = Math.round(m / 0.0254 * 2) / 2, ft = Math.floor(inches / 12), rest = inches - ft * 12;
+  var r = rest % 1 ? Math.floor(rest) + '½' : String(rest);
+  if (rest === 0.5) r = '½';
+  return ft + '′ ' + r + '″';
+}
+function m3Both(m){ return m3Fmt(m, 'ft') + ' (' + m3Fmt(m, 'm') + ')'; }
+function m3SetUnits(u){ M3.units = u; try { localStorage.setItem('cg_units', u); } catch (e) {} render(); }
+
+/* ── data ── */
+function m3LoadMeasures(){
+  return api('/api/tools?action=measures&project=' + encodeURIComponent(PID)).then(function(j){
+    if (j && j.ok) { MEASURES = j.measures || []; if (TAB === 'tools' && TOOL === 'scan') { m3RenderList(); m3DrawSaved(); } }
+  });
+}
+var _m3Load = load;
+load = function(){ var p = _m3Load.apply(this, arguments); m3LoadMeasures(); return p; };
+function m3Rooms(){
+  var seen = {}, out = [];
+  MEASURES.forEach(function(m){ if (!seen[m.room.toLowerCase()]) { seen[m.room.toLowerCase()] = 1; out.push(m.room); } });
+  (RESULTS || []).forEach(function(r){ if (r.tool === 'plans' && r.result && r.result.rooms) r.result.rooms.forEach(function(n){ if (n && !seen[String(n).toLowerCase()]) { seen[String(n).toLowerCase()] = 1; out.push(String(n)); } }); });
+  return out;
+}
+
+/* ── panel ── */
+function scanPanel(){
+  var canUp = isGC || ownerAccount || (typeof isDesigner !== 'undefined' && isDesigner);
+  var h = '<div class="two"><div>';
+  if (SCAN_VIEW) {
+    var glb = SCAN_VIEW.ext === 'glb';
+    var seg = function(k, t){ return '<button class="btn sm' + (M3.mode === k ? ' pri' : '') + '" data-m3mode="' + k + '" onclick="m3Mode(\'' + k + '\')">' + t + '</button>'; };
+    h += '<div class="card" id="scan-view"><div class="row" style="justify-content:space-between;margin-bottom:12px;gap:10px"><h2 style="margin:0;min-width:0">' + esc(SCAN_VIEW.label) + '</h2><button class="btn sm" onclick="SCAN_VIEW=null;m3Dispose();render()">Close</button></div>' +
+      (glb ? '<div class="row m3-bar" style="gap:6px;flex-wrap:wrap;margin-bottom:10px">' + seg('3d', '3D') + seg('2d', '2D plan') + seg('ar', 'AR view') +
+        (M3.mode === '3d' ? '<label class="small" style="display:flex;align-items:center;gap:6px;margin:0 0 0 6px;cursor:pointer"><input type="checkbox" id="m3-doll" style="width:auto;margin:0"' + (M3.dollhouse ? ' checked' : '') + ' onchange="M3.dollhouse=this.checked;m3ApplyMode()">Hide ceiling</label>' : '') +
+        '<span style="flex:1"></span>' +
+        (M3.mode !== 'ar' ? '<button class="btn sm' + (M3.measuring ? ' pri' : '') + '" id="m3-measure" onclick="m3ToggleMeasure()">' + (M3.measuring ? 'Measuring · tap 2 points' : 'Measure') + '</button>' : '') +
+        '<button class="btn sm" onclick="m3SetUnits(\'' + (M3.units === 'ft' ? 'm' : 'ft') + '\')" title="Switch units">' + (M3.units === 'ft' ? 'ft' : 'm') + '</button></div>' : '') +
+      '<div id="viewer-slot"><div class="muted small">Loading model…</div></div>' +
+      (glb && M3.mode === '2d' ? '<div class="row" style="gap:10px;margin-top:10px;align-items:center"><label for="m3-cut" style="margin:0;white-space:nowrap">Cut height</label><input id="m3-cut" type="range" min="0.3" max="2.4" step="0.05" value="' + M3.cut + '" oninput="m3Cut(this.value)" style="flex:1;margin:0"><span class="muted small" id="m3-cut-v" style="min-width:64px;text-align:right">' + m3Fmt(M3.cut) + '</span></div>' : '') +
+      '<div id="m3-pending">' + m3PendingHtml() + '</div>' +
+      '<div class="muted small" style="margin-top:8px" id="m3-hint">' + m3Hint() + '</div></div>';
+  }
+  h += '<div class="card"><h2>Scans on this project</h2>' + (SCANS.length ? SCANS.map(function(s){ return '<div class="item" data-scan="' + esc(s.id) + '"><div class="main"><div class="t">' + esc(s.label) + '</div><div class="muted small">' + esc(s.ext.toUpperCase()) + ' · ' + (s.size / 1048576).toFixed(1) + ' MB · ' + esc(s.by) + ' · ' + esc(when(s.at)) + '</div></div><button class="btn sm pri" onclick="viewScan(\'' + jsq(s.id) + '\')">' + (s.ext === 'usdz' ? 'Open' : 'View + measure') + '</button>' + (isGC ? '<button class="btn sm danger" onclick="delScan(\'' + jsq(s.id) + '\')">Delete</button>' : '') + '</div>'; }).join('') : '<div class="empty">No scans yet.</div>') + '</div>';
+  h += '<div id="m3-list">' + m3ListHtml() + '</div>';
+  h += '</div><div>';
+  if (canUp) h += '<div class="card hi"><h2>Scan the site in 3D</h2><div class="steps3"><div><b>1 · Capture</b><p>Walk the space with an iPhone or iPad Pro (LiDAR) using Polycam, Scaniverse or 3d Scanner App.</p></div><div><b>2 · Export</b><p>Export as <b>GLB</b> (or USDZ). Choose medium quality to keep it under 24 MB.</p></div><div><b>3 · Upload</b><p>Everyone on the project can walk the model, see it as a 2D plan and take measurements.</p></div></div>' +
+    '<label for="scan-label">Name</label><input id="scan-label" placeholder="e.g. Kitchen — existing conditions"><label for="scan-file">Scan file (.glb or .usdz · up to 24 MB)</label><input id="scan-file" type="file" accept=".glb,.usdz,model/gltf-binary,model/vnd.usdz+zip">' +
+    '<div class="prog" id="scan-prog"><i></i></div><button class="btn pri" id="scan-go" onclick="uploadScan()">Upload scan</button><div class="log" id="scan-log"></div></div>';
+  if (m3CanWrite()) h += '<div id="m3-xc">' + m3CrossHtml() + '</div>';
+  return h + '</div></div>';
+}
+function m3Hint(){
+  if (!SCAN_VIEW || SCAN_VIEW.ext !== 'glb') return '';
+  if (M3.mode === 'ar') return 'Drag to orbit · pinch or scroll to zoom · on iPhone, tap the AR button to place it in the room';
+  if (M3.measuring) return M3.mode === '2d' ? 'Tap two points on the plan. 2D measurements are flat (horizontal) distances.' : 'Tap two points on the model. 3D measurements are straight-line distances, so you can measure heights too.';
+  return M3.mode === '2d' ? 'The scan is cut at the height below and seen from above, like a floor plan. Drag to pan · scroll or pinch to zoom.' : 'Drag to orbit · right-drag or two fingers to pan · scroll or pinch to zoom';
+}
+function m3PendingHtml(){
+  var p = M3.pending; if (!p) return '';
+  var rooms = m3Rooms();
+  return '<div class="m3-save" style="margin-top:12px;background:var(--l10);border:1px solid var(--l20);border-radius:12px;padding:12px 14px">' +
+    '<div class="row" style="justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:8px"><b id="m3-len" style="font-size:18px;color:var(--lime)">' + esc(m3Fmt(p.meters)) + '</b><span class="muted small">' + esc(m3Fmt(p.meters, M3.units === 'ft' ? 'm' : 'ft')) + ' · ' + (p.view === '2d' ? 'flat, from the 2D plan' : 'straight line, 3D') + '</span></div>' +
+    '<div class="srow" style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><div><label for="m3-room">Room</label><input id="m3-room" list="m3-rooms" value="' + esc(p.room || '') + '" oninput="M3.pending.room=this.value" placeholder="e.g. Kitchen"></div>' +
+    '<div><label for="m3-what">What you measured</label><input id="m3-what" value="' + esc(p.label || '') + '" oninput="M3.pending.label=this.value" placeholder="e.g. North wall"></div></div>' +
+    '<datalist id="m3-rooms">' + rooms.map(function(r){ return '<option value="' + esc(r) + '">'; }).join('') + '</datalist>' +
+    '<div class="row" style="gap:8px;margin-top:4px"><button class="btn sm pri" id="m3-save" onclick="m3SavePending()">Save measurement</button><button class="btn sm" onclick="m3Discard()">Discard</button><span class="log" id="m3-log" style="margin:0"></span></div></div>';
+}
+
+/* ── measurement list + typed-in form ── */
+function m3ListHtml(){
+  var groups = {}, order = [];
+  MEASURES.forEach(function(m){ var k = m.room; if (!groups[k]) { groups[k] = []; order.push(k); } groups[k].push(m); });
+  var me = ME && ME.identifier;
+  var rows = order.map(function(room){
+    return '<div class="m3-room" data-room="' + esc(room) + '"><div class="eyebrow" style="margin:14px 0 6px">' + esc(room) + ' · ' + groups[room].length + '</div>' +
+      groups[room].map(function(m){
+        var src = m.source === 'scan' ? (m.view === '2d' ? 'Scan · 2D' : 'Scan · 3D') : 'Typed in';
+        var canDel = m.account === me || isGC || ownerAccount;
+        return '<div class="item" data-measure="' + esc(m.id) + '"><div class="main"><div class="t">' + esc(m.label) + '</div><div class="muted small">' + esc(src) + ' · ' + esc(m.by) + (m.note ? ' · ' + esc(m.note) : '') + '</div></div>' +
+          '<b style="white-space:nowrap">' + esc(m3Fmt(m.meters)) + '</b>' + (canDel ? '<button class="btn sm" aria-label="Delete measurement" onclick="m3Delete(\'' + jsq(m.id) + '\')">×</button>' : '') + '</div>';
+      }).join('') + '</div>';
+  }).join('');
+  var rooms = m3Rooms(), ft = M3.units === 'ft';
+  return '<div class="card" id="m3-measures"><div class="row" style="justify-content:space-between;align-items:center;gap:10px"><h2 style="margin:0">Measurements</h2><span class="muted small">' + MEASURES.length + ' saved · by room and wall</span></div>' +
+    (rows || '<div class="empty" style="margin-top:10px">No measurements yet. Open a scan and tap Measure, or type one in below.</div>') +
+    '<details id="m3-manual" style="margin-top:14px"' + (M3.manualOpen ? ' open' : '') + ' ontoggle="M3.manualOpen=this.open"><summary style="cursor:pointer;font-weight:700;color:var(--lime)">+ Type a measurement in</summary>' +
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px"><div><label for="mm-room">Room</label><input id="mm-room" list="mm-rooms" placeholder="e.g. Kitchen"></div><div><label for="mm-what">Wall or item</label><input id="mm-what" placeholder="e.g. East wall"></div></div>' +
+    '<datalist id="mm-rooms">' + rooms.map(function(r){ return '<option value="' + esc(r) + '">'; }).join('') + '</datalist>' +
+    (ft ? '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><div><label for="mm-ft">Feet</label><input id="mm-ft" type="number" min="0" step="1" inputmode="numeric"></div><div><label for="mm-in">Inches</label><input id="mm-in" type="number" min="0" max="11.75" step="0.25" inputmode="decimal"></div></div>'
+        : '<label for="mm-m">Meters</label><input id="mm-m" type="number" min="0" step="0.01" inputmode="decimal">') +
+    '<label for="mm-note">Note (optional)</label><input id="mm-note" placeholder="e.g. to the face of the drywall">' +
+    '<button class="btn pri sm" id="mm-save" onclick="m3SaveManual()">Save measurement</button><span class="log" id="mm-log"></span></details></div>';
+}
+function m3RenderList(){ var el = $('m3-list'); if (el) el.innerHTML = m3ListHtml(); var x = $('m3-xc'); if (x && !M3.xcBusy) x.innerHTML = m3CrossHtml(); }
+function m3SaveManual(){
+  var room = $('mm-room').value.trim(), what = $('mm-what').value.trim(), log = $('mm-log'), meters;
+  if (M3.units === 'ft') { var f = Number($('mm-ft').value || 0), i = Number($('mm-in').value || 0); meters = (f * 12 + i) * 0.0254; }
+  else meters = Number($('mm-m').value || 0);
+  if (!room) { log.textContent = 'Add the room.'; return; }
+  if (!(meters > 0)) { log.textContent = 'Add the length.'; return; }
+  $('mm-save').disabled = true;
+  api('/api/tools', { project: PID, action: 'measure-add', source: 'manual', room: room, label: what || 'Measurement', meters: meters, note: $('mm-note').value.trim() }).then(function(j){
+    if (!j.ok) { $('mm-save').disabled = false; log.textContent = 'Couldn’t save (' + (j.error || 'error') + ').'; return; }
+    MEASURES = j.measures; M3.manualOpen = true; m3RenderList(); toast('Measurement saved');
+  });
+}
+function m3Delete(id){
+  api('/api/tools', { project: PID, action: 'measure-delete', id: id }).then(function(j){ if (j.ok) { MEASURES = j.measures; m3RenderList(); m3DrawSaved(); } });
+}
+
+/* ── cross-check against drawings ── */
+function m3CrossHtml(){
+  var n = MEASURES.length;
+  return '<div class="card" id="m3-cross"><h2>Cross-check with drawings</h2><p class="muted small" style="margin-bottom:12px">Compare your ' + (n ? n + ' saved measurement' + (n === 1 ? '' : 's') : 'saved measurements') + ' with the architect’s drawings. Differences are flagged room by room, so small fixes get made before anything is ordered or built.</p>' +
+    '<label for="xc-file">Drawings (PDF, JPG or PNG · up to 3 MB)</label><input id="xc-file" type="file" accept="application/pdf,image/jpeg,image/png,image/webp">' +
+    '<button class="btn pri" id="xc-go" onclick="m3CrossRun()"' + (n ? '' : ' disabled') + '>' + (n ? 'Cross-check ' + n + ' measurement' + (n === 1 ? '' : 's') : 'Save a measurement first') + '</button><div class="log" id="xc-log"></div>' +
+    '<div id="xc-out">' + (M3.xc ? m3CrossResult(M3.xc) : '') + '</div></div>';
+}
+function m3CrossPrompt(){
+  var m = ST.meta || {};
+  var lines = MEASURES.map(function(x){ return '- ' + x.room + ' | ' + x.label + ' | ' + m3Fmt(x.meters, 'ft') + ' (' + x.meters.toFixed(3) + ' m) | ' + (x.source === 'scan' ? 'from 3D scan, ' + (x.view === '2d' ? 'horizontal plan distance' : 'straight-line 3D distance') : 'measured by hand') + (x.note ? ' | note: ' + x.note : ''); }).join('\n');
+  return 'You are an architect cross-checking field measurements against architectural drawings for ' + (m.address || 'this property') + '.\n' +
+    'Field measurements (room | what | length | source):\n' + lines + '\n\n' +
+    'Read the attached drawings. For each field measurement, find the matching dimension on the drawings (same room and wall or item). ' +
+    'Compare them. Status: "match" if within 1 inch (25 mm), "check" if 1 to 3 inches off, "mismatch" if more than 3 inches off, "not-on-drawing" if the drawings do not show that dimension. ' +
+    'Also list dimensions on the drawings for these rooms that nobody has measured yet, as suggestions.\n' +
+    'Return ONLY valid JSON, no other text: {"summary":"one or two sentences","rows":[{"room":"","item":"","measured":"as given","drawing":"dimension on the drawing, or empty","difference":"e.g. +2 in, or empty","status":"match|check|mismatch|not-on-drawing","note":"what to fix or confirm"}],"suggestions":["dimension worth measuring next"]}. ' +
+    'Order rows mismatch first, then check, then not-on-drawing, then match. If the file is not a drawing, say so in summary and return empty arrays.';
+}
+function m3CrossRun(){
+  var f = $('xc-file').files[0], log = $('xc-log'), btn = $('xc-go');
+  if (!f) { log.textContent = 'Choose the drawings first.'; return; }
+  if (f.size > 3 * 1024 * 1024) { log.textContent = 'That file is over 3 MB. Export just the floor plan sheets.'; return; }
+  btn.disabled = true; btn.textContent = 'Reading drawings…'; M3.xcBusy = true; log.textContent = 'Comparing ' + MEASURES.length + ' measurements… this takes about a minute.';
+  readFile(f).then(function(b64){
+    var content = [f.type === 'application/pdf' ? { type: 'document', source: { type: 'base64', media_type: 'application/pdf', data: b64 } } : { type: 'image', source: { type: 'base64', media_type: f.type, data: b64 } },
+                   { type: 'text', text: m3CrossPrompt() }];
+    return fetch('/api/analyze', { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'same-origin', body: JSON.stringify({ max_tokens: 4000, messages: [{ role: 'user', content: content }] }) });
+  }).then(function(r){ return r.json().then(function(j){ return { ok: r.ok, j: j }; }); }).then(function(x){
+    if (!x.ok) throw new Error((x.j.error && (x.j.error.message || (x.j.error.error && x.j.error.error.message))) || 'The AI engine returned an error.');
+    var txt = (x.j.content || []).map(function(b){ return b.text || ''; }).join(''), mm = txt.match(/\{[\s\S]*\}/);
+    if (!mm) throw new Error('Couldn’t read the result. Try again.');
+    var result = JSON.parse(mm[0]); M3.xc = result;
+    $('xc-out').innerHTML = m3CrossResult(result); log.textContent = 'Done. Saved to this project.';
+    return api('/api/tools', { project: PID, action: 'save-result', tool: 'crosscheck', title: 'Scan vs drawings — ' + f.name, fileName: f.name, result: result }).then(function(s){ if (s.ok) RESULTS.unshift(s.item); });
+  }).catch(function(e){ log.textContent = e.message || 'Something went wrong.'; }).then(function(){ M3.xcBusy = false; btn.disabled = false; btn.textContent = 'Cross-check ' + MEASURES.length + ' measurements'; });
+}
+function m3CrossResult(r){
+  var rows = r.rows || [], c = { match: 0, check: 0, mismatch: 0, 'not-on-drawing': 0 };
+  rows.forEach(function(x){ c[x.status] = (c[x.status] || 0) + 1; });
+  var pill = { match: 'pass', check: 'warn', mismatch: 'fail', 'not-on-drawing': 'warn' }, word = { match: 'Match', check: 'Check', mismatch: 'Off', 'not-on-drawing': 'Not shown' };
+  return '<div class="card" id="xc-result" style="margin-top:14px;background:var(--d3)"><div class="eyebrow">Scan vs drawings</div><p style="color:var(--w70)">' + esc(r.summary || '') + '</p>' +
+    '<div class="kpis"><div class="kpi"><b style="color:#f0a996">' + c.mismatch + '</b><span>Off</span></div><div class="kpi"><b style="color:#e0c67a">' + (c.check + c['not-on-drawing']) + '</b><span>To confirm</span></div><div class="kpi"><b style="color:#8fd6ab">' + c.match + '</b><span>Match</span></div></div>' +
+    rows.map(function(x){ return '<div class="find"><span class="st ' + (pill[x.status] || 'warn') + '">' + esc(word[x.status] || x.status) + '</span><div><div class="t" style="font-weight:700">' + esc(x.room) + ' · ' + esc(x.item) + '</div>' +
+      '<div class="small" style="color:var(--w70)">Measured ' + esc(x.measured || '—') + ' · Drawing ' + esc(x.drawing || '—') + (x.difference ? ' · <b>' + esc(x.difference) + '</b>' : '') + '</div>' + (x.note ? '<div class="small muted">' + esc(x.note) + '</div>' : '') + '</div></div>'; }).join('') +
+    ((r.suggestions || []).length ? '<div class="eyebrow" style="margin-top:12px">Worth measuring next</div>' + r.suggestions.map(function(q){ return '<div class="small" style="color:var(--w70)">• ' + esc(q) + '</div>'; }).join('') : '') + '</div>';
+}
+var _m3RenderResult = renderResult;
+renderResult = function(tool, r){ return tool === 'crosscheck' ? m3CrossResult(r) : _m3RenderResult(tool, r); };
+
+/* ── viewer ── */
+function viewScan(id){ SCAN_VIEW = SCANS.filter(function(s){ return s.id === id; })[0]; if (!M3.scanId || M3.scanId !== id) { m3Dispose(); M3.pending = null; M3.pts = []; } render(); window.scrollTo(0, 0); }
+function m3Mode(k){ if (M3.mode === k) return; M3.mode = k; if (k === 'ar') { M3.measuring = false; } m3ClearPick(); render(); }
+function m3ToggleMeasure(){ M3.measuring = !M3.measuring; if (!M3.measuring) m3ClearPick(); var b = $('m3-measure'); if (b) { b.className = 'btn sm' + (M3.measuring ? ' pri' : ''); b.textContent = M3.measuring ? 'Measuring · tap 2 points' : 'Measure'; } var hn = $('m3-hint'); if (hn) hn.textContent = m3Hint(); }
+function m3Cut(v){ M3.cut = Number(v); var t = $('m3-cut-v'); if (t) t.textContent = m3Fmt(M3.cut); m3ApplyMode(); }
+function m3Dispose(){
+  var V = M3.v; if (!V) return;
+  try { V.ro && V.ro.disconnect(); V.renderer.dispose(); } catch (e) {}
+  M3.v = null; M3.dom = null; M3.scanId = null;
+}
+function afterScanRender(){
+  if (!SCAN_VIEW) return;
+  var s = SCAN_VIEW;
+  if (s.ext === 'usdz' || M3.mode === 'ar') {
+    fetchScan(s).then(function(url){
+      if (!$('viewer-slot') || SCAN_VIEW !== s) return;
+      if (s.ext === 'usdz') { $('viewer-slot').innerHTML = '<a class="btn pri" rel="ar" href="' + url + '" download="' + esc(s.name) + '">Open in AR / download</a><div class="muted small" style="margin-top:8px">USDZ opens in AR Quick Look on iPhone and iPad. Export GLB to view, measure and see it as a 2D plan in the browser.</div>'; return; }
+      if (!MV_LOADED) { MV_LOADED = true; var sc = document.createElement('script'); sc.type = 'module'; sc.src = 'https://cdn.jsdelivr.net/npm/@google/model-viewer@3/dist/model-viewer.min.js'; document.head.appendChild(sc); }
+      $('viewer-slot').innerHTML = '<model-viewer id="mv" src="' + url + '" camera-controls touch-action="pan-y" auto-rotate ar shadow-intensity="0.6" exposure="1" alt="3D scan: ' + esc(s.label) + '"></model-viewer><a class="btn sm" style="margin-top:10px" href="' + url + '" download="' + esc(s.name) + '">Download .glb</a>';
+    }).catch(function(e){ if ($('viewer-slot')) $('viewer-slot').innerHTML = '<div class="msg" style="display:block">' + esc(e.message) + '</div>'; });
+    return;
+  }
+  // keep one live viewer across page refreshes, so a measurement in progress isn't lost
+  if (M3.dom && M3.scanId === s.id) { $('viewer-slot').innerHTML = ''; $('viewer-slot').appendChild(M3.dom); m3ApplyMode(); m3Resize(); return; }
+  m3Dispose(); M3.scanId = s.id;
+  var wrap = document.createElement('div'); wrap.id = 'm3-wrap';
+  wrap.style.cssText = 'position:relative;width:100%;height:' + (window.innerWidth <= 640 ? 340 : 440) + 'px;background:#0d0d11;border-radius:14px;overflow:hidden;touch-action:none';
+  wrap.innerHTML = '<div id="m3-status" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--w50);font-size:13px">Loading model…</div>';
+  M3.dom = wrap; $('viewer-slot').innerHTML = ''; $('viewer-slot').appendChild(wrap);
+  Promise.all([fetchScan(s), import('three'), import('three/addons/controls/OrbitControls.js'), import('three/addons/loaders/GLTFLoader.js')]).then(function(r){
+    if (M3.scanId !== s.id) return;
+    m3Build(r[0], r[1], r[2].OrbitControls, r[3].GLTFLoader, wrap);
+  }).catch(function(e){ var st = wrap.querySelector('#m3-status'); if (st) st.textContent = 'Couldn’t open the 3D viewer: ' + (e && e.message || e); });
+}
+function m3Build(url, THREE, OrbitControls, GLTFLoader, wrap){
+  var W = wrap.clientWidth, H = wrap.clientHeight;
+  var renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2)); renderer.setSize(W, H); renderer.localClippingEnabled = true;
+  renderer.domElement.style.display = 'block'; renderer.domElement.id = 'm3-canvas';
+  var scene = new THREE.Scene(); scene.background = new THREE.Color(0x0d0d11);
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x444444, 1.1));
+  scene.add(new THREE.AmbientLight(0xffffff, 0.45));
+  var dl = new THREE.DirectionalLight(0xffffff, 0.9); dl.position.set(3, 10, 6); scene.add(dl);
+  var persp = new THREE.PerspectiveCamera(50, W / H, 0.01, 2000);
+  var ortho = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.01, 2000);
+  var overlay = new THREE.Group(); scene.add(overlay);
+  var saved = new THREE.Group(); scene.add(saved);
+  var labels = document.createElement('div'); labels.style.cssText = 'position:absolute;inset:0;pointer-events:none;overflow:hidden'; wrap.appendChild(labels);
+  var scale = document.createElement('div'); scale.id = 'm3-scale'; scale.style.cssText = 'position:absolute;left:12px;bottom:12px;display:none;font-size:11px;color:#D9DAD4;pointer-events:none'; wrap.appendChild(scale);
+  var plane = new THREE.Plane(new THREE.Vector3(0, -1, 0), 0);
+  var V = M3.v = { THREE: THREE, renderer: renderer, scene: scene, persp: persp, ortho: ortho, overlay: overlay, saved: saved, labels: labels, scaleEl: scale, plane: plane, model: null, wrap: wrap };
+  wrap.appendChild(renderer.domElement);
+  var cp = new OrbitControls(persp, renderer.domElement), co = new OrbitControls(ortho, renderer.domElement);
+  co.enableRotate = false; co.screenSpacePanning = true;
+  co.mouseButtons = { LEFT: THREE.MOUSE.PAN, MIDDLE: THREE.MOUSE.DOLLY, RIGHT: THREE.MOUSE.PAN }; co.touches = { ONE: THREE.TOUCH.PAN, TWO: THREE.TOUCH.DOLLY_PAN };
+  V.cp = cp; V.co = co;
+  cp.addEventListener('change', m3Render); co.addEventListener('change', m3Render);
+  new GLTFLoader().load(url, function(g){
+    if (M3.v !== V) return;
+    var model = g.scene; V.model = model; scene.add(model);
+    var box = new THREE.Box3().setFromObject(model), size = box.getSize(new THREE.Vector3()), c = box.getCenter(new THREE.Vector3());
+    V.box = box; V.center = c; V.diag = size.length() || 1;
+    model.traverse(function(o){ if (o.isMesh) { (Array.isArray(o.material) ? o.material : [o.material]).forEach(function(m){ m.side = THREE.DoubleSide; }); } });
+    var d = V.diag;
+    persp.position.set(c.x + d * 0.55, c.y + d * 0.6, c.z + d * 0.75); persp.near = d / 500; persp.far = d * 50; persp.updateProjectionMatrix();
+    cp.target.copy(c); cp.update();
+    ortho.position.set(c.x, box.max.y + d, c.z + 1e-4); ortho.near = 0.01; ortho.far = d * 10;   // straight down, north (−z) at the top
+    co.target.set(c.x, box.min.y, c.z); co.update();
+    var st = wrap.querySelector('#m3-status'); if (st) st.remove();
+    m3Resize(); m3ApplyMode(); m3DrawSaved(); m3RedrawPick();
+    V.ready = true; wrap.setAttribute('data-ready', '1');
+  }, undefined, function(e){ var st = wrap.querySelector('#m3-status'); if (st) st.textContent = 'Couldn’t read this scan. Re-export it as GLB and upload again.'; });
+  // tap (not drag) to place a measuring point
+  var down = null;
+  renderer.domElement.addEventListener('pointerdown', function(e){ down = { x: e.clientX, y: e.clientY }; });
+  renderer.domElement.addEventListener('pointerup', function(e){
+    if (!down || !M3.measuring) return;
+    var moved = Math.hypot(e.clientX - down.x, e.clientY - down.y); down = null;
+    if (moved > 6) return;
+    var r = renderer.domElement.getBoundingClientRect();
+    m3PickAt(e.clientX - r.left, e.clientY - r.top);
+  });
+  if (window.ResizeObserver) { V.ro = new ResizeObserver(m3Resize); V.ro.observe(wrap); }
+}
+function m3Cam(){ var V = M3.v; return M3.mode === '2d' ? V.ortho : V.persp; }
+function m3Resize(){
+  var V = M3.v; if (!V) return;
+  var W = V.wrap.clientWidth, H = V.wrap.clientHeight; if (!W || !H) return;
+  V.renderer.setSize(W, H); V.persp.aspect = W / H; V.persp.updateProjectionMatrix();
+  if (V.box) {
+    var size = V.box.getSize(new V.THREE.Vector3()), half = Math.max(size.x / 2 * H / W, size.z / 2) * 1.12, halfW = half * W / H;
+    V.ortho.left = -halfW; V.ortho.right = halfW; V.ortho.top = half; V.ortho.bottom = -half; V.ortho.updateProjectionMatrix();
+  }
+  m3Render();
+}
+function m3ApplyMode(){
+  var V = M3.v; if (!V || !V.model) return;
+  var is2d = M3.mode === '2d';
+  // 2D plan: cut at the chosen height. 3D: dollhouse view, with the ceiling cut away so you can see into the rooms.
+  var ht = V.box.max.y - V.box.min.y;
+  V.plane.constant = is2d ? V.box.min.y + M3.cut : V.box.max.y - Math.max(0.08, ht * 0.04);
+  V.model.traverse(function(o){ if (o.isMesh) (Array.isArray(o.material) ? o.material : [o.material]).forEach(function(m){ m.clippingPlanes = (is2d || M3.dollhouse) ? [V.plane] : []; m.needsUpdate = true; }); });
+  V.cp.enabled = !is2d; V.co.enabled = is2d;
+  V.scaleEl.style.display = is2d ? 'block' : 'none';
+  m3Render();
+}
+function m3Render(){
+  var V = M3.v; if (!V) return;
+  var cam = m3Cam(); V.renderer.render(V.scene, cam);
+  // labels for the pending line and saved lines
+  var W = V.wrap.clientWidth, H = V.wrap.clientHeight, html = '';
+  (V.labelPts || []).forEach(function(L){
+    var p = new V.THREE.Vector3(L.at[0], L.at[1], L.at[2]).project(cam);
+    if (p.z > 1) return;
+    var x = (p.x + 1) / 2 * W, y = (1 - p.y) / 2 * H;
+    html += '<span class="m3-lbl" style="position:absolute;left:' + x.toFixed(1) + 'px;top:' + y.toFixed(1) + 'px;transform:translate(-50%,-130%);white-space:nowrap;font-size:12px;font-weight:700;padding:2px 8px;border-radius:20px;' +
+      (L.pending ? 'background:#D5DC99;color:#000' : 'background:rgba(0,0,0,.72);color:#D9DAD4;border:1px solid rgba(217,218,212,.3)') + '">' + esc(L.text) + '</span>';
+  });
+  V.labels.innerHTML = html;
+  if (M3.mode === '2d' && V.box) {   // scale bar
+    var wpp = (V.ortho.right - V.ortho.left) / V.ortho.zoom / W;   // meters per pixel
+    var target = wpp * 110, steps = M3.units === 'ft' ? [1, 2, 5, 10, 20, 50].map(function(f){ return f * 0.3048; }) : [0.25, 0.5, 1, 2, 5, 10, 20];
+    var len = steps.filter(function(s){ return s <= target; }).pop() || steps[0], px = len / wpp;
+    V.scaleEl.innerHTML = '<div style="width:' + px.toFixed(0) + 'px;height:6px;border:2px solid #D9DAD4;border-top:none"></div><div style="margin-top:2px">' + (M3.units === 'ft' ? Math.round(len / 0.3048) + ' ft' : len + ' m') + '</div>';
+  }
+}
+function m3PickAt(x, y){
+  var V = M3.v; if (!V || !V.model) return false;
+  var THREE = V.THREE, W = V.wrap.clientWidth, H = V.wrap.clientHeight;
+  var rc = new THREE.Raycaster(); rc.setFromCamera(new THREE.Vector2(x / W * 2 - 1, -(y / H) * 2 + 1), m3Cam());
+  var hits = rc.intersectObject(V.model, true);
+  if (M3.mode === '2d' || M3.dollhouse) hits = hits.filter(function(h){ return h.point.y <= V.plane.constant + 1e-4; });
+  if (!hits.length) return false;
+  m3AddPoint(hits[0].point.toArray());
+  return true;
+}
+function m3AddPoint(p){
+  if (M3.pts.length >= 2) { M3.pts = []; M3.pending = null; }
+  M3.pts.push(p);
+  if (M3.pts.length === 2) {
+    var a = M3.pts[0], b = M3.pts[1], is2d = M3.mode === '2d';
+    var d = is2d ? Math.hypot(a[0] - b[0], a[2] - b[2]) : Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]);
+    var prev = M3.lastRoom || '';
+    M3.pending = { a: a, b: b, meters: d, view: is2d ? '2d' : '3d', room: prev, label: '' };
+  }
+  m3RedrawPick();
+  var el = $('m3-pending'); if (el) el.innerHTML = m3PendingHtml();
+  if (M3.pending && $('m3-room')) { (M3.pending.room ? $('m3-what') : $('m3-room')).focus({ preventScroll: true }); }
+}
+function m3ClearPick(){ M3.pts = []; M3.pending = null; m3RedrawPick(); var el = $('m3-pending'); if (el) el.innerHTML = ''; }
+function m3Discard(){ m3ClearPick(); }
+function m3Line(group, a, b, color, flat){
+  var V = M3.v, THREE = V.THREE, r = V.diag * 0.006;
+  var mat = new THREE.MeshBasicMaterial({ color: color, depthTest: false, transparent: true });
+  [a, b].forEach(function(p){ if (!p) return; var s = new THREE.Mesh(new THREE.SphereGeometry(r, 12, 8), mat); s.position.set(p[0], p[1], p[2]); s.renderOrder = 10; group.add(s); });
+  if (a && b) {
+    var bb = flat ? [b[0], a[1], b[2]] : b;
+    var g = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(a[0], a[1], a[2]), new THREE.Vector3(bb[0], bb[1], bb[2])]);
+    var l = new THREE.Line(g, new THREE.LineBasicMaterial({ color: color, depthTest: false, transparent: true })); l.renderOrder = 10; group.add(l);
+  }
+}
+function m3Clear(group){ while (group.children.length) { var o = group.children.pop(); o.geometry && o.geometry.dispose(); } }
+function m3RedrawPick(){
+  var V = M3.v; if (!V || !V.model) return;
+  m3Clear(V.overlay);
+  V.labelPts = (V.labelPts || []).filter(function(L){ return !L.pending; });
+  if (M3.pts.length) {
+    m3Line(V.overlay, M3.pts[0], M3.pts[1], 0xD5DC99, M3.pending && M3.pending.view === '2d');
+    if (M3.pending) { var a = M3.pts[0], b = M3.pts[1]; V.labelPts.push({ pending: true, at: [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2, (a[2] + b[2]) / 2], text: m3Fmt(M3.pending.meters) }); }
+  }
+  m3Render();
+}
+function m3DrawSaved(){
+  var V = M3.v; if (!V || !V.model) return;
+  m3Clear(V.saved);
+  var pend = (V.labelPts || []).filter(function(L){ return L.pending; });
+  V.labelPts = pend;
+  MEASURES.forEach(function(m){
+    if (m.source !== 'scan' || m.scanId !== M3.scanId || !m.a || !m.b || !M3.showSaved) return;
+    m3Line(V.saved, m.a, m.b, 0xB79CFF, m.view === '2d');
+    V.labelPts.push({ at: [(m.a[0] + m.b[0]) / 2, (m.a[1] + m.b[1]) / 2, (m.a[2] + m.b[2]) / 2], text: m.label + ' · ' + m3Fmt(m.meters) });
+  });
+  m3Render();
+}
+function m3SavePending(){
+  var p = M3.pending, log = $('m3-log'); if (!p) return;
+  p.room = ($('m3-room').value || '').trim(); p.label = ($('m3-what').value || '').trim();
+  if (!p.room) { log.textContent = 'Add the room.'; $('m3-room').focus(); return; }
+  $('m3-save').disabled = true;
+  api('/api/tools', { project: PID, action: 'measure-add', source: 'scan', scanId: M3.scanId, view: p.view, room: p.room, label: p.label || 'Measurement', meters: p.meters, a: p.a, b: p.b }).then(function(j){
+    if (!j.ok) { $('m3-save').disabled = false; log.textContent = 'Couldn’t save (' + (j.error || 'error') + ').'; return; }
+    M3.lastRoom = p.room; MEASURES = j.measures; m3ClearPick(); m3RenderList(); m3DrawSaved(); toast('Measurement saved');
+  });
+}
+
+m3LoadMeasures();
+/* SCAN3D_END */</script>
 </body>
 </html>

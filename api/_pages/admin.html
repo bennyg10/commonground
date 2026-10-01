@@ -129,7 +129,7 @@ h1,h2,.stat .v{font-family:'Bungee',sans-serif!important;font-weight:400!importa
 <script>
 var A = window.CG_ADMIN || {me:{name:'Admin'}, projects:[]};
 var D = null, STATS = null, TAB = 'overview', LAST_LINK = '', SUBQ = [], SUBQ_EDIT = {};
-var ROLE = {client:'Homeowner', gc:'GC', trade:'Trade / Sub'};
+var ROLE = {client:'Homeowner', gc:'GC', trade:'Trade / Sub', designer:'Designer'};
 var STAGE = {bidding:'Bidding', kickoff:'Kickoff', active:'Active'};
 var ERR = {not_yourself:'You can’t do that to your own account.', no_gc_yet:'Hire a GC first — that stage needs one.', not_found:'Not found — refresh and try again.',
   confirm_required:'Type the exact email / phone to confirm.', reason_required:'Add a short reason (3+ characters).', signature_required:'Enter who signed (3+ characters).',
@@ -228,7 +228,7 @@ function vSubs(){
     }).join('');
     return '<div class="card" data-subreq="'+esc(r.id)+'"><div class="row" style="justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap">'+
       '<div style="min-width:0"><div class="eyebrow">'+esc(r.projectName)+' · '+esc(r.address||'')+'</div><div style="font-family:Syne,sans-serif;font-size:19px;font-weight:800">'+esc(r.trade)+' near '+esc(r.zip)+'</div>'+
-      '<div class="small muted" style="margin-top:4px">'+esc(r.byName)+' ('+(r.byRole==='client'?'homeowner':'GC')+') · '+esc([r.contactEmail,r.phone].filter(Boolean).join(' · '))+' · asked '+esc(when(r.at))+'</div></div>'+pill+'</div>'+
+      '<div class="small muted" style="margin-top:4px">'+esc(r.byName)+' ('+(r.byRole==='client'?'homeowner':r.byRole==='designer'?'designer':'GC')+') · '+esc([r.contactEmail,r.phone].filter(Boolean).join(' · '))+' · asked '+esc(when(r.at))+'</div></div>'+pill+'</div>'+
       '<p style="margin:12px 0 4px;color:var(--w70)">'+esc(r.scope)+'</p><div class="small muted" style="margin-bottom:14px">When: '+esc(r.timing||'—')+' · Budget: '+esc(r.budget||'—')+'</div>'+
       (e.draft ? '<div class="alert soon">AI draft loaded — check each business, rating, license and phone before sending.</div>' : '')+
       rows+
@@ -236,7 +236,7 @@ function vSubs(){
       '<label style="display:block;font-size:10px;color:var(--w50);margin-bottom:10px">Note to the requester (optional)<textarea oninput="subSet(\''+jsq(k)+'\',-1,\'message\',this.value)" rows="2" style="display:block;width:100%;box-sizing:border-box;margin-top:3px;background:var(--d3);border:1px solid var(--w15);border-radius:7px;padding:8px 10px;color:var(--white);font-size:12px">'+esc(e.message)+'</textarea></label>'+
       '<label style="display:block;font-size:10px;color:var(--w50);margin-bottom:12px">Internal note (only you see this)<input value="'+esc(e.adminNote)+'" oninput="subSet(\''+jsq(k)+'\',-1,\'adminNote\',this.value)" style="display:block;width:100%;box-sizing:border-box;margin-top:3px;background:var(--d3);border:1px solid var(--w15);border-radius:7px;padding:8px 10px;color:var(--white);font-size:12px"></label>'+
       '<div class="row" style="gap:8px;flex-wrap:wrap"><button class="btn" onclick="subSave(\''+jsq(r.project)+'\',\''+jsq(r.id)+'\',false,this)">Save</button><button class="btn pri" onclick="subSave(\''+jsq(r.project)+'\',\''+jsq(r.id)+'\',true,this)">'+(r.sentAt?'Send update':'Send to '+esc(String(r.byName||'them').split(' ')[0]))+'</button>'+
-      '<a class="btn" href="/'+esc(r.projectPath)+'/'+(r.byRole==='client'?'homeowner':'gc')+'" target="_blank">View their page ↗</a></div></div>';
+      '<a class="btn" href="/'+esc(r.projectPath)+'/'+(r.byRole==='client'?'homeowner':r.byRole==='designer'?'designer':'gc')+'" target="_blank">View their page ↗</a></div></div>';
   }).join('');
 }
 function subDraft(p, id, btn){
@@ -282,7 +282,7 @@ function vPeople(){
   return '<div class="eyebrow">People</div><h1>Everyone on the platform</h1><div class="lede">Add people to any project, change what they can see, send a password-reset link, sign them out everywhere, pause or remove them.</div>'+
     '<div class="card"><h2>Add someone to a project</h2><form id="add-f" class="form" onsubmit="addPerson(event)">'+
       '<div><label for="ap-project">Project</label><select id="ap-project">'+opts()+'</select></div>'+
-      '<div><label for="ap-role">Role</label><select id="ap-role"><option value="client">Owner</option><option value="gc">GC</option><option value="trade">Trade / Sub</option></select></div>'+
+      '<div><label for="ap-role">Role</label><select id="ap-role"><option value="client">Owner</option><option value="gc">GC</option><option value="trade">Trade / Sub</option><option value="designer">Designer</option></select></div>'+
       '<div><label for="ap-name">Full name</label><input id="ap-name" required></div>'+
       '<div><label for="ap-id">Email or phone</label><input id="ap-id" required></div>'+
       '<div class="full"><button class="btn pri" id="ap-go" type="submit" style="padding:11px 16px">Create invite link</button></div></form>'+
@@ -304,7 +304,7 @@ function personRow(a){
   var roles = projs.length ? projs.map(function(p){
     return '<div class="row" style="gap:8px;margin-top:6px"><span class="small muted">'+esc(pname(p))+'</span>'+
       '<select class="mini" aria-label="Role on '+esc(pname(p))+'" onchange="setRole(\''+jsq(p)+'\',\''+jsq(a.identifier)+'\',this.value)">'+
-      ['client','gc','trade'].map(function(r){ return '<option value="'+r+'"'+(a.projects[p]===r?' selected':'')+'>'+ROLE[r]+'</option>'; }).join('')+'</select>'+
+      ['client','gc','trade','designer'].map(function(r){ return '<option value="'+r+'"'+(a.projects[p]===r?' selected':'')+'>'+ROLE[r]+'</option>'; }).join('')+'</select>'+
       (self?'':'<button class="btn" style="padding:5px 9px" onclick="removeFrom(\''+jsq(p)+'\',\''+jsq(a.identifier)+'\',\''+jsq(a.name)+'\')">Remove</button>')+'</div>';
   }).join('') : '<div class="small muted">'+(Object.keys(a.bids||{}).length?'Bid account · no project access':'No project access')+'</div>';
   return '<div class="person" data-id="'+esc(a.identifier)+'"><div><div class="row" style="gap:8px"><span class="pname">'+esc(a.name)+'</span>'+

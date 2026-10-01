@@ -10,21 +10,22 @@ const origin = (req) => siteOrigin(req);
 const canManage = (u, project) => !!u && (u.admin || (u.projects || {})[project] === 'gc');
 // owners can see the team and add co-owners (e.g. a spouse); GCs/admins manage everyone
 const canSeeTeam = (u, project) => canManage(u, project) || (!!u && (u.projects || {})[project] === 'client');
-const ACCOUNT_TYPES = ['homeowner', 'contractor'];
+const ACCOUNT_TYPES = ['homeowner', 'contractor', 'designer'];
 // ── project hierarchy: owner (client) > GC > trade ──
 // Owners have final say: they can invite, re-role or remove anyone. A GC can start a project and invite
 // any role (including the homeowner, who then sits above them), and manages trades + GC team.
-const RANK = { client: 3, gc: 2, trade: 1 };
+const RANK = { client: 3, gc: 2, designer: 2, trade: 1 };   // designers sit beside the GC, hired by the owner
 const myRole = (u, project) => (u && (u.projects || {})[project]) || (u && u.admin ? 'admin' : null);
 function canInviteRole(u, project, role) {
   const me = myRole(u, project);
-  return me === 'admin' || me === 'client' || (me === 'gc' && ['client', 'gc', 'trade'].includes(role));
+  return me === 'admin' || me === 'client' || (me === 'gc' && ['client', 'gc', 'trade', 'designer'].includes(role))
+    || (me === 'designer' && ['client', 'trade'].includes(role));   // a designer can bring in the homeowner and their own trades
 }
 async function canActOn(u, project, target) {       // remove / re-role another member
   const me = myRole(u, project);
   if (!target || target.identifier === u.identifier) return false;
   if (me === 'admin' || me === 'client') return true;
-  if (me !== 'gc' || target.role === 'client') return false;
+  if (me !== 'gc' || target.role === 'client' || target.role === 'designer') return false;   // the owner manages their designer
   const st = (await getJSON(`cg:project:${project}`)) || {};
   return !(st.hiredGc && st.hiredGc.identifier === target.identifier);   // only the owner can remove the hired GC
 }
@@ -176,6 +177,7 @@ export default async function handler(req, res) {
       await redis(['DEL', `cg:invitefor:${inv.project}:${inv.identifier}`]);
       await redis(['HSET', `cg:members:${inv.project}`, inv.identifier, JSON.stringify({ name: user.name, identifier: inv.identifier, role: inv.role, status: 'active', joinedAt: new Date().toISOString() })]);
       await createSession(req, res, inv.identifier);
+      if (inv.role === 'designer') await notify(req, inv.project, { text: `${user.name} joined as the designer`, targets: ['client', 'gc'], by: user.name, byAccount: user.identifier });
       if (inv.role === 'client') {
         const owners = (await redis(['HGETALL', `cg:members:${inv.project}`])) || [];
         let active = 0; for (let i = 1; i < owners.length; i += 2) { try { const m = JSON.parse(owners[i]); if (m.role === 'client' && m.status === 'active') active++; } catch (e) {} }

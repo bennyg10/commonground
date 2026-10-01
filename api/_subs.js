@@ -116,7 +116,7 @@ export async function saveSubOptions(req, me, project, id, b) {
     const first = !r.sentAt;
     r.status = 'ready'; r.sentAt = now(); r.sentBy = me.name;
     await notify(req, project, { text: `${first ? 'Your' : 'Updated'} ${r.trade.toLowerCase()} recommendations are ready — ${r.options.length} option${r.options.length === 1 ? '' : 's'} near ${r.zip}`,
-      targets: [r.byRole === 'gc' ? 'gc' : 'client'], by: 'Common Ground', byAccount: me.identifier });
+      targets: [r.byRole === 'gc' || r.byRole === 'designer' ? r.byRole : 'client'], by: 'Common Ground', byAccount: me.identifier });
   }
   r.updatedAt = now();
   await saveList(project, list);

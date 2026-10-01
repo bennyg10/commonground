@@ -94,13 +94,21 @@ h2{font-family:Syne,sans-serif;font-size:40px;line-height:1.15;letter-spacing:-.
 .calc .out p{color:var(--w70);font-size:15px;margin-top:10px}
 .calc .out small{color:var(--w50);font-size:12px;margin-top:12px;display:block}
 /* tools */
-.tools{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-top:40px}
+.tools{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-top:40px;align-items:start}
 .tool{background:var(--d2);border:1px solid var(--w08);border-radius:18px;padding:24px;display:flex;flex-direction:column;gap:10px}
 .tool .ic{width:42px;height:42px;border-radius:11px;background:var(--l10);border:1px solid var(--l20);display:flex;align-items:center;justify-content:center;color:var(--lime)}
 .tool h4{font-family:Syne,sans-serif;font-size:18px;letter-spacing:-.02em}
-.tool p{font-size:14.5px;color:var(--w70);flex:1}
+.tool p{font-size:14.5px;color:var(--w70)}
 .who{display:flex;gap:6px;flex-wrap:wrap}
-.who span{font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;border:1px solid var(--w15);color:var(--w70)}
+.who span,.who button{font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;border:1px solid var(--w15);color:var(--w70);background:none;font-family:inherit;line-height:1.55}
+.who button{cursor:pointer;transition:background .15s,color .15s,border-color .15s}
+.who button:hover{border-color:var(--l20);color:var(--lime)}
+.who button.on{background:var(--lime);border-color:var(--lime);color:#000}
+.who-ans{font-size:14px;line-height:1.55;color:var(--white);background:var(--l10);border:1px solid var(--l20);border-radius:12px;padding:12px 14px;animation:whoIn .2s ease-out}
+.who-ans .for{display:block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--lime);margin-bottom:4px}
+.who-ans .nx-line{display:block;margin-top:8px;color:var(--w70)}
+.who-ans .soon{display:inline-block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#C9B5FF;background:rgba(183,156,255,.14);border:1px solid rgba(183,156,255,.38);border-radius:20px;padding:1px 8px;margin-right:6px;vertical-align:1px}
+@keyframes whoIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
 .free{margin-top:48px;background:var(--d2);border:1px solid var(--l20);border-radius:22px;padding:40px;display:flex;align-items:center;justify-content:space-between;gap:28px;flex-wrap:wrap}
 .free h3{font-family:Syne,sans-serif;font-size:28px;letter-spacing:-.02em;line-height:1.2}
 .free p{color:var(--w70);margin-top:6px}
@@ -131,8 +139,9 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
 #m input:focus{border-color:var(--l20)}
 #m .full{width:100%}
 #m .x{position:absolute;top:14px;right:14px;width:34px;height:34px;border-radius:9px;border:1px solid var(--w08);background:var(--d3);color:var(--w70);font-size:18px;cursor:pointer;line-height:1}
-.choice{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}
-.choice button{background:var(--d3);border:1px solid var(--w08);border-radius:14px;padding:18px 14px;text-align:left;color:var(--white);cursor:pointer}
+.choice{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:18px}
+.choice button{background:var(--d3);border:1px solid var(--w08);border-radius:14px;padding:16px 12px;text-align:left;color:var(--white);cursor:pointer}
+@media(max-width:520px){.choice{grid-template-columns:1fr}.choice button{padding:14px}}
 .choice button b{display:block;font-family:Syne,sans-serif;font-size:16px;margin-bottom:4px}
 .choice button span{font-size:12.5px;color:var(--w50);line-height:1.45;display:block}
 .choice button.on{border-color:var(--lime);background:var(--l10)}
@@ -363,18 +372,47 @@ var ICON = {
   pulse:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>'
 };
 var TOOLS = [
-  ['check','Code check','Upload plans and get findings with code references, set to your property type and city.',['Homeowners','Contractors']],
-  ['plan','Plan analysis','Pull square footage, rooms and scope by trade out of a plan set in about a minute.',['Contractors','Homeowners']],
-  ['cube','3D scan','Upload an iPhone LiDAR scan and give everyone a 3D model of the site to walk around.',['Contractors']],
-  ['bid','Bid collection','Share one link with GCs. Proposals land in one list — hire or pass in a tap.',['Homeowners']],
-  ['sign','Approvals + change orders','Contracts and changes approved in writing, with a signed, timestamped record.',['Homeowners','Contractors']],
-  ['pulse','Live progress','Phase, percent complete and what’s next, visible to everyone on the project.',['Homeowners','Contractors']]
+  ['check','Code check','Upload plans and get findings with code references, set to your property type and city.', [
+    ['Homeowners','Know your plans are code-ready before you pay for bids, so the scope you approve doesn’t change at plan check.'],
+    ['Contractors','Bid on plans you know will pass, and stop eating the cost of redesigns and resubmittals.'],
+    ['Designers','Check clearances, egress and layout against code before your client falls for a design that can’t be permitted.']]],
+  ['plan','Plan analysis','Pull square footage, rooms and scope by trade out of a plan set in about a minute.', [
+    ['Homeowners','See exactly what’s in your plans (square footage, rooms, trade scope) so you can tell a fair bid from a padded one.'],
+    ['Contractors','Skip the manual takeoff and price from clean quantities in minutes, not days.'],
+    ['Designers','Pull room sizes and square footage instantly to spec finishes and furniture without re-measuring the plans.']]],
+  ['cube','3D scan','Upload an iPhone LiDAR scan: walk it in 3D, see it as a 2D plan and measure any wall.', [
+    ['Homeowners','Scan your home with an iPhone instead of paying for a measure-up, get a 3D model of the house and property, and cross-check it against your architect’s drawings to catch the small fixes early.'],
+    ['Contractors','Flatten the scan to a 2D plan and measure from it, save measurements per room and wall, or type your own in, all without another site visit.'],
+    ['Designers','Design against the real room: measure every wall, window and ceiling height from one scan, and check it against the drawings.']]],
+  ['bid','Bid collection','Share one link with GCs. Proposals land in one list — hire or pass in a tap.', [
+    ['Homeowners','One link to every GC and every proposal side by side, so you compare real numbers and hire in a tap.'],
+    ['Contractors','Submit your proposal in minutes and always know where you stand: pending, hired or passed.']]],
+  ['sign','Approvals + change orders','Contracts and changes approved in writing, with a signed, timestamped record.', [
+    ['Homeowners','Nothing is added to your bill until you’ve seen the price and signed.'],
+    ['Contractors','Get every change signed before you build it, and get paid for the work you did.'],
+    ['Designers','Get selections and design changes signed off in writing, so there’s no second-guessing at install.']]],
+  ['pulse','Live progress','Phase, percent complete and what’s next, visible to everyone on the project.', [
+    ['Homeowners','See what’s happening on your job today without texting your GC.'],
+    ['Contractors','Update once and everyone’s informed: fewer calls, fewer interruptions, more building.'],
+    ['Designers','Know when the job is ready for your finishes, so installs are scheduled at the right time, not guessed.']]]
 ];
+/* Easter egg: tap a who-tag on a card to see what that feature does for that person. Tap again to close. */
+var TOOL_WHO = {};
 function drawTools(){
-  $('tool-grid').innerHTML = TOOLS.map(function(t){
-    return '<div class="tool"><div class="ic">'+ICON[t[0]]+'</div><h4>'+esc(t[1])+'</h4><p>'+esc(t[2])+'</p><div class="who">'+t[3].map(function(w){return '<span>'+esc(w)+'</span>';}).join('')+'</div></div>';
+  $('tool-grid').innerHTML = TOOLS.map(function(t, ti){
+    var on = TOOL_WHO[ti], ans = '';
+    if (on != null) {
+      var w = t[3][on];
+      ans = '<div class="who-ans" role="status"><span class="for">For '+esc(w[0].toLowerCase())+'</span>'+esc(w[1])+
+        (w[2] ? '<span class="nx-line"><span class="soon">Coming next</span>'+esc(w[2])+'</span>' : '')+'</div>';
+    }
+    return '<div class="tool" data-tool="'+ti+'"><div class="ic">'+ICON[t[0]]+'</div><h4>'+esc(t[1])+'</h4><p>'+esc(t[2])+'</p>'+
+      '<div class="who">'+t[3].map(function(w, wi){
+        return '<button type="button" class="'+(on === wi ? 'on' : '')+'" aria-pressed="'+(on === wi)+'" title="What this does for '+esc(w[0].toLowerCase())+'" onclick="toolWho('+ti+','+wi+')">'+esc(w[0])+'</button>';
+      }).join('')+'</div>'+ans+'</div>';
   }).join('');
 }
+function toolWho(ti, wi){ TOOL_WHO[ti] = TOOL_WHO[ti] === wi ? null : wi; drawTools(); }
 
 /* ── Use Tool: sign up / sign in ── */
 var FORM = {type:'', mode:'new'};
@@ -415,9 +453,10 @@ function drawModal(){
     '<div class="choice" role="radiogroup" aria-label="I am a">'+
       '<button type="button" id="c-home" role="radio" aria-checked="'+(t==='homeowner')+'" class="'+(t==='homeowner'?'on':'')+'" onclick="pickType(\'homeowner\')"><b>Homeowner</b><span>Building or renovating a property</span></button>'+
       '<button type="button" id="c-gc" role="radio" aria-checked="'+(t==='contractor')+'" class="'+(t==='contractor'?'on':'')+'" onclick="pickType(\'contractor\')"><b>Contractor</b><span>GC or trade running projects</span></button>'+
+      '<button type="button" id="c-designer" role="radio" aria-checked="'+(t==='designer')+'" class="'+(t==='designer'?'on':'')+'" onclick="pickType(\'designer\')"><b>Designer</b><span>Interior or architectural design</span></button>'+
     '</div>'+
     '<form id="f"'+(t?'':' style="display:none"')+'><label for="nm">Full name</label><input id="nm" autocomplete="name" required value="'+esc(FORM.nm||'')+'">'+
-      (t==='contractor'?'<label for="co">Company (optional)</label><input id="co" autocomplete="organization" value="'+esc(FORM.co||'')+'">':'')+
+      (t==='contractor'||t==='designer'?'<label for="co">'+(t==='designer'?'Studio or company (optional)':'Company (optional)')+'</label><input id="co" autocomplete="organization" value="'+esc(FORM.co||'')+'">':'')+
       '<label for="id">Email or phone</label><input id="id" autocomplete="username" required value="'+esc(FORM.id||'')+'">'+
       '<label for="pw">Create a password (8+ characters)</label><input id="pw" type="password" autocomplete="new-password" minlength="8" required>'+
       '<button class="btn pri lg full" id="go" type="submit">Use Tool</button></form>'+

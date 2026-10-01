@@ -84,6 +84,8 @@ h2{font-family:Syne,sans-serif;font-size:19px;font-weight:700;letter-spacing:-.0
 .tool span{font-size:13.5px;color:var(--w70)}
 .chooser{background:var(--d2);border:1px solid var(--l20);border-radius:18px;padding:24px;margin-bottom:34px}
 .cards2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+#chooser .cards2{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media(max-width:720px){#chooser .cards2{grid-template-columns:1fr}}
 .opt{background:var(--d3);border:1px solid var(--w08);border-radius:14px;padding:18px;text-align:left;color:var(--white);cursor:pointer;font:inherit}
 .opt b{display:block;font-family:Syne,sans-serif;font-size:16px;margin-bottom:4px}
 .opt span{display:block;font-size:13px;color:var(--w50);line-height:1.5}
@@ -151,7 +153,8 @@ function initials(){ return String(U.name||'?').trim().split(/\s+/).map(function
 function money(n){ return n==null ? '' : '$'+Math.round(n).toLocaleString('en-US'); }
 function dayPart(){ var h=new Date().getHours(); return h<12?'morning':h<17?'afternoon':'evening'; }
 function isGC(){ return U.accountType==='contractor'; }
-var ROLE = {client:'Homeowner', gc:'GC', trade:'Trade'};
+function isDesigner(){ return U.accountType==='designer'; }
+var ROLE = {client:'Homeowner', gc:'GC', trade:'Trade', designer:'Designer'};
 function roleUrl(r){ return r==='client' ? 'homeowner' : r; }
 var SCOPE = {'new-build':'New build', remodel:'Remodel', addition:'Addition', adu:'ADU', demolition:'Demolition', 'tenant-improvement':'Tenant improvement', repair:'Repair'};
 
@@ -168,12 +171,13 @@ function render(){
   var mine = D.projects.filter(function(p){ return p.member; });
   var others = D.projects.filter(function(p){ return !p.member; });
   var h = '';
-  h += '<div class="hero"><div><div class="eyebrow">'+(U.accountType==='contractor'?'Contractor':U.accountType==='homeowner'?'Homeowner':'Your dashboard')+(U.company?' · '+esc(U.company):'')+'</div>'+
+  h += '<div class="hero"><div><div class="eyebrow">'+(U.accountType==='contractor'?'Contractor':U.accountType==='homeowner'?'Homeowner':U.accountType==='designer'?'Designer':'Your dashboard')+(U.company?' · '+esc(U.company):'')+'</div>'+
        '<h1>Good '+dayPart()+', '+esc(first())+'.</h1><div class="lede">'+esc(ledeText(mine))+'</div></div></div>';
   if (!U.accountType) {
     h += '<div class="chooser" id="chooser"><h2>How will you use Common Ground?</h2><div class="lede" style="margin-top:4px">We’ll set up the right tools. You can still be on any project either way.</div>'+
       '<div class="cards2"><button class="opt" id="pick-home" onclick="setType(\'homeowner\')"><b>I’m a homeowner</b><span>Start a project for my property and collect GC bids</span></button>'+
-      '<button class="opt" id="pick-gc" onclick="setType(\'contractor\')"><b>I’m a contractor</b><span>Run my projects, code checks, plans and 3D scans</span></button></div></div>';
+      '<button class="opt" id="pick-gc" onclick="setType(\'contractor\')"><b>I’m a contractor</b><span>Run my projects, code checks, plans and 3D scans</span></button>'+
+      '<button class="opt" id="pick-designer" onclick="setType(\'designer\')"><b>I’m a designer</b><span>Scan and measure rooms, and get design approvals signed</span></button></div></div>';
   }
   // bidders see their proposals first
   if (D.bids.length) h += bidsSection();
@@ -183,18 +187,21 @@ function render(){
   if (U.accountType && !D.bids.length) h += startCard();   // bidders get the upsell card instead
   h += '<div class="sec"><div class="sec-h"><h2>Your projects</h2><span class="ct">'+mine.length+'</span></div>'+
        (mine.length ? '<div class="grid" id="proj-grid">'+mine.map(projCard).join('')+'</div>'
-         : '<div class="empty" id="proj-empty">'+(U.accountType==='homeowner' ? 'No projects yet. Start one for your property above — it takes two minutes.' : U.accountType==='contractor' ? 'No projects yet. Add a new one or one that’s already underway.' : 'You’re not on a project yet.')+'</div>')+'</div>';
-  if (isGC() || !U.accountType) h += toolsSection(mine);
+         : '<div class="empty" id="proj-empty">'+(U.accountType==='homeowner' ? 'No projects yet. Start one for your property above — it takes two minutes.' : U.accountType==='contractor' ? 'No projects yet. Add a new one or one that’s already underway.' : U.accountType==='designer' ? 'No projects yet. Start one for a client above, or ask your client or their GC to invite you.' : 'You’re not on a project yet.')+'</div>')+'</div>';
+  if (isGC() || isDesigner() || !U.accountType) h += toolsSection(mine);
   if (others.length) h += '<div class="sec"><div class="sec-h"><h2>All platform projects</h2><span class="ct">Admin view · '+others.length+'</span></div><div class="grid">'+others.map(projCard).join('')+'</div></div>';
   $('main').innerHTML = h;
 }
 function ledeText(mine){
   if (U.accountType==='homeowner') return mine.length ? 'Here’s where your projects stand.' : 'Start your project, share one link with contractors, and hire with confidence.';
   if (U.accountType==='contractor') return mine.length ? 'Your projects and tools, all in one place.' : 'Add a project and start using the tools right away. Unlimited projects, free.';
+  if (U.accountType==='designer') return mine.length ? 'Your client projects, scans, measurements and approvals in one place.' : 'Start a project for a client, scan and measure the rooms, and get design approvals signed.';
   return 'Everything you’re working on, in one place.';
 }
 function startCard(){
   if (U.accountType==='homeowner') return '<div class="start"><div><h2>Start a project for your property</h2><p>Tell us the address and property type. We’ll set up code checks for residential or commercial, and a bid page to share with contractors.</p></div>'+
+    '<button class="btn pri" id="start-btn" onclick="openCreate()">Start a project</button></div>';
+  if (isDesigner()) return '<div class="start"><div><h2>Start a client project</h2><p>Add the property and bring your client in. Scan and measure every room, check it against the drawings, and get selections signed off in writing.</p></div>'+
     '<button class="btn pri" id="start-btn" onclick="openCreate()">Start a project</button></div>';
   return '<div class="start"><div><h2>Add a project</h2><p>Brand new or already underway — set it up in a minute, invite your client, and run code checks, plan analysis and 3D scans.</p></div>'+
     '<button class="btn pri" id="start-btn" onclick="openCreate()">Add a project</button></div>';
@@ -226,12 +233,12 @@ function bidsSection(){
     '<button class="btn pri" id="upsell-btn" onclick="'+(U.accountType?'openCreate()':'setType(\'contractor\',true)')+'">Add a project</button></div></div>';
 }
 function toolsSection(mine){
-  var list = [['schedule','Timeline + tasks','Plan the phases, assign tasks, one schedule for everyone.'],['codecheck','Code check','Plans in, findings with code references out.'],['plans','Plan analysis','Square footage, rooms and scope by trade.'],['scan','3D scan','Upload an iPhone LiDAR scan and share the model.']];
+  var list = isDesigner() ? [['scan','3D scan + measure','Walk the room in 3D, see it as a 2D plan and save measurements per wall.'],['plans','Plan analysis','Room sizes and square footage from a plan set.'],['codecheck','Code check','Clearances, egress and layout checked against code.']] : [['schedule','Timeline + tasks','Plan the phases, assign tasks, one schedule for everyone.'],['codecheck','Code check','Plans in, findings with code references out.'],['plans','Plan analysis','Square footage, rooms and scope by trade.'],['scan','3D scan','Upload an iPhone LiDAR scan and share the model.']];
   return '<div class="sec"><div class="sec-h"><h2>Free tools</h2><span class="ct">Open inside any project</span></div><div class="tools">'+
     list.map(function(t){ return '<button class="tool" id="tool-'+t[0]+'" onclick="openTool(\''+t[0]+'\')"><b>'+t[1]+'</b><span>'+t[2]+'</span></button>'; }).join('')+'</div></div>';
 }
 function openTool(t){
-  var mine = D.projects.filter(function(p){ return p.member && (p.role==='gc'||p.role==='client'); });
+  var mine = D.projects.filter(function(p){ return p.member && (p.role==='gc'||p.role==='client'||p.role==='designer'); });
   if (!mine.length) { if (!U.accountType) return setType('contractor', true); return openCreate(t); }
   var hash = t==='schedule' ? '#schedule' : '#tool-'+t;
   if (mine.length===1) { location.href='/'+mine[0].path+'/'+roleUrl(mine[0].role)+hash; return; }
@@ -260,7 +267,7 @@ function openCreate(tool){
   C = {step: isGC() ? 0 : 1, mode:'new', address:'', name:'', classification:'', subtype:'', scope:'', phase:'Pre-construction', percent:0, startDate:'', nextMilestone:'', clientName:'', clientEmail:'', tool:tool||''};
   drawCreate();
 }
-function steps(){ return isGC() ? (C.mode==='underway' ? [0,1,2,3,4] : [0,1,2,3,5]) : [1,2,3]; }
+function steps(){ return isGC() ? (C.mode==='underway' ? [0,1,2,3,4] : [0,1,2,3,5]) : isDesigner() ? [1,2,3,5] : [1,2,3]; }
 function dots(){ var s=steps(); return '<div class="dots">'+s.map(function(n){ return '<i class="'+(s.indexOf(n)<=s.indexOf(C.step)?'on':'')+'"></i>'; }).join('')+'</div>'; }
 var SUBS = {residential:[['single-family','Single-family'],['multi-family','Multi-family'],['adu','ADU'],['condo-townhome','Condo / townhome']],
             commercial:[['office','Office'],['retail','Retail'],['restaurant','Restaurant'],['mixed-use','Mixed-use'],['industrial','Industrial'],['other','Other']]};
@@ -273,7 +280,7 @@ function drawCreate(msg){
       '<div class="cards2" style="margin:0 0 18px"><button class="opt'+(C.mode==='new'?' on':'')+'" id="mode-new" onclick="C.mode=\'new\';drawCreate()"><b>New project</b><span>Pre-construction: code check, plan analysis, 3D scan</span></button>'+
       '<button class="opt'+(C.mode==='underway'?' on':'')+'" id="mode-underway" onclick="C.mode=\'underway\';drawCreate()"><b>Already underway</b><span>Set the current phase and bring your client in</span></button></div>';
   } else if (s===1) {
-    h += '<h3>'+(isGC()?'Where’s the job?':'Where’s the property?')+'</h3><div class="s">The address becomes your project’s page, like buildcommonground.io/123mainst.</div>'+
+    h += '<h3>'+(isGC()?'Where’s the job?':isDesigner()?'Where’s your client’s property?':'Where’s the property?')+'</h3><div class="s">The address becomes your project’s page, like buildcommonground.io/123mainst.</div>'+
       '<label for="c-addr">Property address</label><input id="c-addr" autocomplete="street-address" placeholder="123 Main St, Los Angeles, CA 90049" value="'+esc(C.address)+'">'+
       '<label for="c-name">Project name (optional)</label><input id="c-name" placeholder="e.g. Kitchen remodel" value="'+esc(C.name)+'">';
   } else if (s===2) {
@@ -291,7 +298,7 @@ function drawCreate(msg){
       '<div class="row2"><div><label for="c-start">Start date</label><input id="c-start" type="date" value="'+esc(C.startDate)+'"></div><div><label for="c-next">Next milestone</label><input id="c-next" placeholder="e.g. Framing inspection" value="'+esc(C.nextMilestone)+'"></div></div>'+
       clientFields();
   } else if (s===5) {
-    h += '<h3>Bring your client in?</h3><div class="s">Optional. They get a link to follow progress and approve decisions.</div>'+clientFields();
+    h += '<h3>Bring your client in?</h3><div class="s">Optional. They get a link to '+(isDesigner()?'see your measurements and sign off on design approvals.':'follow progress and approve decisions.')+'</div>'+clientFields();
   }
   var last = steps()[steps().length-1] === s;
   h += '<div class="msg" id="c-msg"'+(msg?' style="display:block"':'')+'>'+esc(msg||'')+'</div>'+
@@ -318,13 +325,13 @@ function stepNext(){
   if ((C.step===4||C.step===5) && (C.clientName && !C.clientEmail || !C.clientName && C.clientEmail)) return drawCreate('Add both the client’s name and email, or leave both blank.');
   if (i < s.length-1) { C.step = s[i+1]; return drawCreate(); }
   var b=$('c-next-btn'); b.disabled=true; b.textContent='Creating…';
-  var body = {action:'create', address:C.address, name:C.name, classification:C.classification, subtype:C.subtype, scope:C.scope, as: isGC()?'gc':'client', mode:C.mode,
+  var body = {action:'create', address:C.address, name:C.name, classification:C.classification, subtype:C.subtype, scope:C.scope, as: isGC()?'gc':isDesigner()?'designer':'client', mode:C.mode,
     phase:C.phase, percent:C.percent, startDate:C.startDate, nextMilestone:C.nextMilestone, clientName:C.clientName, clientEmail:C.clientEmail};
   fetch('/api/project',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify(body)})
     .then(function(r){ return r.json(); }).catch(function(){ return {error:'network'}; }).then(function(j){
       if (!j.ok) return drawCreate({address_required:'Enter the property address.', classification_required:'Choose residential or commercial.', too_many_attempts:'You’ve created a lot of projects today. Try again tomorrow.', network:'Could not reach the server.'}[j.error] || 'That didn’t work. Try again.');
       C.created = true; draftClear();
-      var dest = j.url + (C.tool ? (C.tool==='schedule'?'#schedule':'#tool-'+C.tool) : isGC() ? (C.mode==='underway'?'':'#tools') : '#proposals');
+      var dest = j.url + (C.tool ? (C.tool==='schedule'?'#schedule':'#tool-'+C.tool) : isGC() ? (C.mode==='underway'?'':'#tools') : isDesigner() ? '#tool-scan' : '#proposals');
       if (j.clientInvite) {
         showModal('<div class="eyebrow">Project created</div><h3>'+esc(j.project.name)+' is ready</h3><div class="s">'+(j.clientInvite.emailed?'We emailed '+esc(j.clientInvite.name)+' an invite. You can also text them this link:':'Send '+esc(j.clientInvite.name)+' this link to join:')+'</div>'+
           '<input id="c-invite" readonly value="'+esc(j.clientInvite.link)+'" onclick="this.select()">'+

@@ -65,8 +65,10 @@ export default async function handler(req, res) {
 
     // permission checks before anything is looked up or stored
     if (['approve', 'reject', 'void'].includes(action) && (u.projects || {})[project] !== 'client') return res.status(403).json({ error: 'owner_only' });
-    if (action === 'withdraw' && role !== 'gc') return res.status(403).json({ error: 'gc_only' });
-    if ((action === 'create' || action === 'revise') && role !== 'gc') return res.status(403).json({ error: 'gc_only' });
+    // GCs raise change orders; designers raise design approvals (selections, layouts) for the homeowner
+    const raiser = role === 'gc' || role === 'designer';
+    if (action === 'withdraw' && !raiser) return res.status(403).json({ error: 'gc_only' });
+    if ((action === 'create' || action === 'revise') && !raiser) return res.status(403).json({ error: 'gc_only' });
 
     const raw = await redis(['HGET', key, id]);
     let d = raw ? JSON.parse(raw) : null;
@@ -79,11 +81,14 @@ export default async function handler(req, res) {
 
     const ev = { by: u.name, account: u.identifier, role, at: new Date().toISOString(), ip: ip(req), ua: clean(req.headers['user-agent'] || '', 200) };
 
+    // a designer can only revise or withdraw their own design approvals
+    if (role === 'designer' && ['revise', 'withdraw'].includes(action) && !(d && d.type === 'design' && d.createdByAccount === u.identifier)) return res.status(403).json({ error: 'not_yours' });
+    if (role === 'gc' && !u.admin && ['revise', 'withdraw'].includes(action) && d && d.type === 'design') return res.status(403).json({ error: 'not_yours' });
     if (action === 'create') {
-      if (role !== 'gc') return res.status(403).json({ error: 'gc_only' });
+      if (!raiser) return res.status(403).json({ error: 'gc_only' });
       const title = clean(b.title, 160);
       if (!title) return res.status(400).json({ error: 'title_required' });
-      d = { id, type: 'co', title, area: clean(b.area, 80), amount: num(b.amount), desc: clean(b.desc, 1000), status: 'pending',
+      d = { id, type: role === 'designer' ? 'design' : 'co', createdByAccount: u.identifier, createdByRole: role, title, area: clean(b.area, 80), amount: num(b.amount), desc: clean(b.desc, 1000), status: 'pending',
             createdBy: u.name, createdAt: ev.at, events: [{ type: 'created', amount: num(b.amount), note: clean(b.desc, 1000), ...ev }], photos: [] };
       for (const p of (Array.isArray(b.photos) ? b.photos.slice(0, 3) : [])) { const pid = await savePhoto(project, p); if (pid) d.photos.push({ id: pid, by: u.name, at: ev.at }); }
     } else if (action === 'approve') {
@@ -112,7 +117,7 @@ export default async function handler(req, res) {
         d.voidedApproval = d.approval; delete d.approval; d.status = 'pending';
       } else {
         if (d.status === 'approved') return res.status(409).json({ error: 'already_approved', decision: d });
-        if (action === 'withdraw' && d.type !== 'co') return res.status(400).json({ error: 'not_change_order' });
+        if (action === 'withdraw' && d.type !== 'co' && d.type !== 'design') return res.status(400).json({ error: 'not_change_order' });
         d.status = action === 'reject' ? 'rejected' : 'withdrawn';
         d.events.push({ type: d.status, note, ...ev });
       }
@@ -128,7 +133,7 @@ export default async function handler(req, res) {
       if (!['rejected', 'withdrawn'].includes(d.status)) return res.status(409).json({ error: 'not_closed' });
       d.status = 'pending'; d.events.push({ type: 'reopened', note: clean(b.note, 1000), ...ev });
     } else if (action === 'revise') {
-      if (role !== 'gc') return res.status(403).json({ error: 'gc_only' });
+      if (!raiser) return res.status(403).json({ error: 'gc_only' });
       if (d.status === 'approved') return res.status(409).json({ error: 'already_approved', decision: d });
       const amount = num(b.amount);
       if (amount !== null) d.amount = amount;
@@ -143,16 +148,21 @@ export default async function handler(req, res) {
 
     // who hears about it
     const money = d.amount != null ? ` · $${Math.round(d.amount).toLocaleString('en-US')}` : '';
-    const who = role === 'client' ? 'Owner' : role === 'gc' ? 'GC' : 'Trade';
-    const n = action === 'approve' ? { text: `${u.name} (Owner) approved: ${d.title}${money} · ref ${d.approval.ref}`, targets: ['gc'] }
-      : action === 'create' ? { text: `New change order to review: ${d.title}${money}`, targets: ['client'] }
-      : action === 'revise' ? { text: `Change order revised: ${d.title}${money}`, targets: ['client'] }
-      : action === 'reject' ? { text: `${u.name} (Owner) rejected: ${d.title} — ${clean(b.note, 140)}`, targets: ['gc'] }
-      : action === 'void' ? { text: `${u.name} (Owner) voided their approval: ${d.title} — ${clean(b.note, 140)}`, targets: ['gc'] }
-      : action === 'withdraw' ? { text: `Change order withdrawn: ${d.title} — ${clean(b.note, 140)}`, targets: ['client'] }
-      : action === 'add-photo' ? { text: `${u.name} added a photo to "${d.title}"`, targets: role === 'gc' ? ['client'] : ['gc'] }
-      : action === 'reopen' ? { text: `Reopened for review: ${d.title}`, targets: role === 'gc' ? ['client'] : ['gc'] }
-      : action === 'comment' ? { text: `${u.name} (${who}) on "${d.title}": ${clean(b.note, 140)}`, targets: role === 'gc' ? ['client'] : ['gc'] }
+    const who = role === 'client' ? 'Owner' : role === 'gc' ? 'GC' : role === 'designer' ? 'Designer' : 'Trade';
+    const design = d.type === 'design';
+    const back = design ? ['designer', 'gc'] : ['gc'];   // who hears back from the owner
+    const toOwner = design ? ['client', 'gc'] : ['client'];
+    const kind = design ? 'Design approval' : 'Change order';
+    const others = role === 'client' ? back : toOwner;
+    const n = action === 'approve' ? { text: `${u.name} (Owner) approved: ${d.title}${money} · ref ${d.approval.ref}`, targets: back }
+      : action === 'create' ? { text: `New ${kind.toLowerCase()} to review: ${d.title}${money}`, targets: toOwner }
+      : action === 'revise' ? { text: `${kind} revised: ${d.title}${money}`, targets: toOwner }
+      : action === 'reject' ? { text: `${u.name} (Owner) rejected: ${d.title} — ${clean(b.note, 140)}`, targets: back }
+      : action === 'void' ? { text: `${u.name} (Owner) voided their approval: ${d.title} — ${clean(b.note, 140)}`, targets: back }
+      : action === 'withdraw' ? { text: `${kind} withdrawn: ${d.title} — ${clean(b.note, 140)}`, targets: toOwner }
+      : action === 'add-photo' ? { text: `${u.name} added a photo to "${d.title}"`, targets: others }
+      : action === 'reopen' ? { text: `Reopened for review: ${d.title}`, targets: others }
+      : action === 'comment' ? { text: `${u.name} (${who}) on "${d.title}": ${clean(b.note, 140)}`, targets: others }
       : null;
     if (n) await notify(req, project, Object.assign(n, { decision: d.id, by: u.name, byAccount: u.identifier }));
     return res.status(200).json({ ok: true, decision: role === 'gc' ? d : stripAudit(JSON.parse(JSON.stringify(d))) });

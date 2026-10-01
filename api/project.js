@@ -135,8 +135,8 @@ async function createProject(req, res, b) {
   if (!['residential', 'commercial'].includes(classification)) return res.status(400).json({ error: 'classification_required' });
   const subtype = (SUBTYPES[classification] || []).includes(clean(b.subtype, 30)) ? clean(b.subtype, 30) : '';
   const scope = SCOPES.includes(clean(b.scope, 30)) ? clean(b.scope, 30) : '';
-  const as = clean(b.as, 10) || (u.accountType === 'contractor' ? 'gc' : u.accountType === 'homeowner' ? 'client' : '');
-  if (!['client', 'gc'].includes(as)) return res.status(400).json({ error: 'account_type_required' });
+  const as = clean(b.as, 10) || (u.accountType === 'contractor' ? 'gc' : u.accountType === 'homeowner' ? 'client' : u.accountType === 'designer' ? 'designer' : '');
+  if (!['client', 'gc', 'designer'].includes(as)) return res.status(400).json({ error: 'account_type_required' });
   const mode = as === 'gc' && clean(b.mode, 10) === 'underway' ? 'underway' : 'new';
   // unique, readable URL: "123 Main St, …" → /123mainst
   let base = slugFromAddress(address);
@@ -159,13 +159,13 @@ async function createProject(req, res, b) {
   await setJSON(`cg:project:${id}`, { stage: as === 'gc' ? 'active' : 'bidding', hiredGc, startedAt: as === 'gc' ? now() : null, startedBy: as === 'gc' ? u.name : undefined });
   await redis(['SET', `cg:seeded:${id}`, '1']);
   u.projects = Object.assign({}, u.projects, { [id]: as });
-  if (!u.accountType) u.accountType = as === 'gc' ? 'contractor' : 'homeowner';
+  if (!u.accountType) u.accountType = as === 'gc' ? 'contractor' : as === 'designer' ? 'designer' : 'homeowner';
   await setJSON(`cg:user:${u.identifier}`, u);
   await addMember(id, u.identifier, { name: u.name, role: as, status: 'active', joinedAt: now() });
-  // a GC can bring their client in right away
+  // a GC or designer can bring their client in right away
   let clientInvite = null;
   const cEmail = normalizeIdentifier(b.clientEmail || ''), cName = clean(b.clientName, 80);
-  if (as === 'gc' && cEmail && cName) {
+  if ((as === 'gc' || as === 'designer') && cEmail && cName) {
     const t = await createInvite(id, 'client', cName, cEmail, u.identifier, 14);
     await addMember(id, cEmail, { name: cName, role: 'client', status: 'invited', invitedAt: now() });
     clientInvite = { name: cName, identifier: cEmail, link: `${siteOrigin(req)}/${id}/homeowner?invite=${t}` };

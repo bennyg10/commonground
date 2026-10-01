@@ -29,7 +29,7 @@ export async function setJSON(key, obj, ttlSeconds) {
 }
 
 export const clean = (v, max = 500) => (typeof v === 'string' ? v.trim().slice(0, max) : '');
-export const ROLES = ['client', 'gc', 'trade'];
+export const ROLES = ['client', 'gc', 'trade', 'designer'];
 // URL name for each role: the homeowner's address says /homeowner (the role is stored as 'client')
 export const roleSlug = (r) => (r === 'client' ? 'homeowner' : r);
 

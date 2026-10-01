@@ -123,7 +123,9 @@ export default async function handler(req, res) {
       return login('Your account doesn\'t have access to this project.', { adminExists, signedIn: publicUser(u) });
     }
 
-    const session = { user: publicUser(u), project, path: P, projectInfo: projInfo, role, roleSlug: roleSlug(role), admin: !!u.admin, memberRole: mine };
+    // the built-in demo pages have homeowner / GC / trade views only; a designer there gets the trade-level view (no pricing)
+    const pageRole = meta.builtin && role === 'designer' ? 'trade' : role;
+    const session = { user: publicUser(u), project, path: P, projectInfo: projInfo, role: pageRole, roleSlug: roleSlug(role), admin: !!u.admin, memberRole: mine, designer: role === 'designer' };
     return send(res, inject(readPage(meta.builtin ? meta.page : 'workspace.html'), 'CG_SESSION', session));
   } catch (err) {
     return send(res, '<h1>Something went wrong</h1><p>' + String(err.message || err).replace(/</g, '&lt;').slice(0, 200) + '</p>', 500);

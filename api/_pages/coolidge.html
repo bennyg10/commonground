@@ -3110,7 +3110,7 @@ function notifToast(n){
 var CG_SESS = window.CG_SESSION || null;
 var CG_PROJECT_SLUG = (CG_SESS && CG_SESS.project) || 'anita';
 var CG_PROJECT_PATH = (CG_SESS && CG_SESS.path) || '141nanita';
-var ROLE_LABEL = {client:'Homeowner', gc:'General Contractor', trade:'Trade / Sub'};
+var ROLE_LABEL = {client:'Homeowner', gc:'General Contractor', trade:'Trade / Sub', designer:'Designer'};
 
 function sessFirstName(){ return CG_SESS && CG_SESS.user && CG_SESS.user.name ? CG_SESS.user.name.split(' ')[0] : 'Ben'; }
 function sessInitials(){
@@ -3142,7 +3142,7 @@ function sessInit(){
     var ph = document.querySelector('.sb-proj-header'); if (ph) { ph.onclick = null; ph.style.cursor = 'default'; }
   }
   var tag = document.getElementById('sb-role-tag');
-  if (tag) tag.textContent = CG_SESS.role === 'gc' ? 'GC' : CG_SESS.role === 'trade' ? 'Trade' : 'Homeowner';
+  if (tag) tag.textContent = CG_SESS.designer ? 'Designer' : CG_SESS.role === 'gc' ? 'GC' : CG_SESS.role === 'trade' ? 'Trade' : 'Homeowner';
 }
 
 function sessToggleMenu(e){
@@ -3178,7 +3178,7 @@ function sessSignOut(){
 var TEAM_MEMBERS = [];
 var TEAM_LAST_RESULT = '';
 function teamCanManage(){ return CG_SESS && (CG_SESS.admin || CG_SESS.memberRole === 'gc' || CG_SESS.memberRole === 'client'); }
-function teamCanAct(m){ return CG_SESS && (CG_SESS.admin || CG_SESS.memberRole === 'client' || (CG_SESS.memberRole === 'gc' && m.role !== 'client')); }
+function teamCanAct(m){ return CG_SESS && (CG_SESS.admin || CG_SESS.memberRole === 'client' || (CG_SESS.memberRole === 'gc' && m.role !== 'client' && m.role !== 'designer')); }
 function teamRenderAccess(){
   var el = document.getElementById('team-access'); if (!el) return;
   if (!CG_SESS) { el.innerHTML = '<div style="background:var(--d3);border:1px solid var(--w08);border-radius:var(--r);padding:12px 14px;font-size:11px;color:var(--w50);line-height:1.6;margin-bottom:12px"><b style="color:var(--white)">Team access</b> — invite owners, GCs and subs once the live site is set up. Open /anita/gc to manage access.</div>'; return; }
@@ -3200,7 +3200,7 @@ function teamRenderAccess(){
       '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:6px;margin-bottom:8px">'+
         '<input id="ti-name" placeholder="Full name" style="'+inp+'">'+
         '<input id="ti-id" placeholder="Email or mobile number" style="'+inp+'">'+
-        '<select id="ti-role" style="'+inp+'"><option value="client">Homeowner (final say)</option><option value="trade">Trade / Sub</option><option value="gc">GC</option></select>'+
+        '<select id="ti-role" style="'+inp+'"><option value="client">Homeowner (final say)</option><option value="trade">Trade / Sub</option><option value="designer">Designer</option><option value="gc">GC</option></select>'+
       '</div>'+
       '<button onclick="teamInvite()" style="width:100%;padding:9px;background:var(--lime);border:none;border-radius:8px;font-size:11px;font-weight:700;color:var(--dk);cursor:pointer;font-family:inherit">Create invite link</button>'+
       '<div id="ti-result">'+TEAM_LAST_RESULT+'</div>'+
@@ -4169,7 +4169,7 @@ var SUB_REQS = [], SUB_STATE = null, SUB_LOADED = false;
 function subEsc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
 function subS(){ return window.CG_SESSION || null; }
 function subProject(){ var s = subS(); return s ? s.project : ''; }
-function subCan(){ var s = subS(); return !!(s && s.user && (s.role === 'client' || s.role === 'gc')); }
+function subCan(){ var s = subS(); return !!(s && s.user && (s.role === 'client' || s.role === 'gc' || s.role === 'designer')); }
 function subZipGuess(){ var s = subS(), a = (s && s.projectInfo && s.projectInfo.address) || ''; var m = a.match(/\b(\d{5})(?:-\d{4})?\b/); return m ? m[1] : ''; }
 function subWhen(iso){ try { return new Date(iso).toLocaleString([], {weekday:'short', hour:'numeric', minute:'2-digit'}); } catch (e) { return ''; } }
 function subDraftKey(){ return 'cg_sub_draft_' + subProject(); }

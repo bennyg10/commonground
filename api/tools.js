@@ -10,7 +10,7 @@ const MAX_SCAN_BYTES = 24 * 1024 * 1024;
 const CHUNK_B64 = 2800000;                    // base64 chars per chunk (~2.1 MB)
 const MAX_SCANS = 12;
 const SCAN_EXT = ['glb', 'usdz'];
-const TOOLS = ['codecheck', 'plans'];
+const TOOLS = ['codecheck', 'plans', 'crosscheck'];
 const SCHED_STATUS = ['planned', 'in-progress', 'done', 'delayed'];
 const isDate = (s) => /^\d{4}-\d{2}-\d{2}$/.test(String(s || ''));
 const now = () => new Date().toISOString();
@@ -27,7 +27,7 @@ export default async function handler(req, res) {
   const u = await currentUser(req);
   const role = roleFor(u, project);
   if (!u || !role) return res.status(401).json({ error: 'sign_in_required' });
-  const canWrite = role === 'gc' || role === 'client';
+  const canWrite = role === 'gc' || role === 'client' || role === 'designer';
 
   try {
     // ── saved tool results
@@ -47,9 +47,40 @@ export default async function handler(req, res) {
                      result, by: u.name, role, at: now() };
       await redis(['LPUSH', `cg:tools:${project}`, JSON.stringify(item)]);
       await redis(['LTRIM', `cg:tools:${project}`, '0', '29']);
-      const label = tool === 'codecheck' ? 'Code check' : 'Plan analysis';
+      const label = tool === 'codecheck' ? 'Code check' : tool === 'crosscheck' ? 'Scan vs drawings cross-check' : 'Plan analysis';
       await notify(req, project, { text: `${label} saved: ${item.title || item.fileName || 'plans'}`, targets: role === 'gc' ? ['client'] : ['gc'], by: u.name, byAccount: u.identifier, noEmail: true });
       return res.status(200).json({ ok: true, item });
+    }
+
+    // ── measurements: taken on a 3D scan (3D or 2D plan view) or typed in by hand, grouped by room and wall
+    if (req.method === 'GET' && action === 'measures') {
+      return res.status(200).json({ ok: true, measures: (await getJSON(`cg:measure:${project}`)) || [] });
+    }
+    if (req.method === 'POST' && action === 'measure-add') {
+      if (await rateLimited(`cg:rl:measure:${u.identifier}`, 400, 86400)) return res.status(429).json({ error: 'too_many_attempts' });
+      const meters = Number(b.meters);
+      if (!(meters > 0 && meters < 1000)) return res.status(400).json({ error: 'bad_length' });
+      const room = clean(b.room, 60), label = clean(b.label, 80);
+      if (!room) return res.status(400).json({ error: 'room_required' });
+      const pt = (p) => (Array.isArray(p) && p.length === 3 && p.every((n) => Number.isFinite(Number(n))) ? p.map((n) => Math.round(Number(n) * 1000) / 1000) : null);
+      const source = b.source === 'scan' ? 'scan' : 'manual';
+      const scanId = source === 'scan' ? clean(b.scanId, 40) : '';
+      if (source === 'scan' && !(await redis(['HGET', `cg:scans:${project}`, scanId]))) return res.status(404).json({ error: 'scan_not_found' });
+      const m = { id: 'm' + Date.now().toString(36) + token(3).replace(/[^a-zA-Z0-9]/g, ''), room, label: label || 'Measurement', meters: Math.round(meters * 1000) / 1000,
+                  source, scanId, view: b.view === '2d' ? '2d' : '3d', a: source === 'scan' ? pt(b.a) : null, b: source === 'scan' ? pt(b.b) : null,
+                  note: clean(b.note, 200), by: u.name, account: u.identifier, role, at: now() };
+      const list = (await getJSON(`cg:measure:${project}`)) || [];
+      if (list.length >= 400) return res.status(409).json({ error: 'too_many_measures' });
+      list.push(m); await setJSON(`cg:measure:${project}`, list);
+      return res.status(200).json({ ok: true, measure: m, measures: list });
+    }
+    if (req.method === 'POST' && action === 'measure-delete') {
+      const list = (await getJSON(`cg:measure:${project}`)) || [];
+      const m = list.find((x) => x.id === clean(b.id, 40));
+      if (!m) return res.status(404).json({ error: 'not_found' });
+      if (!(m.account === u.identifier || role === 'gc' || role === 'client' || u.admin)) return res.status(403).json({ error: 'forbidden' });
+      const next = list.filter((x) => x.id !== m.id); await setJSON(`cg:measure:${project}`, next);
+      return res.status(200).json({ ok: true, measures: next });
     }
 
     // ── 3D scans
@@ -90,6 +121,7 @@ export default async function handler(req, res) {
     if (!canWrite) return res.status(403).json({ error: 'forbidden' });
 
     if (action === 'schedule-save') {
+      if (role === 'designer') return res.status(403).json({ error: 'forbidden' });   // the schedule is the GC's (and owner's)
       const items = Array.isArray(b.items) ? b.items.slice(0, 80) : null;
       if (!items) return res.status(400).json({ error: 'bad_request' });
       const clean_ = items.map((x, i) => ({
