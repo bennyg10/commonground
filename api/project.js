@@ -8,6 +8,7 @@ import {
   sendEmail, emailLayout, escHtml, siteOrigin, projectTitle, createInvite, addMember, projectMembers, SUPPORT_EMAIL,
   indexUser, projectPath, getProjectMeta, RESERVED_PATHS, BUILTIN, ROLES,
 } from './_lib.js';
+import { seedPatch, getScope, saveScope, saveBreakdown, listInvoices, uploadInvoice, updateInvoice, deleteInvoice, invoiceFile, publicInvoice } from './_budget.js';
 import { rosterState, rosterAction, rosterDocFile } from './_roster.js';
 import { createSubRequest, listSubRequests, publicSubRequest, cancelSubRequest, markSubInvited } from './_subs.js';
 
@@ -195,6 +196,7 @@ export default async function handler(req, res) {
 
   try {
     await seedProject(project);
+    await seedPatch(project);
 
     // ════════ PUBLIC: bid page (token-based) ════════
     if (req.method === 'GET' && action === 'bidinfo') {
@@ -310,6 +312,39 @@ export default async function handler(req, res) {
       return res.status(st).json(body);
     }
 
+    // ════════ PROJECT BUDGET: scope checklist, proposal line items, invoices ════════
+    const BUDGET_ACTIONS = ['invoices', 'invoice-file', 'scope-save', 'bid-breakdown', 'invoice-upload', 'invoice-update', 'invoice-delete'];
+    if (BUDGET_ACTIONS.includes(action)) {
+      if (!(isOwner || isGC)) return res.status(403).json({ error: 'forbidden' });
+      if (req.method === 'GET' && action === 'invoices') return res.status(200).json({ ok: true, invoices: (await listInvoices(project)).map(publicInvoice) });
+      if (req.method === 'GET' && action === 'invoice-file') {
+        const f = await invoiceFile(project, clean(q.id, 40));
+        if (!f) return res.status(404).json({ error: 'not_found' });
+        res.setHeader('Content-Type', f.inv.fileType);
+        res.setHeader('Content-Disposition', `inline; filename="${f.inv.fileName.replace(/[^\w.\- ]/g, '')}"`);
+        res.setHeader('Cache-Control', 'private, no-store');
+        return res.status(200).send(Buffer.from(f.data, 'base64'));
+      }
+      if (req.method !== 'POST') return res.status(405).json({ error: 'method_not_allowed' });
+      const who = (u.projects || {})[project] === 'client' ? 'client' : role;
+      if (action === 'scope-save') {
+        if (!isOwner) return res.status(403).json({ error: 'owner_only' });
+        return res.status(200).json({ ok: true, scope: await saveScope(project, b.scope) });
+      }
+      if (action === 'bid-breakdown') {
+        if (!isOwner) return res.status(403).json({ error: 'owner_only' });
+        const bd = await saveBreakdown(project, clean(b.bidId, 60), b.breakdown);
+        return bd ? res.status(200).json({ ok: true, breakdown: bd }) : res.status(404).json({ error: 'not_found' });
+      }
+      let out;
+      if (action === 'invoice-upload') out = await uploadInvoice(req, project, u, who, b);
+      else if (action === 'invoice-update') out = await updateInvoice(project, u, who, b);
+      else out = await deleteInvoice(project, u, who, b.id);
+      if (out[1].invoice) out[1].invoice = publicInvoice(out[1].invoice);
+      if (out[1].invoices) out[1].invoices = out[1].invoices.map(publicInvoice);
+      return res.status(out[0]).json(out[1]);
+    }
+
     if (req.method === 'GET' && action === 'state') {
       const owners = (await projectMembers(project)).filter((m) => m.role === 'client' && m.status === 'active').map((m) => m.name);
       const meta = await getProjectMeta(project);
@@ -322,6 +357,13 @@ export default async function handler(req, res) {
         out.bidInvites = []; for (let i = 0; i < flat.length; i += 2) { try { const x = JSON.parse(flat[i + 1]); delete x.token; out.bidInvites.push(x); } catch (e) {} }
       }
       if (role !== 'trade') out.kickoff = (await getJSON(`cg:kickoff:${project}`)) || { items: [] };
+      if (isOwner || isGC) {
+        out.scope = await getScope(project);
+        if (p.hiredGc) {
+          const hb = (await listBids(project)).find((x) => x.id === p.hiredGc.bidId);
+          if (hb) out.contract = { bidId: hb.id, gcName: hb.gcName, amount: hb.amount, breakdown: hb.breakdown || null, hasFile: !!hb.file };
+        }
+      }
       return res.status(200).json(out);
     }
 

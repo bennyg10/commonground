@@ -569,7 +569,7 @@ h1,h2,h3,h4,#pg-greeting,.sh-title{font-family:'Bungee',sans-serif!important;fon
       <button class="nav-btn" onclick="sbNav(this,'photos')"><i class="ti ti-photo"></i>Before photos<span class="nav-badge" id="nav-photo-count">5</span></button>
       <button id="nav-btn-proposals" class="nav-btn role-hidden" onclick="sbNav(this,'proposals')"><i class="ti ti-file-certificate"></i>Proposals<span class="nav-badge" id="nav-proposals-badge" style="background:var(--l10);color:var(--lime);border-color:var(--l20)">1</span></button>
       <button class="nav-btn" onclick="sbNav(this,'punch')"><i class="ti ti-clipboard-check"></i>Punch list<span class="nav-badge red">18</span></button>
-      <button id="nav-btn-finance-project" class="nav-btn" onclick="sbNav(this,'finance')"><i class="ti ti-coin"></i>Financials<span class="nav-badge red role-financial">$153k</span></button>
+      <button id="nav-btn-finance-project" class="nav-btn" style="display:none !important" onclick="sbNav(this,'finance')"><i class="ti ti-coin"></i>Financials<span class="nav-badge red role-financial">$153k</span></button>
       <button id="nav-btn-design" class="nav-btn" onclick="sbNav(this,'design')"><i class="ti ti-sparkles"></i>Design mode<span class="nav-badge" style="background:var(--l10);color:var(--lime);border-color:var(--l20)">Phase 2</span></button>
       <button class="nav-btn" onclick="sbNav(this,'team')"><i class="ti ti-users"></i>Team &amp; Trades</button>
       <button class="nav-btn" onclick="sbNav(this,'products')"><i class="ti ti-package"></i>Products<span class="nav-badge">3</span></button>
@@ -611,8 +611,7 @@ h1,h2,h3,h4,#pg-greeting,.sh-title{font-family:'Bungee',sans-serif!important;fon
       <span class="nav-sec-label">Financials</span><i class="ti ti-chevron-down chev"></i>
     </div>
     <div class="nav-sec-items" id="sec3">
-      <button class="nav-btn" onclick="sbNav(this,'finance')"><i class="ti ti-coin"></i>Overview<span class="nav-badge red role-financial">$0 due</span></button>
-      <button class="nav-btn" onclick="sbNav(this,'finance')"><i class="ti ti-file-invoice"></i>Invoices</button>
+      <button class="nav-btn" id="nav-btn-budget" onclick="sbNav(this,'finance')"><i class="ti ti-report-money"></i>Project Budget<span class="nav-badge red role-financial" id="nav-budget-badge" style="display:none"></span></button>
     </div>
   </nav>
 
@@ -1935,7 +1934,7 @@ function goScreen(name) {
     if (det)  { det.style.display = 'none'; det.style.width = '0'; det.style.minWidth = '0'; }
   }
   var titles = {fp:'Site plan',progress:'Project phases',punch:'Punch list',
-    landscape:'Site clearing',finance:'Financials','notes-screen':'Site notes',
+    landscape:'Site clearing',finance:'Project Budget','notes-screen':'Site notes',
     team:'Team & Trades',products:'Products',design:'Design mode',facts:'Facts & features',scanner:'Plan scanner',photos:'Before photos',proposals:'Proposals'};
   var pt = document.getElementById('page-title');
   if (pt) pt.textContent = titles[name] || name;
@@ -4969,6 +4968,845 @@ if (typeof teamRenderAccess === 'function') {
   teamRenderAccess = function(){ tmBaseRenderAccess(); renderTeam(); if (window.CG_SESS && !ROSTER.live && !ROSTER.loading) { ROSTER.loading = true; tmLoad(); } };
 }
 
+window.CG_BUDGET_ON = true;
+
+/* ══════════════════════════════════════════════════
+   PROPOSALS (open · original · compare) + PROJECT BUDGET (contract vs invoices)
+   Server: /api/project (state, bid-breakdown, scope-save, invoices, invoice-*)
+   AI:     /api/analyze — reads proposals + invoices into one organized format
+   ══════════════════════════════════════════════════ */
+var PB_CATS = ['Pre-construction & permits','Testing & consultants','Demolition','Site work & grading','Hauling & disposal','Foundation & structure',
+  'Framing','Mechanical, electrical + plumbing','Exterior','Interior finishes','Landscape & hardscape','GC overhead & fees','Contingency','Other'];
+var PB_INV = [];               // invoices (server)
+var PB_INV_LOADED = false;
+var PB_SCANNING = {};          // bidId -> promise
+var PB_READING = {};           // invoiceId -> true
+var PB_SCAN_ERR = {};          // bidId -> message
+var PB_OPEN_ROW = '';
+var PB_LAST_FLAGS = [];          // contract line expanded in Project Budget
+var PB_CMP = [];
+var PB_BUDGET_ON = !!window.CG_BUDGET_ON;
+
+function pbEsc(s){ return decEsc(s == null ? '' : String(s)); }
+function pbMoney(n){ if (n == null || isNaN(n)) return '—'; var neg = n < 0; n = Math.abs(Math.round(n)); return (neg?'−':'') + '$' + n.toLocaleString('en-US'); }
+function pbDay(d){ var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(d||''); return m ? new Date(+m[1], +m[2]-1, +m[3]).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : (d||''); }
+function pbPct(n){ return Math.round(n) + '%'; }
+function pbOwner(){ return pjIsOwner(); }
+function pbLive(){ return PROJ_LIVE; }
+function pbSaveCmp(){ try { localStorage.setItem('cg_cmp_'+DEC_PROJECT, JSON.stringify(PB_CMP)); } catch(e){} }
+function pbBids(){ return (PROJ && PROJ.bids) || []; }
+function pbScope(){ return (PROJ && PROJ.scope) || []; }
+function pbTotal(b){ var bd = b.breakdown; if (bd && bd.total != null) return bd.total; if (bd && bd.baseTotal != null) return bd.baseTotal; if (bd && bd.items) return pbSum(bd.items.filter(function(x){return !x.optional;})); return b.amount || 0; }
+function pbSum(items){ return items.reduce(function(a, x){ return a + (Number(x.amount) || 0); }, 0); }
+function pbCatOrder(c){ var i = PB_CATS.indexOf(c); return i === -1 ? 99 : i; }
+function pbByCat(items){
+  var m = {}; (items||[]).forEach(function(x){ (m[x.category||'Other'] = m[x.category||'Other'] || []).push(x); });
+  return Object.keys(m).sort(function(a,b){ return pbCatOrder(a) - pbCatOrder(b) || (a<b?-1:1); }).map(function(c){ return {cat:c, items:m[c]}; });
+}
+var PB_ST = {
+  included:{label:'Included', short:'✓', c:'var(--ok)', bg:'var(--ok15)', bd:'var(--ok30)', score:1},
+  partial:{label:'Partly', short:'◐', c:'var(--amb)', bg:'var(--am15)', bd:'var(--am30)', score:.5},
+  excluded:{label:'Excluded', short:'✕', c:'#E07A5F', bg:'rgba(224,122,95,.12)', bd:'rgba(224,122,95,.3)', score:0},
+  unclear:{label:'Not mentioned', short:'?', c:'var(--w50)', bg:'var(--w04)', bd:'var(--w08)', score:0}
+};
+function pbCov(b, scopeId){
+  var bd = b.breakdown; if (!bd) return null;
+  return (bd.coverage||[]).filter(function(c){ return c.scopeId === scopeId; })[0] || {scopeId:scopeId, status:'unclear', note:''};
+}
+function pbComplete(b){
+  var sc = pbScope(); if (!sc.length || !b.breakdown) return null;
+  var s = 0; sc.forEach(function(x){ s += PB_ST[pbCov(b, x.id).status].score; });
+  return Math.round(s / sc.length * 100);
+}
+function pbChip(status, withLabel){
+  var st = PB_ST[status] || PB_ST.unclear;
+  return '<span style="display:inline-flex;align-items:center;gap:4px;font-size:9px;font-weight:700;padding:2px 8px;border-radius:20px;white-space:nowrap;color:'+st.c+';background:'+st.bg+';border:1px solid '+st.bd+'">'+st.short+(withLabel===false?'':' '+st.label)+'</span>';
+}
+var PB_BTN = 'display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:7px 11px;border-radius:7px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap';
+function pbBtnPri(label, oc, icon, id){ return '<button'+(id?' id="'+id+'"':'')+' onclick="'+oc+'" style="'+PB_BTN+';background:var(--lime);border:none;color:var(--dk)">'+(icon?'<i class="ti '+icon+'" style="font-size:12px" aria-hidden="true"></i>':'')+label+'</button>'; }
+function pbBtnSec(label, oc, icon, id){ return '<button'+(id?' id="'+id+'"':'')+' onclick="'+oc+'" style="'+PB_BTN+';background:var(--d2);border:1px solid var(--w08);color:var(--w70)">'+(icon?'<i class="ti '+icon+'" style="font-size:12px" aria-hidden="true"></i>':'')+label+'</button>'; }
+function pbEyebrow(t){ return '<div style="font-size:9px;text-transform:uppercase;letter-spacing:.09em;color:var(--sage);margin-bottom:6px">'+t+'</div>'; }
+function pbCard(inner, extra){ return '<div style="background:var(--d3);border:1px solid var(--w08);border-radius:var(--r);padding:14px 16px;margin-bottom:12px;'+(extra||'')+'">'+inner+'</div>'; }
+function pbH(t, size){ return '<div style="font-family:Bungee,sans-serif;font-size:'+(size||15)+'px;color:var(--white);line-height:1.25;margin-bottom:6px">'+t+'</div>'; }
+
+/* ── page intro: why you're on this page + a short guided path (per role) ── */
+function cgIntro(key, o){
+  var hidden = false; try { hidden = localStorage.getItem('cg_intro_'+key) === '1'; } catch(e){}
+  if (hidden) return '<div style="margin-bottom:10px"><button onclick="cgIntroShow(\''+key+'\')" style="background:none;border:none;padding:0;font-size:10px;color:var(--w50);cursor:pointer;font-family:inherit;text-decoration:underline"><i class="ti ti-help-circle" style="font-size:11px"></i> What is this page?</button></div>';
+  var steps = (o.steps||[]).map(function(s, i){
+    var st = s.done ? 'done' : (o.steps.slice(0,i).every(function(x){return x.done;}) ? 'now' : 'next');
+    var c = st==='done' ? 'var(--ok)' : st==='now' ? 'var(--lime)' : 'var(--w30)';
+    return '<div style="flex:1;min-width:150px;display:flex;gap:9px;align-items:flex-start;padding:10px 11px;border-radius:10px;background:'+(st==='now'?'var(--l10)':'var(--d2)')+';border:1px solid '+(st==='now'?'var(--l20)':'var(--w08)')+'">'+
+      '<span style="width:22px;height:22px;flex-shrink:0;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:'+(st==='done'?'var(--dk)':c)+';background:'+(st==='done'?'var(--ok)':'transparent')+';border:1.5px solid '+c+'">'+(st==='done'?'✓':(i+1))+'</span>'+
+      '<div style="min-width:0"><div style="font-size:11px;font-weight:700;color:'+(st==='next'?'var(--w50)':'var(--white)')+'">'+s.t+'</div><div style="font-size:10px;color:var(--w50);line-height:1.45;margin-top:2px">'+s.d+'</div></div></div>';
+  }).join('');
+  return '<div data-intro="'+key+'" style="position:relative;background:linear-gradient(135deg,var(--d3),var(--d2));border:1px solid var(--w08);border-radius:var(--r);padding:16px 16px 14px;margin-bottom:14px">'+
+    '<button onclick="cgIntroHide(\''+key+'\')" aria-label="Hide" style="position:absolute;top:10px;right:10px;background:none;border:1px solid var(--w08);border-radius:20px;padding:3px 9px;font-size:9px;font-weight:700;color:var(--w50);cursor:pointer;font-family:inherit">Got it</button>'+
+    '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;padding-right:60px"><span style="width:28px;height:28px;border-radius:8px;background:var(--l10);border:1px solid var(--l20);display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="ti '+o.icon+'" style="font-size:15px;color:var(--lime)"></i></span>'+
+      '<span style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--sage)">'+o.eyebrow+'</span></div>'+
+    '<div style="font-family:Bungee,sans-serif;font-size:17px;color:var(--white);line-height:1.25;margin-bottom:6px">'+o.title+'</div>'+
+    '<div style="font-size:12px;color:var(--w70);line-height:1.6;margin-bottom:12px;max-width:640px">'+o.body+'</div>'+
+    (steps ? '<div style="display:flex;gap:8px;flex-wrap:wrap">'+steps+'</div>' : '')+
+  '</div>';
+}
+function cgIntroHide(k){ try { localStorage.setItem('cg_intro_'+k, '1'); } catch(e){} pbRerender(); }
+function cgIntroShow(k){ try { localStorage.removeItem('cg_intro_'+k); } catch(e){} pbRerender(); }
+function pbRerender(){ pjRenderProposals(); pbRenderBudget(); if (typeof renderTeam === 'function') renderTeam(); }
+
+/* ════════ AI: read a proposal into line items + coverage of what the homeowner asked for ════════ */
+function pbB64FromBlob(blob){ return new Promise(function(res, rej){ var r = new FileReader(); r.onload = function(){ res(String(r.result).split(',')[1] || ''); }; r.onerror = rej; r.readAsDataURL(blob); }); }
+function pbDocBlock(type, data){
+  if (type === 'application/pdf') return {type:'document', source:{type:'base64', media_type:'application/pdf', data:data}};
+  if (['image/jpeg','image/png','image/webp','image/gif'].indexOf(type) !== -1) return {type:'image', source:{type:'base64', media_type:type, data:data}};
+  return null;
+}
+function pbAsk(block, prompt, maxTokens){
+  return fetch('/api/analyze', {method:'POST', headers:{'Content-Type':'application/json'}, credentials:'same-origin',
+    body:JSON.stringify({max_tokens:maxTokens||4000, messages:[{role:'user', content:[block, {type:'text', text:prompt}]}]})})
+  .then(function(r){ return r.json().then(function(j){ if (!r.ok) throw new Error((j.error && (j.error.message || (j.error.error && j.error.error.message))) || 'The AI engine is unavailable.'); return j; }); })
+  .then(function(j){
+    var txt = (j.content||[]).filter(function(c){ return c.type === 'text'; }).map(function(c){ return c.text; }).join('\n');
+    var m = txt.match(/\{[\s\S]*\}/); if (!m) throw new Error('The AI reply had no data in it.');
+    return JSON.parse(m[0]);
+  });
+}
+function pbProposalPrompt(){
+  var sc = pbScope().map(function(s){ return {id:s.id, item:s.item}; });
+  return 'You read construction proposals for a homeowner comparing general contractors. Extract the proposal line items into an organized format.\n'+
+    'Use exactly one of these categories for every line item: '+PB_CATS.join(' | ')+'.\n'+
+    'Copy amounts exactly as written (numbers only, no $). If a section has sub-bullets but one price, keep it as one line item and list the sub-bullets in desc. Mark add-ons or alternates that are not in the base total as optional:true.\n'+
+    'List every exclusion, allowance (priced per unit or capped) and assumption. Never invent items or amounts.\n'+
+    (sc.length ? 'The homeowner asked for this scope (id: item): '+JSON.stringify(sc)+'. For EVERY scope item, say whether this proposal includes it: "included", "partial" (only part, or coordination only), "excluded" (explicitly excluded) or "unclear" (not mentioned). Point lineId at the line item that covers it, and give a short note.\n' : '')+
+    'Reply with ONLY JSON: {"items":[{"id":"l1","category":"","item":"","desc":"","amount":0,"optional":false,"qty":""}],"exclusions":[""],"allowances":[{"item":"","amount":0,"unit":""}],'+
+    '"coverage":[{"scopeId":"","status":"included","lineId":"l1","note":""}],"baseTotal":0,"total":0,"timeline":"","terms":""}';
+}
+function pbScanBid(id, force){
+  if (PB_SCANNING[id] && !force) return PB_SCANNING[id];
+  var b = pjBid(id); if (!b) return Promise.reject(new Error('not found'));
+  if (!pbLive()) return Promise.reject(new Error('Sign in on the live site to scan proposals.'));
+  if (!b.file) return Promise.reject(new Error('This proposal has no file to read.'));
+  delete PB_SCAN_ERR[id];
+  PB_SCANNING[id] = fetch('/api/project?project='+DEC_PROJECT+'&action=file&bid='+encodeURIComponent(id), {credentials:'same-origin'})
+    .then(function(r){ if (!r.ok) throw new Error('Could not open the proposal file.'); return r.blob(); })
+    .then(pbB64FromBlob)
+    .then(function(data){
+      var block = pbDocBlock(b.file.type, data);
+      if (!block) throw new Error('This file type can’t be read automatically. Open the original to review it.');
+      return pbAsk(block, pbProposalPrompt(), 6000);
+    })
+    .then(function(bd){ return pjPost({action:'bid-breakdown', bidId:id, breakdown:bd}); })
+    .then(function(j){ if (!j.ok) throw new Error(pjErr(j)); b.breakdown = j.breakdown; delete PB_SCANNING[id]; pbRerender(); pbRefreshOpen(id); return j.breakdown; })
+    .catch(function(e){ delete PB_SCANNING[id]; PB_SCAN_ERR[id] = e.message || String(e); pbRerender(); pbRefreshOpen(id); throw e; });
+  pbRerender();
+  return PB_SCANNING[id];
+}
+
+/* ════════ PROPOSALS PAGE ════════ */
+function pjRenderProposals(){
+  var el = document.getElementById('pp-body'); if (!el || !PROJ) return;
+  var bidding = PROJ.stage === 'bidding';
+  var inp = 'width:100%;box-sizing:border-box;background:var(--d2);border:1px solid var(--w08);border-radius:8px;padding:9px 10px;font-size:12px;color:var(--white);font-family:inherit';
+  var st = document.getElementById('pp-stage');
+  if (st) st.innerHTML = bidding ? '<span style="font-size:9px;font-weight:700;padding:3px 10px;border-radius:20px;background:var(--am15);color:var(--amb);border:1px solid var(--am30)">Collecting proposals</span>'
+    : '<span style="font-size:9px;font-weight:700;padding:3px 10px;border-radius:20px;background:var(--ok15);color:var(--ok);border:1px solid var(--ok30)">Hired · ' + decEsc(PROJ.hiredGc.company || PROJ.hiredGc.name) + '</span>';
+  var old = el.previousElementSibling; if (old && !old.id && /Invite GCs to bid/.test(old.textContent)) old.style.display = 'none';
+  var bids = pbBids();
+  PB_CMP = PB_CMP.filter(function(id){ return bids.some(function(b){ return b.id === id; }); });
+  var h = cgIntro('proposals', {icon:'ti-scale', eyebrow:'Proposals', title:'Pick your GC with the full picture',
+    body:'Every proposal is scanned into the same clean format, so you can see what each GC actually included, what they left out, and why one costs more than another — before you sign anything.',
+    steps:[{t:'Invite GCs to bid', d:'Send a link; they upload their proposal.', done:bids.length>0},
+           {t:'Open + compare', d:'Check Compare on two proposals to line them up.', done:PB_CMP.length>1 || !bidding},
+           {t:'Choose your GC', d:'Hire one — they get the kickoff checklist.', done:!bidding}]});
+  if (bidding && pjIsOwner()) {
+    h += '<div style="background:var(--d3);border:1px solid var(--l20);border-radius:var(--r);padding:14px;margin-bottom:12px">'+
+      '<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px"><i class="ti ti-send" style="font-size:14px;color:var(--lime)"></i><span style="font-size:12px;font-weight:700;color:var(--white)">Invite a GC to bid</span></div>'+
+      '<div style="font-size:10px;color:var(--w50);margin-bottom:10px;line-height:1.5">They get a link to upload their proposal and create an account in one step.</div>'+
+      '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:6px;margin-bottom:8px">'+
+        '<input id="pp-name" placeholder="Full name" style="'+inp+'"><input id="pp-email" type="email" placeholder="Email" style="'+inp+'"><input id="pp-phone" type="tel" placeholder="Phone" style="'+inp+'">'+
+      '</div>'+
+      '<div style="display:flex;gap:6px;flex-wrap:wrap"><button onclick="pjInvite()" id="pp-invite-btn" style="flex:1;min-width:140px;padding:9px;background:var(--lime);border:none;border-radius:8px;font-size:11px;font-weight:700;color:var(--dk);cursor:pointer;font-family:inherit">Send invite</button>'+
+      '<button onclick="pjOpenLink()" style="flex:1;min-width:140px;padding:9px;background:none;border:1px solid var(--l20);border-radius:8px;font-size:11px;font-weight:700;color:var(--lime);cursor:pointer;font-family:inherit"><i class="ti ti-link" style="font-size:11px"></i> Copy link</button></div>'+
+      '<div id="pp-invite-result">'+PROJ_LAST_INVITE+'</div>'+
+      ((PROJ.bidInvites||[]).length ? '<div style="margin-top:10px;border-top:1px solid var(--w08);padding-top:8px">'+PROJ.bidInvites.map(function(i){
+        return '<div style="display:flex;align-items:center;gap:8px;font-size:10px;padding:4px 0;flex-wrap:wrap"><span style="color:var(--white);font-weight:600">'+decEsc(i.name)+'</span><span style="color:var(--w30);overflow-wrap:anywhere">'+decEsc(i.email)+'</span><span style="margin-left:auto;font-weight:700;color:'+(i.status==='submitted'?'var(--ok)':'var(--amb)')+'">'+(i.status==='submitted'?'Submitted ✓':'Invited')+'</span></div>';
+      }).join('')+'</div>' : '')+
+    '</div>';
+  }
+  var narrow = (el.clientWidth || window.innerWidth) < 620;
+  var cols = 'minmax(0,1.3fr) minmax(0,1.5fr) 72px minmax(0,.8fr)';
+  var head = narrow ? '' : '<div style="display:grid;grid-template-columns:'+cols+';gap:10px;padding:9px 14px;border-bottom:1px solid var(--w08);font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--sage)"><span>General Contractor</span><span>Proposal</span><span style="text-align:center">Compare</span><span style="text-align:right">Decision</span></div>';
+  h += '<div style="background:var(--d3);border:1px solid var(--w08);border-radius:var(--r);overflow:hidden;margin-bottom:12px">'+head+
+    (bids.length ? bids.map(function(b){
+      var q = '\''+b.id+'\'';
+      var hired = PROJ.hiredGc && PROJ.hiredGc.bidId === b.id;
+      var decision = hired ? '<span style="font-size:10px;font-weight:700;color:var(--ok)">Hired ✓</span>'
+        : b.status==='declined' ? '<span style="font-size:10px;font-weight:600;color:var(--w30)">Not hired</span>'
+        : bidding && pjIsOwner() ? '<button onclick="pjChoose('+q+')" style="padding:7px 12px;background:var(--lime);border:none;border-radius:7px;font-size:11px;font-weight:700;color:var(--dk);cursor:pointer;font-family:inherit">Choose</button>'
+        : '<span style="font-size:10px;color:var(--w30)">Not selected</span>';
+      var cmp = PB_CMP.indexOf(b.id) !== -1;
+      var scanning = !!PB_SCANNING[b.id];
+      var sub = (b.amount?'<b style="color:var(--lime)">'+pjMoney(b.amount)+'</b> · ':'')+pjDate(b.submittedAt)+(b.contactName && b.contactName!==b.gcName?' · '+decEsc(b.contactName):'')+
+        (scanning ? ' · <span style="color:var(--amb)">Scanning…</span>' : b.breakdown ? ' · <span style="color:var(--ok)">'+b.breakdown.items.length+' line items</span>' : '');
+      var docBtns = b.file ? '<div style="display:flex;gap:6px;flex-wrap:wrap">'+pbBtnPri('Open Proposal', 'pbOpenProposal('+q+')', 'ti-layout-list')+pbBtnSec('View Original Document', 'pjViewDoc('+q+')', 'ti-file-text')+'</div>'
+        : '<span style="font-size:10px;color:var(--w30)">No file</span>';
+      var box = '<label title="Compare" style="display:inline-flex;align-items:center;gap:6px;cursor:pointer;font-size:10px;font-weight:700;color:'+(cmp?'var(--lime)':'var(--w50)')+'">'+
+        '<input type="checkbox" data-cmp="'+b.id+'" '+(cmp?'checked ':'')+(b.file?'':'disabled ')+'onchange="pbToggleCmp('+q+',this.checked)" style="width:18px;height:18px;accent-color:#D5DC99;cursor:pointer;margin:0">'+(narrow?'Compare':'')+'</label>';
+      if (narrow) return '<div data-bid="'+b.id+'" style="padding:12px 14px;border-bottom:1px solid var(--w08)'+(cmp?';background:var(--l10)':'')+'">'+
+        '<div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:8px"><div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:600;color:var(--white);overflow-wrap:anywhere">'+decEsc(b.gcName)+'</div><div style="font-size:10px;color:var(--w50);margin-top:2px">'+sub+'</div></div><div>'+decision+'</div></div>'+
+        docBtns+'<div style="margin-top:9px">'+box+'</div></div>';
+      return '<div data-bid="'+b.id+'" style="display:grid;grid-template-columns:'+cols+';gap:10px;align-items:center;padding:12px 14px;border-bottom:1px solid var(--w08)'+(cmp?';background:var(--l10)':'')+'">'+
+        '<div style="min-width:0"><div style="font-size:12px;font-weight:600;color:var(--white);overflow-wrap:anywhere">'+decEsc(b.gcName)+'</div><div style="font-size:10px;color:var(--w50);margin-top:2px">'+sub+'</div></div>'+
+        '<div>'+docBtns+'</div><div style="text-align:center">'+box+'</div><div style="text-align:right">'+decision+'</div></div>';
+    }).join('') : '<div style="padding:22px 14px;text-align:center;font-size:11px;color:var(--w30)">No proposals yet. Invite GCs above.</div>')+
+  '</div>';
+  h += '<div id="pb-compare">'+pbCompareHtml(narrow)+'</div>';
+  el.innerHTML = h;
+}
+var PB_RESIZE_T = null;
+window.addEventListener('resize', function(){ clearTimeout(PB_RESIZE_T); PB_RESIZE_T = setTimeout(function(){ var s = document.getElementById('sc-proposals'); if (s && s.classList.contains('on')) pjRenderProposals(); }, 200); });
+
+function pbToggleCmp(id, on){
+  PB_CMP = PB_CMP.filter(function(x){ return x !== id; });
+  if (on) { PB_CMP.push(id); if (PB_CMP.length > 3) PB_CMP.shift(); }
+  pbSaveCmp();
+  var b = pjBid(id);
+  if (on && b && !b.breakdown && !PB_SCANNING[id] && pbOwner()) pbScanBid(id).catch(function(){});
+  pjRenderProposals();
+  var c = document.getElementById('pb-compare'); if (on && c && c.scrollIntoView) c.scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+/* compare panel */
+function pbCompareHtml(narrow){
+  var sel = PB_CMP.map(pjBid).filter(Boolean);
+  if (!pbBids().length) return '';
+  if (!sel.length) return '<div style="border:1px dashed var(--w15);border-radius:var(--r);padding:18px 16px;text-align:center">'+
+    '<i class="ti ti-checkbox" style="font-size:22px;color:var(--lime)"></i>'+
+    '<div style="font-size:12px;font-weight:700;color:var(--white);margin:6px 0 4px">Check Compare on a proposal</div>'+
+    '<div style="font-size:11px;color:var(--w50);line-height:1.6;max-width:460px;margin:0 auto">One proposal: every line item organized, plus what it covers from your list. Two or three: side by side, with why one costs more.</div></div>';
+  var pending = sel.filter(function(b){ return !b.breakdown; });
+  if (pending.length) return pbCard(pending.map(function(b){
+    var err = PB_SCAN_ERR[b.id];
+    return '<div style="display:flex;align-items:center;gap:10px;padding:6px 0;flex-wrap:wrap">'+
+      (err ? '<i class="ti ti-alert-triangle" style="color:#E07A5F"></i>' : '<span class="pb-spin" style="width:14px;height:14px;border-radius:50%;border:2px solid var(--l20);border-top-color:var(--lime);display:inline-block;animation:pbspin 1s linear infinite"></span>')+
+      '<div style="flex:1;min-width:180px"><div style="font-size:12px;font-weight:700;color:var(--white)">'+(err?'Couldn’t scan ':'Scanning ')+pbEsc(b.gcName)+'</div>'+
+      '<div style="font-size:10px;color:'+(err?'#E07A5F':'var(--w50)')+'">'+(err ? pbEsc(err) : pbOwner() ? 'Reading every line into the Common Ground format — about 30 seconds.' : 'Waiting for the homeowner to scan this proposal.')+'</div></div>'+
+      (err && pbOwner() ? pbBtnSec('Try again', 'pbScanBid(\''+b.id+'\',true).catch(function(){})', 'ti-refresh') : '')+'</div>';
+  }).join(''));
+  if (sel.length === 1) return pbSingleHtml(sel[0]);
+  return pbCompareManyHtml(sel, narrow);
+}
+
+/* one proposal, organized */
+function pbScopeEditBtn(){ return pbOwner() ? '<button onclick="pbScopeEditor()" style="background:none;border:none;padding:0;font-size:10px;font-weight:700;color:var(--lime);cursor:pointer;font-family:inherit"><i class="ti ti-pencil" style="font-size:11px"></i> Edit your list</button>' : ''; }
+function pbCoverageList(b){
+  var sc = pbScope();
+  if (!sc.length) return '<div style="font-size:11px;color:var(--w50);line-height:1.6">Add what you asked for — the list of work you need — and every proposal is checked against it. '+pbScopeEditBtn()+'</div>';
+  var pct = pbComplete(b);
+  return '<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap"><div style="flex:1;min-width:160px;height:6px;border-radius:3px;background:var(--w08);overflow:hidden"><div style="height:100%;width:'+pct+'%;background:'+(pct>=90?'var(--ok)':pct>=70?'var(--amb)':'#E07A5F')+'"></div></div>'+
+    '<span style="font-size:11px;font-weight:800;color:var(--white)">'+pct+'% of your list</span>'+pbScopeEditBtn()+'</div>'+
+    sc.map(function(s){ var c = pbCov(b, s.id); return '<div style="display:flex;gap:8px;align-items:flex-start;padding:7px 0;border-top:1px solid var(--w08)">'+pbChip(c.status)+
+      '<div style="flex:1;min-width:0"><div style="font-size:11px;color:var(--white)">'+pbEsc(s.item)+'</div>'+(c.note?'<div style="font-size:10px;color:var(--w50);margin-top:1px">'+pbEsc(c.note)+'</div>':'')+'</div></div>'; }).join('');
+}
+function pbLinesHtml(b){
+  var bd = b.breakdown, base = bd.items.filter(function(x){ return !x.optional; }), opt = bd.items.filter(function(x){ return x.optional; });
+  var tot = pbSum(base) || 1;
+  var rows = pbByCat(base).map(function(g){
+    var sub = pbSum(g.items);
+    return '<div style="padding:9px 0;border-top:1px solid var(--w08)">'+
+      '<div style="display:flex;align-items:baseline;gap:8px"><span style="font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--sage);flex:1">'+pbEsc(g.cat)+'</span><b style="font-size:12px;color:var(--white)">'+pbMoney(sub)+'</b><span style="font-size:9px;color:var(--w30);width:34px;text-align:right">'+pbPct(sub/tot*100)+'</span></div>'+
+      '<div style="height:3px;border-radius:2px;background:var(--w08);margin:5px 0 6px"><div style="height:100%;width:'+(sub/tot*100)+'%;background:var(--lime);border-radius:2px"></div></div>'+
+      g.items.map(function(x){ return '<div style="display:flex;gap:10px;padding:3px 0"><div style="flex:1;min-width:0"><div style="font-size:11px;color:var(--white);font-weight:600">'+pbEsc(x.item)+(x.qty?' <span style="color:var(--w30);font-weight:400">· '+pbEsc(x.qty)+'</span>':'')+'</div>'+(x.desc?'<div style="font-size:10px;color:var(--w50);line-height:1.5">'+pbEsc(x.desc)+'</div>':'')+'</div><div style="font-size:11px;color:var(--w70);white-space:nowrap">'+pbMoney(x.amount)+'</div></div>'; }).join('')+
+    '</div>';
+  }).join('');
+  if (opt.length) rows += '<div style="padding:9px 0;border-top:1px dashed var(--w15)"><div style="font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--amb);margin-bottom:4px">Optional — not in the total</div>'+
+    opt.map(function(x){ return '<div style="display:flex;gap:10px;padding:3px 0"><div style="flex:1;min-width:0"><div style="font-size:11px;color:var(--white)">'+pbEsc(x.item)+'</div>'+(x.desc?'<div style="font-size:10px;color:var(--w50)">'+pbEsc(x.desc)+'</div>':'')+'</div><div style="font-size:11px;color:var(--amb);white-space:nowrap">+'+pbMoney(x.amount)+'</div></div>'; }).join('')+'</div>';
+  return rows;
+}
+function pbExtrasHtml(b){
+  var bd = b.breakdown, h = '';
+  if (bd.allowances && bd.allowances.length) h += '<div style="margin-top:10px">'+pbEyebrow('Allowances — priced per unit, not capped')+bd.allowances.map(function(a){ return '<div style="font-size:11px;color:var(--w70);padding:2px 0">'+pbEsc(a.item)+' · <b style="color:var(--amb)">'+pbMoney(a.amount)+(a.unit?' '+pbEsc(a.unit):'')+'</b></div>'; }).join('')+'</div>';
+  if (bd.exclusions && bd.exclusions.length) h += '<div style="margin-top:10px">'+pbEyebrow('Not included')+bd.exclusions.map(function(x){ return '<div style="font-size:11px;color:var(--w70);padding:2px 0;display:flex;gap:6px"><span style="color:#E07A5F">✕</span>'+pbEsc(x)+'</div>'; }).join('')+'</div>';
+  if (bd.timeline) h += '<div style="margin-top:10px">'+pbEyebrow('Timeline')+'<div style="font-size:11px;color:var(--w70);line-height:1.6">'+pbEsc(bd.timeline)+'</div></div>';
+  if (bd.terms) h += '<div style="margin-top:10px">'+pbEyebrow('Terms + assumptions')+'<div style="font-size:11px;color:var(--w70);line-height:1.6">'+pbEsc(bd.terms)+'</div></div>';
+  return h;
+}
+function pbSingleHtml(b){
+  return '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px">'+
+    pbCard(pbEyebrow('Line items · '+pbEsc(b.gcName))+'<div style="display:flex;align-items:baseline;gap:8px;margin-bottom:6px"><span style="font-family:Bungee,sans-serif;font-size:22px;color:var(--lime)">'+pbMoney(pbTotal(b))+'</span><span style="font-size:10px;color:var(--w50)">base total</span></div>'+pbLinesHtml(b)+pbExtrasHtml(b), 'margin-bottom:0')+
+    pbCard(pbEyebrow('What you asked for')+pbCoverageList(b)+
+      '<div style="margin-top:12px;padding:10px 12px;border-radius:9px;background:var(--l10);border:1px solid var(--l20);font-size:11px;color:var(--w70);line-height:1.55"><i class="ti ti-arrows-left-right" style="color:var(--lime)"></i> Check Compare on another proposal to line them up side by side.</div>', 'margin-bottom:0')+
+  '</div>';
+}
+
+/* two or three proposals, side by side + why one is higher */
+function pbCatTotals(b){ var m = {}; b.breakdown.items.forEach(function(x){ if (x.optional) return; m[x.category||'Other'] = (m[x.category||'Other']||0) + (Number(x.amount)||0); }); return m; }
+function pbWhy(hi, lo){
+  var diff = pbTotal(hi) - pbTotal(lo), sc = pbScope(), out = {tone:'mute', headline:'', bullets:[]};
+  if (Math.abs(diff) < 1) { out.headline = pbEsc(hi.gcName)+' and '+pbEsc(lo.gcName)+' are the same price.'; }
+  var hiMore = [], loMore = [];
+  sc.forEach(function(s){ var a = PB_ST[pbCov(hi, s.id).status].score, c = PB_ST[pbCov(lo, s.id).status].score; if (a > c) hiMore.push(s.item); else if (c > a) loMore.push(s.item); });
+  var ch = pbCatTotals(hi), cl = pbCatTotals(lo), cats = {};
+  Object.keys(ch).concat(Object.keys(cl)).forEach(function(c){ cats[c] = (ch[c]||0) - (cl[c]||0); });
+  var drivers = Object.keys(cats).filter(function(c){ return cats[c] > 0; }).sort(function(a,b){ return cats[b] - cats[a]; }).slice(0,3);
+  if (Math.abs(diff) >= 1) {
+    if (sc.length && hiMore.length > loMore.length) { out.tone = 'ok'; out.headline = pbEsc(hi.gcName)+' is '+pbMoney(diff)+' higher — and more complete.'; }
+    else if (sc.length && hiMore.length < loMore.length) { out.tone = 'bad'; out.headline = pbEsc(hi.gcName)+' is '+pbMoney(diff)+' higher and covers less of your list.'; }
+    else { out.tone = 'am'; out.headline = pbEsc(hi.gcName)+' is '+pbMoney(diff)+' higher for '+(sc.length?'about the same scope':'the scope shown')+'.'; }
+  }
+  drivers.forEach(function(c){ out.bullets.push('<b>'+pbMoney(cats[c])+'</b> of the gap is in '+pbEsc(c)+' ('+pbEsc(hi.gcName)+' '+pbMoney(ch[c]||0)+' vs '+pbEsc(lo.gcName)+' '+pbMoney(cl[c]||0)+').'); });
+  if (hiMore.length) out.bullets.push(pbEsc(hi.gcName)+' covers '+hiMore.length+' item'+(hiMore.length===1?'':'s')+' '+pbEsc(lo.gcName)+' leaves out or only partly covers: '+hiMore.slice(0,4).map(pbEsc).join(', ')+(hiMore.length>4?'…':'')+'. Missing items usually come back as change orders.');
+  if (loMore.length) out.bullets.push(pbEsc(lo.gcName)+' covers '+loMore.length+' item'+(loMore.length===1?'':'s')+' '+pbEsc(hi.gcName)+' doesn’t: '+loMore.slice(0,4).map(pbEsc).join(', ')+(loMore.length>4?'…':'')+'.');
+  var eh = (hi.breakdown.exclusions||[]).length, el = (lo.breakdown.exclusions||[]).length;
+  if (eh !== el) out.bullets.push((eh > el ? pbEsc(hi.gcName) : pbEsc(lo.gcName))+' lists more exclusions ('+Math.max(eh,el)+' vs '+Math.min(eh,el)+') — read them before you compare totals.');
+  [hi, lo].forEach(function(b){ var a = (b.breakdown.allowances||[]); if (a.length) out.bullets.push(pbEsc(b.gcName)+' has '+a.length+' open-ended allowance'+(a.length===1?'':'s')+' ('+a.map(function(x){ return pbEsc(x.item)+' '+pbMoney(x.amount)+(x.unit?' '+pbEsc(x.unit):''); }).join(', ')+') — real cost depends on the site.'); });
+  [hi, lo].forEach(function(b){ var o = b.breakdown.items.filter(function(x){ return x.optional; }); if (o.length) out.bullets.push(pbEsc(b.gcName)+'’s total leaves out '+pbMoney(pbSum(o))+' in optional items ('+o.map(function(x){ return pbEsc(x.item); }).join(', ')+').'); });
+  if (!sc.length) out.bullets.push('Add what you asked for to see which proposal is more complete.');
+  return out;
+}
+function pbCompareManyHtml(sel, narrow){
+  var sorted = sel.slice().sort(function(a,b){ return pbTotal(b) - pbTotal(a); });
+  var hi = sorted[0], lo = sorted[sorted.length-1];
+  var why = pbWhy(hi, lo);
+  var toneC = {ok:'var(--ok)', am:'var(--amb)', bad:'#E07A5F', mute:'var(--w70)'}[why.tone];
+  var toneBg = {ok:'var(--ok15)', am:'var(--am15)', bad:'rgba(224,122,95,.1)', mute:'var(--d3)'}[why.tone];
+  var h = '<div style="background:'+toneBg+';border:1px solid '+toneC+';border-radius:var(--r);padding:14px 16px;margin-bottom:12px">'+
+    pbEyebrow('Why is one higher?')+'<div style="font-family:Bungee,sans-serif;font-size:16px;color:'+toneC+';line-height:1.3;margin-bottom:8px">'+why.headline+'</div>'+
+    why.bullets.map(function(t){ return '<div style="display:flex;gap:8px;font-size:11px;color:var(--w70);line-height:1.6;padding:2px 0"><span style="color:'+toneC+'">•</span><span>'+t+'</span></div>'; }).join('')+
+    (sorted.length > 2 ? '<div style="font-size:10px;color:var(--w50);margin-top:6px">Comparing the highest and lowest of the '+sorted.length+' you checked.</div>' : '')+'</div>';
+  var n = sel.length, lab = narrow ? '120px' : 'minmax(0,1.6fr)';
+  var gcols = lab + ' repeat('+n+',minmax('+(narrow?'110px':'0')+',1fr))';
+  var minW = narrow ? (120 + n*120) : 0;
+  function row(label, cells, opts){ opts = opts||{};
+    return '<div style="display:grid;grid-template-columns:'+gcols+';gap:8px;align-items:'+(opts.align||'center')+';padding:'+(opts.pad||'8px 12px')+';border-top:1px solid var(--w08)'+(opts.bg?';background:'+opts.bg:'')+'">'+
+      '<div style="min-width:0;font-size:'+(opts.fs||11)+'px;color:'+(opts.lc||'var(--white)')+(opts.bold?';font-weight:700':'')+'">'+label+'</div>'+cells.map(function(c){ return '<div style="min-width:0;font-size:11px;color:var(--w70)">'+c+'</div>'; }).join('')+'</div>'; }
+  var mins = function(vals){ return Math.min.apply(null, vals.filter(function(v){ return v != null; })); };
+  var tots = sel.map(pbTotal), minT = mins(tots);
+  var t = '<div style="display:grid;grid-template-columns:'+gcols+';gap:8px;padding:12px;background:var(--d2)"><div></div>'+sel.map(function(b){
+      return '<div style="min-width:0"><div style="font-size:12px;font-weight:700;color:var(--white);overflow-wrap:anywhere">'+pbEsc(b.gcName)+'</div><div style="display:flex;gap:6px;margin-top:5px;flex-wrap:wrap"><button onclick="pbOpenProposal(\''+b.id+'\')" style="background:none;border:none;padding:0;font-size:10px;font-weight:700;color:var(--lime);cursor:pointer;font-family:inherit">Open</button><button onclick="pbToggleCmp(\''+b.id+'\',false)" style="background:none;border:none;padding:0;font-size:10px;color:var(--w50);cursor:pointer;font-family:inherit">Remove</button></div></div>'; }).join('')+'</div>';
+  t += row('Base total', tots.map(function(v){ return '<span style="font-family:Bungee,sans-serif;font-size:15px;color:'+(v===minT?'var(--ok)':'var(--white)')+'">'+pbMoney(v)+'</span>'+(v>minT?'<div style="font-size:10px;color:var(--amb)">+'+pbMoney(v-minT)+'</div>':'<div style="font-size:10px;color:var(--ok)">Lowest</div>'); }), {bold:true});
+  if (pbScope().length) t += row('Covers your list', sel.map(function(b){ var p = pbComplete(b); return '<b style="color:'+(p>=90?'var(--ok)':p>=70?'var(--amb)':'#E07A5F')+';font-size:13px">'+p+'%</b>'; }), {bold:true});
+  t += row('Exclusions', sel.map(function(b){ return String((b.breakdown.exclusions||[]).length); }));
+  t += row('Allowances', sel.map(function(b){ var a = b.breakdown.allowances||[]; return a.length ? a.map(function(x){ return pbEsc(x.item)+' '+pbMoney(x.amount)+(x.unit?' '+pbEsc(x.unit):''); }).join('<br>') : 'None'; }), {align:'start'});
+  t += row('Optional add-ons', sel.map(function(b){ var o = b.breakdown.items.filter(function(x){ return x.optional; }); return o.length ? '+'+pbMoney(pbSum(o)) : 'None'; }));
+  if (sel.some(function(b){ return b.breakdown.timeline; })) t += row('Timeline', sel.map(function(b){ return pbEsc(b.breakdown.timeline||'—'); }), {align:'start'});
+  // what you asked for
+  var sc = pbScope();
+  t += '<div style="display:flex;align-items:center;gap:8px;padding:12px 12px 6px;border-top:1px solid var(--w15)"><span style="font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--sage);flex:1">What you asked for</span>'+pbScopeEditBtn()+'</div>';
+  if (!sc.length) t += '<div style="padding:4px 12px 12px;font-size:11px;color:var(--w50)">Add your list to see who included what.</div>';
+  else t += sc.map(function(s){ return row(pbEsc(s.item), sel.map(function(b){ var c = pbCov(b, s.id); return pbChip(c.status, !narrow)+(c.note?'<div style="font-size:10px;color:var(--w50);margin-top:3px;line-height:1.4">'+pbEsc(c.note)+'</div>':''); }), {align:'start'}); }).join('');
+  var stale = sel.filter(function(b){ return sc.some(function(s){ return !(b.breakdown.coverage||[]).some(function(c){ return c.scopeId === s.id; }); }); });
+  if (stale.length && pbOwner()) t += '<div style="padding:8px 12px;font-size:10px;color:var(--w50)">Your list changed since '+stale.map(function(b){ return pbEsc(b.gcName); }).join(', ')+' was scanned. '+stale.map(function(b){ return '<button onclick="pbScanBid(\''+b.id+'\',true).catch(function(){})" style="background:none;border:none;padding:0;font-size:10px;font-weight:700;color:var(--lime);cursor:pointer;font-family:inherit">Re-check '+pbEsc(b.gcName)+'</button>'; }).join(' · ')+'</div>';
+  // line items by category
+  var cats = {}; sel.forEach(function(b){ b.breakdown.items.forEach(function(x){ if (!x.optional) cats[x.category||'Other'] = 1; }); });
+  t += '<div style="padding:12px 12px 6px;border-top:1px solid var(--w15);font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--sage)">Line items by category</div>';
+  t += Object.keys(cats).sort(function(a,b){ return pbCatOrder(a) - pbCatOrder(b); }).map(function(c){
+    var vals = sel.map(function(b){ return pbCatTotals(b)[c] || 0; }), mn = Math.min.apply(null, vals);
+    return row('<b>'+pbEsc(c)+'</b>', sel.map(function(b, i){
+      var items = b.breakdown.items.filter(function(x){ return !x.optional && (x.category||'Other') === c; });
+      return '<div style="font-size:12px;font-weight:700;color:'+(!items.length?'#E07A5F':vals[i]===mn?'var(--white)':'var(--amb)')+'">'+(items.length?pbMoney(vals[i]):'Not priced')+(items.length && vals[i]>mn && mn>0?'<span style="font-size:10px;font-weight:600"> +'+pbMoney(vals[i]-mn)+'</span>':'')+'</div>'+
+        items.map(function(x){ return '<div style="font-size:10px;color:var(--w50);line-height:1.45;margin-top:3px">'+pbEsc(x.item)+' · '+pbMoney(x.amount)+'</div>'; }).join('');
+    }), {align:'start', pad:'10px 12px'});
+  }).join('');
+  t += '<div style="padding:12px 12px 6px;border-top:1px solid var(--w15);font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--sage)">Not included</div>';
+  t += row('Exclusions', sel.map(function(b){ var e = b.breakdown.exclusions||[]; return e.length ? e.map(function(x){ return '<div style="font-size:10px;line-height:1.45;margin-bottom:3px"><span style="color:#E07A5F">✕</span> '+pbEsc(x)+'</div>'; }).join('') : 'None listed'; }), {align:'start'});
+  h += '<div style="background:var(--d3);border:1px solid var(--w08);border-radius:var(--r);overflow:hidden"><div style="overflow-x:auto"><div style="min-width:'+minW+'px">'+t+'</div></div></div>';
+  return h;
+}
+
+/* scope list editor (homeowner) */
+function pbScopeEditor(){
+  var lines = pbScope().map(function(s){ return s.item; }).join('\n');
+  pjModal(pbH('What you asked for', 16)+'<div style="font-size:11px;color:var(--w70);line-height:1.6;margin-bottom:10px">One item per line — the work you need done. Every proposal is checked against this list.</div>'+
+    '<textarea id="pb-scope-ta" rows="10" style="width:100%;box-sizing:border-box;background:var(--d2);border:1px solid var(--w08);border-radius:8px;padding:10px;font-size:12px;line-height:1.6;color:var(--white);font-family:inherit">'+pbEsc(lines)+'</textarea>'+
+    '<div id="pb-err" style="display:none;font-size:11px;color:#E07A5F;margin:6px 0"></div>'+
+    '<div style="display:flex;gap:8px;margin-top:10px"><button id="pb-go" onclick="pbScopeSave()" style="flex:1;padding:12px;background:var(--lime);border:none;border-radius:8px;font-size:12px;font-weight:800;color:var(--dk);cursor:pointer;font-family:inherit">Save list</button>'+
+    '<button onclick="decClose()" style="padding:12px 14px;background:var(--d4);border:1px solid var(--w08);border-radius:8px;font-size:11px;font-weight:600;color:var(--w70);cursor:pointer;font-family:inherit">Cancel</button></div>');
+}
+function pbScopeSave(){
+  var prev = pbScope();
+  var items = document.getElementById('pb-scope-ta').value.split('\n').map(function(x){ return x.trim(); }).filter(Boolean);
+  var list = items.map(function(t){ var old = prev.filter(function(p){ return p.item === t; })[0]; return old ? old : {item:t}; });
+  var btn = document.getElementById('pb-go'); btn.disabled = true; btn.textContent = 'Saving…';
+  pjPost({action:'scope-save', scope:list}).then(function(j){
+    if (!j.ok) { btn.disabled = false; btn.textContent = 'Save list'; var e = document.getElementById('pb-err'); e.style.display = 'block'; e.textContent = pjErr(j); return; }
+    PROJ.scope = j.scope; decClose(); pbRerender();
+  });
+}
+
+/* ── Open Proposal: the branded, organized view ── */
+var PB_OPEN = '';
+function pbOv(){
+  var ov = document.getElementById('pb-ov');
+  if (!ov) {
+    ov = document.createElement('div'); ov.id = 'pb-ov';
+    ov.style.cssText = 'display:none;position:fixed;inset:0;z-index:10001;background:rgba(0,0,0,.76);backdrop-filter:blur(6px);padding:12px;box-sizing:border-box;overflow-y:auto';
+    ov.onclick = function(e){ if (e.target === ov) pbCloseOv(); };
+    ov.innerHTML = '<div role="dialog" aria-modal="true" id="pb-ov-box" style="background:var(--d1);border:1px solid var(--w15);border-radius:16px;max-width:880px;margin:2vh auto;box-shadow:0 32px 80px rgba(0,0,0,.6);overflow:hidden"></div>';
+    document.body.appendChild(ov);
+    if (!document.getElementById('pb-style')) { var st = document.createElement('style'); st.id = 'pb-style'; st.textContent = '@keyframes pbspin{to{transform:rotate(360deg)}}'; document.head.appendChild(st); }
+  }
+  return ov;
+}
+function pbCloseOv(){ var ov = document.getElementById('pb-ov'); if (ov) ov.style.display = 'none'; PB_OPEN = ''; document.body.style.overflow = ''; }
+function pbRefreshOpen(id){ if (PB_OPEN === id) pbOpenProposal(id); }
+function pbOpenProposal(id){
+  var b = pjBid(id); if (!b) return;
+  PB_OPEN = id;
+  var ov = pbOv(); ov.style.display = 'block'; document.body.style.overflow = 'hidden';
+  var box = document.getElementById('pb-ov-box');
+  var q = '\''+id+'\'';
+  var top = '<div style="display:flex;align-items:center;gap:8px;padding:12px 14px;border-bottom:1px solid var(--w08);background:var(--d2)"><span style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--sage)">Proposal · Common Ground format</span>'+
+    '<button onclick="pbCloseOv()" aria-label="Close" style="margin-left:auto;width:32px;height:32px;border-radius:50%;background:var(--d4);border:1px solid var(--w08);color:var(--w70);font-size:18px;line-height:1;cursor:pointer;font-family:inherit">×</button></div>';
+  var hired = PROJ.hiredGc && PROJ.hiredGc.bidId === id;
+  var actions = '<div style="display:flex;gap:8px;flex-wrap:wrap">'+pbBtnSec('View Original Document', 'pjViewDoc('+q+')', 'ti-file-text')+
+    (PB_CMP.indexOf(id) === -1 ? pbBtnSec('Add to Compare', 'pbCloseOv();pbToggleCmp('+q+',true)', 'ti-arrows-left-right') : '')+
+    (PROJ.stage === 'bidding' && pjIsOwner() && b.status !== 'declined' ? pbBtnPri('Choose this GC', 'pbCloseOv();pjChoose('+q+')', 'ti-check') : '')+'</div>';
+  var head = '<div style="padding:20px 20px 16px;border-bottom:1px solid var(--w08);background:linear-gradient(135deg,var(--d2),var(--d1))">'+
+    '<div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-end">'+
+      '<div style="flex:1;min-width:220px"><div style="font-family:Bungee,sans-serif;font-size:22px;color:var(--white);line-height:1.2;overflow-wrap:anywhere">'+pbEsc(b.gcName)+'</div>'+
+      '<div style="font-size:11px;color:var(--w50);margin-top:5px">Submitted '+pjDate(b.submittedAt)+(b.contactName && b.contactName!==b.gcName?' · '+pbEsc(b.contactName):'')+(b.file?' · '+pbEsc(b.file.name):'')+(hired?' · <b style="color:var(--ok)">Hired ✓</b>':'')+'</div></div>'+
+      '<div style="text-align:right"><div style="font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--sage)">Base total</div><div style="font-family:Bungee,sans-serif;font-size:28px;color:var(--lime);line-height:1.1">'+pbMoney(pbTotal(b))+'</div></div>'+
+    '</div>'+
+    (b.breakdown ? '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:12px">'+
+      pbKpiChip(b.breakdown.items.filter(function(x){return !x.optional;}).length+' line items')+
+      (pbComplete(b)!=null ? pbKpiChip(pbComplete(b)+'% of your list') : '')+
+      ((b.breakdown.exclusions||[]).length ? pbKpiChip(b.breakdown.exclusions.length+' exclusions') : '')+
+      ((b.breakdown.allowances||[]).length ? pbKpiChip(b.breakdown.allowances.length+' allowance'+(b.breakdown.allowances.length===1?'':'s')) : '')+
+      (b.breakdown.items.some(function(x){return x.optional;}) ? pbKpiChip('+'+pbMoney(pbSum(b.breakdown.items.filter(function(x){return x.optional;})))+' optional') : '')+
+    '</div>' : '')+
+    '<div style="margin-top:14px">'+actions+'</div></div>';
+  var body;
+  if (b.breakdown) {
+    body = '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:0">'+
+      '<div style="padding:16px 20px;border-right:1px solid var(--w08)">'+pbEyebrow('Line items')+pbLinesHtml(b)+'</div>'+
+      '<div style="padding:16px 20px">'+pbEyebrow('What you asked for')+pbCoverageList(b)+pbExtrasHtml(b)+
+        '<div style="font-size:9px;color:var(--w30);margin-top:14px">'+(b.breakdown.source==='seed'?'Organized from the original proposal.':'Scanned by Common Ground AI '+pjDate(b.breakdown.at)+'.')+' Always check against the original before signing.'+
+        (pbOwner() && b.breakdown.source !== 'seed' ? ' <button onclick="pbScanBid('+q+',true).catch(function(){})" style="background:none;border:none;padding:0;font-size:9px;color:var(--lime);cursor:pointer;font-family:inherit;text-decoration:underline">Re-scan</button>' : '')+'</div></div></div>';
+  } else if (PB_SCAN_ERR[id]) {
+    body = '<div style="padding:28px 20px;text-align:center"><i class="ti ti-alert-triangle" style="font-size:24px;color:#E07A5F"></i><div style="font-size:13px;font-weight:700;color:var(--white);margin:8px 0 4px">We couldn’t scan this proposal</div><div style="font-size:11px;color:var(--w50);margin-bottom:14px">'+pbEsc(PB_SCAN_ERR[id])+'</div>'+
+      (pbOwner() ? pbBtnPri('Try again', 'pbScanBid('+q+',true).catch(function(){})', 'ti-refresh') : '')+'</div>';
+  } else {
+    body = '<div style="padding:34px 20px;text-align:center"><span style="width:26px;height:26px;border-radius:50%;border:3px solid var(--l20);border-top-color:var(--lime);display:inline-block;animation:pbspin 1s linear infinite"></span>'+
+      '<div style="font-family:Bungee,sans-serif;font-size:15px;color:var(--white);margin:12px 0 6px">Scanning the proposal</div><div style="font-size:11px;color:var(--w50);line-height:1.6;max-width:380px;margin:0 auto">Reading every line item, exclusion and allowance into one organized format'+(pbScope().length?' and checking it against your list':'')+'. About 30 seconds.</div></div>';
+    if (pbOwner() && !PB_SCANNING[id]) pbScanBid(id).catch(function(){});
+    else if (!pbOwner()) body = '<div style="padding:28px 20px;text-align:center;font-size:11px;color:var(--w50)">This proposal hasn’t been scanned yet. Open the original document to review it.</div>';
+  }
+  box.innerHTML = top + head + body;
+  pbOv(); // keeps keyframes
+}
+function pbKpiChip(t){ return '<span style="font-size:10px;font-weight:700;padding:4px 10px;border-radius:20px;background:var(--d4);color:var(--w70);border:1px solid var(--w08)">'+t+'</span>'; }
+
+/* the proposal popup (Choose) now offers Open Proposal + the original */
+function pjChoose(id){
+  var b = pjBid(id); if (!b) return;
+  var q = '\''+b.id+'\'';
+  pjModal('<div style="font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--sage);margin-bottom:2px">Proposal</div>'+
+    '<div style="font-family:Bungee,sans-serif;font-size:18px;color:var(--white);margin-bottom:4px">'+decEsc(b.gcName)+'</div>'+
+    '<div style="font-size:11px;color:var(--w50);margin-bottom:12px">'+(b.amount?'<b style="color:var(--lime);font-size:14px">'+pjMoney(b.amount)+'</b> · ':'')+'Submitted '+pjDate(b.submittedAt)+(b.breakdown && pbComplete(b)!=null?' · covers '+pbComplete(b)+'% of your list':'')+'</div>'+
+    (b.note ? '<div style="font-size:11px;color:var(--w70);line-height:1.6;background:var(--d3);border:1px solid var(--w08);border-radius:9px;padding:10px 12px;margin-bottom:12px">'+decEsc(b.note)+'</div>' : '')+
+    (b.file ? '<div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap"><button onclick="decClose();pbOpenProposal('+q+')" style="flex:1;min-width:140px;padding:10px;background:var(--d3);border:1px solid var(--l20);border-radius:9px;font-size:11px;font-weight:700;color:var(--lime);cursor:pointer;font-family:inherit"><i class="ti ti-layout-list"></i> Open Proposal</button>'+
+      '<button onclick="pjViewDoc('+q+')" style="flex:1;min-width:140px;padding:10px;background:var(--d3);border:1px solid var(--w08);border-radius:9px;font-size:11px;font-weight:600;color:var(--w70);cursor:pointer;font-family:inherit"><i class="ti ti-file-text"></i> View Original Document</button></div>' : '')+
+    '<div style="display:flex;gap:8px"><button onclick="pjHireConfirm('+q+')" style="flex:1;padding:13px;background:var(--lime);border:none;border-radius:9px;font-size:13px;font-weight:800;color:var(--dk);cursor:pointer;font-family:inherit">Hire</button>'+
+    '<button onclick="pjDeclineConfirm('+q+')" style="flex:1;padding:13px;background:none;border:1px solid rgba(224,122,95,.35);border-radius:9px;font-size:13px;font-weight:700;color:#E07A5F;cursor:pointer;font-family:inherit">Don\'t hire</button></div>');
+}
+
+/* ════════ PROJECT BUDGET ════════ */
+function pbContract(){
+  var c = PROJ && PROJ.contract; if (!c) return null;
+  var b = pjBid(c.bidId);                       // owner has the full bid; GC gets the contract copy
+  var bd = (b && b.breakdown) || c.breakdown;
+  return {bidId:c.bidId, gcName:c.gcName, amount:c.amount, breakdown:bd || null};
+}
+function pbCOs(){
+  var all = (typeof decAll === 'function') ? decAll() : [];
+  return all.filter(function(d){ return d.type === 'co'; });
+}
+function pbContractLines(con){
+  if (!con || !con.breakdown) return [];
+  var signed = ((typeof decAll === 'function') ? decAll() : []).filter(function(d){ return d.type === 'contract' && d.status === 'approved'; });
+  return con.breakdown.items.map(function(x){
+    var l = {id:x.id, item:x.item, category:x.category, amount:Number(x.amount)||0, optional:!!x.optional, desc:x.desc};
+    // an optional item becomes part of the contract once the homeowner approves it (e.g. Option 2)
+    if (l.optional && signed.some(function(d){ var k = pbKeywords(l.item); return Number(d.amount) === l.amount && k.some(function(w){ return String(d.title||'').toLowerCase().indexOf(w) !== -1; }); })) { l.optional = false; l.accepted = true; }
+    return l;
+  });
+}
+var PB_INV_FETCHED = false;
+function pbLoadInvoices(){
+  if (!pbLive() || !(pjIsOwner() || pjRole()==='gc')) { PB_INV_LOADED = true; pbRenderBudget(); return Promise.resolve(); }
+  PB_INV_FETCHED = true;
+  return fetch('/api/project?project='+DEC_PROJECT+'&action=invoices', {credentials:'same-origin', cache:'no-store'})
+    .then(function(r){ return r.ok ? r.json() : {invoices:[]}; })
+    .then(function(j){ PB_INV = j.invoices || []; PB_INV_LOADED = true; pbRenderBudget(); })
+    .catch(function(){ PB_INV_LOADED = true; pbRenderBudget(); });
+}
+var PB_KW_STOP = {the:1,and:1,for:1,with:1,not:1,included:1,per:1,load:1,other:1,change:1,order:1,conditions:1,unforeseen:1,extra:0};
+function pbKeywords(s){ return String(s||'').toLowerCase().replace(/\(.*?\)/g,'').split(/[^a-z]+/).filter(function(w){ return w.length > 4 && !PB_KW_STOP[w]; }); }
+
+/* every honesty check, computed in the open */
+function pbChecks(con, invs){
+  var lines = pbContractLines(con), byId = {}; lines.forEach(function(l){ byId[l.id] = l; });
+  var cos = pbCOs(), coById = {}; cos.forEach(function(c){ coById[c.id] = c; });
+  var excl = (con && con.breakdown && con.breakdown.exclusions) || [];
+  var flags = [], perLine = {}, notIn = 0;
+  var gcCo = String((PROJ.hiredGc && (PROJ.hiredGc.company || PROJ.hiredGc.name)) || '').toLowerCase().split(/\s+/)[0] || '';
+  invs.forEach(function(inv){
+    var x = inv.extracted; if (!x) return;
+    var label = (x.vendor || inv.fileName) + (x.number ? ' #' + x.number : '');
+    var add = function(key, sev, text, item){ flags.push({key:inv.id+':'+key, inv:inv, sev:sev, text:text, label:label, resolved:(inv.resolved||{})[inv.id+':'+key] || null, item:item||null}); };
+    var sum = pbSum(x.items||[]);
+    if (x.total != null && (x.items||[]).length && Math.abs(sum - x.total) > 1) add('sum', 'warn', 'The line items add up to '+pbMoney(sum)+', but the invoice total is '+pbMoney(x.total)+'.');
+    invs.forEach(function(o){
+      if (o === inv || !o.extracted || o.at > inv.at) return;
+      var ox = o.extracted;
+      if ((x.number && ox.number && x.number === ox.number && (x.vendor||'') === (ox.vendor||'')) || (x.total && ox.total === x.total && x.date && ox.date === x.date && (x.vendor||'') === (ox.vendor||'')))
+        add('dup', 'bad', 'Looks like a duplicate of '+(ox.vendor||o.fileName)+(ox.number?' #'+ox.number:'')+' ('+pbMoney(ox.total)+'). Don’t pay twice.');
+    });
+    if (gcCo && x.vendor && String(x.vendor).toLowerCase().indexOf(gcCo) === -1) add('vendor', 'info', 'Billed by '+x.vendor+', not your GC ('+(PROJ.hiredGc.company||PROJ.hiredGc.name)+'). Confirm who you’re paying and that it’s part of the contract.');
+    (x.items||[]).forEach(function(it, i){
+      var amt = Number(it.amount) || 0;
+      var co = it.changeOrderId && coById[it.changeOrderId];
+      if (co) {
+        if (co.status !== 'approved') add('co'+i, 'bad', '“'+it.desc+'” ('+pbMoney(amt)+') bills change order “'+co.title+'”, which isn’t approved yet.', it);
+        perLine['co:'+co.id] = (perLine['co:'+co.id]||0) + amt;
+        return;
+      }
+      var l = it.contractLineId && byId[it.contractLineId];
+      if (!l) {
+        notIn += amt;
+        var ex = excl.filter(function(e){ var k = pbKeywords(e); return k.some(function(w){ return String(it.desc||'').toLowerCase().indexOf(w) !== -1; }); })[0];
+        if (ex) add('ex'+i, 'bad', '“'+it.desc+'” ('+pbMoney(amt)+') was excluded in the proposal (“'+ex+'”). It needs an approved change order before it’s billed.', it);
+        else add('nm'+i, 'bad', '“'+it.desc+'” ('+pbMoney(amt)+') isn’t in the contract or an approved change order.', it);
+        return;
+      }
+      if (l.optional) add('opt'+i, 'warn', '“'+it.desc+'” bills the optional item “'+l.item+'”. Confirm you accepted it — it isn’t in the base contract.', it);
+      perLine[l.id] = (perLine[l.id]||0) + amt;
+    });
+  });
+  lines.forEach(function(l){
+    var inv = perLine[l.id] || 0;
+    if (!l.optional && inv > l.amount + 1) flags.push({key:'line:'+l.id, sev:'bad', text:'Invoiced '+pbMoney(inv)+' against '+l.item+' — '+pbMoney(inv - l.amount)+' over its '+pbMoney(l.amount)+' contract amount. A change order should cover the difference.', label:l.item, resolved:null, line:true});
+  });
+  cos.filter(function(c){ return c.status === 'approved'; }).forEach(function(c){
+    var inv = perLine['co:'+c.id] || 0;
+    if (c.amount != null && inv > c.amount + 1) flags.push({key:'line:co:'+c.id, sev:'bad', text:'Invoiced '+pbMoney(inv)+' against change order “'+c.title+'” — '+pbMoney(inv - c.amount)+' over the approved '+pbMoney(c.amount)+'.', label:c.title, resolved:null, line:true});
+  });
+  return {flags:flags, perLine:perLine, notIn:notIn};
+}
+
+function pbIntroBudget(hired, nInv){
+  var gc = pjRole() === 'gc' && !pjIsOwner();
+  return cgIntro(gc ? 'budget-gc' : 'budget', gc ? {icon:'ti-receipt', eyebrow:'Project Budget', title:'Bill against the contract — get paid faster',
+      body:'Upload each invoice here. Every line is matched to the contract the homeowner signed, so approvals don’t stall on questions.',
+      steps:[{t:'Contract loaded', d:'Your hired proposal is the contract.', done:hired},{t:'Upload invoices', d:'PDF or photo — we read them.', done:nInv>0},{t:'Checked + paid', d:'Clean invoices get marked paid.', done:PB_INV.some(function(i){return i.paid;})}]}
+    : {icon:'ti-shield-check', eyebrow:'Project Budget', title:'Every dollar, checked against your contract',
+      body:'This is where your money is tracked. Upload invoices as they arrive — we read each one, match every line to your contract and approved change orders, and flag anything that doesn’t line up before you pay. Everyone stays above board.',
+      steps:[{t:'Hire your GC', d:'Their proposal becomes the contract.', done:hired},{t:'Upload invoices', d:'Paid ones too — even from before the platform.', done:nInv>0},{t:'Review the checks', d:'Clear flags, mark what you’ve paid.', done:PB_INV.some(function(i){return i.paid;})}]});
+}
+function pbRenderBudget(){
+  var root = document.getElementById('pb-root'); if (!root || !PB_BUDGET_ON || !PROJ) return;
+  var con = pbContract(), hired = !!(PROJ.hiredGc && con), invs = PB_INV.slice().sort(function(a,b){ return a.at < b.at ? -1 : 1; });
+  var h = pbIntroBudget(hired, invs.length);
+  if (!PB_INV_LOADED) { root.innerHTML = h + '<div style="padding:20px;text-align:center;font-size:11px;color:var(--w50)">Loading…</div>'; return; }
+  var ctas = pbCtas(hired);
+  if (!hired) {
+    h += pbCard('<div style="display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap"><span style="width:38px;height:38px;border-radius:10px;background:var(--l10);border:1px solid var(--l20);display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="ti ti-building-community" style="font-size:19px;color:var(--lime)"></i></span>'+
+      '<div style="flex:1;min-width:220px"><div style="font-size:14px;font-weight:700;color:var(--white);margin-bottom:6px">No GC has been dedicated to this project yet.</div>'+
+      '<div style="font-size:12px;color:var(--w70);line-height:1.65">If you have paid invoices and a contract started outside of the platform, no problem just upload all documents and we’ll analyze, organize and help you monitor your budget throughout the project.</div></div></div>'+ctas, 'padding:18px');
+    if (invs.length) h += pbCard(pbEyebrow('Uploaded so far · waiting on a contract to check against')+invs.map(function(i){ return pbInvRow(i, null); }).join(''));
+    root.innerHTML = h; pbBadge(0); return;
+  }
+  if (!con.breakdown) {
+    var scanning = !!PB_SCANNING[con.bidId];
+    h += pbCard(pbH(pbEsc(con.gcName)+' is your GC')+'<div style="font-size:12px;color:var(--w70);line-height:1.6;margin-bottom:12px">'+(pbOwner() ? (scanning ? 'Scanning the contract into line items so every invoice can be checked against it…' : 'Scan the hired proposal into line items so every invoice can be checked against it.') : 'Waiting for the homeowner to load the contract line items.')+'</div>'+
+      (pbOwner() && !scanning ? pbBtnPri('Scan the contract', 'pbScanBid(\''+con.bidId+'\').catch(function(e){ alert(e.message); })', 'ti-scan') : '')+(PB_SCAN_ERR[con.bidId] ? '<div style="font-size:11px;color:#E07A5F;margin-top:8px">'+pbEsc(PB_SCAN_ERR[con.bidId])+'</div>' : ''));
+    root.innerHTML = h; pbBadge(0); return;
+  }
+  var lines = pbContractLines(con), base = lines.filter(function(l){ return !l.optional; });
+  var cos = pbCOs(), coA = cos.filter(function(c){ return c.status === 'approved'; }), coP = cos.filter(function(c){ return c.status !== 'approved' && c.status !== 'rejected' && c.status !== 'withdrawn'; });
+  var contractTotal = pbSum(base) + pbSum(coA.map(function(c){ return {amount:c.amount||0}; }));
+  if (!invs.length) {
+    h += pbCard(pbH(pbEsc(con.gcName)+' is your GC')+
+      '<div style="font-size:12px;color:var(--w70);line-height:1.65;margin-bottom:6px">Contract loaded: <b style="color:var(--lime)">'+pbMoney(contractTotal)+'</b> across '+base.length+' line items'+(coA.length?' + '+coA.length+' approved change order'+(coA.length===1?'':'s'):'')+'. Upload the first invoice and we’ll check every line against it.</div>'+ctas, 'padding:18px');
+    h += pbContractTable(con, lines, coA, {}, 0, []);
+    root.innerHTML = h; pbBadge(0); return;
+  }
+  var chk = pbChecks(con, invs); PB_LAST_FLAGS = chk.flags;
+  var openFlags = chk.flags.filter(function(f){ return !f.resolved && f.sev !== 'info'; });
+  var invoiced = pbSum(invs.map(function(i){ return {amount:i.extracted ? i.extracted.total : 0}; }));
+  var paid = pbSum(invs.filter(function(i){ return i.paid; }).map(function(i){ return {amount:i.extracted ? i.extracted.total : 0}; }));
+  var left = contractTotal - invoiced;
+  var reading = invs.filter(function(i){ return !i.extracted; }).length;
+  // KPIs
+  function kpi(label, val, sub, color){ return '<div style="flex:1;min-width:140px;background:var(--d3);border:1px solid var(--w08);border-radius:12px;padding:12px 14px"><div style="font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--sage)">'+label+'</div><div style="font-family:Bungee,sans-serif;font-size:20px;color:'+(color||'var(--white)')+';margin:4px 0 2px;white-space:nowrap">'+val+'</div><div style="font-size:10px;color:var(--w50)">'+sub+'</div></div>'; }
+  h += '<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px"><div style="font-size:11px;color:var(--w50)">Contract: <b style="color:var(--white)">'+pbEsc(con.gcName)+'</b>'+(con.breakdown.source==='seed'?'':' · scanned '+pjDate(con.breakdown.at))+'</div><div style="display:flex;gap:6px;flex-wrap:wrap">'+pbBtnPri('Upload Invoice', 'pbUploadForm()', 'ti-upload')+(PROJ.contract.hasFile ? pbBtnSec('Contract', 'pjViewDoc(\''+con.bidId+'\')', 'ti-file-text') : '')+'</div></div>';
+  h += '<div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px">'+
+    kpi('Contract', pbMoney(contractTotal), base.length+' lines'+(coA.length?' + '+coA.length+' CO':''))+
+    kpi('Invoiced', pbMoney(invoiced), invs.length+' invoice'+(invs.length===1?'':'s')+(reading?' · '+reading+' reading':''), invoiced > contractTotal ? '#E07A5F' : 'var(--white)')+
+    kpi('Paid', pbMoney(paid), invoiced ? pbPct(paid/invoiced*100)+' of invoiced' : '—', 'var(--ok)')+
+    kpi('Left on contract', pbMoney(left), left < 0 ? 'Over contract' : contractTotal ? pbPct(left/contractTotal*100)+' remaining' : '', left < 0 ? '#E07A5F' : 'var(--lime)')+
+    kpi('Checks', openFlags.length ? openFlags.length+' to review' : 'All clear', openFlags.length ? 'See below' : 'Every line matches', openFlags.length ? '#E07A5F' : 'var(--ok)')+
+  '</div>';
+  // progress bar
+  var scale = Math.max(contractTotal, invoiced) || 1;
+  h += '<div style="margin-bottom:14px"><div style="display:flex;height:10px;border-radius:5px;overflow:hidden;background:var(--w08)">'+
+    '<div title="Paid" style="width:'+(Math.min(paid,contractTotal)/scale*100)+'%;background:var(--ok)"></div>'+
+    '<div title="Invoiced, not paid" style="width:'+(Math.max(0, Math.min(invoiced,contractTotal)-Math.min(paid,contractTotal))/scale*100)+'%;background:var(--lime)"></div>'+
+    '<div title="Over contract" style="width:'+(Math.max(0, invoiced-contractTotal)/scale*100)+'%;background:#E07A5F"></div></div>'+
+    '<div style="display:flex;gap:14px;flex-wrap:wrap;font-size:10px;color:var(--w50);margin-top:6px"><span><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:var(--ok)"></span> Paid</span><span><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:var(--lime)"></span> Invoiced, not paid</span><span><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:var(--w15)"></span> Not invoiced yet</span>'+(invoiced>contractTotal?'<span><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#E07A5F"></span> Over contract</span>':'')+'</div></div>';
+  h += pbChecksHtml(chk.flags);
+  h += pbContractTable(con, lines, coA, chk.perLine, chk.notIn, invs);
+  if (coP.length) h += pbCard(pbEyebrow('Change orders waiting on approval — not in the contract yet')+coP.map(function(c){ return '<div style="display:flex;gap:10px;padding:6px 0;border-top:1px solid var(--w08);font-size:11px"><span style="flex:1;color:var(--white)">'+pbEsc(c.title)+'</span><span style="color:var(--amb)">'+(c.amount!=null?pbMoney(c.amount):'No price yet')+'</span></div>'; }).join(''));
+  h += pbCard(pbEyebrow('Invoices')+invs.slice().reverse().map(function(i){ return pbInvRow(i, chk); }).join(''));
+  root.innerHTML = h;
+  pbBadge(openFlags.length);
+}
+function pbBadge(n){
+  var b = document.getElementById('nav-budget-badge'); if (!b) return;
+  b.textContent = n ? n + ' to review' : ''; b.style.display = n ? '' : 'none';
+}
+function pbCtas(hired){
+  var linked = hired ? '<span style="display:inline-flex;align-items:center;gap:6px;padding:10px 14px;border-radius:9px;background:var(--ok15);border:1px solid var(--ok30);font-size:12px;font-weight:700;color:var(--ok)"><i class="ti ti-link"></i> GC linked · '+pbEsc(PROJ.hiredGc.company || PROJ.hiredGc.name)+'</span>'
+    : (pbOwner() ? '<button onclick="pbLinkGc()" id="pb-link-gc" style="flex:1;min-width:160px;padding:12px 16px;background:none;border:1px solid var(--l20);border-radius:9px;font-size:12px;font-weight:800;color:var(--lime);cursor:pointer;font-family:inherit"><i class="ti ti-link"></i> Link GC</button>' : '');
+  return '<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;padding-top:14px;border-top:1px solid var(--w08)">'+
+    '<button onclick="pbUploadForm()" id="pb-upload-btn" style="flex:1;min-width:160px;padding:12px 16px;background:var(--lime);border:none;border-radius:9px;font-size:12px;font-weight:800;color:var(--dk);cursor:pointer;font-family:inherit"><i class="ti ti-upload"></i> Upload Invoice</button>'+linked+'</div>';
+}
+function pbContractTable(con, lines, coA, perLine, notIn, invs){
+  var narrow = (document.getElementById('pb-root')||{}).clientWidth < 560;
+  var cols = narrow ? 'minmax(0,1.4fr) minmax(0,1fr) minmax(0,1fr)' : 'minmax(0,2fr) repeat(4,minmax(0,1fr))';
+  var paidBy = {};
+  invs.forEach(function(inv){ if (!inv.paid || !inv.extracted) return; (inv.extracted.items||[]).forEach(function(it){ var k = it.changeOrderId ? 'co:'+it.changeOrderId : it.contractLineId; if (k) paidBy[k] = (paidBy[k]||0) + (Number(it.amount)||0); }); });
+  function rowFor(key, name, sub, amount, optional, accepted){
+    var inv = perLine[key] || 0, pd = paidBy[key] || 0, over = !optional && inv > amount + 1;
+    var pct = amount ? Math.min(100, inv/amount*100) : (inv ? 100 : 0);
+    var open = PB_OPEN_ROW === key;
+    var detail = open ? pbLineDetail(key, invs) : '';
+    return '<div data-line="'+pbEsc(key)+'" onclick="pbToggleRow(\''+pbEsc(key)+'\')" style="cursor:pointer;padding:10px 14px;border-top:1px solid var(--w08)'+(open?';background:var(--d2)':'')+'">'+
+      '<div style="display:grid;grid-template-columns:'+cols+';gap:8px;align-items:center">'+
+        '<div style="min-width:0"><div style="font-size:11px;font-weight:600;color:var(--white)">'+pbEsc(name)+(optional?' <span style="font-size:9px;color:var(--amb);font-weight:700">Optional</span>':'')+(accepted?' <span style="font-size:9px;color:var(--ok);font-weight:700">Accepted option</span>':'')+'</div><div style="font-size:9px;color:var(--w30)">'+pbEsc(sub||'')+'</div></div>'+
+        '<div style="font-size:11px;color:var(--w70);text-align:right">'+(optional?'<span style="color:var(--w30)">'+pbMoney(amount)+'</span>':pbMoney(amount))+'</div>'+
+        '<div style="font-size:11px;font-weight:700;text-align:right;color:'+(over?'#E07A5F':'var(--white)')+'">'+pbMoney(inv)+'</div>'+
+        (narrow ? '' : '<div style="font-size:11px;color:var(--ok);text-align:right">'+pbMoney(pd)+'</div><div style="font-size:11px;text-align:right;color:'+(over?'#E07A5F':'var(--lime)')+'">'+(optional && !inv ? '—' : pbMoney(amount - inv))+'</div>')+
+      '</div>'+
+      '<div style="height:4px;border-radius:2px;background:var(--w08);margin-top:7px;overflow:hidden"><div style="height:100%;width:'+pct+'%;background:'+(over?'#E07A5F':pct>=90?'var(--amb)':'var(--lime)')+'"></div></div>'+detail+'</div>';
+  }
+  var head = '<div style="display:grid;grid-template-columns:'+cols+';gap:8px;padding:9px 14px;font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--sage)"><span>Contract line</span><span style="text-align:right">Contract</span><span style="text-align:right">Invoiced</span>'+(narrow?'':'<span style="text-align:right">Paid</span><span style="text-align:right">Left</span>')+'</div>';
+  var rows = lines.map(function(l){ return rowFor(l.id, l.item, l.category, l.amount, l.optional, l.accepted); }).join('');
+  rows += coA.map(function(c){ return rowFor('co:'+c.id, c.title, 'Approved change order', Number(c.amount)||0, false); }).join('');
+  if (notIn) rows += '<div onclick="pbToggleRow(\'none\')" style="cursor:pointer;padding:10px 14px;border-top:1px solid var(--w08);background:rgba(224,122,95,.07)"><div style="display:grid;grid-template-columns:'+cols+';gap:8px;align-items:center"><div style="font-size:11px;font-weight:700;color:#E07A5F">Not in the contract</div><div style="text-align:right;font-size:11px;color:var(--w30)">$0</div><div style="text-align:right;font-size:11px;font-weight:700;color:#E07A5F">'+pbMoney(notIn)+'</div>'+(narrow?'':'<div></div><div></div>')+'</div>'+(PB_OPEN_ROW==='none'?pbLineDetail('none', invs):'')+'</div>';
+  return '<div style="background:var(--d3);border:1px solid var(--w08);border-radius:var(--r);overflow:hidden;margin-bottom:12px"><div style="padding:12px 14px 2px;display:flex;align-items:center;gap:8px"><span style="font-size:12px;font-weight:700;color:var(--white);flex:1">Contract vs. invoiced</span><span style="font-size:9px;color:var(--w30)">Tap a line to see what billed it</span></div>'+head+rows+'</div>';
+}
+function pbToggleRow(k){ PB_OPEN_ROW = PB_OPEN_ROW === k ? '' : k; pbRenderBudget(); }
+function pbLineDetail(key, invs){
+  var hits = [];
+  invs.forEach(function(inv){ if (!inv.extracted) return; (inv.extracted.items||[]).forEach(function(it){
+    var k = it.changeOrderId ? 'co:'+it.changeOrderId : it.contractLineId;
+    var lines = pbContractLines(pbContract()), known = lines.some(function(l){ return l.id === it.contractLineId; }) || (it.changeOrderId && pbCOs().some(function(c){ return c.id === it.changeOrderId; }));
+    if ((key === 'none' && !known) || (key !== 'none' && k === key)) hits.push({inv:inv, it:it});
+  }); });
+  if (!hits.length) return '<div style="font-size:10px;color:var(--w30);padding-top:8px">Nothing billed against this line yet.</div>';
+  return '<div style="padding-top:8px">'+hits.map(function(h){ return '<div style="display:flex;gap:8px;font-size:10px;padding:3px 0;color:var(--w70)"><span style="flex:1;min-width:0">'+pbEsc(h.it.desc)+' <span style="color:var(--w30)">· '+pbEsc((h.inv.extracted.vendor||h.inv.fileName)+(h.inv.extracted.number?' #'+h.inv.extracted.number:''))+'</span></span><b style="color:var(--white)">'+pbMoney(h.it.amount)+'</b>'+(h.inv.paid?'<span style="color:var(--ok)">Paid</span>':'')+'</div>'; }).join('')+'</div>';
+}
+function pbChecksHtml(flags){
+  var open = flags.filter(function(f){ return !f.resolved; }), done = flags.filter(function(f){ return f.resolved; });
+  var sevC = {bad:'#E07A5F', warn:'var(--amb)', info:'var(--w70)'};
+  var h = '<div style="background:var(--d3);border:1px solid '+(open.some(function(f){return f.sev==='bad';})?'rgba(224,122,95,.4)':'var(--w08)')+';border-radius:var(--r);padding:14px 16px;margin-bottom:12px">'+
+    '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><i class="ti ti-shield-check" style="font-size:16px;color:'+(open.length?'var(--amb)':'var(--ok)')+'"></i><span style="font-size:12px;font-weight:700;color:var(--white);flex:1">Above-board checks</span><span style="font-size:10px;color:var(--w50)">'+(open.length?open.length+' open':'All clear')+'</span></div>';
+  if (!flags.length) h += '<div style="font-size:11px;color:var(--w70);line-height:1.6">Every invoice line matches the contract or an approved change order, nothing is over its contract amount, and no duplicates were found.</div>';
+  h += open.map(function(f){
+    var act = f.line ? '<div style="font-size:10px;color:var(--w50);margin-top:4px">Ask your GC for a change order, or approve one in Approvals.</div>'
+      : pbOwner() ? '<div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap"><button onclick="pbResolve(\''+f.inv.id+'\',\''+pbEsc(f.key)+'\')" style="'+PB_BTN+';padding:5px 10px;font-size:10px;background:var(--d2);border:1px solid var(--w08);color:var(--w70)">Looks right</button><button onclick="pbOpenInvoice(\''+f.inv.id+'\')" style="'+PB_BTN+';padding:5px 10px;font-size:10px;background:none;border:none;color:var(--lime)">Open invoice</button></div>'
+      : '<div style="font-size:10px;color:var(--w50);margin-top:4px">The homeowner will review this.</div>';
+    return '<div style="display:flex;gap:10px;padding:9px 0;border-top:1px solid var(--w08)"><span style="width:8px;height:8px;border-radius:50%;background:'+sevC[f.sev]+';margin-top:4px;flex-shrink:0"></span><div style="flex:1;min-width:0"><div style="font-size:10px;color:var(--w50)">'+pbEsc(f.label)+'</div><div style="font-size:11px;color:var(--white);line-height:1.55">'+pbEsc(f.text)+'</div>'+act+'</div></div>';
+  }).join('');
+  if (done.length) h += '<div style="font-size:10px;color:var(--w50);margin-top:8px;padding-top:8px;border-top:1px solid var(--w08)">'+done.length+' reviewed: '+done.map(function(f){ return pbEsc(f.label)+' — OK’d by '+pbEsc(f.resolved.by)+(f.resolved.note?' (“'+pbEsc(f.resolved.note)+'”)':''); }).join(' · ')+'</div>';
+  return h + '</div>';
+}
+function pbInvRow(inv, chk){
+  var x = inv.extracted, flags = chk ? chk.flags.filter(function(f){ return f.inv === inv && !f.resolved && f.sev !== 'info'; }) : [];
+  var reading = !x && (PB_READING[inv.id] || inv.status === 'reading');
+  var pill = !x ? (reading ? '<span style="font-size:9px;font-weight:700;color:var(--amb)">Reading…</span>' : '<span style="font-size:9px;font-weight:700;color:#E07A5F">Couldn’t read</span>')
+    : !chk ? '<span style="font-size:9px;font-weight:700;color:var(--w50)">Read ✓</span>'
+    : flags.length ? '<span style="font-size:9px;font-weight:700;padding:2px 8px;border-radius:20px;background:rgba(224,122,95,.12);color:#E07A5F;border:1px solid rgba(224,122,95,.3)">'+flags.length+' to review</span>'
+    : '<span style="font-size:9px;font-weight:700;padding:2px 8px;border-radius:20px;background:var(--ok15);color:var(--ok);border:1px solid var(--ok30)">Matches contract ✓</span>';
+  var paid = pbOwner() ? '<label style="display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:700;color:'+(inv.paid?'var(--ok)':'var(--w50)')+';cursor:pointer"><input type="checkbox" data-paid="'+inv.id+'" '+(inv.paid?'checked ':'')+(x?'':'disabled ')+'onchange="pbSetPaid(\''+inv.id+'\',this.checked)" style="accent-color:#4A9B6F;width:15px;height:15px;margin:0">Paid</label>'
+    : (inv.paid ? '<span style="font-size:10px;font-weight:700;color:var(--ok)">Paid ✓</span>' : '<span style="font-size:10px;color:var(--w30)">Not paid</span>');
+  var readBtn = !x && !reading ? '<button onclick="pbReadById(\''+inv.id+'\')" style="'+PB_BTN+';padding:5px 9px;font-size:10px;background:var(--d2);border:1px solid var(--w08);color:var(--w70)">Try again</button><button onclick="pbManualForm(\''+inv.id+'\')" style="'+PB_BTN+';padding:5px 9px;font-size:10px;background:none;border:none;color:var(--lime)">Enter details</button>' : '';
+  var stale = x && chk && PROJ.hiredGc && inv.readAt && inv.readAt < PROJ.hiredGc.hiredAt ? '<button onclick="pbReadById(\''+inv.id+'\')" style="'+PB_BTN+';padding:5px 9px;font-size:10px;background:none;border:none;color:var(--lime)">Re-check against contract</button>' : '';
+  return '<div data-inv="'+inv.id+'" style="display:flex;gap:10px;align-items:center;padding:10px 0;border-top:1px solid var(--w08);flex-wrap:wrap">'+
+    '<i class="ti ti-file-invoice" style="font-size:17px;color:var(--lime)"></i>'+
+    '<div style="flex:1;min-width:170px"><div style="font-size:11px;font-weight:700;color:var(--white);overflow-wrap:anywhere">'+pbEsc(x ? (x.vendor || inv.fileName) + (x.number ? ' · #' + x.number : '') : inv.fileName)+'</div>'+
+      '<div style="font-size:10px;color:var(--w50)">'+(x && x.date ? pbEsc(pbDay(x.date))+' · ' : '')+(x ? (x.items||[]).length+' line'+((x.items||[]).length===1?'':'s')+' · ' : '')+'uploaded by '+pbEsc(inv.by)+' '+pjDate(inv.at)+'</div></div>'+
+    '<div style="font-family:Bungee,sans-serif;font-size:14px;color:var(--white)">'+(x && x.total != null ? pbMoney(x.total) : '')+'</div>'+pill+paid+readBtn+stale+
+    '<button onclick="pbOpenInvoice(\''+inv.id+'\')" style="'+PB_BTN+';padding:5px 9px;font-size:10px;background:var(--d2);border:1px solid var(--w08);color:var(--w70)">Open</button>'+
+    '<button onclick="pbDeleteInv(\''+inv.id+'\',this)" style="'+PB_BTN+';padding:5px 9px;font-size:10px;background:none;border:1px solid rgba(224,122,95,.3);color:#E07A5F">Delete</button></div>';
+}
+function pbOpenInvoice(id){
+  if (!pbLive()) { alert('Invoices open on the live site after sign-in.'); return; }
+  window.open('/api/project?project='+DEC_PROJECT+'&action=invoice-file&id='+encodeURIComponent(id), '_blank', 'noopener');
+}
+function pbInvPost(body){ return pjPost(body).then(function(j){ if (j.invoices) PB_INV = j.invoices; else if (j.invoice) { PB_INV = PB_INV.filter(function(i){ return i.id !== j.invoice.id; }).concat([j.invoice]); } return j; }); }
+function pbSetPaid(id, on){ pbInvPost({action:'invoice-update', id:id, paid:on}).then(function(j){ if (!j.ok) alert(pjErr(j)); pbRenderBudget(); }); }
+function pbResolve(invId, key){
+  var f = (PB_LAST_FLAGS||[]).filter(function(x){ return x.key === key; })[0];
+  pjModal(pbH('Looks right?', 16)+(f?'<div style="font-size:11px;color:var(--w70);line-height:1.6;background:var(--d3);border:1px solid var(--w08);border-radius:9px;padding:10px 12px;margin-bottom:10px">'+pbEsc(f.text)+'</div>':'')+
+    '<div style="font-size:11px;color:var(--w50);margin-bottom:6px">Add a short note — it’s saved with the invoice so your GC sees why it was OK’d.</div>'+
+    '<textarea id="pb-res-note" rows="3" placeholder="e.g. Agreed by phone 10/2 — CO coming" style="width:100%;box-sizing:border-box;background:var(--d2);border:1px solid var(--w08);border-radius:8px;padding:10px;font-size:12px;color:var(--white);font-family:inherit;margin-bottom:10px"></textarea>'+
+    '<div style="display:flex;gap:8px"><button id="pb-go" onclick="pbResolveGo(\''+invId+'\',\''+pbEsc(key)+'\')" style="flex:1;padding:12px;background:var(--lime);border:none;border-radius:8px;font-size:12px;font-weight:800;color:var(--dk);cursor:pointer;font-family:inherit">Mark as reviewed</button>'+
+    '<button onclick="decClose()" style="padding:12px 14px;background:var(--d4);border:1px solid var(--w08);border-radius:8px;font-size:11px;font-weight:600;color:var(--w70);cursor:pointer;font-family:inherit">Cancel</button></div>');
+}
+function pbResolveGo(invId, key){
+  var note = ((document.getElementById('pb-res-note')||{}).value||'').trim();
+  var btn = document.getElementById('pb-go'); btn.disabled = true;
+  pbInvPost({action:'invoice-update', id:invId, resolve:{key:key, note:note}}).then(function(j){ if (!j.ok) { btn.disabled = false; alert(pjErr(j)); return; } decClose(); pbRenderBudget(); });
+}
+function pbDeleteInv(id, btn){
+  if (!confirm('Delete this invoice? The file is removed for everyone.')) return;
+  btn.disabled = true;
+  pbInvPost({action:'invoice-delete', id:id}).then(function(j){ if (!j.ok) { btn.disabled = false; alert(pjErr(j)); return; } pbRenderBudget(); });
+}
+
+/* Link GC: no GC in the pipeline → send an invite; proposals already in → go choose one */
+function pbLinkGc(){
+  var bids = pbBids(), invites = PROJ.bidInvites || [];
+  if (bids.length || invites.length) {
+    pjModal(pbH('Your GC is in the pipeline', 16)+'<div style="font-size:12px;color:var(--w70);line-height:1.6;margin-bottom:14px">'+
+      (bids.length ? bids.length+' proposal'+(bids.length===1?' is':'s are')+' in. Open and compare them, then choose your GC — their proposal becomes the contract here.' : invites.length+' GC'+(invites.length===1?' has':'s have')+' been invited to bid. Once a proposal comes in, choose your GC on Proposals.')+'</div>'+
+      '<div style="display:flex;gap:8px;flex-wrap:wrap"><button onclick="decClose();pbGoProposals()" style="flex:1;padding:12px;background:var(--lime);border:none;border-radius:8px;font-size:12px;font-weight:800;color:var(--dk);cursor:pointer;font-family:inherit">Go to Proposals</button>'+
+      '<button onclick="pbInviteForm()" style="flex:1;padding:12px;background:var(--d4);border:1px solid var(--w08);border-radius:8px;font-size:11px;font-weight:700;color:var(--w70);cursor:pointer;font-family:inherit">Invite another GC</button></div>');
+    return;
+  }
+  pbInviteForm();
+}
+function pbGoProposals(){ var b = document.getElementById('nav-btn-proposals'); if (b) b.click(); else goScreen('proposals'); }
+function pbInviteForm(){
+  var inp = 'width:100%;box-sizing:border-box;background:var(--d2);border:1px solid var(--w08);border-radius:8px;padding:10px;font-size:13px;color:var(--white);font-family:inherit;margin-bottom:8px';
+  pjModal(pbH('Invite your GC', 16)+'<div style="font-size:11px;color:var(--w70);line-height:1.6;margin-bottom:12px">Already working with a GC — or want one to bid? Send them a link. They upload their proposal or contract and create an account in one step; once you choose them, every invoice is checked against it.</div>'+
+    '<input id="pb-gc-name" placeholder="Full name" style="'+inp+'"><input id="pb-gc-email" type="email" placeholder="Email" style="'+inp+'"><input id="pb-gc-phone" type="tel" placeholder="Phone (optional)" style="'+inp+'">'+
+    '<div id="pb-err" style="display:none;font-size:11px;color:#E07A5F;margin-bottom:8px"></div><div id="pb-invite-out"></div>'+
+    '<div style="display:flex;gap:8px"><button id="pb-go" onclick="pbInviteGo()" style="flex:1;padding:12px;background:var(--lime);border:none;border-radius:8px;font-size:12px;font-weight:800;color:var(--dk);cursor:pointer;font-family:inherit">Send invite</button>'+
+    '<button onclick="decClose()" style="padding:12px 14px;background:var(--d4);border:1px solid var(--w08);border-radius:8px;font-size:11px;font-weight:600;color:var(--w70);cursor:pointer;font-family:inherit">Cancel</button></div>');
+}
+function pbInviteGo(){
+  var g = function(id){ return ((document.getElementById(id)||{}).value||'').trim(); };
+  var name = g('pb-gc-name'), email = g('pb-gc-email'), phone = g('pb-gc-phone');
+  var err = document.getElementById('pb-err');
+  if (!name || !email) { err.style.display = 'block'; err.textContent = 'Add the GC’s full name and email.'; return; }
+  var btn = document.getElementById('pb-go'); btn.disabled = true; btn.textContent = 'Sending…';
+  pjPost({action:'bid-invite', name:name, email:email, phone:phone}).then(function(j){
+    btn.disabled = false; btn.textContent = 'Send invite';
+    if (!j.ok) { err.style.display = 'block'; err.textContent = pjErr(j); return; }
+    pjModal(pbH('Invite sent'+(j.emailed?' ✓':''), 16)+'<div style="font-size:11px;color:var(--w70);line-height:1.6">'+(j.emailed?'We emailed '+pbEsc(email)+'. ':'')+'When their proposal comes in, you’ll find it on Proposals.</div>'+
+      pjShareBox('Invite for <b style="color:var(--white)">'+pbEsc(name)+'</b>', j.link, 'Hi '+pjFirst(name)+', please submit your proposal for '+cgTitle()+' on Common Ground: '+j.link, phone, email, 'Proposal request — '+cgTitle())+
+      '<button onclick="decClose()" style="width:100%;margin-top:12px;padding:11px;background:var(--d4);border:1px solid var(--w08);border-radius:8px;font-size:12px;font-weight:600;color:var(--w70);cursor:pointer;font-family:inherit">Done</button>');
+    pjLoad();
+  });
+}
+
+/* Upload Invoice → stored → read by AI → matched to the contract */
+function pbUploadForm(){
+  if (!pbLive()) { alert('Sign in on the live site to upload invoices.'); return; }
+  pjModal(pbH('Upload Invoice', 16)+'<div style="font-size:11px;color:var(--w70);line-height:1.6;margin-bottom:12px">Add one or more invoices — paid or not, from before the platform too. We read each one and match every line to '+(PROJ.hiredGc?'the contract':'your contract once your GC is linked')+'.</div>'+
+    '<input id="pb-files" type="file" accept="application/pdf,image/jpeg,image/png,image/webp" multiple style="width:100%;box-sizing:border-box;background:var(--d2);border:1px solid var(--w08);border-radius:8px;padding:10px;font-size:12px;color:var(--white);font-family:inherit;margin-bottom:6px">'+
+    (pbOwner() ? '<label style="display:flex;align-items:center;gap:8px;font-size:11px;color:var(--w70);margin:8px 0 4px;cursor:pointer"><input id="pb-already-paid" type="checkbox" style="accent-color:#4A9B6F;width:15px;height:15px;margin:0"> I’ve already paid these</label>' : '')+
+    '<div style="font-size:10px;color:var(--w30);margin-bottom:12px">PDF or photo · up to 3 MB each</div><div id="pb-up-log"></div>'+
+    '<div style="display:flex;gap:8px"><button id="pb-go" onclick="pbUploadGo()" style="flex:1;padding:12px;background:var(--lime);border:none;border-radius:8px;font-size:12px;font-weight:800;color:var(--dk);cursor:pointer;font-family:inherit">Upload + check</button>'+
+    '<button onclick="decClose()" style="padding:12px 14px;background:var(--d4);border:1px solid var(--w08);border-radius:8px;font-size:11px;font-weight:600;color:var(--w70);cursor:pointer;font-family:inherit">Close</button></div>');
+}
+function pbUploadGo(){
+  var files = Array.prototype.slice.call((document.getElementById('pb-files')||{}).files || []);
+  var log = document.getElementById('pb-up-log'), btn = document.getElementById('pb-go');
+  if (!files.length) { log.innerHTML = '<div style="font-size:11px;color:#E07A5F;margin-bottom:8px">Choose at least one file.</div>'; return; }
+  var paidAlready = !!(document.getElementById('pb-already-paid')||{}).checked;
+  btn.disabled = true; btn.textContent = 'Uploading…';
+  var line = function(f, t, c){ var id = 'pbl-'+f.name.replace(/[^a-z0-9]/gi,'').slice(0,30); var el = document.getElementById(id); var html = '<div id="'+id+'" style="font-size:11px;color:'+(c||'var(--w70)')+';margin-bottom:6px">'+pbEsc(f.name)+' — '+t+'</div>'; if (el) el.outerHTML = html; else log.insertAdjacentHTML('beforeend', html); };
+  (function next(){
+    if (!files.length) { btn.disabled = false; btn.textContent = 'Done'; btn.onclick = function(){ decClose(); }; pbRenderBudget(); return; }
+    var f = files.shift();
+    if (f.size > 3.1*1024*1024) { line(f, 'over 3 MB', '#E07A5F'); next(); return; }
+    line(f, 'uploading…');
+    pbB64FromBlob(f).then(function(data){
+      return pbInvPost({action:'invoice-upload', name:f.name, type:f.type || (/\.pdf$/i.test(f.name)?'application/pdf':''), data:data}).then(function(j){
+        if (!j.ok) { line(f, pjErr(j), '#E07A5F'); return; }
+        line(f, 'reading + checking…'); pbRenderBudget();
+        return pbReadInvoice(j.invoice, data, j.invoice.fileType).then(function(ok){
+          line(f, ok ? 'read ✓ — matched to the contract' : 'stored — couldn’t read it automatically (you can enter the details)', ok ? 'var(--ok)' : 'var(--amb)');
+          if (ok && paidAlready) return pbInvPost({action:'invoice-update', id:j.invoice.id, paid:true});
+        });
+      });
+    }).catch(function(e){ line(f, e.message || 'failed', '#E07A5F'); }).then(next);
+  })();
+}
+function pbInvoicePrompt(){
+  var con = pbContract();
+  var lines = pbContractLines(con).map(function(l){ return {id:l.id, item:l.item, category:l.category, amount:l.amount, optional:l.optional}; });
+  var cos = pbCOs().map(function(c){ return {id:c.id, title:c.title, amount:c.amount, status:c.status}; });
+  return 'Read this construction invoice for a homeowner and check it against their contract.\n'+
+    'Contract line items: '+JSON.stringify(lines)+'\nChange orders: '+JSON.stringify(cos)+'\n'+
+    'Copy every invoice line exactly (description + amount). For each line set contractLineId to the contract line it bills, or changeOrderId to the change order it bills. Leave both empty if it matches neither — never force a match. '+
+    'Set paidOnDoc true only if the invoice says it is paid. Never invent amounts.\n'+
+    'Reply with ONLY JSON: {"vendor":"","number":"","date":"","total":0,"paidOnDoc":false,"items":[{"desc":"","amount":0,"contractLineId":"","changeOrderId":""}],"notes":""}';
+}
+function pbReadInvoice(inv, data, type){
+  var block = pbDocBlock(type, data);
+  if (!block) return pbInvPost({action:'invoice-update', id:inv.id, failed:true}).then(function(){ return false; });
+  PB_READING[inv.id] = true;
+  return pbAsk(block, pbInvoicePrompt(), 3000)
+    .then(function(x){ return pbInvPost({action:'invoice-update', id:inv.id, extracted:x}); })
+    .then(function(j){ delete PB_READING[inv.id]; pbRenderBudget(); return !!j.ok; })
+    .catch(function(){ delete PB_READING[inv.id]; return pbInvPost({action:'invoice-update', id:inv.id, failed:true}).then(function(){ pbRenderBudget(); return false; }); });
+}
+function pbReadById(id){
+  var inv = PB_INV.filter(function(i){ return i.id === id; })[0]; if (!inv) return;
+  PB_READING[id] = true; pbRenderBudget();
+  fetch('/api/project?project='+DEC_PROJECT+'&action=invoice-file&id='+encodeURIComponent(id), {credentials:'same-origin'})
+    .then(function(r){ if (!r.ok) throw new Error('file'); return r.blob(); }).then(pbB64FromBlob)
+    .then(function(data){ return pbReadInvoice(inv, data, inv.fileType); })
+    .catch(function(){ delete PB_READING[id]; pbRenderBudget(); });
+}
+/* manual fallback when a file can't be read */
+function pbManualForm(id){
+  var inv = PB_INV.filter(function(i){ return i.id === id; })[0]; if (!inv) return;
+  var inp = 'width:100%;box-sizing:border-box;background:var(--d2);border:1px solid var(--w08);border-radius:8px;padding:10px;font-size:13px;color:var(--white);font-family:inherit;margin-bottom:8px';
+  var opts = '<option value="">Not in the contract</option>'+pbContractLines(pbContract()).map(function(l){ return '<option value="'+pbEsc(l.id)+'">'+pbEsc(l.item)+' ('+pbMoney(l.amount)+')</option>'; }).join('')+
+    pbCOs().map(function(c){ return '<option value="co:'+pbEsc(c.id)+'">Change order: '+pbEsc(c.title)+'</option>'; }).join('');
+  pjModal(pbH('Enter invoice details', 16)+'<div style="font-size:11px;color:var(--w50);margin-bottom:10px">'+pbEsc(inv.fileName)+'</div>'+
+    '<input id="pm-vendor" placeholder="Billed by (company)" style="'+inp+'"><input id="pm-number" placeholder="Invoice #" style="'+inp+'"><input id="pm-date" type="date" style="'+inp+'">'+
+    '<input id="pm-desc" placeholder="What it’s for" style="'+inp+'"><input id="pm-total" inputmode="decimal" placeholder="Total $" style="'+inp+'">'+
+    '<select id="pm-line" style="'+inp+'">'+opts+'</select>'+
+    '<div style="display:flex;gap:8px"><button onclick="pbManualSave(\''+id+'\')" style="flex:1;padding:12px;background:var(--lime);border:none;border-radius:8px;font-size:12px;font-weight:800;color:var(--dk);cursor:pointer;font-family:inherit">Save</button><button onclick="decClose()" style="padding:12px 14px;background:var(--d4);border:1px solid var(--w08);border-radius:8px;font-size:11px;font-weight:600;color:var(--w70);cursor:pointer;font-family:inherit">Cancel</button></div>');
+}
+function pbManualSave(id){
+  var g = function(k){ return ((document.getElementById(k)||{}).value||'').trim(); };
+  var total = Number(g('pm-total').replace(/[$,\s]/g,''));
+  if (!(total > 0)) { alert('Add the total.'); return; }
+  var ln = g('pm-line');
+  var item = {desc:g('pm-desc') || 'Invoice', amount:total, contractLineId: ln.indexOf('co:') === 0 ? '' : ln, changeOrderId: ln.indexOf('co:') === 0 ? ln.slice(3) : ''};
+  pbInvPost({action:'invoice-update', id:id, extracted:{vendor:g('pm-vendor'), number:g('pm-number'), date:g('pm-date'), total:total, items:[item], notes:'Entered by hand'}}).then(function(j){ if (!j.ok) { alert(pjErr(j)); return; } decClose(); pbRenderBudget(); });
+}
+
+/* keep the budget in step with the rest of the page */
+function pbInit(){
+  try { PB_CMP = JSON.parse(localStorage.getItem('cg_cmp_'+DEC_PROJECT) || '[]'); } catch(e){ PB_CMP = []; }
+  if (PB_BUDGET_ON) {
+    var sc = document.querySelector('#sc-finance .scrl');
+    if (sc && !document.getElementById('pb-root')) {
+      var old = document.createElement('div'); old.id = 'pb-old'; old.style.cssText = 'display:none !important';
+      while (sc.firstChild) old.appendChild(sc.firstChild);
+      var root = document.createElement('div'); root.id = 'pb-root';
+      var title = document.createElement('div'); title.className = 'sh fu1'; title.innerHTML = '<span class="sh-title">Project Budget</span>';
+      sc.appendChild(title); sc.appendChild(root); sc.appendChild(old);
+    }
+    pbLoadInvoices();
+  }
+  if (typeof pjApply === 'function') {
+    var base = pjApply;
+    pjApply = function(){ base.apply(this, arguments); if (PB_BUDGET_ON && pbLive() && !PB_INV_FETCHED) pbLoadInvoices(); pbRenderBudget(); var c = pbContract(); if (PB_BUDGET_ON && c && !c.breakdown && pbOwner() && pbLive() && !PB_SCANNING[c.bidId] && !PB_SCAN_ERR[c.bidId]) pbScanBid(c.bidId).catch(function(){}); };
+  }
+  if (typeof decRenderAll === 'function') { var bd = decRenderAll; decRenderAll = function(){ bd.apply(this, arguments); pbRenderBudget(); }; }
+  pbOv();
+}
+
 /* ── INIT ── */
 document.addEventListener('DOMContentLoaded',function(){
   animateBars();
@@ -5000,6 +5838,7 @@ document.addEventListener('DOMContentLoaded',function(){
   apnInit();
   subInit();
   tmInit();
+  pbInit();
   console.log('Common Ground — 141 N Anita — init OK' + (window.CG_SESSION ? ' · signed in as ' + CG_SESSION.role : ' · demo mode'));
 });
 
