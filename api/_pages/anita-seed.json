@@ -42,8 +42,8 @@
           {
             "id": "l4",
             "category": "Site work & grading",
-            "item": "Soil grading + removal",
-            "desc": "Backfill demolition excavations + rough grade for safe temporary drainage and Phase 2 handoff",
+            "item": "Soil grading + removal (excavation)",
+            "desc": "Excavate + remove soil off site, backfill demolition excavations and rough grade for safe temporary drainage and Phase 2 handoff",
             "amount": 45000
           },
           {
@@ -126,6 +126,12 @@
             "note": "Standard hauling included; extra soil loads $1,500 each"
           },
           {
+            "scopeId": "s-excavate",
+            "status": "included",
+            "lineId": "l4",
+            "note": "Soil removal priced in this line; extra soil loads beyond the base are $1,500 each"
+          },
+          {
             "scopeId": "s-grade",
             "status": "included",
             "lineId": "l4",
@@ -196,6 +202,11 @@
       "id": "s-haul",
       "item": "Haul, recycle + legal disposal with load tickets",
       "category": "Hauling & disposal"
+    },
+    {
+      "id": "s-excavate",
+      "item": "Excavation + soil removal / export off site",
+      "category": "Site work & grading"
     },
     {
       "id": "s-grade",

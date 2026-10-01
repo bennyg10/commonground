@@ -4739,6 +4739,13 @@ function pbBids(){ return (PROJ && PROJ.bids) || []; }
 function pbScope(){ return (PROJ && PROJ.scope) || []; }
 function pbTotal(b){ var bd = b.breakdown; if (bd && bd.total != null) return bd.total; if (bd && bd.baseTotal != null) return bd.baseTotal; if (bd && bd.items) return pbSum(bd.items.filter(function(x){return !x.optional;})); return b.amount || 0; }
 function pbSum(items){ return items.reduce(function(a, x){ return a + (Number(x.amount) || 0); }, 0); }
+function pbLump(b){   // priced as one number with no (or few) line prices
+  var bd = b.breakdown; if (!bd) return false;
+  var base = bd.items.filter(function(x){ return !x.optional; });
+  var priced = base.filter(function(x){ return x.amount != null; });
+  var tot = pbTotal(b);
+  return !priced.length || (tot > 0 && pbSum(priced) < tot * 0.5);
+}
 function pbCatOrder(c){ var i = PB_CATS.indexOf(c); return i === -1 ? 99 : i; }
 function pbByCat(items){
   var m = {}; (items||[]).forEach(function(x){ (m[x.category||'Other'] = m[x.category||'Other'] || []).push(x); });
@@ -4790,6 +4797,17 @@ function cgIntro(key, o){
     (steps ? '<div style="display:flex;gap:8px;flex-wrap:wrap">'+steps+'</div>' : '')+
   '</div>';
 }
+/* first-time tip: shown once per person per feature, dismissed with “Got it” */
+function cgTipSeen(k){ try { return localStorage.getItem('cg_tip_'+k) === '1'; } catch(e){ return false; } }
+function cgTipDone(k, btn){ try { localStorage.setItem('cg_tip_'+k, '1'); } catch(e){} var el = btn && btn.closest('[data-tip]'); if (el) el.remove(); }
+function cgTip(k, o){
+  if (cgTipSeen(k)) return '';
+  return '<div data-tip="'+k+'" style="position:relative;background:rgba(183,156,255,.1);border:1px solid rgba(183,156,255,.38);border-radius:12px;padding:12px 14px;margin-bottom:12px">'+
+    '<div style="display:flex;align-items:center;gap:6px;margin-bottom:5px"><span style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.09em;color:#C9B5FF">Tip</span><span style="font-size:12px;font-weight:700;color:var(--white)">'+o.title+'</span></div>'+
+    '<div style="font-size:11px;color:var(--w70);line-height:1.6">'+o.body+'</div>'+
+    '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">'+(o.action ? '<button onclick="'+o.action[1]+'" style="'+PB_BTN+';padding:6px 11px;font-size:10px;background:#B79CFF;border:none;color:#000">'+o.action[0]+'</button>' : '')+
+    '<button onclick="cgTipDone(\''+k+'\',this)" style="'+PB_BTN+';padding:6px 11px;font-size:10px;background:none;border:1px solid rgba(183,156,255,.38);color:#C9B5FF">Got it</button></div></div>';
+}
 function cgIntroHide(k){ try { localStorage.setItem('cg_intro_'+k, '1'); } catch(e){} pbRerender(); }
 function cgIntroShow(k){ try { localStorage.removeItem('cg_intro_'+k); } catch(e){} pbRerender(); }
 function pbRerender(){ pjRenderProposals(); pbRenderBudget(); if (typeof renderTeam === 'function') renderTeam(); }
@@ -4816,6 +4834,7 @@ function pbProposalPrompt(){
   return 'You read construction proposals for a homeowner comparing general contractors. Extract the proposal line items into an organized format.\n'+
     'Use exactly one of these categories for every line item: '+PB_CATS.join(' | ')+'.\n'+
     'Copy amounts exactly as written (numbers only, no $). If a section has sub-bullets but one price, keep it as one line item and list the sub-bullets in desc. Mark add-ons or alternates that are not in the base total as optional:true.\n'+
+    'If the proposal gives ONE lump-sum price for many scope items, list every scope item as its own line with amount null and put the lump sum in total — never split or estimate a price yourself. Put quantities (sq ft, tons, linear ft, loads) in qty.\n'+
     'List every exclusion, allowance (priced per unit or capped) and assumption. Never invent items or amounts.\n'+
     (sc.length ? 'The homeowner asked for this scope (id: item): '+JSON.stringify(sc)+'. For EVERY scope item, say whether this proposal includes it: "included", "partial" (only part, or coordination only), "excluded" (explicitly excluded) or "unclear" (not mentioned). Point lineId at the line item that covers it, and give a short note.\n' : '')+
     'Reply with ONLY JSON: {"items":[{"id":"l1","category":"","item":"","desc":"","amount":0,"optional":false,"qty":""}],"exclusions":[""],"allowances":[{"item":"","amount":0,"unit":""}],'+
@@ -4836,7 +4855,7 @@ function pbScanBid(id, force){
       return pbAsk(block, pbProposalPrompt(), 6000);
     })
     .then(function(bd){ return pjPost({action:'bid-breakdown', bidId:id, breakdown:bd}); })
-    .then(function(j){ if (!j.ok) throw new Error(pjErr(j)); b.breakdown = j.breakdown; delete PB_SCANNING[id]; pbRerender(); pbRefreshOpen(id); return j.breakdown; })
+    .then(function(j){ if (!j.ok) throw new Error(pjErr(j)); [b, pjBid(id)].forEach(function(x){ if (x) { x.breakdown = j.breakdown; if (j.amount) x.amount = j.amount; } }); delete PB_SCANNING[id]; pbRerender(); pbRefreshOpen(id); return j.breakdown; })
     .catch(function(e){ delete PB_SCANNING[id]; PB_SCAN_ERR[id] = e.message || String(e); pbRerender(); pbRefreshOpen(id); throw e; });
   pbRerender();
   return PB_SCANNING[id];
@@ -4866,12 +4885,18 @@ function pjRenderProposals(){
         '<input id="pp-name" placeholder="Full name" style="'+inp+'"><input id="pp-email" type="email" placeholder="Email" style="'+inp+'"><input id="pp-phone" type="tel" placeholder="Phone" style="'+inp+'">'+
       '</div>'+
       '<div style="display:flex;gap:6px;flex-wrap:wrap"><button onclick="pjInvite()" id="pp-invite-btn" style="flex:1;min-width:140px;padding:9px;background:var(--lime);border:none;border-radius:8px;font-size:11px;font-weight:700;color:var(--dk);cursor:pointer;font-family:inherit">Send invite</button>'+
-      '<button onclick="pjOpenLink()" style="flex:1;min-width:140px;padding:9px;background:none;border:1px solid var(--l20);border-radius:8px;font-size:11px;font-weight:700;color:var(--lime);cursor:pointer;font-family:inherit"><i class="ti ti-link" style="font-size:11px"></i> Copy link</button></div>'+
+      '<button onclick="pjOpenLink()" style="flex:1;min-width:140px;padding:9px;background:none;border:1px solid var(--l20);border-radius:8px;font-size:11px;font-weight:700;color:var(--lime);cursor:pointer;font-family:inherit"><i class="ti ti-link" style="font-size:11px"></i> Copy link</button>'+
+      '</div>'+
       '<div id="pp-invite-result">'+PROJ_LAST_INVITE+'</div>'+
       ((PROJ.bidInvites||[]).length ? '<div style="margin-top:10px;border-top:1px solid var(--w08);padding-top:8px">'+PROJ.bidInvites.map(function(i){
         return '<div style="display:flex;align-items:center;gap:8px;font-size:10px;padding:4px 0;flex-wrap:wrap"><span style="color:var(--white);font-weight:600">'+decEsc(i.name)+'</span><span style="color:var(--w30);overflow-wrap:anywhere">'+decEsc(i.email)+'</span><span style="margin-left:auto;font-weight:700;color:'+(i.status==='submitted'?'var(--ok)':'var(--amb)')+'">'+(i.status==='submitted'?'Submitted ✓':'Invited')+'</span></div>';
       }).join('')+'</div>' : '')+
     '</div>';
+    h += '<div id="pp-upload-card" style="background:var(--d3);border:1px solid var(--w08);border-radius:var(--r);padding:14px;margin-bottom:12px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">'+
+      '<span style="width:34px;height:34px;border-radius:9px;background:var(--l10);border:1px solid var(--l20);display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="ti ti-file-upload" style="font-size:16px;color:var(--lime)"></i></span>'+
+      '<div style="flex:1;min-width:200px"><div style="font-size:12px;font-weight:700;color:var(--white)">Already have a proposal?</div>'+
+      '<div style="font-size:10px;color:var(--w50);line-height:1.5;margin-top:2px">Got one by email or on paper? Upload it yourself — we scan it into the same format and line it up with the others.</div></div>'+
+      '<button onclick="pbBidUploadForm()" id="pp-upload-btn" style="padding:9px 16px;background:var(--lime);border:none;border-radius:8px;font-size:11px;font-weight:700;color:var(--dk);cursor:pointer;font-family:inherit"><i class="ti ti-upload" style="font-size:11px"></i> Upload a proposal</button></div>';
   }
   var narrow = (el.clientWidth || window.innerWidth) < 620;
   var cols = 'minmax(0,1.3fr) minmax(0,1.5fr) 72px minmax(0,.8fr)';
@@ -4951,6 +4976,13 @@ function pbCoverageList(b){
 function pbLinesHtml(b){
   var bd = b.breakdown, base = bd.items.filter(function(x){ return !x.optional; }), opt = bd.items.filter(function(x){ return x.optional; });
   var tot = pbSum(base) || 1;
+  if (pbLump(b)) {
+    var rowsL = '<div style="padding:10px 12px;border-radius:9px;background:var(--am15);border:1px solid var(--am30);font-size:11px;color:var(--w70);line-height:1.55;margin-bottom:6px"><b style="color:var(--amb)">One lump-sum price.</b> '+pbEsc(b.gcName)+' priced the whole scope as '+pbMoney(pbTotal(b))+' without line prices, so costs can’t be split by item. Compare what’s included instead — and ask for a breakdown before signing.</div>'+
+      pbByCat(base).map(function(g){ return '<div style="padding:9px 0;border-top:1px solid var(--w08)"><div style="font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--sage);margin-bottom:4px">'+pbEsc(g.cat)+'</div>'+
+        g.items.map(function(x){ return '<div style="display:flex;gap:10px;padding:3px 0"><div style="flex:1;min-width:0"><div style="font-size:11px;color:var(--white);font-weight:600">'+pbEsc(x.item)+(x.qty?' <span style="color:var(--w30);font-weight:400">· '+pbEsc(x.qty)+'</span>':'')+'</div>'+(x.desc?'<div style="font-size:10px;color:var(--w50);line-height:1.5">'+pbEsc(x.desc)+'</div>':'')+'</div><div style="font-size:10px;color:var(--w30);white-space:nowrap">'+(x.amount!=null?pbMoney(x.amount):'in lump sum')+'</div></div>'; }).join('')+'</div>'; }).join('');
+    if (opt.length) rowsL += '<div style="padding:9px 0;border-top:1px dashed var(--w15)"><div style="font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--amb);margin-bottom:4px">Optional — not in the total</div>'+opt.map(function(x){ return '<div style="font-size:11px;color:var(--white)">'+pbEsc(x.item)+' <span style="color:var(--amb)">+'+pbMoney(x.amount)+'</span></div>'; }).join('')+'</div>';
+    return rowsL;
+  }
   var rows = pbByCat(base).map(function(g){
     var sub = pbSum(g.items);
     return '<div style="padding:9px 0;border-top:1px solid var(--w08)">'+
@@ -4981,24 +5013,62 @@ function pbSingleHtml(b){
 
 /* two or three proposals, side by side + why one is higher */
 function pbCatTotals(b){ var m = {}; b.breakdown.items.forEach(function(x){ if (x.optional) return; m[x.category||'Other'] = (m[x.category||'Other']||0) + (Number(x.amount)||0); }); return m; }
+function pbHas(b, scopeId){ return PB_ST[pbCov(b, scopeId).status].score > 0; }
+/* scope X prices that the other proposal leaves out, per priced line:
+   full = every item that line covers is missing there (its whole price is extra scope);
+   part = some of it is missing (the price includes work the other doesn't do, but can't be split) */
+function pbMissingCost(x, y){
+  var sc = pbScope(), out = [];
+  (x.breakdown.items||[]).forEach(function(l){
+    if (l.optional || !(Number(l.amount) > 0)) return;
+    var mapped = sc.filter(function(s){ var c = pbCov(x, s.id); return c.lineId === l.id && PB_ST[c.status].score > 0; });
+    var miss = mapped.filter(function(s){ return !pbHas(y, s.id); });
+    if (miss.length) out.push({line:l, scope:miss, full:miss.length === mapped.length, weight:l.amount * miss.length / mapped.length});
+  });
+  return out.sort(function(a,b){ return b.weight - a.weight; });   // rough share of the line's price that's missing work
+}
 function pbWhy(hi, lo){
-  var diff = pbTotal(hi) - pbTotal(lo), sc = pbScope(), out = {tone:'mute', headline:'', bullets:[]};
-  if (Math.abs(diff) < 1) { out.headline = pbEsc(hi.gcName)+' and '+pbEsc(lo.gcName)+' are the same price.'; }
+  var diff = pbTotal(hi) - pbTotal(lo), sc = pbScope(), out = {tone:'mute', headline:'', key:'', bullets:[]};
+  var H = pbEsc(hi.gcName), L = pbEsc(lo.gcName);
   var hiMore = [], loMore = [];
-  sc.forEach(function(s){ var a = PB_ST[pbCov(hi, s.id).status].score, c = PB_ST[pbCov(lo, s.id).status].score; if (a > c) hiMore.push(s.item); else if (c > a) loMore.push(s.item); });
-  var ch = pbCatTotals(hi), cl = pbCatTotals(lo), cats = {};
-  Object.keys(ch).concat(Object.keys(cl)).forEach(function(c){ cats[c] = (ch[c]||0) - (cl[c]||0); });
-  var drivers = Object.keys(cats).filter(function(c){ return cats[c] > 0; }).sort(function(a,b){ return cats[b] - cats[a]; }).slice(0,3);
-  if (Math.abs(diff) >= 1) {
-    if (sc.length && hiMore.length > loMore.length) { out.tone = 'ok'; out.headline = pbEsc(hi.gcName)+' is '+pbMoney(diff)+' higher — and more complete.'; }
-    else if (sc.length && hiMore.length < loMore.length) { out.tone = 'bad'; out.headline = pbEsc(hi.gcName)+' is '+pbMoney(diff)+' higher and covers less of your list.'; }
-    else { out.tone = 'am'; out.headline = pbEsc(hi.gcName)+' is '+pbMoney(diff)+' higher for '+(sc.length?'about the same scope':'the scope shown')+'.'; }
+  sc.forEach(function(s){ var a = PB_ST[pbCov(hi, s.id).status].score, c = PB_ST[pbCov(lo, s.id).status].score; if (a > c) hiMore.push(s); else if (c > a) loMore.push(s); });
+  if (Math.abs(diff) < 1) out.headline = H+' and '+L+' are the same price.';
+  else if (sc.length && hiMore.length > loMore.length) { out.tone = 'ok'; out.headline = H+' is '+pbMoney(diff)+' higher — and more complete.'; }
+  else if (sc.length && hiMore.length < loMore.length) { out.tone = 'bad'; out.headline = H+' is '+pbMoney(diff)+' higher and covers less of your list.'; }
+  else { out.tone = 'am'; out.headline = H+' is '+pbMoney(diff)+' higher for '+(sc.length?'about the same scope':'the scope shown')+'.'; }
+  // the key difference: priced scope one side has and the other leaves out — biggest dollars first
+  var missLo = sc.length ? pbMissingCost(hi, lo) : [], missHi = sc.length ? pbMissingCost(lo, hi) : [];
+  var fullLo = missLo.filter(function(m){ return m.full; }), partLo = missLo.filter(function(m){ return !m.full; });
+  var mLo = pbSum(fullLo.map(function(m){ return m.line; })), mHi = pbSum(missHi.filter(function(m){ return m.full; }).map(function(m){ return m.line; }));
+  var adj = diff - mLo + mHi;
+  var top = missLo[0];
+  if (top && !top.full) {
+    out.key = 'Key difference: '+H+' includes '+top.scope.map(function(s){ return pbEsc(s.item); }).join(', ')+' in its '+pbEsc(top.line.item)+' line ('+pbMoney(top.line.amount)+') — '+L+' doesn’t, so it isn’t pricing the same job.'+
+      (fullLo.length ? ' '+L+' also leaves out '+fullLo.map(function(m){ return pbEsc(m.line.item)+' ('+pbMoney(m.line.amount)+')'; }).join(' and ')+'.' : '')+
+      (adj > 0 ? (fullLo.length ? ' Count those and '+L+' is only about '+pbMoney(adj)+' lower — for a job without the '+pbEsc(top.scope[0].item.split(/[+(\/]/)[0].trim().toLowerCase())+'.' : '')+' Ask '+L+' to price the missing work before comparing totals.'
+        : ' Add the missing work back and '+L+' is no longer cheaper.');
+  } else if (top) {
+    out.key = 'Key difference: '+L+' leaves out '+fullLo.map(function(m){ return pbEsc(m.line.item)+' ('+pbMoney(m.line.amount)+')'; }).join(' and ')+' — '+pbMoney(mLo)+' of '+H+'’s price. '+
+      (adj > 0 ? 'Add those back and the real gap is about '+pbMoney(adj)+', not '+pbMoney(diff)+'.' : 'Add those back and '+L+' is no longer cheaper.')+
+      (partLo.length ? ' It also skips part of '+partLo.map(function(m){ return pbEsc(m.line.item); }).join(', ')+'.' : '');
+  } else if (missHi.length) {
+    out.key = 'Key difference: '+H+' leaves out '+missHi.map(function(m){ return pbEsc(m.line.item); }).join(' and ')+' that '+L+' prices — and is still higher.';
   }
-  drivers.forEach(function(c){ out.bullets.push('<b>'+pbMoney(cats[c])+'</b> of the gap is in '+pbEsc(c)+' ('+pbEsc(hi.gcName)+' '+pbMoney(ch[c]||0)+' vs '+pbEsc(lo.gcName)+' '+pbMoney(cl[c]||0)+').'); });
-  if (hiMore.length) out.bullets.push(pbEsc(hi.gcName)+' covers '+hiMore.length+' item'+(hiMore.length===1?'':'s')+' '+pbEsc(lo.gcName)+' leaves out or only partly covers: '+hiMore.slice(0,4).map(pbEsc).join(', ')+(hiMore.length>4?'…':'')+'. Missing items usually come back as change orders.');
-  if (loMore.length) out.bullets.push(pbEsc(lo.gcName)+' covers '+loMore.length+' item'+(loMore.length===1?'':'s')+' '+pbEsc(hi.gcName)+' doesn’t: '+loMore.slice(0,4).map(pbEsc).join(', ')+(loMore.length>4?'…':'')+'.');
-  var eh = (hi.breakdown.exclusions||[]).length, el = (lo.breakdown.exclusions||[]).length;
-  if (eh !== el) out.bullets.push((eh > el ? pbEsc(hi.gcName) : pbEsc(lo.gcName))+' lists more exclusions ('+Math.max(eh,el)+' vs '+Math.min(eh,el)+') — read them before you compare totals.');
+  var lumpHi = pbLump(hi), lumpLo = pbLump(lo);
+  if (lumpHi || lumpLo) {
+    out.bullets.push((lumpLo ? L : H)+' priced the whole job as one lump sum with no line prices, so the gap can’t be split by category. Compare what’s included below — and ask for a breakdown before signing.');
+  } else {
+    var ch = pbCatTotals(hi), cl = pbCatTotals(lo), cats = {};
+    Object.keys(ch).concat(Object.keys(cl)).forEach(function(c){ cats[c] = (ch[c]||0) - (cl[c]||0); });
+    Object.keys(cats).filter(function(c){ return cats[c] > 0; }).sort(function(a,b){ return cats[b] - cats[a]; }).slice(0,3).forEach(function(c){
+      out.bullets.push('<b>'+pbMoney(cats[c])+'</b> of the gap is in '+pbEsc(c)+' ('+H+' '+pbMoney(ch[c]||0)+' vs '+L+' '+pbMoney(cl[c]||0)+').'); });
+  }
+  var priced = {}; missLo.forEach(function(m){ m.scope.forEach(function(s){ priced[s.id] = 1; }); });  // already named in the key difference
+  var bundled = hiMore.filter(function(s){ return !priced[s.id]; });
+  if (bundled.length) out.bullets.push(H+' also covers '+bundled.map(function(s){ return pbEsc(s.item); }).join(', ')+' — '+L+' '+(bundled.length===1?'doesn’t':'doesn’t')+' include or only partly covers '+(bundled.length===1?'it':'them')+'. Get a price for '+(bundled.length===1?'it':'them')+' before comparing; missing items usually come back as change orders.');
+  if (loMore.length) out.bullets.push(L+' covers '+loMore.length+' item'+(loMore.length===1?'':'s')+' '+H+' doesn’t: '+loMore.slice(0,4).map(function(s){ return pbEsc(s.item); }).join(', ')+(loMore.length>4?'…':'')+'.');
+  var exLo = lo.breakdown.exclusions||[];
+  if (exLo.length) out.bullets.push(L+'’s own exclusions: '+exLo.map(pbEsc).join('; ')+'.');
   [hi, lo].forEach(function(b){ var a = (b.breakdown.allowances||[]); if (a.length) out.bullets.push(pbEsc(b.gcName)+' has '+a.length+' open-ended allowance'+(a.length===1?'':'s')+' ('+a.map(function(x){ return pbEsc(x.item)+' '+pbMoney(x.amount)+(x.unit?' '+pbEsc(x.unit):''); }).join(', ')+') — real cost depends on the site.'); });
   [hi, lo].forEach(function(b){ var o = b.breakdown.items.filter(function(x){ return x.optional; }); if (o.length) out.bullets.push(pbEsc(b.gcName)+'’s total leaves out '+pbMoney(pbSum(o))+' in optional items ('+o.map(function(x){ return pbEsc(x.item); }).join(', ')+').'); });
   if (!sc.length) out.bullets.push('Add what you asked for to see which proposal is more complete.');
@@ -5012,6 +5082,7 @@ function pbCompareManyHtml(sel, narrow){
   var toneBg = {ok:'var(--ok15)', am:'var(--am15)', bad:'rgba(224,122,95,.1)', mute:'var(--d3)'}[why.tone];
   var h = '<div style="background:'+toneBg+';border:1px solid '+toneC+';border-radius:var(--r);padding:14px 16px;margin-bottom:12px">'+
     pbEyebrow('Why is one higher?')+'<div style="font-family:Bungee,sans-serif;font-size:16px;color:'+toneC+';line-height:1.3;margin-bottom:8px">'+why.headline+'</div>'+
+    (why.key ? '<div data-key-diff style="font-size:12px;font-weight:700;color:var(--white);line-height:1.55;background:rgba(0,0,0,.25);border-radius:9px;padding:10px 12px;margin-bottom:8px"><i class="ti ti-key" style="color:'+toneC+'"></i> '+why.key+'</div>' : '')+
     why.bullets.map(function(t){ return '<div style="display:flex;gap:8px;font-size:11px;color:var(--w70);line-height:1.6;padding:2px 0"><span style="color:'+toneC+'">•</span><span>'+t+'</span></div>'; }).join('')+
     (sorted.length > 2 ? '<div style="font-size:10px;color:var(--w50);margin-top:6px">Comparing the highest and lowest of the '+sorted.length+' you checked.</div>' : '')+'</div>';
   var n = sel.length, lab = narrow ? '120px' : 'minmax(0,1.6fr)';
@@ -5041,9 +5112,10 @@ function pbCompareManyHtml(sel, narrow){
   var cats = {}; sel.forEach(function(b){ b.breakdown.items.forEach(function(x){ if (!x.optional) cats[x.category||'Other'] = 1; }); });
   t += '<div style="padding:12px 12px 6px;border-top:1px solid var(--w15);font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--sage)">Line items by category</div>';
   t += Object.keys(cats).sort(function(a,b){ return pbCatOrder(a) - pbCatOrder(b); }).map(function(c){
-    var vals = sel.map(function(b){ return pbCatTotals(b)[c] || 0; }), mn = Math.min.apply(null, vals);
+    var vals = sel.map(function(b){ return pbCatTotals(b)[c] || 0; }), pv = sel.filter(function(b){ return !pbLump(b); }).map(function(b){ return pbCatTotals(b)[c] || 0; }), mn = pv.length ? Math.min.apply(null, pv) : 0;
     return row('<b>'+pbEsc(c)+'</b>', sel.map(function(b, i){
       var items = b.breakdown.items.filter(function(x){ return !x.optional && (x.category||'Other') === c; });
+      if (pbLump(b)) return '<div style="font-size:11px;font-weight:700;color:var(--w50)">'+(items.length?'In lump sum':'Not listed')+'</div>'+items.map(function(x){ return '<div style="font-size:10px;color:var(--w50);line-height:1.45;margin-top:3px">'+pbEsc(x.item)+(x.qty?' · '+pbEsc(x.qty):'')+'</div>'; }).join('');
       return '<div style="font-size:12px;font-weight:700;color:'+(!items.length?'#E07A5F':vals[i]===mn?'var(--white)':'var(--amb)')+'">'+(items.length?pbMoney(vals[i]):'Not priced')+(items.length && vals[i]>mn && mn>0?'<span style="font-size:10px;font-weight:600"> +'+pbMoney(vals[i]-mn)+'</span>':'')+'</div>'+
         items.map(function(x){ return '<div style="font-size:10px;color:var(--w50);line-height:1.45;margin-top:3px">'+pbEsc(x.item)+' · '+pbMoney(x.amount)+'</div>'; }).join('');
     }), {align:'start', pad:'10px 12px'});
@@ -5054,10 +5126,56 @@ function pbCompareManyHtml(sel, narrow){
   return h;
 }
 
+/* homeowner uploads a proposal they received outside the platform */
+function pbBidUploadForm(){
+  if (!pbLive()) { alert('Sign in on the live site to upload proposals.'); return; }
+  var inp = 'width:100%;box-sizing:border-box;background:var(--d2);border:1px solid var(--w08);border-radius:8px;padding:10px;font-size:13px;color:var(--white);font-family:inherit;margin-bottom:8px';
+  pbModal(pbH('Upload a proposal', 16)+
+    cgTip('bid-upload', {title:'Sending your GC the link is easier',
+      body:'When the GC submits through their link, the proposal comes straight from them — Common Ground reads the bid, breaks down every line item, compares it with the others and helps you choose the best path forward, with no typing on your end. Their contact details come with it, they can send a revised version, and hiring them is one tap.<br><span style="color:var(--w50)">Already have it by email? No problem — upload it here and we’ll still scan and compare it.</span>',
+      action:['Send a link instead', "cgTipDone('bid-upload',this);decClose();var n=document.getElementById('pp-name');if(n){n.scrollIntoView({block:'center'});n.focus();}"]})+
+    '<div style="font-size:11px;color:var(--w70);line-height:1.6;margin-bottom:12px">Add a proposal you received outside the platform. We scan it into the same organized format, check it against your list, and line it up with the others.</div>'+
+    '<input id="pu-gc" placeholder="GC company name" style="'+inp+'"><input id="pu-contact" placeholder="Contact name (optional)" style="'+inp+'">'+
+    '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px"><input id="pu-email" type="email" placeholder="Email (optional)" style="'+inp+'"><input id="pu-phone" type="tel" placeholder="Phone (optional)" style="'+inp+'"></div>'+
+    '<input id="pu-amount" inputmode="decimal" placeholder="Total $ (optional — we read it from the file)" style="'+inp+'">'+
+    '<input id="pu-file" type="file" accept="application/pdf,image/jpeg,image/png,image/webp" style="'+inp+';padding:8px">'+
+    '<div style="font-size:10px;color:var(--w30);margin-bottom:10px">PDF or photo · up to 3 MB</div>'+
+    '<div id="pb-err" style="display:none;font-size:11px;color:#E07A5F;margin-bottom:8px"></div>'+
+    '<div style="display:flex;gap:8px"><button id="pb-go" onclick="pbBidUploadGo()" style="flex:1;padding:12px;background:var(--lime);border:none;border-radius:8px;font-size:12px;font-weight:800;color:var(--dk);cursor:pointer;font-family:inherit">Upload + scan</button>'+
+    '<button onclick="decClose()" style="padding:12px 14px;background:var(--d4);border:1px solid var(--w08);border-radius:8px;font-size:11px;font-weight:600;color:var(--w70);cursor:pointer;font-family:inherit">Cancel</button></div>');
+}
+function pbBidUploadGo(){
+  var g = function(id){ return ((document.getElementById(id)||{}).value||'').trim(); };
+  var err = document.getElementById('pb-err'), btn = document.getElementById('pb-go');
+  var show = function(t){ err.style.display = 'block'; err.textContent = t; btn.disabled = false; btn.textContent = 'Upload + scan'; };
+  var f = (document.getElementById('pu-file').files || [])[0];
+  if (!g('pu-gc')) return show('Add the GC’s company name.');
+  if (!f) return show('Choose the proposal file.');
+  if (f.size > 3.1*1024*1024) return show('That file is over 3 MB. Try a smaller PDF or a photo.');
+  btn.disabled = true; btn.textContent = 'Uploading…';
+  pbB64FromBlob(f).then(function(data){
+    return pjPost({action:'bid-upload', gcName:g('pu-gc'), contactName:g('pu-contact'), email:g('pu-email'), phone:g('pu-phone'), amount:g('pu-amount'),
+      file:{name:f.name, type:f.type || (/\.pdf$/i.test(f.name)?'application/pdf':''), data:data}});
+  }).then(function(j){
+    if (!j.ok) return show(j.error === 'gc_name_required' ? 'Add the GC’s company name.' : j.error === 'file_too_large' ? 'That file is over 3 MB.' : j.error === 'bad_file_type' ? 'Use a PDF or a photo.' : pjErr(j));
+    PROJ.bids = (PROJ.bids||[]).concat([j.bid]);
+    // line it up with the others right away
+    if (PB_CMP.indexOf(j.bid.id) === -1) { PB_CMP.push(j.bid.id); if (PB_CMP.length > 3) PB_CMP.shift(); pbSaveCmp(); }
+    decClose(); pbScanBid(j.bid.id).catch(function(){}); pjRenderProposals(); pjLoad();
+    var c = document.getElementById('pb-compare'); if (c && c.scrollIntoView) c.scrollIntoView({behavior:'smooth', block:'start'});
+  }).catch(function(e){ show(e.message || 'Upload failed.'); });
+}
+
 /* scope list editor (homeowner) */
+function pbModal(html){
+  pjModal(html);
+  var sp = document.querySelector('#dec-modal [role=dialog] > div:first-child > span');
+  var onBudget = (document.getElementById('sc-finance')||{}).classList && document.getElementById('sc-finance').classList.contains('on');
+  if (sp) sp.textContent = onBudget ? 'Project Budget' : 'Proposals';
+}
 function pbScopeEditor(){
   var lines = pbScope().map(function(s){ return s.item; }).join('\n');
-  pjModal(pbH('What you asked for', 16)+'<div style="font-size:11px;color:var(--w70);line-height:1.6;margin-bottom:10px">One item per line — the work you need done. Every proposal is checked against this list.</div>'+
+  pbModal(pbH('What you asked for', 16)+'<div style="font-size:11px;color:var(--w70);line-height:1.6;margin-bottom:10px">One item per line — the work you need done. Every proposal is checked against this list.</div>'+
     '<textarea id="pb-scope-ta" rows="10" style="width:100%;box-sizing:border-box;background:var(--d2);border:1px solid var(--w08);border-radius:8px;padding:10px;font-size:12px;line-height:1.6;color:var(--white);font-family:inherit">'+pbEsc(lines)+'</textarea>'+
     '<div id="pb-err" style="display:none;font-size:11px;color:#E07A5F;margin:6px 0"></div>'+
     '<div style="display:flex;gap:8px;margin-top:10px"><button id="pb-go" onclick="pbScopeSave()" style="flex:1;padding:12px;background:var(--lime);border:none;border-radius:8px;font-size:12px;font-weight:800;color:var(--dk);cursor:pointer;font-family:inherit">Save list</button>'+
@@ -5141,7 +5259,7 @@ function pbKpiChip(t){ return '<span style="font-size:10px;font-weight:700;paddi
 function pjChoose(id){
   var b = pjBid(id); if (!b) return;
   var q = '\''+b.id+'\'';
-  pjModal('<div style="font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--sage);margin-bottom:2px">Proposal</div>'+
+  pbModal('<div style="font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--sage);margin-bottom:2px">Proposal</div>'+
     '<div style="font-family:Bungee,sans-serif;font-size:18px;color:var(--white);margin-bottom:4px">'+decEsc(b.gcName)+'</div>'+
     '<div style="font-size:11px;color:var(--w50);margin-bottom:12px">'+(b.amount?'<b style="color:var(--lime);font-size:14px">'+pjMoney(b.amount)+'</b> · ':'')+'Submitted '+pjDate(b.submittedAt)+(b.breakdown && pbComplete(b)!=null?' · covers '+pbComplete(b)+'% of your list':'')+'</div>'+
     (b.note ? '<div style="font-size:11px;color:var(--w70);line-height:1.6;background:var(--d3);border:1px solid var(--w08);border-radius:9px;padding:10px 12px;margin-bottom:12px">'+decEsc(b.note)+'</div>' : '')+
@@ -5390,7 +5508,7 @@ function pbInvPost(body){ return pjPost(body).then(function(j){ if (j.invoices) 
 function pbSetPaid(id, on){ pbInvPost({action:'invoice-update', id:id, paid:on}).then(function(j){ if (!j.ok) alert(pjErr(j)); pbRenderBudget(); }); }
 function pbResolve(invId, key){
   var f = (PB_LAST_FLAGS||[]).filter(function(x){ return x.key === key; })[0];
-  pjModal(pbH('Looks right?', 16)+(f?'<div style="font-size:11px;color:var(--w70);line-height:1.6;background:var(--d3);border:1px solid var(--w08);border-radius:9px;padding:10px 12px;margin-bottom:10px">'+pbEsc(f.text)+'</div>':'')+
+  pbModal(pbH('Looks right?', 16)+(f?'<div style="font-size:11px;color:var(--w70);line-height:1.6;background:var(--d3);border:1px solid var(--w08);border-radius:9px;padding:10px 12px;margin-bottom:10px">'+pbEsc(f.text)+'</div>':'')+
     '<div style="font-size:11px;color:var(--w50);margin-bottom:6px">Add a short note — it’s saved with the invoice so your GC sees why it was OK’d.</div>'+
     '<textarea id="pb-res-note" rows="3" placeholder="e.g. Agreed by phone 10/2 — CO coming" style="width:100%;box-sizing:border-box;background:var(--d2);border:1px solid var(--w08);border-radius:8px;padding:10px;font-size:12px;color:var(--white);font-family:inherit;margin-bottom:10px"></textarea>'+
     '<div style="display:flex;gap:8px"><button id="pb-go" onclick="pbResolveGo(\''+invId+'\',\''+pbEsc(key)+'\')" style="flex:1;padding:12px;background:var(--lime);border:none;border-radius:8px;font-size:12px;font-weight:800;color:var(--dk);cursor:pointer;font-family:inherit">Mark as reviewed</button>'+
@@ -5411,7 +5529,7 @@ function pbDeleteInv(id, btn){
 function pbLinkGc(){
   var bids = pbBids(), invites = PROJ.bidInvites || [];
   if (bids.length || invites.length) {
-    pjModal(pbH('Your GC is in the pipeline', 16)+'<div style="font-size:12px;color:var(--w70);line-height:1.6;margin-bottom:14px">'+
+    pbModal(pbH('Your GC is in the pipeline', 16)+'<div style="font-size:12px;color:var(--w70);line-height:1.6;margin-bottom:14px">'+
       (bids.length ? bids.length+' proposal'+(bids.length===1?' is':'s are')+' in. Open and compare them, then choose your GC — their proposal becomes the contract here.' : invites.length+' GC'+(invites.length===1?' has':'s have')+' been invited to bid. Once a proposal comes in, choose your GC on Proposals.')+'</div>'+
       '<div style="display:flex;gap:8px;flex-wrap:wrap"><button onclick="decClose();pbGoProposals()" style="flex:1;padding:12px;background:var(--lime);border:none;border-radius:8px;font-size:12px;font-weight:800;color:var(--dk);cursor:pointer;font-family:inherit">Go to Proposals</button>'+
       '<button onclick="pbInviteForm()" style="flex:1;padding:12px;background:var(--d4);border:1px solid var(--w08);border-radius:8px;font-size:11px;font-weight:700;color:var(--w70);cursor:pointer;font-family:inherit">Invite another GC</button></div>');
@@ -5422,7 +5540,7 @@ function pbLinkGc(){
 function pbGoProposals(){ var b = document.getElementById('nav-btn-proposals'); if (b) b.click(); else goScreen('proposals'); }
 function pbInviteForm(){
   var inp = 'width:100%;box-sizing:border-box;background:var(--d2);border:1px solid var(--w08);border-radius:8px;padding:10px;font-size:13px;color:var(--white);font-family:inherit;margin-bottom:8px';
-  pjModal(pbH('Invite your GC', 16)+'<div style="font-size:11px;color:var(--w70);line-height:1.6;margin-bottom:12px">Already working with a GC — or want one to bid? Send them a link. They upload their proposal or contract and create an account in one step; once you choose them, every invoice is checked against it.</div>'+
+  pbModal(pbH('Invite your GC', 16)+'<div style="font-size:11px;color:var(--w70);line-height:1.6;margin-bottom:12px">Already working with a GC — or want one to bid? Send them a link. They upload their proposal or contract and create an account in one step; once you choose them, every invoice is checked against it.</div>'+
     '<input id="pb-gc-name" placeholder="Full name" style="'+inp+'"><input id="pb-gc-email" type="email" placeholder="Email" style="'+inp+'"><input id="pb-gc-phone" type="tel" placeholder="Phone (optional)" style="'+inp+'">'+
     '<div id="pb-err" style="display:none;font-size:11px;color:#E07A5F;margin-bottom:8px"></div><div id="pb-invite-out"></div>'+
     '<div style="display:flex;gap:8px"><button id="pb-go" onclick="pbInviteGo()" style="flex:1;padding:12px;background:var(--lime);border:none;border-radius:8px;font-size:12px;font-weight:800;color:var(--dk);cursor:pointer;font-family:inherit">Send invite</button>'+
@@ -5437,7 +5555,7 @@ function pbInviteGo(){
   pjPost({action:'bid-invite', name:name, email:email, phone:phone}).then(function(j){
     btn.disabled = false; btn.textContent = 'Send invite';
     if (!j.ok) { err.style.display = 'block'; err.textContent = pjErr(j); return; }
-    pjModal(pbH('Invite sent'+(j.emailed?' ✓':''), 16)+'<div style="font-size:11px;color:var(--w70);line-height:1.6">'+(j.emailed?'We emailed '+pbEsc(email)+'. ':'')+'When their proposal comes in, you’ll find it on Proposals.</div>'+
+    pbModal(pbH('Invite sent'+(j.emailed?' ✓':''), 16)+'<div style="font-size:11px;color:var(--w70);line-height:1.6">'+(j.emailed?'We emailed '+pbEsc(email)+'. ':'')+'When their proposal comes in, you’ll find it on Proposals.</div>'+
       pjShareBox('Invite for <b style="color:var(--white)">'+pbEsc(name)+'</b>', j.link, 'Hi '+pjFirst(name)+', please submit your proposal for '+cgTitle()+' on Common Ground: '+j.link, phone, email, 'Proposal request — '+cgTitle())+
       '<button onclick="decClose()" style="width:100%;margin-top:12px;padding:11px;background:var(--d4);border:1px solid var(--w08);border-radius:8px;font-size:12px;font-weight:600;color:var(--w70);cursor:pointer;font-family:inherit">Done</button>');
     pjLoad();
@@ -5447,7 +5565,7 @@ function pbInviteGo(){
 /* Upload Invoice → stored → read by AI → matched to the contract */
 function pbUploadForm(){
   if (!pbLive()) { alert('Sign in on the live site to upload invoices.'); return; }
-  pjModal(pbH('Upload Invoice', 16)+'<div style="font-size:11px;color:var(--w70);line-height:1.6;margin-bottom:12px">Add one or more invoices — paid or not, from before the platform too. We read each one and match every line to '+(PROJ.hiredGc?'the contract':'your contract once your GC is linked')+'.</div>'+
+  pbModal(pbH('Upload Invoice', 16)+'<div style="font-size:11px;color:var(--w70);line-height:1.6;margin-bottom:12px">Add one or more invoices — paid or not, from before the platform too. We read each one and match every line to '+(PROJ.hiredGc?'the contract':'your contract once your GC is linked')+'.</div>'+
     '<input id="pb-files" type="file" accept="application/pdf,image/jpeg,image/png,image/webp" multiple style="width:100%;box-sizing:border-box;background:var(--d2);border:1px solid var(--w08);border-radius:8px;padding:10px;font-size:12px;color:var(--white);font-family:inherit;margin-bottom:6px">'+
     (pbOwner() ? '<label style="display:flex;align-items:center;gap:8px;font-size:11px;color:var(--w70);margin:8px 0 4px;cursor:pointer"><input id="pb-already-paid" type="checkbox" style="accent-color:#4A9B6F;width:15px;height:15px;margin:0"> I’ve already paid these</label>' : '')+
     '<div style="font-size:10px;color:var(--w30);margin-bottom:12px">PDF or photo · up to 3 MB each</div><div id="pb-up-log"></div>'+
@@ -5511,7 +5629,7 @@ function pbManualForm(id){
   var inp = 'width:100%;box-sizing:border-box;background:var(--d2);border:1px solid var(--w08);border-radius:8px;padding:10px;font-size:13px;color:var(--white);font-family:inherit;margin-bottom:8px';
   var opts = '<option value="">Not in the contract</option>'+pbContractLines(pbContract()).map(function(l){ return '<option value="'+pbEsc(l.id)+'">'+pbEsc(l.item)+' ('+pbMoney(l.amount)+')</option>'; }).join('')+
     pbCOs().map(function(c){ return '<option value="co:'+pbEsc(c.id)+'">Change order: '+pbEsc(c.title)+'</option>'; }).join('');
-  pjModal(pbH('Enter invoice details', 16)+'<div style="font-size:11px;color:var(--w50);margin-bottom:10px">'+pbEsc(inv.fileName)+'</div>'+
+  pbModal(pbH('Enter invoice details', 16)+'<div style="font-size:11px;color:var(--w50);margin-bottom:10px">'+pbEsc(inv.fileName)+'</div>'+
     '<input id="pm-vendor" placeholder="Billed by (company)" style="'+inp+'"><input id="pm-number" placeholder="Invoice #" style="'+inp+'"><input id="pm-date" type="date" style="'+inp+'">'+
     '<input id="pm-desc" placeholder="What it’s for" style="'+inp+'"><input id="pm-total" inputmode="decimal" placeholder="Total $" style="'+inp+'">'+
     '<select id="pm-line" style="'+inp+'">'+opts+'</select>'+

@@ -41,10 +41,11 @@ async function dashboardData(u) {
   for (const id of ids) {
     const m = await getProjectMeta(id);
     if (!m) continue;
+    if (m.sample && !(u.projects || {})[id]) continue;          // other people's practice projects stay private
     const st = (await getJSON(`cg:project:${id}`)) || { stage: 'bidding' };
     projects.push({
       id, path: projectPath(id), name: m.name, address: m.address || '', classification: m.classification || '', scope: m.scope || '',
-      role: (u.projects || {})[id] || (u.admin ? 'gc' : ''), member: !!(u.projects || {})[id], builtin: !!m.builtin,
+      role: (u.projects || {})[id] || (u.admin ? 'gc' : ''), member: !!(u.projects || {})[id], builtin: !!m.builtin, sample: !!m.sample,
       stage: st.stage || 'bidding', hiredGc: st.hiredGc ? (st.hiredGc.company || st.hiredGc.name) : '', status: m.status || null, createdAt: m.createdAt || '',
     });
   }

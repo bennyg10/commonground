@@ -82,6 +82,11 @@ h2{font-family:Bungee,sans-serif;font-size:19px;font-weight:700;letter-spacing:-
 .tool:hover{border-color:var(--w30)}
 .tool b{font-family:Bungee,sans-serif;font-size:16px}
 .tool span{font-size:13.5px;color:var(--w70)}
+.feats{grid-template-columns:repeat(auto-fill,minmax(230px,1fr))}
+.feat{position:relative;transition:border-color .15s,transform .15s}
+.feat:hover{border-color:var(--l20);transform:translateY(-2px)}
+.feat .fi{width:40px;height:40px;border-radius:11px;background:var(--l10);border:1px solid var(--l20);color:var(--lime);display:flex;align-items:center;justify-content:center}
+.feat em{font-style:normal;font-size:12.5px;font-weight:700;color:var(--lime);margin-top:auto;padding-top:4px}
 .chooser{background:var(--d2);border:1px solid var(--l20);border-radius:18px;padding:24px;margin-bottom:34px}
 .cards2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
 #chooser .cards2{grid-template-columns:repeat(3,minmax(0,1fr))}
@@ -182,6 +187,7 @@ function render(){
   }
   // bidders see their proposals first
   if (D.bids.length) h += bidsSection();
+  if (D.bids.length && !mine.filter(function(p){return !p.sample;}).length && (isGC() || !U.accountType)) h += toolsSection(mine);   // waiting on a bid: the toolkit comes right after it
   var dr = (C && !C.created) ? C : draftLoad();
   if (dr && U.accountType) { C = dr; h += '<div class="resume" id="resume-card"><div class="t"><div class="eyebrow" style="margin:0 0 4px">Pick up where you left off</div><div style="font-weight:700">'+esc(dr.address || (dr.mode==='underway'?'Project already underway':'New project'))+'</div><div class="muted" style="font-size:13px;color:var(--w50)">Step '+(steps().indexOf(dr.step)+1)+' of '+steps().length+' · your answers are saved</div></div>'+
     '<button class="btn" onclick="draftDiscard()">Start over</button><button class="btn pri" id="resume-btn" onclick="openCreate()">Continue</button></div>'; }
@@ -189,7 +195,7 @@ function render(){
   h += '<div class="sec"><div class="sec-h"><h2>Your projects</h2><span class="ct">'+mine.length+'</span></div>'+
        (mine.length ? '<div class="grid" id="proj-grid">'+mine.map(projCard).join('')+'</div>'
          : '<div class="empty" id="proj-empty">'+(U.accountType==='homeowner' ? 'No projects yet. Start one for your property above — it takes two minutes.' : U.accountType==='contractor' ? 'No projects yet. Add a new one or one that’s already underway.' : U.accountType==='designer' ? 'No projects yet. Start one for a client above, or ask your client or their GC to invite you.' : 'You’re not on a project yet.')+'</div>')+'</div>';
-  if (isGC() || isDesigner() || !U.accountType) h += toolsSection(mine);
+  if ((isGC() || isDesigner() || !U.accountType) && !(D.bids.length && !mine.filter(function(p){return !p.sample;}).length)) h += toolsSection(mine);
   if (others.length) h += '<div class="sec"><div class="sec-h"><h2>All platform projects</h2><span class="ct">Admin view · '+others.length+'</span></div><div class="grid">'+others.map(projCard).join('')+'</div></div>';
   $('main').innerHTML = h;
 }
@@ -214,7 +220,7 @@ function stageLabel(p){
 function projCard(p){
   var pct = p.status && p.status.percent!=null ? p.status.percent : null;
   return '<a class="pcard" href="/'+esc(p.path)+'/'+roleUrl(p.role||'client')+'" data-path="'+esc(p.path)+'">'+
-    '<div class="pills">'+(p.role?'<span class="pill lime">'+esc(ROLE[p.role]||p.role)+'</span>':'')+(p.member?'':'<span class="pill gray">Admin</span>')+
+    '<div class="pills">'+(p.sample?'<span class="pill" style="color:#C9B5FF;border-color:rgba(183,156,255,.38);background:rgba(183,156,255,.12)">Practice</span>':'')+(p.role?'<span class="pill lime">'+esc(ROLE[p.role]||p.role)+'</span>':'')+(p.member?'':'<span class="pill gray">Admin</span>')+
       (p.classification?'<span class="pill">'+esc(p.classification==='commercial'?'Commercial':'Residential')+'</span>':'')+(p.scope?'<span class="pill">'+esc(SCOPE[p.scope]||p.scope)+'</span>':'')+'</div>'+
     '<div><div class="nm">'+esc(p.name)+'</div><div class="ad">'+esc(p.address)+'</div></div>'+
     '<div style="font-size:13px;color:var(--w70)">'+esc(stageLabel(p))+(p.hiredGc && p.role==='client'?' · GC: '+esc(p.hiredGc):'')+(pct!=null?' · '+pct+'%':'')+'</div>'+
@@ -233,18 +239,66 @@ function bidsSection(){
     '<div class="upsell"><div><h3>Win or not, run every job here — free.</h3><p>Add your own projects and use the same tools homeowners see: code checks before you submit, plan analysis by trade, 3D scans, timelines and task lists, and one-tap owner approvals.</p></div>'+
     '<button class="btn pri" id="upsell-btn" onclick="'+(U.accountType?'openCreate()':'setType(\'contractor\',true)')+'">Add a project</button></div></div>';
 }
+/* ── toolkit: every feature card opens the real tool and runs a 1-minute guided tour ── */
+var ICON = {
+  schedule:'<path d="M4 6h16M4 12h10M4 18h7"/><circle cx="18" cy="16" r="3"/>',
+  decisions:'<path d="M6 3h9l4 4v14H6z"/><path d="M9 13l2 2 4-4"/>',
+  codecheck:'<path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/><path d="M9 12l2 2 4-4"/>',
+  plans:'<path d="M3 5h18v14H3z"/><path d="M3 10h8v9M11 5v5h10"/>',
+  scan:'<path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 12l8-4.5M12 12v9M12 12L4 7.5"/>',
+  team:'<circle cx="9" cy="8" r="3"/><path d="M3 20c0-3 3-5 6-5s6 2 6 5"/><circle cx="17" cy="9" r="2.5"/><path d="M16 15c3 0 5 1.5 5 4"/>',
+  subs:'<circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/>',
+  progress:'<path d="M4 18l5-6 4 3 7-9"/><path d="M15 6h5v5"/>',
+  design:'<path d="M4 20l4-1 11-11-3-3L5 16z"/><path d="M14 6l3 3"/>'
+};
+var FEATURES = {
+  schedule:['Timeline + tasks','Lay out every phase and assign tasks to your trades — one schedule the whole job sees.','#schedule'],
+  decisions:['Change orders + approvals','Send a change order with photos. The owner signs from their phone and it’s on record.','#decisions'],
+  codecheck:['Code check','Upload plans and get findings with code sections — before plan check finds them.','#tool-codecheck'],
+  plans:['Plan analysis','Square footage, rooms and scope by trade from a plan set, ready to price.','#tool-plans'],
+  scan:['3D scan + measure','Upload an iPhone LiDAR scan, measure in 3D or on a 2D plan, save every wall.','#tool-scan'],
+  team:['Team + trades','Invite your client and subs — everyone gets their own sign-in and only what they need.','#controls'],
+  subs:['Find a sub','Need a trade fast? Get 3–5 top-rated, licensed options near the job within 12 hours.',''],
+  progress:['Progress updates','Post the phase and % complete — your client sees it instead of calling you.',''],
+  design:['Design approvals','Send selections for a signed approval — finishes get built the way you designed them.','#decisions']
+};
+function featureKeys(){ return isDesigner() ? ['scan','plans','codecheck','design','team'] : ['schedule','decisions','codecheck','plans','scan','team','subs','progress']; }
 function toolsSection(mine){
-  var list = isDesigner() ? [['scan','3D scan + measure','Walk the room in 3D, see it as a 2D plan and save measurements per wall.'],['plans','Plan analysis','Room sizes and square footage from a plan set.'],['codecheck','Code check','Clearances, egress and layout checked against code.']] : [['schedule','Timeline + tasks','Plan the phases, assign tasks, one schedule for everyone.'],['codecheck','Code check','Plans in, findings with code references out.'],['plans','Plan analysis','Square footage, rooms and scope by trade.'],['scan','3D scan','Upload an iPhone LiDAR scan and share the model.']];
-  return '<div class="sec"><div class="sec-h"><h2>Free tools</h2><span class="ct">Open inside any project</span></div><div class="tools">'+
-    list.map(function(t){ return '<button class="tool" id="tool-'+t[0]+'" onclick="openTool(\''+t[0]+'\')"><b>'+t[1]+'</b><span>'+t[2]+'</span></button>'; }).join('')+'</div></div>';
+  var waiting = D.bids.some(function(b){ return b.status==='pending'; });
+  var real = mine.filter(function(p){ return !p.sample; });
+  var title = waiting && !real.length ? 'While you wait, your toolkit is live' : 'Your toolkit';
+  var sub = waiting && !real.length ? 'Your proposal is in. Tap any tool — it opens on a private practice project and walks you through it in about a minute.'
+    : real.length ? 'Tap a tool to open it on one of your projects, with a 1-minute guided tour.' : 'Tap any tool — it opens on a private practice project with a 1-minute guided tour.';
+  var done = function(k){ try { return localStorage.getItem('cg_tour_done_'+k)==='1'; } catch(e){ return false; } };
+  return '<div class="sec" id="toolkit"><div class="sec-h"><h2>'+title+'</h2><span class="ct">Free · unlimited</span></div>'+
+    '<div class="lede" style="margin:-6px 0 18px;max-width:720px">'+sub+'</div><div class="tools feats">'+
+    featureKeys().map(function(k){ var f = FEATURES[k];
+      return '<button class="tool feat" id="tool-'+k+'" data-feature="'+k+'" onclick="openTool(\''+k+'\')">'+
+        '<span class="fi"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">'+ICON[k]+'</svg></span>'+
+        '<b>'+f[0]+'</b><span>'+f[1]+'</span><em>'+(done(k)?'Toured ✓ · open again →':'Try it · 1-min tour →')+'</em></button>'; }).join('')+'</div></div>';
+}
+function tourGo(t, p){
+  try { localStorage.setItem('cg_tour_next', t); } catch(e){}
+  location.href = '/'+p.path+'/'+roleUrl(p.role)+(FEATURES[t] ? FEATURES[t][2] : '');
 }
 function openTool(t){
+  if (t==='tasks') t='schedule';
   var mine = D.projects.filter(function(p){ return p.member && (p.role==='gc'||p.role==='client'||p.role==='designer'); });
-  if (!mine.length) { if (!U.accountType) return setType('contractor', true); return openCreate(t); }
-  var hash = t==='schedule' ? '#schedule' : '#tool-'+t;
-  if (mine.length===1) { location.href='/'+mine[0].path+'/'+roleUrl(mine[0].role)+hash; return; }
-  showModal('<div class="eyebrow">Choose a project</div><h3>Which project?</h3><div class="s">Tools save their results to the project so everyone on it can see them.</div>'+
-    mine.map(function(p){ return '<a class="btn" style="width:100%;justify-content:flex-start;margin-bottom:8px" href="/'+esc(p.path)+'/'+roleUrl(p.role)+hash+'">'+esc(p.name)+'</a>'; }).join(''));
+  var real = mine.filter(function(p){ return !p.sample; }), practice = mine.filter(function(p){ return p.sample; })[0];
+  if (!U.accountType) return practiceGo(t);
+  if (!real.length) return practice ? tourGo(t, practice) : practiceGo(t);
+  showModal('<div class="eyebrow">'+esc(FEATURES[t]?FEATURES[t][0]:'Tool')+'</div><h3>Where should we open it?</h3><div class="s">Results save to the project so everyone on it can see them. A 1-minute tour starts when it opens.</div>'+
+    real.map(function(p){ return '<button class="btn" data-pick="'+esc(p.path)+'" style="width:100%;justify-content:flex-start;margin-bottom:8px" onclick="tourGo(\''+t+'\','+esc(JSON.stringify({path:p.path, role:p.role}))+')">'+esc(p.name)+'</button>'; }).join('')+
+    '<button class="btn" id="pick-practice" style="width:100%;justify-content:flex-start;margin-bottom:8px;border-style:dashed" onclick="'+(practice?'tourGo(\''+t+'\','+esc(JSON.stringify({path:practice.path, role:practice.role}))+')':'practiceGo(\''+t+'\')')+'">Practice project — try it without touching a real job</button>');
+}
+function practiceGo(t){
+  showModal('<div class="eyebrow">Practice project</div><h3>Setting up your practice project…</h3><div class="s">A private sandbox to try every tool. Nothing goes to a client.</div>');
+  fetch('/api/project',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify({action:'create', sample:true})})
+    .then(function(r){return r.json();}).then(function(j){
+      if (!j.ok) { showModal('<h3>Couldn’t open the practice project</h3><div class="s">'+esc(j.error||'Try again in a moment.')+'</div>'); return; }
+      try { localStorage.setItem('cg_tour_next', t); } catch(e){}
+      location.href = j.url + (FEATURES[t] ? FEATURES[t][2] : '');
+    }).catch(function(){ showModal('<h3>Couldn’t reach the server</h3><div class="s">Check your connection and try again.</div>'); });
 }
 function setType(t, thenCreate){
   fetch('/api/auth',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify({action:'set-type', accountType:t})})
@@ -346,6 +400,7 @@ function copyInvite(){ var i=$('c-invite'); i.select(); try { navigator.clipboar
 
 render();
 if (/#start/.test(location.hash) && U.accountType) openCreate();
+if (/#toolkit/.test(location.hash)) setTimeout(function(){ var t = $('toolkit'); if (t) window.scrollTo(0, t.getBoundingClientRect().top + window.scrollY - 84); }, 50);
 </script>
 </body>
 </html>

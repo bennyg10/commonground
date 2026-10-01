@@ -6,7 +6,7 @@ import path from 'node:path';
 import { redis, getJSON, setJSON, clean, token, rateLimited, notify } from './_lib.js';
 
 const now = () => new Date().toISOString();
-const money = (v) => { const n = Number(v); return Number.isFinite(n) && Math.abs(n) < 1e9 ? Math.round(n * 100) / 100 : null; };
+const money = (v) => { if (v === null || v === undefined || v === '') return null; const n = Number(v); return Number.isFinite(n) && Math.abs(n) < 1e9 ? Math.round(n * 100) / 100 : null; };
 const STATUSES = ['included', 'partial', 'excluded', 'unclear'];
 const FILE_TYPES = ['application/pdf', 'image/jpeg', 'image/png', 'image/webp'];
 const MAX_FILE_B64 = 4200000;          // ~3 MB file
@@ -14,6 +14,33 @@ const MAX_INVOICES = 200;
 
 // ── one-time seed patch: line items + scope for projects seeded before this existed ──
 export async function seedPatch(project) {
+  await seedV2(project);
+  await seedV3(project);
+}
+// v3: the excavation phase (soil removal / export) is its own item on the homeowner's list, and seeded proposals are refreshed to match
+async function seedV3(project) {
+  if (await redis(['GET', `cg:seedv3:${project}`])) return;
+  const seedPath = path.join(process.cwd(), 'api', '_pages', `${project}-seed.json`);
+  if (fs.existsSync(seedPath)) {
+    const seed = JSON.parse(fs.readFileSync(seedPath, 'utf8'));
+    const want = (seed.scope || []).find((x) => x.id === 's-excavate');
+    const cur = await getJSON(`cg:scope:${project}`);
+    if (want && cur && !cur.some((x) => x.id === want.id)) {
+      const i = cur.findIndex((x) => x.id === 's-grade');
+      cur.splice(i === -1 ? cur.length : i, 0, want);
+      await setJSON(`cg:scope:${project}`, cleanScope(cur));
+    }
+    for (const sb of seed.bids || []) {
+      if (!sb.breakdown) continue;
+      const raw = await redis(['HGET', `cg:bids:${project}`, sb.id]);
+      if (!raw) continue;
+      const bid = JSON.parse(raw);
+      if (!bid.breakdown || bid.breakdown.source === 'seed') { bid.breakdown = cleanBreakdown(sb.breakdown, 'seed'); await redis(['HSET', `cg:bids:${project}`, sb.id, JSON.stringify(bid)]); }
+    }
+  }
+  await redis(['SET', `cg:seedv3:${project}`, '1']);
+}
+async function seedV2(project) {
   if (await redis(['GET', `cg:seedv2:${project}`])) return;
   const seedPath = path.join(process.cwd(), 'api', '_pages', `${project}-seed.json`);
   if (fs.existsSync(seedPath)) {
@@ -64,8 +91,9 @@ export async function saveBreakdown(project, bidId, breakdown) {
   if (!raw) return null;
   const bid = JSON.parse(raw);
   bid.breakdown = cleanBreakdown(breakdown, 'ai');
+  if (!bid.amount && bid.breakdown.total) bid.amount = Math.round(bid.breakdown.total);   // uploaded without a price → use the proposal's total
   await redis(['HSET', `cg:bids:${project}`, bidId, JSON.stringify(bid)]);
-  return bid.breakdown;
+  return { breakdown: bid.breakdown, amount: bid.amount };
 }
 
 // ── invoices ──

@@ -127,10 +127,39 @@ function cleanStatus(b, prev) {
     updatedAt: now(),
   });
 }
+// ── practice project: a private sandbox so a new GC or designer can try every tool before they're hired anywhere ──
+async function createPractice(req, res, u) {
+  const as = u.accountType === 'designer' ? 'designer' : 'gc';
+  const roleUrl = as;
+  if (u.sampleProject && (u.projects || {})[u.sampleProject] && (await getProjectMeta(u.sampleProject))) {
+    return res.status(200).json({ ok: true, existing: true, project: { id: u.sampleProject, path: u.sampleProject }, url: `/${u.sampleProject}/${roleUrl}` });
+  }
+  let id = null;
+  for (let i = 0; i < 8 && !id; i++) {
+    const cand = 'practice-' + token(6).toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 6);
+    if (cand.length < 13) continue;
+    const meta = { id: cand, path: cand, name: 'Practice project', address: 'Practice project — try every tool, nothing goes to a client', classification: 'residential',
+      subtype: 'single-family', scope: 'remodel', mode: 'new', sample: true, createdBy: u.identifier, createdByName: u.name, creatorRole: as, createdAt: now() };
+    if (as === 'gc') meta.status = cleanStatus({ phase: 'Pre-construction', percent: 0 }, null);
+    if (await redis(['SET', `cg:proj:${cand}`, JSON.stringify(meta), 'NX'])) id = cand;
+  }
+  if (!id) return res.status(409).json({ error: 'try_again' });
+  await redis(['SADD', 'cg:projects', id]);
+  const hiredGc = as === 'gc' ? { name: u.name, company: u.company || u.name, identifier: u.identifier, phone: u.phone || '', bidId: null, amount: null, hiredAt: now(), hiredBy: 'self' } : null;
+  await setJSON(`cg:project:${id}`, { stage: as === 'gc' ? 'active' : 'bidding', hiredGc, startedAt: as === 'gc' ? now() : null });
+  await redis(['SET', `cg:seeded:${id}`, '1']);
+  u.projects = Object.assign({}, u.projects, { [id]: as });
+  if (!u.accountType) u.accountType = 'contractor';
+  u.sampleProject = id;
+  await setJSON(`cg:user:${u.identifier}`, u);
+  await addMember(id, u.identifier, { name: u.name, role: as, status: 'active', joinedAt: now() });
+  return res.status(200).json({ ok: true, project: { id, path: id }, url: `/${id}/${roleUrl}` });
+}
 async function createProject(req, res, b) {
   const u = await currentUser(req);
   if (!u) return res.status(401).json({ error: 'sign_in_required' });
   if (!u.admin && await rateLimited(`cg:rl:create:${u.identifier}`, 25, 86400)) return res.status(429).json({ error: 'too_many_attempts' });
+  if (b.sample === true) return createPractice(req, res, u);
   const address = clean(b.address, 160);
   if (address.length < 5) return res.status(400).json({ error: 'address_required' });
   const classification = clean(b.classification, 20);
@@ -333,8 +362,8 @@ export default async function handler(req, res) {
       }
       if (action === 'bid-breakdown') {
         if (!isOwner) return res.status(403).json({ error: 'owner_only' });
-        const bd = await saveBreakdown(project, clean(b.bidId, 60), b.breakdown);
-        return bd ? res.status(200).json({ ok: true, breakdown: bd }) : res.status(404).json({ error: 'not_found' });
+        const sv = await saveBreakdown(project, clean(b.bidId, 60), b.breakdown);
+        return sv ? res.status(200).json({ ok: true, breakdown: sv.breakdown, amount: sv.amount }) : res.status(404).json({ error: 'not_found' });
       }
       let out;
       if (action === 'invoice-upload') out = await uploadInvoice(req, project, u, who, b);
@@ -350,7 +379,7 @@ export default async function handler(req, res) {
       const meta = await getProjectMeta(project);
       const out = { ok: true, stage: p.stage, hiredGc: p.hiredGc, startedAt: p.startedAt, clientName: await clientName(project), clientNames: owners,
         meta: { name: meta.name, address: meta.address || '', classification: meta.classification || '', subtype: meta.subtype || '', scope: meta.scope || '',
-                mode: meta.mode || '', status: meta.status || null, path: projectPath(project), builtin: !!meta.builtin }, phases: PHASES };
+                mode: meta.mode || '', status: meta.status || null, path: projectPath(project), builtin: !!meta.builtin, sample: !!meta.sample }, phases: PHASES };
       if (isOwner) {
         out.bids = (await listBids(project)).map(publicBid);
         const flat = (await redis(['HGETALL', `cg:bidinvites:${project}`])) || [];
@@ -409,6 +438,30 @@ export default async function handler(req, res) {
         text: `${byName} invited you to submit a proposal for ${projectTitle(project)}.\n\nUpload it here: ${link}`,
       });
       return res.status(200).json({ ok: true, link, emailed: !!sent.ok });
+    }
+
+    // ── owner: upload a proposal they received outside the platform (email, paper, PDF)
+    if (action === 'bid-upload') {
+      if (!isOwner) return res.status(403).json({ error: 'owner_only' });
+      if (p.stage !== 'bidding') return res.status(409).json({ error: 'bidding_closed' });
+      if (await rateLimited(`cg:rl:bidup:${u.identifier}`, 30, 86400)) return res.status(429).json({ error: 'too_many_attempts' });
+      const gcName = clean(b.gcName, 100);
+      if (!gcName) return res.status(400).json({ error: 'gc_name_required' });
+      const f = b.file || {};
+      const type = clean(f.type, 60), data = typeof f.data === 'string' ? f.data : '';
+      if (!data) return res.status(400).json({ error: 'file_required' });
+      if (!FILE_TYPES.includes(type)) return res.status(400).json({ error: 'bad_file_type' });
+      if (data.length * 0.75 > MAX_FILE_BYTES || !/^[A-Za-z0-9+/=]+$/.test(data)) return res.status(413).json({ error: 'file_too_large' });
+      const bidId = 'bid-' + Date.now().toString(36) + token(2).toLowerCase().replace(/[^a-z0-9]/g, '');
+      const fileId = 'f-' + bidId;
+      await redis(['SET', `cg:file:${fileId}`, data]);
+      const amount = Number(String(b.amount || '').replace(/[$,\s]/g, ''));
+      const email = normalizeIdentifier(b.email || '');
+      const bid = { id: bidId, gcName, company: gcName, contactName: clean(b.contactName, 80), email: email && email.includes('@') ? email : '', phone: clean(b.phone, 30),
+        amount: isFinite(amount) && amount > 0 ? Math.round(amount) : null, note: clean(b.note, 600), status: 'submitted', submittedAt: now(), source: 'uploaded by owner', uploadedBy: u.name,
+        file: { id: fileId, name: clean(f.name, 120) || 'proposal', type, size: Math.round(data.length * 0.75) } };
+      await redis(['HSET', `cg:bids:${project}`, bidId, JSON.stringify(bid)]);
+      return res.status(200).json({ ok: true, bid: publicBid(bid) });
     }
 
     // ── owner: hire / don't hire

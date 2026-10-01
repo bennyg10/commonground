@@ -1373,5 +1373,154 @@ function m3SavePending(){
 
 m3LoadMeasures();
 /* SCAN3D_END */</script>
+<script id="tour-front">/* TOUR_FRONT_START */
+/* ══════════════════════════════════════════════════
+   GUIDED TOURS — tooltip-led onboarding for each tool (workspace).
+   Started from the dashboard toolkit (localStorage cg_tour_next) or the practice-project banner.
+   ══════════════════════════════════════════════════ */
+var TOURS = {
+  schedule:{name:'Timeline + tasks', steps:[
+    {tab:'schedule', sel:'[data-tab="schedule"]', t:'One schedule for everyone', b:'Your client, your trades and you all see the same timeline — no more “when are you starting?” texts.'},
+    {tab:'schedule', sel:'#sched-template', alt:'#timeline-card', t:'Start from a template', b:'One tap lays out every phase for this kind of job. Then drag the dates to fit.'},
+    {tab:'schedule', sel:'#tk-title', t:'Assign tasks', b:'Add a task, pick who owns it and a due date. Trades see their own list when they sign in.'},
+    {tab:'schedule', sel:'#tk-go', t:'Your turn', b:'Add your first task — try “Order windows” for next Friday.'}]},
+  decisions:{name:'Change orders + approvals', steps:[
+    {tab:'decisions', sel:'[data-tab="decisions"]', t:'Change orders, signed', b:'Every change, price and approval lives here with a time stamp — the end of “I never agreed to that.”'},
+    {tab:'decisions', sel:'#co-title', t:'Describe the change', b:'Say what’s changing in plain words, like “Upgrade to a 200A panel.”'},
+    {tab:'decisions', sel:'#co-amt', t:'Add the price', b:'The owner sees exactly what it adds to the contract before they sign.'},
+    {tab:'decisions', sel:'#co-photos', alt:'#co-desc', t:'Show why', b:'Attach photos from the site. Approvals go faster when the owner can see the problem.'},
+    {tab:'decisions', sel:'#co-go', t:'Send it', b:'The owner approves with a signature from their phone, and you’re notified the moment they do.'}]},
+  codecheck:{name:'Code check', steps:[
+    {tab:'tools', tool:'codecheck', sel:'[data-tool="codecheck"]', t:'Catch it before plan check does', b:'Upload a plan set and get findings with code sections — egress, clearances, stairs, smoke alarms, energy.'},
+    {tab:'tools', tool:'codecheck', sel:'#ai-file', t:'Drop in the plans', b:'PDF or a photo of the sheets, up to 3 MB.'},
+    {tab:'tools', tool:'codecheck', sel:'#ai-jur', t:'Right code, right city', b:'We apply the code your jurisdiction adopted, plus local amendments we know about.'},
+    {tab:'tools', tool:'codecheck', sel:'#ai-go', t:'Run it', b:'About a minute later: what to fix, what to review and what passes. Results save to the project for your client to see.'}]},
+  plans:{name:'Plan analysis', steps:[
+    {tab:'tools', tool:'plans', sel:'[data-tool="plans"]', t:'Plans in, scope out', b:'Square footage, rooms, scope by trade, open questions and risks — ready to price or send to subs.'},
+    {tab:'tools', tool:'plans', sel:'#ai-file', t:'Upload a plan set', b:'Any PDF or photo of the plans.'},
+    {tab:'tools', tool:'plans', sel:'#ai-go', t:'Analyze', b:'Every result is saved under Saved results, so the whole team works from the same numbers.'}]},
+  scan:{name:'3D scan + measure', steps:[
+    {tab:'tools', tool:'scan', sel:'[data-tool="scan"]', alt:'#scan-file', t:'Walk the site in 3D', b:'Scan a room with an iPhone or iPad Pro (Polycam, Scaniverse or 3d Scanner App) and upload it here.'},
+    {tab:'tools', tool:'scan', sel:'#scan-label', t:'Name the space', b:'“Kitchen — existing conditions” keeps every scan easy to find.'},
+    {tab:'tools', tool:'scan', sel:'#scan-file', t:'Upload the GLB', b:'Then measure in 3D or on a flat 2D plan, save every wall by room, and check them against the drawings.'},
+    {tab:'tools', tool:'scan', sel:'#scan-go', t:'Share it', b:'Your client and trades can orbit the model from their phones — no app needed.'}]},
+  team:{name:'Team + trades', steps:[
+    {tab:'controls', sel:'[data-tab="controls"]', t:'Bring your team in', b:'Your client and every trade get their own sign-in. Everyone sees what they need — and nothing they shouldn’t.'},
+    {tab:'controls', sel:'#t-name', t:'Who are you inviting?', b:'Name plus email or mobile number. They get a link to set a password.'},
+    {tab:'controls', sel:'#t-role', t:'Pick their role', b:'Homeowner, trade or designer. Trades never see pricing or change orders.'},
+    {tab:'controls', sel:'#t-go', t:'Create the link', b:'Text it or email it. When they join, they show up on your team right away.'}]},
+  subs:{name:'Find a sub', steps:[
+    {tab:'overview', sel:'#find-sub', t:'Need a trade fast?', b:'Invite a sub you already trust, or ask Common Ground for 3–5 top-rated, licensed options near the job.'},
+    {tab:'overview', sel:'#find-sub .btn', t:'Within 12 hours', b:'Tell us the trade and the job. We send the short list to your project and your inbox.'}]},
+  progress:{name:'Progress updates', steps:[
+    {tab:'overview', sel:'#progress-card', t:'Keep your client in the loop', b:'Post where the job stands — they see it instantly instead of calling you.'},
+    {tab:'overview', sel:'#u-phase', t:'Pick the phase', b:'Demolition, framing, rough-ins… the phases match a real construction schedule.'},
+    {tab:'overview', sel:'#u-pct', t:'Slide the percent', b:'Five-percent steps. Your client’s progress bar moves with it.'},
+    {tab:'overview', sel:'#u-save', t:'Post it', b:'Saved with a time stamp so the history is always there.'}]},
+  design:{name:'Design approvals', steps:[
+    {tab:'decisions', sel:'#da-card', alt:'[data-tab="decisions"]', t:'Selections, signed off', b:'Send finishes, fixtures and layouts to your client for a signed approval — no more lost email threads.'},
+    {tab:'decisions', sel:'#da-title', t:'What needs approval', b:'For example “Primary bath tile — Calacatta 24×48.”'},
+    {tab:'decisions', sel:'#da-go', t:'Send it', b:'Your client signs from their phone; the GC sees it too, so it gets built the way you designed it.'}]}
+};
+var TOUR = null;
+function tourWait(sel, alt, ms){
+  return new Promise(function(res){
+    var t0 = Date.now();
+    (function poll(){
+      var el = document.querySelector(sel) || (alt && document.querySelector(alt));
+      if (el && el.getBoundingClientRect().height > 0) return res(el);
+      if (Date.now() - t0 > ms) return res(null);
+      setTimeout(poll, 100);
+    })();
+  });
+}
+function tourEls(){
+  var spot = document.getElementById('tour-spot'), bub = document.getElementById('tour-bub');
+  if (!spot) {
+    spot = document.createElement('div'); spot.id = 'tour-spot';
+    spot.style.cssText = 'position:fixed;z-index:9998;pointer-events:none;border-radius:12px;box-shadow:0 0 0 3px #D5DC99,0 0 0 9999px rgba(0,0,0,.62);transition:all .25s ease';
+    bub = document.createElement('div'); bub.id = 'tour-bub'; bub.setAttribute('role', 'dialog'); bub.setAttribute('aria-live', 'polite');
+    bub.style.cssText = 'position:fixed;z-index:9999;width:min(320px,calc(100vw - 24px));box-sizing:border-box;background:#17161C;border:1px solid #D5DC99;border-radius:14px;padding:14px 16px;box-shadow:0 20px 60px rgba(0,0,0,.6);color:#FDFFFE;font-family:inherit;transition:top .25s ease,left .25s ease';
+    document.body.appendChild(spot); document.body.appendChild(bub);
+    window.addEventListener('resize', tourPlace); window.addEventListener('scroll', tourPlace, true);
+  }
+  return {spot:spot, bub:bub};
+}
+function tourPlace(){
+  if (!TOUR || !TOUR.el) return;
+  if (!document.body.contains(TOUR.el)) {                 // the page re-rendered under the tour: find the same spot again
+    var st = TOURS[TOUR.key].steps[TOUR.i], again = document.querySelector(st.sel) || (st.alt && document.querySelector(st.alt));
+    if (!again) return; TOUR.el = again;
+  }
+  var r = TOUR.el.getBoundingClientRect(), e = tourEls(), pad = 6, vw = window.innerWidth, vh = window.innerHeight;
+  e.spot.style.left = (r.left - pad)+'px'; e.spot.style.top = (r.top - pad)+'px'; e.spot.style.width = (r.width + pad*2)+'px'; e.spot.style.height = (r.height + pad*2)+'px';
+  var bw = e.bub.offsetWidth, bh = e.bub.offsetHeight;
+  var top = r.bottom + 14; if (top + bh > vh - 10) top = Math.max(10, r.top - bh - 14);
+  var left = Math.min(Math.max(12, r.left), vw - bw - 12);
+  e.bub.style.top = top+'px'; e.bub.style.left = left+'px';
+}
+function tourShow(i){
+  if (!TOUR) return;
+  var steps = TOURS[TOUR.key].steps;
+  if (i < 0) i = 0;
+  if (i >= steps.length) return tourEnd(true);
+  TOUR.i = i;
+  var st = steps[i];
+  if (st.tab && (TAB !== st.tab || (st.tool && TOOL !== st.tool))) go(st.tab, st.tool);
+  tourWait(st.sel, st.alt, 2500).then(function(el){
+    if (!TOUR || TOUR.i !== i) return;
+    if (!el) return tourShow(i + (TOUR.dir || 1));               // a step that doesn't apply to this view is skipped
+    TOUR.el = el;
+    el.scrollIntoView({block:'center', behavior:'auto'});
+    var e = tourEls(), last = i === steps.length - 1;
+    var btn = 'border-radius:8px;padding:8px 13px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit';
+    e.bub.innerHTML = '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><span style="font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#D5DC99">'+esc(TOURS[TOUR.key].name)+'</span>'+
+        '<span style="margin-left:auto;font-size:11px;color:rgba(253,255,254,.5)">'+(i+1)+' / '+steps.length+'</span></div>'+
+      '<div style="font-family:Bungee,sans-serif;font-size:15px;line-height:1.3;margin-bottom:6px">'+esc(st.t)+'</div>'+
+      '<div style="font-size:13px;line-height:1.55;color:rgba(253,255,254,.78)">'+esc(st.b)+'</div>'+
+      '<div style="display:flex;gap:8px;margin-top:12px;align-items:center"><button id="tour-skip" onclick="tourEnd(false)" style="'+btn+';background:none;border:none;color:rgba(253,255,254,.5);padding-left:0">Skip tour</button>'+
+        '<span style="flex:1"></span>'+(i ? '<button id="tour-back" onclick="TOUR.dir=-1;tourShow('+(i-1)+')" style="'+btn+';background:none;border:1px solid rgba(253,255,254,.2);color:#FDFFFE">Back</button>' : '')+
+        '<button id="tour-next" onclick="TOUR.dir=1;tourShow('+(i+1)+')" style="'+btn+';background:#D5DC99;border:none;color:#000">'+(last ? 'Try it' : 'Next')+'</button></div>';
+    e.spot.style.display = e.bub.style.display = 'block';
+    setTimeout(tourPlace, 30); tourPlace();
+  });
+}
+function tourStart(key){
+  if (!TOURS[key]) return;
+  TOUR = {key:key, i:0, dir:1, el:null};
+  tourShow(0);
+}
+function tourEnd(finished){
+  var key = TOUR && TOUR.key, el = TOUR && TOUR.el;
+  TOUR = null;
+  ['tour-spot','tour-bub'].forEach(function(id){ var x = document.getElementById(id); if (x) x.style.display = 'none'; });
+  try { if (key) localStorage.setItem('cg_tour_done_'+key, '1'); } catch(e){}
+  if (finished) { if (typeof toast === 'function') toast('Your turn — it’s all live.'); if (el && el.focus && /INPUT|SELECT|TEXTAREA/.test(el.tagName)) el.focus(); }
+}
+document.addEventListener('keydown', function(e){ if (TOUR && e.key === 'Escape') tourEnd(false); });
+
+/* practice-project banner with every tour one tap away */
+function tourKeysForRole(){ return isDesigner ? ['scan','plans','codecheck','design','team'] : ['schedule','decisions','codecheck','plans','scan','team','subs','progress']; }
+function tourBanner(){
+  var m = (ST && ST.meta) || {};
+  var host = document.getElementById('practice-banner');
+  if (!m.sample) { if (host) host.remove(); return; }
+  if (!host) { host = document.createElement('div'); host.id = 'practice-banner'; var main = $('main'); main.parentNode.insertBefore(host, main); }
+  var mp = getComputedStyle($('main'));   // line up with the page content at any width
+  host.style.cssText = 'max-width:1120px;margin:14px auto -18px;padding:0 '+mp.paddingRight+' 0 '+mp.paddingLeft+';box-sizing:border-box';
+  host.innerHTML = '<div style="background:rgba(183,156,255,.1);border:1px solid rgba(183,156,255,.38);border-radius:14px;padding:12px 14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">'+
+    '<span style="font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#C9B5FF">Practice project</span>'+
+    '<span style="font-size:13px;color:rgba(253,255,254,.75);flex:1;min-width:200px">Try anything here — nothing goes to a real client. Pick a tool for a 1-minute tour:</span>'+
+    '<div style="display:flex;gap:6px;flex-wrap:wrap">'+tourKeysForRole().map(function(k){ return '<button data-tour="'+k+'" onclick="tourStart(\''+k+'\')" style="border-radius:20px;padding:5px 11px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;background:none;border:1px solid rgba(183,156,255,.38);color:#C9B5FF">'+esc(TOURS[k].name)+'</button>'; }).join('')+'</div></div>';
+}
+function tourInit(){
+  var key = null; try { key = localStorage.getItem('cg_tour_next'); localStorage.removeItem('cg_tour_next'); } catch(e){}
+  (function wait(n){
+    if (typeof ST !== 'undefined' && ST && $('main') && $('main').children.length) { tourBanner(); if (key && TOURS[key]) setTimeout(function(){ tourStart(key); }, 250); return; }
+    if (n > 80) return; setTimeout(function(){ wait(n+1); }, 100);
+  })(0);
+}
+tourInit();
+/* TOUR_FRONT_END */</script>
 </body>
 </html>
