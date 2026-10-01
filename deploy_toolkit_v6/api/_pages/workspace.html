@@ -1,0 +1,1526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Common Ground — Project</title>
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Common Ground">
+<meta property="og:image" content="https://www.buildcommonground.io/og.png?v=5">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Common Ground — Build better on day one.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://www.buildcommonground.io/og.png?v=5">
+<link rel="icon" type="image/png" href="/favicon.png?v=2">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png?v=2">
+<meta name="theme-color" content="#111015">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script type="importmap" id="three-map">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+<style>
+:root{--black:#0B0B0E;--d1:#111015;--d2:#17161C;--d3:#1E1D24;--d4:#26252D;--white:#FDFFFE;--lime:#D5DC99;--sage:#737F73;
+  --w08:rgba(253,255,254,.08);--w15:rgba(253,255,254,.15);--w30:rgba(253,255,254,.3);--w50:rgba(253,255,254,.55);--w70:rgba(253,255,254,.75);
+  --l10:rgba(213,220,153,.1);--l20:rgba(213,220,153,.22);--ok:#4A9B6F;--del:#E07A5F;--amb:#C9A84C}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--d1);color:var(--white);font-family:"DM Sans",sans-serif;font-size:15px;line-height:1.55;overflow-x:hidden}
+a{color:var(--lime)}
+button,input,select,textarea{font-family:inherit}
+.top{position:sticky;top:0;z-index:20;background:rgba(17,16,21,.95);backdrop-filter:blur(10px);border-bottom:1px solid var(--w08)}
+.bar{max-width:1120px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:12px}
+.mark{display:flex;align-items:center;gap:8px;text-decoration:none;flex:none}
+.mark b{width:28px;height:28px;border-radius:7px;background:var(--lime);color:var(--black);display:flex;align-items:center;justify-content:center;font-family:Bungee,sans-serif;font-size:11px;font-weight:800}
+.crumb{font-size:13px;color:var(--w50);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.crumb a{color:var(--w70);text-decoration:none}
+.right{margin-left:auto;display:flex;align-items:center;gap:8px;flex:none}
+.tabs{max-width:1120px;margin:0 auto;padding:0 20px;display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:none;background:none;border:none;border-bottom:2px solid transparent;color:var(--w50);font-size:14px;font-weight:600;padding:10px 12px 12px;cursor:pointer}
+.tab.on{color:var(--lime);border-bottom-color:var(--lime)}
+.tab .ct{display:inline-block;min-width:18px;font-size:10px;font-weight:700;padding:1px 6px;border-radius:20px;background:var(--d4);color:var(--w70);margin-left:5px}
+main{max-width:1120px;margin:0 auto;padding:34px 28px 90px}
+.eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--sage);margin-bottom:8px}
+h1{font-family:Bungee,sans-serif;font-size:30px;font-weight:800;letter-spacing:-.03em;line-height:1.2}
+h2{font-family:Bungee,sans-serif;font-size:18px;font-weight:700;letter-spacing:-.02em;line-height:1.3;margin-bottom:12px}
+.lede{color:var(--w70);margin-top:6px}
+.muted{color:var(--w50)}.small{font-size:13px}
+.card{background:var(--d2);border:1px solid var(--w08);border-radius:16px;padding:22px 24px;margin-bottom:18px}
+.card.hi{border-color:var(--l20);background:linear-gradient(135deg,rgba(213,220,153,.08),var(--d2) 60%)}
+.two{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:18px;align-items:start}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:10px 16px;border-radius:10px;border:1px solid var(--w15);background:var(--d3);color:var(--white);font-size:13.5px;font-weight:700;cursor:pointer;text-decoration:none;white-space:nowrap}
+.btn.pri{background:var(--lime);border-color:var(--lime);color:var(--black)}
+.btn.sm{padding:6px 11px;font-size:12px;border-radius:8px}
+.btn.danger{color:var(--del);border-color:rgba(224,122,95,.35)}
+.btn:disabled{opacity:.5;cursor:default}
+.pills{display:flex;gap:6px;flex-wrap:wrap}
+.pill{display:inline-block;font-size:11px;font-weight:700;padding:2px 9px;border-radius:20px;border:1px solid var(--w15);color:var(--w70);white-space:nowrap}
+.pill.lime{background:var(--l10);border-color:var(--l20);color:var(--lime)}
+.pill.ok{background:rgba(74,155,111,.14);border-color:rgba(74,155,111,.4);color:#8fd6ab}
+.pill.amb{background:rgba(201,168,76,.12);border-color:rgba(201,168,76,.38);color:#e0c67a}
+.pill.del{background:rgba(224,122,95,.12);border-color:rgba(224,122,95,.35);color:#f0a996}
+.pill.gray{background:var(--d3);color:var(--w50)}
+.stages{display:flex;gap:6px;margin-top:18px;flex-wrap:wrap}
+.stages span{font-size:12px;font-weight:700;padding:6px 12px;border-radius:20px;background:var(--d3);color:var(--w30);border:1px solid var(--w08)}
+.stages span.done{color:var(--w70)}
+.stages span.on{background:var(--l10);color:var(--lime);border-color:var(--l20)}
+.track{height:8px;background:var(--d4);border-radius:8px;overflow:hidden;margin:10px 0 6px}
+.fill{height:100%;background:var(--lime)}
+.big{font-family:Bungee,sans-serif;font-size:40px;font-weight:800;letter-spacing:-.03em;line-height:1.1}
+label{display:block;font-size:12px;color:var(--sage);margin:0 0 6px}
+input,select,textarea{width:100%;background:var(--d3);border:1px solid var(--w08);border-radius:10px;padding:11px 12px;font-size:14.5px;color:var(--white);outline:none;margin-bottom:12px}
+input:focus,select:focus,textarea:focus{border-color:var(--l20)}
+input[type=range]{accent-color:#D5DC99;padding:0;border:none;background:none}
+input[type=file]{padding:10px;font-size:13px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.form3{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:10px;align-items:end}
+.form3 input{margin-bottom:0}
+.item{display:flex;gap:14px;align-items:center;padding:14px 0;border-top:1px solid var(--w08)}
+.item:first-child{border-top:none;padding-top:2px}
+.item .main{flex:1;min-width:0}
+.item .t{font-weight:700}
+.linkbox{display:flex;gap:8px;margin-top:6px}
+.linkbox input{margin:0;color:var(--lime);font-size:13px}
+.empty{color:var(--w50);font-size:14px;padding:6px 0}
+.msg{display:none;font-size:13px;border-radius:9px;padding:10px 12px;margin:0 0 12px;background:rgba(224,122,95,.12);border:1px solid rgba(224,122,95,.3);color:#f0a996}
+.ok-msg{font-size:13px;border-radius:9px;padding:10px 12px;margin:0 0 12px;background:rgba(74,155,111,.12);border:1px solid rgba(74,155,111,.35);color:#9fd4b4}
+.subtabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px}
+.subtabs button{background:var(--d2);border:1px solid var(--w08);border-radius:20px;padding:8px 14px;color:var(--w70);font-size:13px;font-weight:600;cursor:pointer}
+.subtabs button.on{border-color:var(--lime);background:var(--l10);color:var(--lime)}
+.find{display:flex;gap:12px;padding:14px 0;border-top:1px solid var(--w08)}
+.find:first-child{border-top:none}
+.find .st{flex:none;width:52px;text-align:center;font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;border-radius:6px;padding:3px 0;height:fit-content}
+.find .st.fail{background:rgba(224,122,95,.16);color:#f0a996}.find .st.warn{background:rgba(201,168,76,.16);color:#e0c67a}.find .st.pass{background:rgba(74,155,111,.16);color:#8fd6ab}
+.kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:14px 0}
+.kpi{background:var(--d3);border-radius:12px;padding:12px 14px}
+.kpi b{display:block;font-family:Bungee,sans-serif;font-size:22px}
+.kpi span{font-size:12px;color:var(--w50)}
+.log{font-size:12.5px;color:var(--w50);margin-top:8px;min-height:18px}
+.steps3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:12px 0 18px}
+.steps3 div{background:var(--d3);border-radius:12px;padding:14px}
+.steps3 b{font-family:Bungee,sans-serif;color:var(--lime);font-size:13px}
+.steps3 p{font-size:13px;color:var(--w70);margin-top:4px}
+.prog{height:6px;background:var(--d4);border-radius:6px;overflow:hidden;margin:8px 0;display:none}
+.prog i{display:block;height:100%;width:0;background:var(--lime);transition:width .2s}
+.srow{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr) minmax(0,1fr) minmax(0,1fr) minmax(0,1fr) auto;gap:8px;align-items:end;padding:8px 0;border-top:1px solid var(--w08)}
+model-viewer{width:100%;height:420px;background:#0d0d11;border-radius:14px;--poster-color:transparent}
+#m-bg{position:fixed;inset:0;background:rgba(5,5,8,.72);backdrop-filter:blur(4px);z-index:60;display:none;align-items:center;justify-content:center;padding:16px}
+#m{width:100%;max-width:500px;max-height:calc(100vh - 32px);overflow-y:auto;background:var(--d2);border:1px solid var(--w15);border-radius:20px;padding:26px;position:relative}
+#m h3{font-family:Bungee,sans-serif;font-size:21px;letter-spacing:-.02em;line-height:1.25;margin-bottom:6px;padding-right:40px}
+#m p{color:var(--w70);font-size:14px;margin-bottom:14px}
+#m .x{position:absolute;top:14px;right:14px;width:34px;height:34px;border-radius:9px;border:1px solid var(--w08);background:var(--d3);color:var(--w70);font-size:18px;cursor:pointer}
+.acts{display:flex;justify-content:flex-end;gap:8px;margin-top:6px;flex-wrap:wrap}
+#toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--d4);border:1px solid var(--w15);color:var(--white);font-size:13px;padding:10px 16px;border-radius:10px;z-index:70;display:none;max-width:calc(100vw - 32px)}
+@media(max-width:860px){.two{grid-template-columns:1fr}.form3{grid-template-columns:1fr 1fr}}
+@media(max-width:640px){
+  .bar{padding:10px 14px}.tabs{padding:0 6px}main{padding:22px 16px 72px}h1{font-size:24px}
+  .card{padding:18px 16px}.form3,.steps3{grid-template-columns:1fr}.kpis{grid-template-columns:1fr 1fr 1fr}
+  .item{flex-wrap:wrap}.srow{grid-template-columns:1fr 1fr}#admin-views{display:none}.right .who{display:none}model-viewer{height:320px}
+}
+</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&display=swap" id="brand-kit">
+<style id="brand-v2">
+:root{--dk:#000000;--black:#000000;--d1:#000000;--d2:#1A1A1A;--d3:#262626;--d4:#333333;--white:#D9DAD4;--sage:#A39684;--stone:#6D604F;--limestone:#D9DAD4;--graphite:#333333;
+ --w08:rgba(217,218,212,.10);--w15:rgba(217,218,212,.18);--w30:rgba(217,218,212,.34);--w50:rgba(217,218,212,.6);--w70:rgba(217,218,212,.8)}
+html,body{background:#000}
+.nav,.top{background:rgba(0,0,0,.92)!important}
+h1,h2,h3,h4,#m h3,.big{font-family:'Bungee',sans-serif!important;font-weight:400!important;letter-spacing:0!important}
+*{font-synthesis:none}
+.mark b,.mark span,.top-mark span{font-family:'Bungee',sans-serif!important;font-weight:400!important;letter-spacing:0!important}
+</style>
+</head>
+<body>
+<div class="top">
+  <div class="bar">
+    <a class="mark" href="/dashboard" title="Dashboard"><b>CG</b></a>
+    <div class="crumb"><a href="/dashboard">Dashboard</a> / <span id="crumb-name"></span></div>
+    <div class="right"><span class="pill lime" id="role-pill"></span><span id="admin-views"></span><button class="btn sm" onclick="signOut()">Sign out</button></div>
+  </div>
+  <nav class="tabs" id="tabs"></nav>
+</div>
+<main id="main"><div class="muted">Loading your project…</div></main>
+<div id="m-bg" role="dialog" aria-modal="true"><div id="m"></div></div>
+<div id="toast"></div>
+<script>
+var S = window.CG_SESSION || {user:{name:'You'}, project:'', path:'', role:'client', projectInfo:{}};
+var PID = S.project, ROLE = S.role, ME = S.user;
+var ST = null, DEC = [], NOTES = [], MEMBERS = [], RESULTS = [], SCANS = [], SCHED = {items:[]}, TASKS = {items:[]}, TAB = 'overview', TOOL = 'codecheck';
+var $ = function(id){ return document.getElementById(id); };
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+function jsq(s){ return esc(String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'")); }
+function decClosed(d){ return d.status==='approved'||d.status==='rejected'||d.status==='withdrawn'; }
+function money(n){ return n==null||n==='' ? '—' : '$'+Math.round(n).toLocaleString('en-US'); }
+function when(t){ if(!t) return ''; var d=new Date(t); return isNaN(d) ? String(t) : d.toLocaleDateString('en-US',{month:'short',day:'numeric'}); }
+function first(n){ return String(n||'').trim().split(/\s+/)[0]; }
+function dayPart(){ var h=new Date().getHours(); return h<12?'morning':h<17?'afternoon':'evening'; }
+function toast(t){ var e=$('toast'); e.textContent=t; e.style.display='block'; clearTimeout(toast.h); toast.h=setTimeout(function(){ e.style.display='none'; },3200); }
+var isOwner = ROLE==='client', isGC = ROLE==='gc', isTrade = ROLE==='trade', isDesigner = ROLE==='designer';
+var ownerAccount = (ME.projects||{})[PID]==='client';
+var SCOPE = {'new-build':'New build', remodel:'Remodel', addition:'Addition', adu:'ADU', demolition:'Demolition', 'tenant-improvement':'Tenant improvement', repair:'Repair'};
+var SUB = {'single-family':'Single-family','multi-family':'Multi-family',adu:'ADU','condo-townhome':'Condo / townhome',office:'Office',retail:'Retail',restaurant:'Restaurant','mixed-use':'Mixed-use',industrial:'Industrial',other:'Other'};
+
+function api(url, body){
+  var opt = body ? {method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify(body)} : {credentials:'same-origin',cache:'no-store'};
+  return fetch(url, opt).then(function(r){ return r.json().then(function(j){ j._s=r.status; return j; }).catch(function(){ return {error:'server', _s:r.status}; }); }).catch(function(){ return {error:'network'}; });
+}
+var P = function(extra){ return '/api/project?project='+encodeURIComponent(PID)+(extra||''); };
+function load(){
+  return Promise.all([
+    api(P('&action=state')),
+    isTrade ? Promise.resolve({decisions:[],notifications:[]}) : api('/api/decisions?project='+encodeURIComponent(PID)),
+    (isOwner||isGC||isDesigner) ? api('/api/auth?action=members&project='+encodeURIComponent(PID)) : Promise.resolve({members:[]}),
+    isTrade ? Promise.resolve({results:[]}) : api('/api/tools?action=results&project='+encodeURIComponent(PID)),
+    api('/api/tools?action=scans&project='+encodeURIComponent(PID)),
+    api('/api/tools?action=schedule&project='+encodeURIComponent(PID))
+  ]).then(function(r){
+    if (r[0].error) { $('main').innerHTML='<div class="card">Couldn’t load this project. <a href="/dashboard">Back to dashboard</a></div>'; return; }
+    ST=r[0]; DEC=r[1].decisions||[]; NOTES=r[1].notifications||[]; MEMBERS=r[2].members||[]; RESULTS=r[3].results||[]; SCANS=r[4].scans||[]; SCHED=(r[5].schedule||{items:[]}); TASKS=(r[5].tasks||{items:[]});
+    render();
+  });
+}
+function signOut(){ api('/api/auth',{action:'logout'}).then(function(){ location.href='/'; }); }
+
+/* ── shell ── */
+function tabsFor(){
+  var t = [['overview','Overview']];
+  if ((isOwner && (ST.stage==='bidding' || (ST.bids||[]).length))) t.push(['proposals','Proposals']);
+  if (!isTrade) t.push(['decisions','Decisions']);
+  t.push(['schedule','Schedule']);
+  if (isOwner||isGC||isDesigner) t.push(['controls', ownerAccount ? 'Homeowner controls' : isGC ? 'GC controls' : isDesigner ? 'Team' : 'Controls']);
+  if (!isTrade) t.push(['tools','Tools']); else t.push(['tools','3D scans']);
+  return t;
+}
+function go(t, tool){ TAB=t; if (tool) TOOL=tool; try{ history.replaceState(null,'', t==='overview'?location.pathname:'#'+(t==='tools'?'tool-'+TOOL:t)); }catch(e){} render(); window.scrollTo(0,0); }
+function render(){
+  var m = ST.meta || {};
+  document.title = 'Common Ground — '+(m.name||'Project');
+  $('crumb-name').textContent = m.name || '';
+  $('role-pill').textContent = {client:'Homeowner',gc:'GC',trade:'Trade',designer:'Designer'}[ROLE] || ROLE;
+  if (S.admin) $('admin-views').innerHTML = ['client','gc','designer','trade'].filter(function(r){return r!==ROLE;}).map(function(r){ return '<a class="btn sm" href="/'+esc(S.path)+'/'+(r==='client'?'homeowner':r)+location.hash+'">'+({client:'Homeowner',gc:'GC',trade:'Trade',designer:'Designer'}[r])+' view</a>'; }).join(' ');
+  var tabs = tabsFor(); if (!tabs.some(function(x){return x[0]===TAB;})) TAB='overview';
+  var counts = {proposals:(ST.bids||[]).length, decisions:DEC.filter(function(d){return !decClosed(d);}).length, controls:MEMBERS.length, schedule:TASKS.items.filter(function(t){return !t.done;}).length};
+  $('tabs').innerHTML = tabs.map(function(t){ return '<button class="tab'+(TAB===t[0]?' on':'')+'" data-tab="'+t[0]+'" onclick="go(\''+t[0]+'\')">'+t[1]+(counts[t[0]]?'<span class="ct">'+counts[t[0]]+'</span>':'')+'</button>'; }).join('');
+  $('main').innerHTML = ({overview:vOverview, proposals:vProposals, decisions:vDecisions, controls:vControls, schedule:vSchedule, tools:vTools}[TAB])();
+  if (TAB==='tools' && TOOL==='scan') afterScanRender();
+  if (TAB==='overview' && typeof subRenderList==='function') subRenderList();
+}
+
+/* ── Overview ── */
+function codeBasis(m){
+  return m.classification==='commercial'
+    ? 'Commercial: building code (CBC / IBC), accessibility (CBC 11B / ADA), fire (CFC), energy (Title 24) + local code'
+    : 'Residential: residential code (CRC / IRC), energy (Title 24 Part 6), CALGreen + local code';
+}
+function vOverview(){
+  var m = ST.meta || {}, s = m.status, stages = [['bidding','Collecting bids'],['kickoff','Kickoff'],['active','In progress']];
+  var si = stages.map(function(x){return x[0];}).indexOf(ST.stage);
+  var h = '<div class="eyebrow">'+esc(m.address)+'</div><h1>Good '+dayPart()+', '+esc(first(ME.name))+'.</h1>'+
+    '<div class="lede">'+esc(briefLine())+'</div>'+
+    '<div class="pills" style="margin-top:14px"><span class="pill">'+(m.classification==='commercial'?'Commercial':'Residential')+(m.subtype?' · '+esc(SUB[m.subtype]||m.subtype):'')+'</span>'+(m.scope?'<span class="pill">'+esc(SCOPE[m.scope]||m.scope)+'</span>':'')+
+      (ST.hiredGc?'<span class="pill lime">GC · '+esc(ST.hiredGc.company||ST.hiredGc.name)+'</span>':'')+'</div>'+
+    (ST.hiredGc && ST.hiredGc.hiredBy==='self' ? '' : '<div class="stages" id="stages">')+(ST.hiredGc && ST.hiredGc.hiredBy==='self' ? '' : stages.map(function(x,i){ return '<span class="'+(i<si?'done':i===si?'on':'')+'">'+(i<si?'✓ ':'')+x[1]+'</span>'; }).join('')+'</div>');
+  h += '<div class="two" style="margin-top:26px"><div>';
+  // next step
+  if (ST.stage==='bidding' && (isOwner||S.admin)) {
+    var n = (ST.bids||[]).length;
+    h += '<div class="card hi" id="next-step"><div class="eyebrow">Next step</div><h2>'+(n?'You have '+n+' proposal'+(n>1?'s':'')+' to review':'Share your bid link with contractors')+'</h2>'+
+      '<p class="muted small" style="margin-bottom:14px">'+(n?'Open each one, then hire or pass. Every GC hears back automatically.':'One link for every GC. They upload their proposal and it lands in your Proposals list.')+'</p>'+
+      '<button class="btn pri" onclick="go(\'proposals\')">'+(n?'Review proposals':'Get your bid link')+'</button></div>';
+  }
+  if (ST.stage==='bidding' && isGC) h += '<div class="card">This project is collecting bids. You’ll see it here once the owner hires a GC.</div>';
+  if (isDesigner) h += hasOwner()
+    ? '<div class="card hi" id="next-step"><div class="eyebrow">Next step</div><h2>Scan and measure the rooms</h2><p class="muted small" style="margin-bottom:14px">Upload a LiDAR scan, measure walls in 3D or on the 2D plan, check them against the drawings, then send design approvals for your client to sign.</p><button class="btn pri" onclick="go(\'tools\',\'scan\')">Open 3D scan + measure</button></div>'
+    : '<div class="card hi" id="next-step"><div class="eyebrow">Next step</div><h2>Bring your client in</h2><p class="muted small" style="margin-bottom:14px">Your client gets their own sign-in to see your measurements and sign off on design approvals.</p><button class="btn pri" onclick="go(\'controls\')">Invite your client</button></div>';
+  // progress
+  if (s || ST.stage==='active') {
+    var pct = s ? s.percent : 0;
+    h += '<div class="card" id="progress-card"><div class="eyebrow">Progress</div><div class="row" style="justify-content:space-between;align-items:flex-end"><div><div class="big" id="pct">'+pct+'%</div><div class="muted small" id="phase">'+esc(s?s.phase:'Started')+'</div></div>'+
+      (s&&s.nextMilestone?'<div style="text-align:right"><div class="muted small">Next</div><div style="font-weight:700" id="next-ms">'+esc(s.nextMilestone)+'</div></div>':'')+'</div>'+
+      '<div class="track"><div class="fill" style="width:'+pct+'%"></div></div>'+
+      '<div class="muted small">'+(s&&s.startDate?'Started '+esc(when(s.startDate))+' · ':'')+(s&&s.updatedAt?'Updated '+esc(when(s.updatedAt)):'')+'</div>'+
+      (s&&s.note?'<p style="margin-top:10px;color:var(--w70)">'+esc(s.note)+'</p>':'')+
+      (isGC && !m.builtin ? statusForm(s) : '')+'</div>';
+  }
+  if (ST.stage==='kickoff') h += kickoffCard();
+  if (!isTrade && typeof subCan==='function' && subCan()) h += '<div class="card" id="find-sub"><div class="eyebrow">Your team</div><h2>Need a sub?</h2>'+
+    '<p class="muted small" style="margin-bottom:14px">Invite a tradesperson you already trust, or ask us for 3–5 of the best-rated, licensed options near the job. We send them within 12 hours.</p>'+
+    '<button class="btn pri" onclick="subOpen()">Find a sub</button></div><div id="sub-list"></div>';
+  h += '</div><div>';
+  h += '<div class="card"><div class="eyebrow">Code basis</div><p style="color:var(--w70)">'+esc(codeBasis(m))+'</p>'+(isTrade?'':'<button class="btn sm" style="margin-top:12px" onclick="go(\'tools\',\'codecheck\')">Run a code check</button>')+'</div>';
+  h += '<div class="card"><div class="eyebrow">Recent activity</div>'+(NOTES.length ? NOTES.slice(0,6).map(function(n){ return '<div class="item"><div class="main"><div>'+esc(n.text)+'</div><div class="muted small">'+esc(when(n.at))+(n.by?' · '+esc(n.by):'')+'</div></div></div>'; }).join('') : '<div class="empty">Nothing yet.</div>')+'</div>';
+  h += '</div></div>';
+  return h;
+}
+function briefLine(){
+  var open = DEC.filter(function(d){ return !decClosed(d); }).length;
+  if (ST.stage==='bidding') return isOwner ? 'You’re collecting proposals. Share your bid link, compare, and hire when you’re ready.' : isDesigner ? 'Design phase: scan and measure the rooms, and get selections approved in writing.' : 'Collecting bids.';
+  if (ST.stage==='kickoff') return 'Kickoff: finish the checklist together, then the GC starts the project.';
+  var s = (ST.meta||{}).status;
+  return (s ? s.phase+' · '+s.percent+'% complete.' : 'Project in progress.') + (open ? ' '+open+' decision'+(open>1?'s':'')+' waiting.' : '');
+}
+function statusForm(s){
+  s = s || {phase:'Pre-construction', percent:0};
+  return '<details style="margin-top:14px"><summary class="btn sm" style="list-style:none">Update progress</summary><div style="margin-top:14px">'+
+    '<label for="u-phase">Phase</label><select id="u-phase">'+(ST.phases||[]).map(function(p){ return '<option'+(p===s.phase?' selected':'')+'>'+esc(p)+'</option>'; }).join('')+'</select>'+
+    '<label for="u-pct">Percent complete · <b id="u-pct-v" style="color:var(--white)">'+(s.percent||0)+'%</b></label><input id="u-pct" type="range" min="0" max="100" step="5" value="'+(s.percent||0)+'" oninput="$(\'u-pct-v\').textContent=this.value+\'%\'">'+
+    '<label for="u-next">Next milestone</label><input id="u-next" value="'+esc(s.nextMilestone||'')+'">'+
+    '<label for="u-note">Note for the owner (optional)</label><textarea id="u-note" rows="2">'+esc(s.note||'')+'</textarea>'+
+    '<button class="btn pri" id="u-save" onclick="saveStatus()">Save + notify owner</button></div></details>';
+}
+function saveStatus(){
+  api(P(), {project:PID, action:'status', phase:$('u-phase').value, percent:+$('u-pct').value, nextMilestone:$('u-next').value, note:$('u-note').value}).then(function(j){
+    if (!j.ok) return toast('Couldn’t save that.'); ST.meta.status = j.status; toast('Progress updated — owner notified'); render();
+  });
+}
+function kickoffCard(){
+  var items = (ST.kickoff||{}).items||[];
+  var done = function(i){ return i.type==='agreement' ? i.gcAgreed && i.clientAgreed : i.done; };
+  var open = items.filter(function(i){ return i.required && !done(i); }).length;
+  var h = '<div class="card" id="kickoff"><div class="eyebrow">Kickoff checklist · '+(items.length-open)+' of '+items.length+'</div>';
+  h += items.map(function(i){
+    var mineAgree = isGC ? i.gcAgreed : i.clientAgreed;
+    var btn = i.type==='agreement'
+      ? ((isGC||ownerAccount) ? '<button class="btn sm'+(mineAgree?'':' pri')+'" onclick="kick(\''+i.id+'\',\''+(mineAgree?'unagree':'agree')+'\')">'+(mineAgree?'Agreed ✓':'Agree')+'</button>' : '')
+      : ((isGC || (ownerAccount && i.owner==='client')) ? '<button class="btn sm" onclick="kick(\''+i.id+'\',\'toggle\')">'+(i.done?'Undo':'Mark done')+'</button>' : '');
+    var who = i.type==='agreement' ? '<span class="muted small">GC '+(i.gcAgreed?'✓':'…')+' · Owner '+(i.clientAgreed?'✓':'…')+'</span>' : '';
+    return '<div class="item" data-k="'+esc(i.id)+'"><div class="main"><div class="t" style="'+(done(i)?'color:var(--w50);text-decoration:line-through':'')+'">'+esc(i.text)+'</div><div class="muted small">'+esc(i.detail||'')+'</div>'+who+
+      ((i.tags||[]).length?'<div class="pills" style="margin-top:4px">'+i.tags.map(function(t){return '<span class="pill amb">'+esc(t)+'</span>';}).join('')+'</div>':'')+'</div>'+btn+'</div>';
+  }).join('');
+  if (isGC) h += '<div style="margin-top:16px"><button class="btn pri" id="start-project" '+(open?'disabled':'')+' onclick="startProject()">Start Project</button>'+(open?'<span class="muted small" style="margin-left:10px">'+open+' item'+(open>1?'s':'')+' left</span>':'')+'</div>';
+  return h+'</div>';
+}
+function kick(id, op){ api(P(), {project:PID, action:'kickoff', op:op, id:id}).then(function(j){ if (!j.ok) return toast('Couldn’t update that.'); load(); }); }
+function startProject(){ api(P(), {project:PID, action:'start'}).then(function(j){ if (!j.ok) return toast(j.error==='checklist_incomplete'?'Finish the checklist first.':'Couldn’t start.'); toast('Project started — owner notified'); load(); }); }
+
+/* ── Proposals (owner) ── */
+var BIDLINK = '', HIRE_RESULT = null;
+function vProposals(){
+  var bids = ST.bids||[], inv = ST.bidInvites||[];
+  var h = '<div class="eyebrow">Proposals</div><h1>Collect and compare bids</h1><div class="lede">Share one link with every contractor. Their proposals land here.</div><div class="two" style="margin-top:24px"><div>';
+  if (HIRE_RESULT) h += hireResultCard();
+  h += '<div class="card"><h2>Proposals <span class="muted small">· '+bids.length+'</span></h2>'+(bids.length ? bids.map(function(b){
+    var tag = b.status==='hired'?['ok','Hired']:b.status==='declined'?['gray','Passed']:ST.hiredGc?['gray','Not chosen']:['amb','New'];
+    return '<div class="item" data-bid="'+esc(b.id)+'"><div class="main"><div class="t">'+esc(b.gcName)+'</div><div class="muted small">'+money(b.amount)+' · '+esc(when(b.submittedAt))+(b.email?' · '+esc(b.email):'')+'</div>'+(b.note?'<div class="small" style="color:var(--w70);margin-top:3px">'+esc(b.note)+'</div>':'')+'</div>'+
+      '<span class="pill '+tag[0]+'">'+tag[1]+'</span>'+
+      (b.file?'<a class="btn sm" target="_blank" rel="noopener" href="'+P('&action=file&bid='+encodeURIComponent(b.id))+'">View document</a>':'')+
+      (ST.stage==='bidding' && b.status!=='declined' && ownerAccount ? '<button class="btn sm pri" onclick="choose(\''+jsq(b.id)+'\')">Choose</button>' : '')+'</div>';
+  }).join('') : '<div class="empty">No proposals yet. Share your bid link to get started.</div>')+'</div>';
+  h += '</div><div>';
+  if (ST.stage==='bidding') {
+    h += '<div class="card hi"><h2>Your bid link</h2><p class="muted small" style="margin-bottom:12px">Anyone with this link can upload a proposal and create a free account.</p>'+
+      (BIDLINK ? '<div class="linkbox"><input id="bid-link" readonly value="'+esc(BIDLINK)+'" onclick="this.select()"><button class="btn sm" onclick="copy(\'bid-link\')">Copy</button></div>'+
+        '<div class="row" style="margin-top:10px"><a class="btn sm" href="sms:?&body='+encodeURIComponent('Please submit your proposal for '+ST.meta.name+' here: '+BIDLINK)+'">Text it</a><a class="btn sm" href="mailto:?subject='+encodeURIComponent('Proposal request — '+ST.meta.name)+'&body='+encodeURIComponent('Please upload your proposal here: '+BIDLINK)+'">Email it</a></div>'
+        : '<button class="btn pri" id="make-link" onclick="makeLink()">Create bid link</button>')+'</div>';
+    h += '<div class="card"><h2>Invite a contractor</h2><div class="msg" id="inv-msg"></div><label for="bi-name">Name</label><input id="bi-name"><label for="bi-email">Email</label><input id="bi-email" type="email"><label for="bi-phone">Phone (optional)</label><input id="bi-phone" type="tel">'+
+      '<button class="btn pri" id="bi-go" onclick="inviteGC()">Send invite</button>'+
+      (inv.length?'<div style="margin-top:16px">'+inv.map(function(x){ return '<div class="item"><div class="main"><div class="t">'+esc(x.name)+'</div><div class="muted small">'+esc(x.email)+'</div></div><span class="pill '+(x.status==='submitted'?'ok':'gray')+'">'+(x.status==='submitted'?'Submitted':'Invited')+'</span></div>'; }).join('')+'</div>':'')+'</div>';
+  }
+  return h+'</div></div>';
+}
+function copy(id){ var i=$(id); i.select(); try{ navigator.clipboard.writeText(i.value).then(function(){toast('Copied');},function(){document.execCommand('copy');toast('Copied');}); }catch(e){ document.execCommand('copy'); toast('Copied'); } }
+function makeLink(){ api(P(), {project:PID, action:'bid-link'}).then(function(j){ if (!j.ok) return toast('Couldn’t create the link.'); BIDLINK=j.link; render(); }); }
+function inviteGC(){
+  var b=$('bi-go'); b.disabled=true;
+  api(P(), {project:PID, action:'bid-invite', name:$('bi-name').value, email:$('bi-email').value, phone:$('bi-phone').value}).then(function(j){
+    b.disabled=false;
+    if (!j.ok) { var m=$('inv-msg'); m.style.display='block'; m.textContent={name_required:'Add their name.', bad_email:'Enter a valid email.'}[j.error]||'Couldn’t send that.'; return; }
+    toast(j.emailed?'Invite emailed':'Invite link created'); BIDLINK = BIDLINK || ''; load();
+  });
+}
+function choose(id){
+  var b = (ST.bids||[]).filter(function(x){return x.id===id;})[0]; if (!b) return;
+  modal('<div class="eyebrow">'+esc(b.gcName)+' · '+money(b.amount)+'</div><h3>Hire '+esc(b.company||b.gcName)+'?</h3><p>Hiring moves the project to kickoff and invites them in. Other contractors see “going another direction.”</p>'+
+    (!b.email?'<label for="h-email">Their email</label><input id="h-email" type="email"><label for="h-phone">Phone (optional)</label><input id="h-phone">':'')+
+    '<div class="msg" id="h-msg"></div><div class="acts"><button class="btn" onclick="decline(\''+jsq(id)+'\')">Don’t hire</button><button class="btn pri" id="h-go" onclick="hire(\''+jsq(id)+'\')">Hire</button></div>');
+}
+function hire(id){
+  var b=$('h-go'); b.disabled=true;
+  api(P(), {project:PID, action:'hire', bidId:id, email:$('h-email')?$('h-email').value:'', phone:$('h-phone')?$('h-phone').value:''}).then(function(j){
+    if (!j.ok) { b.disabled=false; var m=$('h-msg'); m.style.display='block'; m.textContent={contact_required:'Add their email so we can send the project link.'}[j.error]||'Couldn’t hire — try again.'; return; }
+    HIRE_RESULT = j; closeModal(); toast('Hired — they’ve been notified'); load();
+  });
+}
+function decline(id){ api(P(), {project:PID, action:'decline', bidId:id}).then(function(j){ closeModal(); toast(j.ok?'Marked as passed':'Couldn’t update'); load(); }); }
+function hireResultCard(){
+  var j = HIRE_RESULT;
+  return '<div class="card hi"><h2>'+esc(j.hiredGc.company)+' is hired</h2><p class="muted small">'+(j.emailed?'We emailed them the project link. ':'')+'You can also text it:</p>'+
+    '<div class="linkbox"><input id="hire-link" readonly value="'+esc(j.link)+'"><button class="btn sm" onclick="copy(\'hire-link\')">Copy</button></div>'+
+    (j.phone?'<a class="btn sm" style="margin-top:10px" href="sms:'+esc(j.phone)+'?&body='+encodeURIComponent(j.sms)+'">Text '+esc(first(j.hiredGc.name))+'</a>':'')+'</div>';
+}
+
+/* ── Decisions ── */
+function vDecisions(){
+  var h = '<div class="eyebrow">Decisions</div><h1>Approvals + change orders</h1><div class="lede">'+(ownerAccount?'Every change is priced and waits for your approval before work starts.':isGC?'Send a change order — the owner approves it in writing.':isDesigner?'Send a design approval — your client signs off in writing before anything is ordered.':'Decisions on this project.')+'</div><div class="two" style="margin-top:24px"><div><div class="card">';
+  h += DEC.length ? DEC.slice().sort(function(a,b){ return (a.status==='approved')-(b.status==='approved') || String(b.updatedAt||b.createdAt).localeCompare(String(a.updatedAt||a.createdAt)); }).map(function(d){
+    return '<div class="item" data-dec="'+esc(d.id)+'">'+((d.photos||[]).length?'<img src="'+photoUrl(d.photos[0].id)+'" alt="" style="width:52px;height:52px;object-fit:cover;border-radius:8px;flex:none;background:var(--d3)">':'')+'<div class="main"><div class="t">'+esc(d.title)+'</div><div class="muted small">'+(d.type==='design'?'Design approval · ':'')+money(d.amount)+(d.area?' · '+esc(d.area):'')+' · '+esc(when(d.updatedAt||d.createdAt))+'</div></div>'+
+      decPill(d)+'<button class="btn sm" onclick="openDec(\''+jsq(d.id)+'\')">Open</button></div>';
+  }).join('') : '<div class="empty">No decisions yet.'+(isGC?' Create a change order when something changes.':isDesigner?' Send a design approval when a selection or layout needs sign-off.':'')+'</div>';
+  h += '</div></div><div>';
+  if (isGC) h += '<div class="card"><h2>New change order</h2><label for="co-title">What’s changing</label><input id="co-title" placeholder="e.g. Upgrade to 200A panel"><label for="co-amt">Price ($)</label><input id="co-amt" type="number" min="0" step="1"><label for="co-desc">Details</label><textarea id="co-desc" rows="3"></textarea><label for="co-photos">Photos (optional, up to 3)</label><input id="co-photos" type="file" accept="image/*" multiple><button class="btn pri" id="co-go" onclick="createCO()">Send to homeowner</button></div>';
+  if (isDesigner) h += '<div class="card" id="da-card"><h2>New design approval</h2><p class="muted small" style="margin-bottom:12px">Selections, finishes, layouts: anything your client should sign off on before it’s ordered.</p>'+
+    '<label for="da-title">What needs sign-off</label><input id="da-title" placeholder="e.g. Kitchen backsplash: 3×12 white zellige">'+
+    '<label for="da-area">Room or area</label><input id="da-area" placeholder="e.g. Kitchen">'+
+    '<label for="da-amt">Cost ($, optional)</label><input id="da-amt" type="number" min="0" step="1">'+
+    '<label for="da-desc">Details</label><textarea id="da-desc" rows="3" placeholder="Specs, supplier, lead time"></textarea>'+
+    '<label for="da-photos">Photos or renderings (optional, up to 3)</label><input id="da-photos" type="file" accept="image/*" multiple>'+
+    '<button class="btn pri" id="da-go" onclick="createDA()">Send to homeowner</button></div>';
+  return h+'</div></div>';
+}
+function decPill(d){
+  var m = {approved:['ok','Approved'], discussing:['amb','Discussing'], rejected:['del','Rejected'], withdrawn:['gray','Withdrawn']}[d.status] || ['lime','Pending'];
+  return '<span class="pill '+m[0]+'">'+m[1]+'</span>';
+}
+function photoUrl(pid){ return '/api/decisions?project='+encodeURIComponent(PID)+'&action=photo&photo='+encodeURIComponent(pid); }
+function shrinkPhoto(file){
+  return new Promise(function(res, rej){
+    var img = new Image(), url = URL.createObjectURL(file);
+    img.onload = function(){ var s = Math.min(1, 1280/Math.max(img.width, img.height)), c = document.createElement('canvas'); c.width = Math.round(img.width*s); c.height = Math.round(img.height*s);
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height); URL.revokeObjectURL(url); res({type:'image/jpeg', data:c.toDataURL('image/jpeg', .82).split(',')[1]}); };
+    img.onerror = function(){ rej(new Error('That file isn’t an image we can read.')); }; img.src = url;
+  });
+}
+function addDecPhoto(id, input){
+  var f = input.files[0]; if (!f) return; toast('Uploading photo…');
+  shrinkPhoto(f).then(function(photo){ return api('/api/decisions', {project:PID, action:'add-photo', id:id, photo:photo}); })
+    .then(function(j){ if (!j.ok) return toast(j.error==='too_many_photos'?'Already 6 photos on this one.':'Couldn’t add that photo.'); var k = DEC.findIndex(function(x){return x.id===id;}); if (k>=0) DEC[k] = j.decision; openDec(id); toast('Photo added'); render(); })
+    .catch(function(e){ toast(e.message); });
+}
+function createCO(){
+  var t=$('co-title').value.trim(); if (!t) return toast('Describe the change first.');
+  var b=$('co-go'); b.disabled=true; b.textContent='Sending…';
+  Promise.all([].slice.call($('co-photos').files, 0, 3).map(shrinkPhoto)).then(function(photos){
+    return api('/api/decisions', {project:PID, action:'create', title:t, amount:$('co-amt').value?+$('co-amt').value:null, desc:$('co-desc').value, area:'Change order', photos:photos});
+  }).then(function(j){ b.disabled=false; b.textContent='Send to homeowner';
+    if (!j.ok) return toast('Couldn’t send that.'); toast('Sent — homeowner notified'); load();
+  }).catch(function(e){ b.disabled=false; b.textContent='Send to homeowner'; toast(e.message); });
+}
+function createDA(){
+  var t=$('da-title').value.trim(); if (!t) return toast('Describe what needs sign-off first.');
+  var b=$('da-go'); b.disabled=true; b.textContent='Sending…';
+  Promise.all([].slice.call($('da-photos').files, 0, 3).map(shrinkPhoto)).then(function(photos){
+    return api('/api/decisions', {project:PID, action:'create', title:t, amount:$('da-amt').value?+$('da-amt').value:null, desc:$('da-desc').value, area:$('da-area').value.trim(), photos:photos});
+  }).then(function(j){ b.disabled=false; b.textContent='Send to homeowner';
+    if (!j.ok) return toast('Couldn’t send that.'); toast('Sent — homeowner notified'); load();
+  }).catch(function(e){ b.disabled=false; b.textContent='Send to homeowner'; toast(e.message); });
+}
+function openDec(id){
+  var d = DEC.filter(function(x){return x.id===id;})[0]; if (!d) return;
+  var ev = (d.events||[]).map(function(e){
+    var t = e.type==='approved' ? '<span style="color:#8fd6ab">✓ Approved '+money(e.amount)+' · signed “'+esc(e.signature)+'”'+(e.method==='offline'?' on paper':'')+'</span>'
+      : e.type==='voided' ? '<span style="color:#f0a996">Approval voided by '+(e.role==='admin'?'platform admin':'the owner')+'</span>'+(e.note?' — '+esc(e.note):'')
+      : e.type==='rejected' ? '<span style="color:#f0a996">Rejected by the owner</span>'+(e.note?' — '+esc(e.note):'')
+      : e.type==='withdrawn' ? '<span class="muted">Withdrawn by '+(e.role==='designer'?'the designer':'the GC')+'</span>'+(e.note?' — '+esc(e.note):'')
+      : e.type==='reopened' ? '<span style="color:#e0c67a">Reopened for review</span>'
+      : e.type==='photo' ? 'Added a photo'
+      : e.type==='revised' ? 'Revised to '+money(e.amount)+(e.note?' — '+esc(e.note):'')
+      : e.type==='created' ? 'Created · '+money(e.amount) : esc(e.note);
+    return '<div class="item"><div class="main"><div class="small"><b>'+esc(e.by)+'</b> · '+esc(when(e.at))+'</div><div class="small" style="color:var(--w70)">'+t+'</div></div></div>';
+  }).join('');
+  var approve = ownerAccount && !decClosed(d)
+    ? '<div class="card" style="margin:14px 0 0;padding:16px"><label style="display:flex;gap:8px;align-items:flex-start;color:var(--w70);font-size:13px"><input id="d-agree" type="checkbox" style="width:auto;margin:3px 0 0"> I approve '+esc(d.title)+(d.amount!=null?' for '+money(d.amount):'')+'.</label>'+
+      '<label for="d-sig">Type your full name to sign</label><input id="d-sig" autocomplete="name"><button class="btn pri" id="d-approve" onclick="approveDec(\''+jsq(id)+'\')">Approve + sign</button></div>' : '';
+  var ph = d.photos||[], gal = ph.length ? '<div style="display:grid;grid-template-columns:repeat('+Math.min(ph.length,2)+',1fr);gap:8px;margin-bottom:12px">'+ph.map(function(p){ return '<a href="'+photoUrl(p.id)+'" target="_blank" rel="noopener"><img src="'+photoUrl(p.id)+'" alt="Photo" style="width:100%;height:'+(ph.length===1?'220px':'130px')+';object-fit:cover;border-radius:10px;background:var(--d3)"></a>'; }).join('')+'</div>' : '';
+  var addPh = (!isTrade && ph.length<6) ? '<label class="btn sm" style="margin-bottom:12px;cursor:pointer">+ Add photo<input type="file" accept="image/*" style="display:none" onchange="addDecPhoto(\''+jsq(id)+'\',this)"></label>' : '';
+  modal('<div class="eyebrow">'+esc(d.area||'Decision')+'</div><h3>'+esc(d.title)+'</h3><p>'+money(d.amount)+(d.desc?' · '+esc(d.desc):'')+'</p>'+gal+addPh+(ev||'')+approve+
+    '<label for="d-note" style="margin-top:14px">Comment or question</label><textarea id="d-note" rows="2"></textarea><div class="msg" id="d-msg"></div>'+
+    '<div class="acts">'+
+      (ownerAccount ? '<button class="btn danger" id="d-override" onclick="overrideDec(\''+jsq(id)+'\',\''+(d.status==='approved'?'void':decClosed(d)?'reopen':'reject')+'\')">'+(d.status==='approved'?'Void my approval':decClosed(d)?'Reopen':'Reject')+'</button>' : '')+
+      (((isGC && d.type==='co') || (isDesigner && d.type==='design' && d.createdByAccount===ME.identifier)) && !decClosed(d) ? '<button class="btn danger" id="d-withdraw" onclick="overrideDec(\''+jsq(id)+'\',\'withdraw\')">Withdraw</button>' : '')+
+      '<button class="btn" onclick="closeModal()">Close</button><button class="btn" onclick="commentDec(\''+jsq(id)+'\')">Send comment</button></div>');
+}
+function approveDec(id){
+  if (!$('d-agree').checked) { var m=$('d-msg'); m.style.display='block'; m.textContent='Tick the box to approve.'; return; }
+  api('/api/decisions', {project:PID, action:'approve', id:id, agree:true, signature:$('d-sig').value}).then(function(j){
+    if (!j.ok) { var m=$('d-msg'); m.style.display='block'; m.textContent={signature_required:'Type your full name to sign.'}[j.error]||'Couldn’t approve.'; return; }
+    closeModal(); toast('Approved — GC notified'); load();
+  });
+}
+function overrideDec(id, action){
+  var n = $('d-note').value.trim();
+  if (action!=='reopen' && n.length<3) { var m=$('d-msg'); m.style.display='block'; m.textContent='Write the reason in the comment box first — '+(action==='withdraw'?'the owner':'the GC')+' sees it.'; return; }
+  api('/api/decisions', {project:PID, action:action, id:id, note:n}).then(function(j){
+    if (!j.ok) { var m=$('d-msg'); m.style.display='block'; m.textContent='Couldn’t do that.'; return; }
+    closeModal(); toast({reject:'Rejected — GC notified', void:'Approval voided — GC notified', withdraw:'Withdrawn — owner notified', reopen:'Reopened'}[action]); load();
+  });
+}
+function commentDec(id){ var n=$('d-note').value.trim(); if (!n) return; api('/api/decisions', {project:PID, action:'comment', id:id, note:n}).then(function(){ closeModal(); toast('Comment sent'); load(); }); }
+
+/* ── Controls: each role's own admin page (owner > GC > trade) ── */
+var TEAM_LINK = '';
+var RL = {client:'Homeowner', gc:'GC', trade:'Trade / Sub', designer:'Designer'};
+function myRank(){ return S.admin ? 9 : ({client:3, gc:2, designer:2, trade:1}[(ME.projects||{})[PID]] || 0); }
+function canActOn(m){
+  if (m.identifier===ME.identifier) return false;
+  if (S.admin || ownerAccount) return true;
+  if (!isGC || m.role==='client' || m.role==='designer') return false;
+  return !(ST.hiredGc && ST.hiredGc.identifier===m.identifier);
+}
+function rolesICanGive(){ return (S.admin||ownerAccount) ? ['client','gc','designer','trade'] : isGC ? ['gc','designer','trade'] : []; }
+function hasOwner(){ return MEMBERS.some(function(m){ return m.role==='client' && m.status==='active'; }); }
+function vControls(){
+  var m = ST.meta||{};
+  var h = '<div class="eyebrow">'+(ownerAccount?'Homeowner controls':isDesigner?'Team':'GC controls')+'</div><h1>'+(ownerAccount?'You have final say on this project':isDesigner?'Your client and trades':'Run your team and trades')+'</h1>'+
+    '<div class="lede">'+(ownerAccount ? 'Add or remove anyone, change roles, reject or void decisions, and release the GC if you need to.'
+      : isDesigner ? (hasOwner() ? 'Invite the trades you work with. Your client has final say on approvals.' : 'No homeowner has joined yet. Invite your client below — once they join, they sign off on your design approvals.')
+      : hasOwner() ? 'Invite trades and your GC team, send change orders, and keep the schedule current. The homeowner has final say on approvals.'
+      : 'No homeowner has joined yet. Invite them below — once they join, they have final say on approvals.')+'</div>';
+  h += '<div class="two" style="margin-top:24px"><div>';
+  // team + roles
+  h += '<div class="card" id="team-card"><h2>Team + roles</h2>'+(MEMBERS.length ? MEMBERS.map(function(x){
+    var act = canActOn(x), roles = rolesICanGive();
+    var sel = act && roles.indexOf(x.role)>=0 && roles.length>1
+      ? '<select class="role-sel" data-id="'+esc(x.identifier)+'" style="width:auto;margin:0;padding:6px 8px;font-size:12.5px" onchange="setMemberRole(\''+jsq(x.identifier)+'\',this.value)">'+roles.map(function(r){ return '<option value="'+r+'"'+(x.role===r?' selected':'')+'>'+RL[r]+'</option>'; }).join('')+'</select>'
+      : '<span class="pill lime">'+esc(RL[x.role]||x.role)+'</span>';
+    return '<div class="item" data-member="'+esc(x.identifier)+'"><div class="main"><div class="t">'+esc(x.name)+(x.identifier===ME.identifier?' <span class="muted small">(you)</span>':'')+'</div><div class="muted small">'+esc(x.identifier)+(ST.hiredGc&&ST.hiredGc.identifier===x.identifier?' · hired GC':'')+'</div></div>'+
+      sel+'<span class="pill '+(x.status==='active'?'ok':'gray')+'">'+(x.status==='active'?'Active':'Invited')+'</span>'+
+      (act?'<button class="btn sm danger" onclick="removeMember(\''+jsq(x.identifier)+'\',\''+jsq(x.name)+'\')">Remove</button>':'')+'</div>';
+  }).join('') : '<div class="empty">Just you so far.</div>')+'</div>';
+  // overrides (owner)
+  if (ownerAccount) {
+    var od = DEC.slice().sort(function(a,b){ return decClosed(a)-decClosed(b); });
+    h += '<div class="card" id="override-card"><h2>Decisions — your final say</h2>'+(od.length ? od.map(function(d){
+      var a = d.status==='approved' ? ['void','Void approval'] : decClosed(d) ? ['reopen','Reopen'] : ['reject','Reject'];
+      return '<div class="item" data-ov="'+esc(d.id)+'"><div class="main"><div class="t">'+esc(d.title)+'</div><div class="muted small">'+money(d.amount)+'</div></div>'+decPill(d)+
+        '<button class="btn sm" onclick="openDec(\''+jsq(d.id)+'\')">Open</button><button class="btn sm danger" onclick="quickOverride(\''+jsq(d.id)+'\',\''+a[0]+'\')">'+a[1]+'</button></div>';
+    }).join('') : '<div class="empty">No decisions yet.</div>')+'</div>';
+  }
+  h += '</div><div>';
+  // invite
+  var give = (S.admin||ownerAccount||isGC) ? ['client','gc','designer','trade'] : isDesigner ? ['client','trade'] : [];
+  h += '<div class="card"><h2>Invite someone</h2><p class="muted small" style="margin-bottom:12px">Choose who they are — that sets what they see and what they can approve.</p><div class="msg" id="t-msg"></div>'+
+    '<label for="t-role">They are the…</label><select id="t-role">'+give.map(function(r){ return '<option value="'+r+'"'+((isDesigner ? r===(hasOwner()?'trade':'client') : (isGC&&!hasOwner()&&r==='client')||(!isGC&&r==='gc'))?' selected':'')+'>'+{client:'Homeowner (final say on approvals)', gc:'General Contractor / GC Team', designer:'Designer (Interior / Architectural)', trade:'Trade / Sub'}[r]+'</option>'; }).join('')+'</select>'+
+    '<label for="t-name">Name</label><input id="t-name"><label for="t-id">Email or phone</label><input id="t-id"><button class="btn pri" id="t-go" onclick="teamInvite()">Create invite link</button>'+
+    (TEAM_LINK?'<div class="linkbox" style="margin-top:12px"><input id="team-link" readonly value="'+esc(TEAM_LINK)+'"><button class="btn sm" onclick="copy(\'team-link\')">Copy</button></div><div class="muted small" style="margin-top:6px">Text or email this link — it lets them set a password and join.</div>':'')+'</div>';
+  // project details
+  if (!m.builtin && (S.admin || ownerAccount || (isGC && !hasOwner()))) {
+    var SUBS = {residential:[['single-family','Single-family'],['multi-family','Multi-family'],['adu','ADU'],['condo-townhome','Condo / townhome']], commercial:[['office','Office'],['retail','Retail'],['restaurant','Restaurant'],['mixed-use','Mixed-use'],['industrial','Industrial'],['other','Other']]};
+    h += '<div class="card" id="details-card"><h2>Project details</h2><label for="pd-name">Name</label><input id="pd-name" value="'+esc(m.name)+'">'+
+      '<label for="pd-class">Property type</label><select id="pd-class" onchange="pdSubs()"><option value="residential"'+(m.classification==='residential'?' selected':'')+'>Residential</option><option value="commercial"'+(m.classification==='commercial'?' selected':'')+'>Commercial</option></select>'+
+      '<label for="pd-sub">Type</label><select id="pd-sub"></select>'+
+      '<label for="pd-scope">Work</label><select id="pd-scope">'+Object.keys(SCOPE).map(function(k){ return '<option value="'+k+'"'+(m.scope===k?' selected':'')+'>'+SCOPE[k]+'</option>'; }).join('')+'</select>'+
+      '<button class="btn pri" id="pd-save" onclick="saveDetails()">Save details</button></div>';
+    window.PD_SUBS = SUBS; setTimeout(function(){ pdSubs(m.subtype); }, 0);
+  }
+  // release GC (owner)
+  if (ownerAccount && ST.hiredGc && !m.builtin) h += '<div class="card" style="border-color:rgba(224,122,95,.3)" id="release-card"><h2>Release the GC</h2><p class="muted small" style="margin-bottom:12px">Ends '+esc(ST.hiredGc.company||ST.hiredGc.name)+'’s access and reopens the project for bids. Everything so far stays on record.</p><button class="btn danger" onclick="releaseGC()">Release '+esc(ST.hiredGc.company||ST.hiredGc.name)+'</button></div>';
+  return h+'</div></div>';
+}
+function pdSubs(cur){ var c=$('pd-class'), sel=$('pd-sub'); if (!c||!sel) return; var list=PD_SUBS[c.value]; sel.innerHTML=list.map(function(x){ return '<option value="'+x[0]+'"'+(x[0]===cur?' selected':'')+'>'+x[1]+'</option>'; }).join(''); }
+function saveDetails(){ api(P(), {project:PID, action:'update-meta', name:$('pd-name').value, classification:$('pd-class').value, subtype:$('pd-sub').value, scope:$('pd-scope').value}).then(function(j){ toast(j.ok?'Details saved':'Couldn’t save — '+(j.error==='owner_only'?'the homeowner manages details now':'try again')); if (j.ok) load(); }); }
+function teamInvite(){
+  api('/api/auth', {action:'invite', project:PID, role:$('t-role').value, name:$('t-name').value, identifier:$('t-id').value}).then(function(j){
+    if (!j.ok) { var m=$('t-msg'); m.style.display='block'; m.textContent={name_required:'Add their name.', bad_identifier:'Enter a valid email or phone.', forbidden:'You can’t invite that role.'}[j.error]||'Couldn’t create the invite.'; return; }
+    TEAM_LINK = j.link; load();
+  });
+}
+function setMemberRole(id, role){ api('/api/auth', {action:'set-role', project:PID, identifier:id, role:role}).then(function(j){ toast(j.ok?'Role updated':'You can’t make that change'); load(); }); }
+function removeMember(id, name){ modal('<h3>Remove '+esc(name)+'?</h3><p>They lose access to this project right away.</p><div class="acts"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn danger" id="rm-go" onclick="api(\'/api/auth\',{action:\'remove\',project:PID,identifier:\''+jsq(id)+'\'}).then(function(j){closeModal();toast(j.ok?\'Removed\':\'You can’t remove them\');load();})">Remove</button></div>'); }
+function quickOverride(id, action){
+  var d = DEC.filter(function(x){return x.id===id;})[0];
+  modal('<div class="eyebrow">'+({reject:'Reject',void:'Void approval',reopen:'Reopen'}[action])+'</div><h3>'+esc(d.title)+'</h3><p>'+(action==='reopen'?'Puts it back in front of you for a decision.':'The GC is notified with your reason.')+'</p>'+
+    (action!=='reopen'?'<label for="d-note">Reason</label><textarea id="d-note" rows="2"></textarea>':'<textarea id="d-note" style="display:none"></textarea>')+'<div class="msg" id="d-msg"></div>'+
+    '<div class="acts"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn danger" id="qo-go" onclick="overrideDec(\''+jsq(id)+'\',\''+action+'\')">Confirm</button></div>');
+}
+function releaseGC(){
+  modal('<div class="eyebrow">Release the GC</div><h3>Release '+esc(ST.hiredGc.company||ST.hiredGc.name)+'?</h3><p>They lose access and the project goes back to collecting bids. Tell them why — they’re notified.</p><label for="rel-why">Reason</label><textarea id="rel-why" rows="2"></textarea><div class="msg" id="rel-msg"></div>'+
+    '<div class="acts"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn danger" id="rel-go" onclick="doRelease()">Release GC</button></div>');
+}
+function doRelease(){ api(P(), {project:PID, action:'owner-release', reason:$('rel-why').value}).then(function(j){ if (!j.ok) { var m=$('rel-msg'); m.style.display='block'; m.textContent=j.error==='reason_required'?'Add a short reason.':'Couldn’t release — try again.'; return; } closeModal(); toast('GC released — back to collecting bids'); load(); }); }
+
+/* ── Schedule: timeline + tasks ── */
+var SCHED_EDIT = false, SCHED_DRAFT = null;
+var SCOL = {planned:'var(--w30)', 'in-progress':'var(--lime)', done:'#6D604F', delayed:'#E07A5F'};
+var SLBL = {planned:'Planned', 'in-progress':'In progress', done:'Done', delayed:'Delayed'};
+function canPlan(){ return isGC || ownerAccount || S.admin; }
+function dnum(d){ return d ? Date.parse(d+'T12:00:00Z') : NaN; }
+function vSchedule(){
+  var h = '<div class="eyebrow">Schedule</div><h1>Timeline + tasks</h1><div class="lede">'+(canPlan()?'Plan the phases, assign tasks, and everyone on the project sees the same schedule.':'The project schedule and the tasks assigned to you.')+'</div>';
+  h += '<div class="card" style="margin-top:22px" id="timeline-card"><div class="row" style="justify-content:space-between;margin-bottom:12px"><h2 style="margin:0">Timeline</h2>'+
+    (canPlan()&&!SCHED_EDIT?'<div class="row">'+(!SCHED.items.length?'<button class="btn sm" id="sched-template" onclick="schedTemplate()">Start from a template</button>':'')+'<button class="btn sm pri" id="sched-edit" onclick="schedEdit()">'+(SCHED.items.length?'Edit schedule':'Add phases')+'</button></div>':'')+'</div>';
+  h += SCHED_EDIT ? schedEditor() : gantt();
+  h += '</div>';
+  // tasks
+  var mine = TASKS.items.filter(function(t){ return canPlan() || t.assignee===ME.identifier; });
+  h += '<div class="two"><div class="card" id="tasks-card"><h2>Tasks <span class="muted small">· '+mine.filter(function(t){return !t.done;}).length+' open</span></h2>'+
+    (mine.length ? mine.map(function(t){
+      var mayToggle = canPlan() || t.assignee===ME.identifier, late = t.due && !t.done && dnum(t.due) < Date.now()-86400000;
+      return '<div class="item" data-task="'+esc(t.id)+'"><input type="checkbox" style="width:18px;height:18px;margin:0;flex:none;accent-color:#D5DC99" '+(t.done?'checked ':'')+(mayToggle?'':'disabled ')+'onchange="taskToggle(\''+jsq(t.id)+'\')" aria-label="Done">'+
+        '<div class="main"><div class="t" style="'+(t.done?'text-decoration:line-through;color:var(--w50)':'')+'">'+esc(t.title)+(t.priority==='high'?' <span class="pill del">High</span>':'')+'</div><div class="muted small">'+(t.assigneeName?esc(t.assigneeName)+' · ':'')+(t.due?'<span style="'+(late?'color:#f0a996':'')+'">due '+esc(when(t.due))+'</span> · ':'')+'from '+esc(t.createdBy)+'</div></div>'+
+        (canPlan()?'<button class="btn sm" aria-label="Delete task" onclick="taskDelete(\''+jsq(t.id)+'\')">×</button>':'')+'</div>';
+    }).join('') : '<div class="empty">'+(canPlan()?'No tasks yet.':'Nothing assigned to you.')+'</div>')+'</div><div>';
+  if (canPlan()) h += '<div class="card"><h2>Add a task</h2><label for="tk-title">Task</label><input id="tk-title" placeholder="e.g. Order 200A panel">'+
+    '<label for="tk-who">Assign to</label><select id="tk-who"><option value="">Unassigned</option>'+MEMBERS.map(function(x){ return '<option value="'+esc(x.identifier)+'" data-name="'+esc(x.name)+'">'+esc(x.name)+' · '+esc(RL[x.role]||x.role)+'</option>'; }).join('')+'</select>'+
+    '<div class="row" style="gap:10px;align-items:flex-end"><div style="flex:1;min-width:140px"><label for="tk-due">Due</label><input id="tk-due" type="date"></div><div style="flex:1;min-width:120px"><label for="tk-pri">Priority</label><select id="tk-pri"><option value="normal">Normal</option><option value="high">High</option></select></div></div>'+
+    '<button class="btn pri" id="tk-go" onclick="taskAdd()">Add task</button></div>';
+  return h+'</div></div>';
+}
+function gantt(){
+  var it = SCHED.items.filter(function(x){ return x.start && x.end; });
+  if (!SCHED.items.length) return '<div class="empty">No schedule yet.'+(canPlan()?' Add phases or start from a template.':'')+'</div>';
+  var min = Math.min.apply(null, it.map(function(x){return dnum(x.start);})), max = Math.max.apply(null, it.map(function(x){return dnum(x.end);}));
+  if (!it.length) { min = Date.now(); max = min + 86400000*30; }
+  var span = Math.max(max-min, 86400000), today = Date.now(), tpos = (today-min)/span*100;
+  var months = [], d = new Date(min); d.setUTCDate(1);
+  while (d.getTime() <= max) { var p=(d.getTime()-min)/span*100; if (p>=0) months.push([p, d.toLocaleDateString('en-US',{month:'short',timeZone:'UTC'})]); d.setUTCMonth(d.getUTCMonth()+1); }
+  var rows = SCHED.items.map(function(x){
+    var has = x.start && x.end, l = has?(dnum(x.start)-min)/span*100:0, w = has?Math.max((dnum(x.end)-dnum(x.start))/span*100, 1.5):0;
+    return '<div class="grow" data-phase="'+esc(x.id)+'" style="display:grid;grid-template-columns:minmax(120px,32%) 1fr;gap:12px;align-items:center;padding:8px 0;border-top:1px solid var(--w08)">'+
+      '<div style="min-width:0"><div style="font-weight:700;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+esc(x.name)+'</div><div class="muted" style="font-size:11.5px">'+(x.trade?esc(x.trade)+' · ':'')+'<span style="color:'+SCOL[x.status]+'">'+SLBL[x.status]+'</span>'+(has?' · '+esc(when(x.start))+'–'+esc(when(x.end)):'')+'</div></div>'+
+      '<div style="position:relative;height:22px;background:var(--d3);border-radius:6px;overflow:hidden">'+(has?'<div style="position:absolute;top:3px;bottom:3px;left:'+l+'%;width:'+w+'%;background:'+SCOL[x.status]+';border-radius:4px;opacity:'+(x.status==='planned'?'.55':'1')+'"></div>':'')+
+        (tpos>=0&&tpos<=100?'<div style="position:absolute;top:0;bottom:0;left:'+tpos+'%;width:2px;background:#E07A5F"></div>':'')+'</div></div>';
+  }).join('');
+  return '<div style="display:grid;grid-template-columns:minmax(120px,32%) 1fr;gap:12px;margin-bottom:4px"><div></div><div style="position:relative;height:16px">'+months.map(function(m){ return '<span class="muted" style="position:absolute;left:'+m[0]+'%;font-size:11px">'+m[1]+'</span>'; }).join('')+'</div></div>'+rows+
+    '<div class="muted small" style="margin-top:10px"><span style="display:inline-block;width:10px;height:10px;background:#E07A5F;border-radius:2px;vertical-align:middle"></span> today'+(SCHED.by?' · updated by '+esc(SCHED.by)+' '+esc(when(SCHED.updatedAt)):'')+'</div>';
+}
+function schedEdit(){ SCHED_DRAFT = JSON.parse(JSON.stringify(SCHED.items)); if (!SCHED_DRAFT.length) SCHED_DRAFT.push({name:'',trade:'',start:'',end:'',status:'planned'}); SCHED_EDIT = true; render(); }
+function schedTemplate(){
+  var base = new Date(); base.setUTCHours(12,0,0,0);
+  var steps = ((ST.meta||{}).classification==='commercial') ? [['Design + plans',21],['Permitting',42],['Demolition',10],['Rough-ins (MEP)',21],['Inspections',7],['Finishes',28],['Punch list',7],['Closeout',5]]
+    : [['Design + plans',21],['Permitting',35],['Demolition',7],['Framing',14],['Rough-ins (MEP)',14],['Inspections',5],['Insulation + drywall',10],['Finishes',21],['Punch list',7]];
+  var t = base.getTime(); SCHED_DRAFT = steps.map(function(sx){ var s0=new Date(t), e0=new Date(t+sx[1]*86400000); t = e0.getTime()+86400000; return {name:sx[0], trade:'', start:s0.toISOString().slice(0,10), end:e0.toISOString().slice(0,10), status:'planned'}; });
+  SCHED_EDIT = true; render();
+}
+function schedEditor(){
+  return '<div id="sched-rows">'+SCHED_DRAFT.map(function(x,i){
+    return '<div class="srow">'+
+      '<div><label>Phase</label><input data-f="name" data-i="'+i+'" value="'+esc(x.name)+'" style="margin:0"></div><div><label>Trade</label><input data-f="trade" data-i="'+i+'" value="'+esc(x.trade||'')+'" style="margin:0"></div>'+
+      '<div><label>Start</label><input type="date" data-f="start" data-i="'+i+'" value="'+esc(x.start||'')+'" style="margin:0"></div><div><label>End</label><input type="date" data-f="end" data-i="'+i+'" value="'+esc(x.end||'')+'" style="margin:0"></div>'+
+      '<div><label>Status</label><select data-f="status" data-i="'+i+'" style="margin:0">'+Object.keys(SLBL).map(function(k){ return '<option value="'+k+'"'+(x.status===k?' selected':'')+'>'+SLBL[k]+'</option>'; }).join('')+'</select></div>'+
+      '<button class="btn sm" aria-label="Remove phase" onclick="schedGrab();SCHED_DRAFT.splice('+i+',1);render()">×</button></div>';
+  }).join('')+'</div><div class="msg" id="sched-msg"></div><div class="row" style="margin-top:12px"><button class="btn sm" onclick="schedGrab();SCHED_DRAFT.push({name:\'\',trade:\'\',start:\'\',end:\'\',status:\'planned\'});render()">+ Add phase</button><span style="flex:1"></span><button class="btn sm" onclick="SCHED_EDIT=false;render()">Cancel</button><button class="btn sm pri" id="sched-save" onclick="schedSave()">Save + share</button></div>';
+}
+function schedGrab(){ document.querySelectorAll('#sched-rows [data-f]').forEach(function(el){ SCHED_DRAFT[+el.getAttribute('data-i')][el.getAttribute('data-f')] = el.value; }); }
+function schedSave(){
+  schedGrab();
+  api('/api/tools', {project:PID, action:'schedule-save', items:SCHED_DRAFT}).then(function(j){
+    if (!j.ok) { var m=$('sched-msg'); m.style.display='block'; m.textContent = j.error==='end_before_start' ? '“'+j.item+'” ends before it starts.' : 'Couldn’t save the schedule.'; return; }
+    SCHED = j.schedule; SCHED_EDIT = false; toast('Schedule saved — everyone on the project sees it'); render();
+  });
+}
+function taskAdd(){
+  var t=$('tk-title').value.trim(); if (!t) return toast('Describe the task first.');
+  var sel=$('tk-who'), opt=sel.options[sel.selectedIndex];
+  api('/api/tools', {project:PID, action:'task-add', title:t, assignee:sel.value, assigneeName:sel.value?opt.getAttribute('data-name'):'', due:$('tk-due').value, priority:$('tk-pri').value}).then(function(j){ if (!j.ok) return toast('Couldn’t add that.'); TASKS=j.tasks; render(); toast('Task added'); });
+}
+function taskToggle(id){ api('/api/tools', {project:PID, action:'task-toggle', id:id}).then(function(j){ if (j.ok) { TASKS=j.tasks; render(); } else toast('You can’t change that task.'); }); }
+function taskDelete(id){ api('/api/tools', {project:PID, action:'task-delete', id:id}).then(function(j){ if (j.ok) { TASKS=j.tasks; render(); } }); }
+
+/* ── Tools ── */
+function vTools(){
+  if (isTrade) { TOOL='scan'; return '<div class="eyebrow">3D scans</div><h1>Site scans</h1><div style="margin-top:20px">'+scanPanel()+'</div>'; }
+  var T = [['codecheck','Code check'],['plans','Plan analysis'],['scan','3D scan'],['history','Saved results']];
+  return '<div class="eyebrow">Tools</div><h1>Project tools</h1><div class="lede">Results save to this project so '+(isGC?'your client':isDesigner?'your client and GC':'your GC')+' see'+(isDesigner?'':'s')+' them too.</div>'+
+    '<div class="subtabs" style="margin-top:20px">'+T.map(function(t){ return '<button class="'+(TOOL===t[0]?'on':'')+'" data-tool="'+t[0]+'" onclick="go(\'tools\',\''+t[0]+'\')">'+t[1]+(t[0]==='history'&&RESULTS.length?' · '+RESULTS.length:'')+'</button>'; }).join('')+'</div>'+
+    ({codecheck:aiPanel, plans:aiPanel, scan:scanPanel, history:historyPanel}[TOOL])();
+}
+var LAST = {codecheck:null, plans:null};
+function cityFromAddress(a){ var p=String(a||'').split(','); return p.length>=2 ? p.slice(1).join(',').trim() : ''; }
+function aiPanel(){
+  var cc = TOOL==='codecheck', m = ST.meta||{};
+  var h = '<div class="two"><div><div class="card">'+
+    '<h2>'+(cc?'Check plans against code':'Analyze a plan set')+'</h2><p class="muted small" style="margin-bottom:14px">'+(cc?esc(codeBasis(m))+'.':'Pull out square footage, rooms, scope by trade, open questions and risks.')+'</p>'+
+    '<label for="ai-file">Plans (PDF, JPG or PNG · up to 3 MB)</label><input id="ai-file" type="file" accept="application/pdf,image/jpeg,image/png,image/webp">'+
+    (cc?'<label for="ai-jur">Jurisdiction</label><input id="ai-jur" value="'+esc(cityFromAddress(m.address))+'" placeholder="City, State">':'')+
+    '<button class="btn pri" id="ai-go" onclick="runAI()">'+(cc?'Run code check':'Analyze plans')+'</button><div class="log" id="ai-log"></div></div>'+
+    '<p class="muted small">AI-assisted review to catch issues early. It doesn’t replace plan check or a licensed professional’s review.</p></div><div id="ai-out">'+(LAST[TOOL]?renderResult(TOOL, LAST[TOOL]):'')+'</div></div>';
+  return h;
+}
+function readFile(f){ return new Promise(function(res, rej){ var r=new FileReader(); r.onload=function(){ res(String(r.result).split(',')[1]); }; r.onerror=rej; r.readAsDataURL(f); }); }
+function promptFor(tool, m, jur){
+  var prop = 'Property: '+m.address+'. Classification: '+m.classification+(m.subtype?' ('+m.subtype+')':'')+'. Scope of work: '+(SCOPE[m.scope]||m.scope||'not specified')+'.';
+  if (tool==='codecheck') return 'You are a building code compliance expert reviewing construction plans. '+prop+' Jurisdiction: '+(jur||'infer from the address')+'.\n'+
+    'Apply the right code basis for this classification: '+codeBasis(m)+'. Use the current adopted edition for this jurisdiction and note local amendments you know of.\n'+
+    'Read the attached plans. Extract measurable data (areas, heights, setbacks, egress, stairs, guards, smoke/CO alarms, energy notes, accessibility for commercial). Then check each against code.\n'+
+    'Return ONLY valid JSON, no other text: {"summary":"one or two sentences","codeBasis":"codes and editions applied","extracted":[{"label":"","value":""}],"findings":[{"status":"fail|warn|pass","item":"","code":"section reference","detail":"what the plans show","fix":"what to change, empty if pass"}]}. '+
+    'Order findings fail first, then warn, then pass. Be specific and cite sections. If the file is not a plan, say so in summary and return empty arrays.';
+  return 'You are a senior estimator and project manager. '+prop+'\nRead the attached plan set and return ONLY valid JSON, no other text: '+
+    '{"summary":"two sentences on what is being built","stats":[{"label":"e.g. Total area","value":""}],"rooms":["room names"],"trades":[{"trade":"e.g. Electrical","scope":"what this trade does on this job"}],"questions":["open questions to resolve before pricing"],"risks":["schedule or cost risks you see"]}. '+
+    'If the file is not a plan, say so in summary and return empty arrays.';
+}
+function runAI(){
+  var f = $('ai-file').files[0], log=$('ai-log'), btn=$('ai-go'), tool=TOOL, m=ST.meta||{};
+  if (!f) { log.textContent='Choose a plan file first.'; return; }
+  if (f.size > 3*1024*1024) { log.textContent='That file is over 3 MB. Export a smaller PDF or send just the relevant sheets.'; return; }
+  var jur = $('ai-jur') ? $('ai-jur').value : '';
+  btn.disabled=true; btn.textContent='Reading plans…'; log.textContent='Uploading '+f.name+'…';
+  readFile(f).then(function(b64){
+    var content = [f.type==='application/pdf' ? {type:'document', source:{type:'base64', media_type:'application/pdf', data:b64}} : {type:'image', source:{type:'base64', media_type:f.type, data:b64}},
+                   {type:'text', text:promptFor(tool, m, jur)}];
+    log.textContent = tool==='codecheck' ? 'Checking against '+(m.classification==='commercial'?'commercial':'residential')+' code… this takes about a minute.' : 'Analyzing plans… this takes about a minute.';
+    return fetch('/api/analyze',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify({max_tokens:4000, messages:[{role:'user', content:content}]})});
+  }).then(function(r){ return r.json().then(function(j){ return {ok:r.ok, j:j}; }); }).then(function(x){
+    if (!x.ok) throw new Error((x.j.error && (x.j.error.message || (x.j.error.error && x.j.error.error.message))) || 'The AI engine returned an error.');
+    var txt = (x.j.content||[]).map(function(b){return b.text||'';}).join(''); var mm = txt.match(/\{[\s\S]*\}/);
+    if (!mm) throw new Error('Couldn’t read the result. Try again.');
+    var result = JSON.parse(mm[0]); LAST[tool] = result;
+    $('ai-out').innerHTML = renderResult(tool, result); log.textContent = 'Done. Saved to this project.';
+    return api('/api/tools', {project:PID, action:'save-result', tool:tool, title:(tool==='codecheck'?'Code check':'Plan analysis')+' — '+f.name, fileName:f.name, jurisdiction:jur, result:result}).then(function(s){ if (s.ok) RESULTS.unshift(s.item); });
+  }).catch(function(e){ log.textContent = e.message || 'Something went wrong.'; }).then(function(){ btn.disabled=false; btn.textContent = tool==='codecheck'?'Run code check':'Analyze plans'; });
+}
+function renderResult(tool, r){
+  if (tool==='codecheck') {
+    var F = r.findings||[], c = {fail:0,warn:0,pass:0}; F.forEach(function(f){ c[f.status]=(c[f.status]||0)+1; });
+    return '<div class="card" id="result"><div class="eyebrow">Code check result</div><p style="color:var(--w70)">'+esc(r.summary)+'</p>'+
+      '<div class="kpis"><div class="kpi"><b style="color:#f0a996">'+c.fail+'</b><span>To fix</span></div><div class="kpi"><b style="color:#e0c67a">'+c.warn+'</b><span>To review</span></div><div class="kpi"><b style="color:#8fd6ab">'+c.pass+'</b><span>Passing</span></div></div>'+
+      (r.codeBasis?'<div class="muted small" style="margin-bottom:6px">Codes: '+esc(r.codeBasis)+'</div>':'')+
+      F.map(function(f){ return '<div class="find"><span class="st '+esc(f.status)+'">'+esc(f.status)+'</span><div><div class="t" style="font-weight:700">'+esc(f.item)+(f.code?' <span class="muted small">· '+esc(f.code)+'</span>':'')+'</div><div class="small" style="color:var(--w70)">'+esc(f.detail)+'</div>'+(f.fix?'<div class="small" style="color:var(--lime);margin-top:3px">Fix: '+esc(f.fix)+'</div>':'')+'</div></div>'; }).join('')+
+      ((r.extracted||[]).length?'<div class="eyebrow" style="margin-top:14px">From the plans</div>'+r.extracted.map(function(e){ return '<div class="small"><span class="muted">'+esc(e.label)+':</span> '+esc(e.value)+'</div>'; }).join(''):'')+'</div>';
+  }
+  return '<div class="card" id="result"><div class="eyebrow">Plan analysis</div><p style="color:var(--w70)">'+esc(r.summary)+'</p>'+
+    ((r.stats||[]).length?'<div class="kpis">'+r.stats.slice(0,6).map(function(s){ return '<div class="kpi"><b>'+esc(s.value)+'</b><span>'+esc(s.label)+'</span></div>'; }).join('')+'</div>':'')+
+    ((r.trades||[]).length?'<div class="eyebrow" style="margin-top:10px">Scope by trade</div>'+r.trades.map(function(t){ return '<div class="item"><div class="main"><div class="t">'+esc(t.trade)+'</div><div class="small" style="color:var(--w70)">'+esc(t.scope)+'</div></div></div>'; }).join(''):'')+
+    ((r.rooms||[]).length?'<div class="eyebrow" style="margin-top:12px">Rooms</div><div class="small" style="color:var(--w70)">'+r.rooms.map(esc).join(' · ')+'</div>':'')+
+    ((r.questions||[]).length?'<div class="eyebrow" style="margin-top:12px">Open questions</div>'+r.questions.map(function(q){ return '<div class="small" style="color:var(--w70)">• '+esc(q)+'</div>'; }).join(''):'')+
+    ((r.risks||[]).length?'<div class="eyebrow" style="margin-top:12px">Risks</div>'+r.risks.map(function(q){ return '<div class="small" style="color:#e0c67a">• '+esc(q)+'</div>'; }).join(''):'')+'</div>';
+}
+function historyPanel(){
+  if (!RESULTS.length) return '<div class="card"><div class="empty">No saved results yet. Run a code check or plan analysis.</div></div>';
+  return '<div class="card">'+RESULTS.map(function(r,i){ return '<div class="item"><div class="main"><div class="t">'+esc(r.title||r.tool)+'</div><div class="muted small">'+esc(r.by)+' · '+esc(when(r.at))+'</div></div><button class="btn sm" onclick="showSaved('+i+')">View</button></div>'; }).join('')+'</div><div id="saved-out"></div>';
+}
+function showSaved(i){ var r=RESULTS[i]; $('saved-out').innerHTML = renderResult(r.tool, r.result); $('saved-out').scrollIntoView({behavior:'smooth'}); }
+
+/* ── 3D scan ── */
+var SCAN_URLS = {}, SCAN_VIEW = null;
+function scanPanel(){
+  var canUp = isGC || ownerAccount;
+  var h = '<div class="two"><div>';
+  if (SCAN_VIEW) h += '<div class="card" id="scan-view"><div class="row" style="justify-content:space-between;margin-bottom:12px"><h2 style="margin:0">'+esc(SCAN_VIEW.label)+'</h2><button class="btn sm" onclick="SCAN_VIEW=null;render()">Close</button></div><div id="viewer-slot"><div class="muted small">Loading model…</div></div><div class="muted small" style="margin-top:8px">Drag to orbit · pinch or scroll to zoom'+(SCAN_VIEW.ext==='glb'?' · on iPhone, tap the AR button to place it in the room':'')+'</div></div>';
+  h += '<div class="card"><h2>Scans on this project</h2>'+(SCANS.length ? SCANS.map(function(s){ return '<div class="item" data-scan="'+esc(s.id)+'"><div class="main"><div class="t">'+esc(s.label)+'</div><div class="muted small">'+esc(s.ext.toUpperCase())+' · '+(s.size/1048576).toFixed(1)+' MB · '+esc(s.by)+' · '+esc(when(s.at))+'</div></div><button class="btn sm pri" onclick="viewScan(\''+jsq(s.id)+'\')">'+(s.ext==='usdz'?'Open':'View 3D')+'</button>'+(isGC?'<button class="btn sm danger" onclick="delScan(\''+jsq(s.id)+'\')">Delete</button>':'')+'</div>'; }).join('') : '<div class="empty">No scans yet.</div>')+'</div>';
+  h += '</div><div>';
+  if (canUp) h += '<div class="card hi"><h2>Scan the site in 3D</h2><div class="steps3"><div><b>1 · Capture</b><p>Walk the space with an iPhone or iPad Pro (LiDAR) using Polycam, Scaniverse or 3d Scanner App.</p></div><div><b>2 · Export</b><p>Export as <b>GLB</b> (or USDZ). Choose medium quality to keep it under 24 MB.</p></div><div><b>3 · Upload</b><p>Everyone on the project can view and walk around the model.</p></div></div>'+
+    '<label for="scan-label">Name</label><input id="scan-label" placeholder="e.g. Kitchen — existing conditions"><label for="scan-file">Scan file (.glb or .usdz · up to 24 MB)</label><input id="scan-file" type="file" accept=".glb,.usdz,model/gltf-binary,model/vnd.usdz+zip">'+
+    '<div class="prog" id="scan-prog"><i></i></div><button class="btn pri" id="scan-go" onclick="uploadScan()">Upload scan</button><div class="log" id="scan-log"></div></div>';
+  return h+'</div></div>';
+}
+function uploadScan(){
+  var f=$('scan-file').files[0], log=$('scan-log'), btn=$('scan-go'), bar=$('scan-prog');
+  if (!f) { log.textContent='Choose a .glb or .usdz file.'; return; }
+  var ext = (f.name.split('.').pop()||'').toLowerCase();
+  if (['glb','usdz'].indexOf(ext)<0) { log.textContent='Export your scan as .glb (or .usdz) and upload that.'; return; }
+  if (f.size > 24*1024*1024) { log.textContent='That scan is over 24 MB. Re-export at medium quality.'; return; }
+  btn.disabled=true; bar.style.display='block';
+  var label=$('scan-label').value.trim();
+  api('/api/tools', {project:PID, action:'scan-init', name:f.name, size:f.size, label:label}).then(function(j){
+    if (!j.ok) throw new Error({too_many_scans:'This project already has the maximum 12 scans. Delete one first.', file_too_large:'That scan is over 24 MB.', bad_file_type:'Upload a .glb or .usdz file.'}[j.error] || 'Couldn’t start the upload.');
+    return readFile(f).then(function(b64){
+      var n = 0, total = j.chunks;
+      function next(){
+        if (n >= total) return api('/api/tools', {project:PID, action:'scan-done', id:j.id});
+        var part = b64.slice(n*j.chunkChars, (n+1)*j.chunkChars);
+        log.textContent = 'Uploading… '+Math.round(n/total*100)+'%';
+        return api('/api/tools', {project:PID, action:'scan-chunk', id:j.id, n:n, data:part}).then(function(r){
+          if (!r.ok) throw new Error('Upload interrupted. Try again.');
+          n++; bar.firstChild.style.width = Math.round(n/total*100)+'%'; return next();
+        });
+      }
+      return next();
+    });
+  }).then(function(d){
+    if (!d.ok) throw new Error('Upload didn’t finish. Try again.');
+    toast('Scan uploaded'); return load();
+  }).catch(function(e){ log.textContent = e.message; btn.disabled=false; });
+}
+function fetchScan(s){
+  if (SCAN_URLS[s.id]) return Promise.resolve(SCAN_URLS[s.id]);
+  var parts = [], i = 0;
+  function next(){
+    if (i >= s.chunks) {
+      var bin = atob(parts.join('')), bytes = new Uint8Array(bin.length); for (var k=0;k<bin.length;k++) bytes[k]=bin.charCodeAt(k);
+      var url = URL.createObjectURL(new Blob([bytes], {type: s.ext==='usdz'?'model/vnd.usdz+zip':'model/gltf-binary'}));
+      SCAN_URLS[s.id] = url; window.SCAN_BYTES = bytes.length; return url;
+    }
+    return api('/api/tools?action=scan-chunk&project='+encodeURIComponent(PID)+'&id='+encodeURIComponent(s.id)+'&n='+i).then(function(r){ if (!r.ok) throw new Error('Couldn’t load the scan.'); parts.push(r.data); i++; return next(); });
+  }
+  return next();
+}
+function viewScan(id){ SCAN_VIEW = SCANS.filter(function(s){return s.id===id;})[0]; render(); window.scrollTo(0,0); }
+var MV_LOADED = false;
+function afterScanRender(){
+  if (!SCAN_VIEW) return;
+  var s = SCAN_VIEW;
+  fetchScan(s).then(function(url){
+    if (!$('viewer-slot') || SCAN_VIEW!==s) return;
+    if (s.ext==='usdz') { $('viewer-slot').innerHTML = '<a class="btn pri" rel="ar" href="'+url+'" download="'+esc(s.name)+'">Open in AR / download</a><div class="muted small" style="margin-top:8px">USDZ opens in AR Quick Look on iPhone and iPad. Export GLB to view it in the browser.</div>'; return; }
+    if (!MV_LOADED) { MV_LOADED = true; var sc=document.createElement('script'); sc.type='module'; sc.src='https://cdn.jsdelivr.net/npm/@google/model-viewer@3/dist/model-viewer.min.js'; document.head.appendChild(sc); }
+    $('viewer-slot').innerHTML = '<model-viewer id="mv" src="'+url+'" camera-controls touch-action="pan-y" auto-rotate ar shadow-intensity="0.6" exposure="1" alt="3D scan: '+esc(s.label)+'"></model-viewer><a class="btn sm" style="margin-top:10px" href="'+url+'" download="'+esc(s.name)+'">Download .glb</a>';
+  }).catch(function(e){ if ($('viewer-slot')) $('viewer-slot').innerHTML = '<div class="msg" style="display:block">'+esc(e.message)+'</div>'; });
+}
+function delScan(id){ modal('<h3>Delete this scan?</h3><p>Everyone on the project loses access to it.</p><div class="acts"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn danger" onclick="api(\'/api/tools\',{project:PID,action:\'scan-delete\',id:\''+jsq(id)+'\'}).then(function(){closeModal();SCAN_VIEW=null;load();})">Delete</button></div>'); }
+
+/* ── modal ── */
+function modal(html){ $('m').innerHTML = '<button class="x" onclick="closeModal()" aria-label="Close">×</button>'+html; $('m-bg').style.display='flex'; }
+function closeModal(){ $('m-bg').style.display='none'; }
+// Windows never close from a tap outside them or a stray key — only the × does, so nobody loses a half-finished
+// sign-up or project by accident.
+function mTyped(){ return [].some.call(document.querySelectorAll('#m input:not([readonly]):not([type=checkbox]):not([type=range]):not([type=hidden]), #m textarea'), function(i){ return String(i.value).trim() !== ''; }); }
+document.addEventListener('keydown', function(e){ if (e.key === 'Escape' && !mTyped() && !(window.C && $('c-next-btn'))) closeModal(); });   // small confirm popups only
+
+function fromHash(){
+  var h = (location.hash||'').slice(1);
+  if (h.indexOf('tool-')===0) { TAB='tools'; TOOL=h.slice(5) || 'codecheck'; if (['codecheck','plans','scan','history'].indexOf(TOOL)<0) TOOL='codecheck'; }
+  else if (h==='tools') TAB='tools'; else if (h==='team') TAB='controls'; else if (['proposals','decisions','controls','schedule'].indexOf(h)>=0) TAB=h; else if (!h) TAB='overview';
+}
+window.addEventListener('hashchange', function(){ fromHash(); if (ST) { render(); load(); } });
+(function init(){
+  fromHash();
+  load();
+  if (typeof subInit==='function') subInit();
+  setInterval(function(){ if ($('m-bg').style.display!=='flex' && document.visibilityState==='visible' && !document.activeElement.matches('input,textarea,select')) load(); }, 60000);
+})();
+</script>
+<script id="subs-front">/* SUBS_FRONT_START */
+/* ══════════════════════════════════════════════════
+   FIND A SUB — invite your own trade, or ask Common Ground for
+   top-rated options near the job (within 12 hours).
+   Shared by the built-in project pages and the workspace page.
+   ══════════════════════════════════════════════════ */
+var SUB_TRADES = ['Environmental testing (asbestos / lead)','Surveyor','Demolition','Plumber','Electrician','HVAC','Roofer','Framer',
+  'Drywall','Painter','Tile setter','Flooring','Cabinets','Countertops','Windows & doors','Concrete','Landscaper','Structural engineer','Architect / designer'];
+var SUB_TIMING = ['As soon as possible','Within 2 weeks','Within a month','Just planning ahead'];
+var SUB_REQS = [], SUB_STATE = null, SUB_LOADED = false;
+
+function subEsc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+function subS(){ return window.CG_SESSION || null; }
+function subProject(){ var s = subS(); return s ? s.project : ''; }
+function subCan(){ var s = subS(); return !!(s && s.user && (s.role === 'client' || s.role === 'gc' || s.role === 'designer')); }
+function subZipGuess(){ var s = subS(), a = (s && s.projectInfo && s.projectInfo.address) || ''; var m = a.match(/\b(\d{5})(?:-\d{4})?\b/); return m ? m[1] : ''; }
+function subWhen(iso){ try { return new Date(iso).toLocaleString([], {weekday:'short', hour:'numeric', minute:'2-digit'}); } catch (e) { return ''; } }
+function subDraftKey(){ return 'cg_sub_draft_' + subProject(); }
+function subSaveDraft(){ try { if (SUB_STATE && SUB_STATE.step !== 'done') localStorage.setItem(subDraftKey(), JSON.stringify(SUB_STATE)); } catch (e) {} }
+function subClearDraft(){ try { localStorage.removeItem(subDraftKey()); } catch (e) {} }
+
+/* ── data ── */
+function subLoad(){
+  if (!subCan()) return;
+  fetch('/api/project?action=sub-requests&project=' + encodeURIComponent(subProject()), {credentials:'same-origin', cache:'no-store'})
+    .then(function(r){ return r.json(); }).then(function(j){ SUB_REQS = (j.requests || []).slice().reverse(); SUB_LOADED = true; subRenderList(); })
+    .catch(function(){});
+}
+function subPost(body){
+  body.project = subProject();
+  return fetch('/api/project', {method:'POST', headers:{'Content-Type':'application/json'}, credentials:'same-origin', body:JSON.stringify(body)})
+    .then(function(r){ return r.json().then(function(j){ j._s = r.status; return j; }); });
+}
+
+/* ── the modal (only the × closes it; progress is remembered) ── */
+function subOpen(opts){
+  if (!subCan()) return;
+  opts = opts || {};
+  var saved = null; try { saved = JSON.parse(localStorage.getItem(subDraftKey()) || 'null'); } catch (e) {}
+  if (opts.fresh || opts.option || (opts.trade && saved && saved.trade !== opts.trade)) saved = null;
+  SUB_STATE = saved || { step: opts.step || 'choose', trade: opts.trade || '', tradeOther: '', scope: '', zip: subZipGuess(), timing: SUB_TIMING[0], budget: '', phone: '',
+    name: '', contact: '', fromReq: '', fromOpt: '' };
+  if (opts.option) {
+    var o = opts.option;
+    SUB_STATE.step = 'invite'; SUB_STATE.name = o.name || o.company || ''; SUB_STATE.contact = o.email || o.phone || '';
+    SUB_STATE.trade = opts.trade || ''; SUB_STATE.fromReq = opts.reqId || ''; SUB_STATE.fromOpt = o.id || '';
+  }
+  if (!document.getElementById('sub-modal')) {
+    var m = document.createElement('div'); m.id = 'sub-modal';
+    m.setAttribute('role', 'dialog'); m.setAttribute('aria-modal', 'true');
+    m.style.cssText = 'position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,.62);display:flex;align-items:flex-start;justify-content:center;padding:6vh 16px 16px;overflow-y:auto;box-sizing:border-box';
+    m.innerHTML = '<div id="sub-card" style="position:relative;width:100%;max-width:520px;background:var(--d2);border:1px solid var(--w15);border-radius:16px;padding:26px 24px 22px;box-sizing:border-box;box-shadow:0 24px 60px rgba(0,0,0,.5);color:var(--white)"></div>';
+    document.body.appendChild(m);
+  }
+  subRenderModal();
+}
+function subClose(){ var m = document.getElementById('sub-modal'); if (m) m.remove(); if (SUB_STATE && SUB_STATE.step === 'done') subClearDraft(); SUB_STATE = null; }
+function subGo(step){ subCollect(); SUB_STATE.step = step; SUB_STATE.err = ''; subSaveDraft(); subRenderModal(); }
+function subCollect(){
+  if (!SUB_STATE) return;
+  ['trade','tradeOther','scope','zip','timing','budget','phone','name','contact'].forEach(function(k){ var e = document.getElementById('sub-f-' + k); if (e) SUB_STATE[k] = e.value; });
+  subSaveDraft();
+}
+function subTradeValue(){ return SUB_STATE.trade === '__other' ? (SUB_STATE.tradeOther || '').trim() : SUB_STATE.trade; }
+
+function subRenderModal(){
+  var c = document.getElementById('sub-card'); if (!c || !SUB_STATE) return;
+  var st = SUB_STATE;
+  var lbl = 'display:block;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--sage);margin:14px 0 6px';
+  var inp = 'width:100%;box-sizing:border-box;background:var(--d3);border:1px solid var(--w15);border-radius:9px;padding:11px 12px;font-size:14px;color:var(--white);font-family:inherit;outline:none';
+  var btn = 'flex:1;min-height:44px;padding:12px 16px;border-radius:10px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;';
+  var primary = btn + 'background:var(--lime);border:1px solid var(--lime);color:#000';
+  var grey = btn + 'background:var(--d4);border:1px solid var(--w15);color:var(--w70)';
+  var x = '<button id="sub-x" onclick="subClose()" aria-label="Close" style="position:absolute;top:12px;right:12px;width:36px;height:36px;border-radius:50%;background:var(--d3);border:1px solid var(--w08);color:var(--w70);font-size:18px;line-height:1;cursor:pointer;font-family:inherit">×</button>';
+  var head = function(eye, title, sub){ return '<div style="font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--sage);margin-bottom:8px">' + eye + '</div>' +
+    '<div style="font-family:Bungee,sans-serif;font-size:22px;font-weight:800;line-height:1.25;letter-spacing:-.01em;margin-bottom:6px;padding-right:36px">' + title + '</div>' +
+    (sub ? '<div style="font-size:13px;color:var(--w50);line-height:1.6">' + sub + '</div>' : ''); };
+  var tradeSel = function(){
+    var known = SUB_TRADES.indexOf(st.trade) >= 0 || !st.trade || st.trade === '__other';
+    if (!known) { st.tradeOther = st.trade; st.trade = '__other'; }
+    return '<label style="' + lbl + '" for="sub-f-trade">Trade</label><select id="sub-f-trade" onchange="subCollect();subRenderModal()" style="' + inp + '">' +
+      '<option value="">Choose a trade…</option>' + SUB_TRADES.map(function(t){ return '<option' + (st.trade === t ? ' selected' : '') + '>' + subEsc(t) + '</option>'; }).join('') +
+      '<option value="__other"' + (st.trade === '__other' ? ' selected' : '') + '>Something else…</option></select>' +
+      (st.trade === '__other' ? '<input id="sub-f-tradeOther" oninput="subCollect()" value="' + subEsc(st.tradeOther) + '" placeholder="e.g. Pool contractor" style="' + inp + ';margin-top:8px">' : '');
+  };
+  var err = st.err ? '<div style="margin-top:12px;font-size:12px;color:var(--del)">' + subEsc(st.err) + '</div>' : '';
+  var h = x;
+
+  if (st.step === 'choose') {
+    var card = function(onclick, icon, title, sub, tag){ return '<button onclick="' + onclick + '" style="display:flex;gap:14px;align-items:flex-start;width:100%;text-align:left;background:var(--d3);border:1px solid var(--w15);border-radius:12px;padding:16px;margin-top:12px;cursor:pointer;font-family:inherit;color:var(--white)">' +
+      '<span style="flex-shrink:0;width:38px;height:38px;border-radius:10px;background:var(--l10);border:1px solid var(--l20);display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--lime)">' + icon + '</span>' +
+      '<span style="flex:1"><span style="display:block;font-size:14px;font-weight:700;margin-bottom:4px">' + title + (tag ? ' <span style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--lime);background:var(--l10);border:1px solid var(--l20);border-radius:20px;padding:2px 7px;margin-left:4px;vertical-align:2px">' + tag + '</span>' : '') + '</span>' +
+      '<span style="display:block;font-size:12px;color:var(--w50);line-height:1.55">' + sub + '</span></span></button>'; };
+    h += head('Find a sub', 'Who do you need on this job?', 'Bring someone you already trust, or let us find a few great options for you.') +
+      card("subGo('recommend')", '★', 'Get recommendations', 'Tell us the trade and the job. We send 3–5 of the best-rated, licensed options near you within 12 hours.', '12 hrs') +
+      card("subGo('invite')", '+', 'Invite my own', 'Already have an environmental tester, tile setter or anyone else? Send them a link to join this project.', '');
+  }
+
+  else if (st.step === 'invite') {
+    h += head('Invite your own', st.fromOpt ? 'Invite ' + subEsc(st.name) : 'Add a trade to this project', 'They get their own sign-in with the trades view: their tasks and scope, no pricing.') +
+      tradeSel() +
+      '<label style="' + lbl + '" for="sub-f-name">Name or company</label><input id="sub-f-name" oninput="subCollect()" value="' + subEsc(st.name) + '" autocomplete="off" style="' + inp + '">' +
+      '<label style="' + lbl + '" for="sub-f-contact">Email or mobile number</label><input id="sub-f-contact" oninput="subCollect()" value="' + subEsc(st.contact) + '" autocomplete="off" inputmode="email" style="' + inp + '">' +
+      err + '<div style="display:flex;gap:10px;margin-top:20px">' + (st.fromOpt ? '' : '<button onclick="subGo(\'choose\')" style="' + grey + '">Back</button>') +
+      '<button id="sub-invite-btn" onclick="subSendInvite()" style="' + primary + '">Create invite link</button></div>';
+  }
+
+  else if (st.step === 'invited') {
+    var link = st.link || '', isPhone = (st.contact || '').indexOf('@') === -1;
+    var first = (st.name || '').split(' ')[0];
+    var msg = 'Hi ' + first + ', I\'d like you on our project at ' + ((subS() && subS().projectInfo && subS().projectInfo.name) || 'our home') + '. Here is your Common Ground link — tap it to set your password: ' + link;
+    var href = isPhone ? 'sms:' + st.contact.replace(/[^\d+]/g, '') + '&body=' + encodeURIComponent(msg)
+                       : 'mailto:' + st.contact + '?subject=' + encodeURIComponent('Join our project on Common Ground') + '&body=' + encodeURIComponent(msg);
+    h += head('Invite ready', subEsc(st.name) + ' can join now', 'Send them this link. It expires in 14 days.') +
+      '<input readonly value="' + subEsc(link) + '" onclick="this.select()" style="' + inp + ';font-family:monospace;font-size:12px;margin-top:16px">' +
+      '<div style="display:flex;gap:10px;margin-top:12px"><button onclick="navigator.clipboard&&navigator.clipboard.writeText(' + subEsc(JSON.stringify(link)) + ');this.textContent=\'Copied ✓\'" style="' + grey + '">Copy link</button>' +
+      '<a href="' + subEsc(href) + '" style="' + primary + ';text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center">' + (isPhone ? 'Text it' : 'Email it') + '</a></div>' +
+      '<div style="display:flex;gap:10px;margin-top:10px"><button onclick="subOpen({fresh:true,step:\'invite\'})" style="' + grey + ';background:none">Invite someone else</button><button onclick="subClose()" style="' + grey + ';background:none">Done</button></div>';
+  }
+
+  else if (st.step === 'recommend') {
+    h += head('Get recommendations', 'Tell us about the job', 'We check ratings, reviews and licenses near you and send a short list within 12 hours.') +
+      tradeSel() +
+      '<label style="' + lbl + '" for="sub-f-scope">What\'s the job?</label><textarea id="sub-f-scope" oninput="subCollect()" rows="3" placeholder="e.g. Asbestos and lead survey before demolishing a 1950s house" style="' + inp + ';resize:vertical">' + subEsc(st.scope) + '</textarea>' +
+      '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:0 12px">' +
+        '<div><label style="' + lbl + '" for="sub-f-zip">Zip code</label><input id="sub-f-zip" oninput="subCollect()" value="' + subEsc(st.zip) + '" inputmode="numeric" maxlength="10" style="' + inp + '"></div>' +
+        '<div><label style="' + lbl + '" for="sub-f-timing">When</label><select id="sub-f-timing" onchange="subCollect()" style="' + inp + '">' + SUB_TIMING.map(function(t){ return '<option' + (st.timing === t ? ' selected' : '') + '>' + t + '</option>'; }).join('') + '</select></div>' +
+        '<div><label style="' + lbl + '" for="sub-f-budget">Budget <span style="text-transform:none;letter-spacing:0;color:var(--w30)">(optional)</span></label><input id="sub-f-budget" oninput="subCollect()" value="' + subEsc(st.budget) + '" placeholder="e.g. $1,500" style="' + inp + '"></div>' +
+        '<div><label style="' + lbl + '" for="sub-f-phone">Your phone <span style="text-transform:none;letter-spacing:0;color:var(--w30)">(optional)</span></label><input id="sub-f-phone" oninput="subCollect()" value="' + subEsc(st.phone) + '" inputmode="tel" style="' + inp + '"></div>' +
+      '</div>' + err +
+      '<div style="display:flex;gap:10px;margin-top:20px"><button onclick="subGo(\'choose\')" style="' + grey + '">Back</button><button id="sub-req-btn" onclick="subSendRequest()" style="' + primary + '">Send request</button></div>';
+  }
+
+  else if (st.step === 'done') {
+    h += head('Request sent', 'We\'re on it', 'You\'ll have ' + subEsc((st.doneTrade || 'trade').toLowerCase()) + ' options on this page by <b style="color:var(--white)">' + subEsc(subWhen(st.dueAt)) + '</b>. We\'ll email you when they\'re ready.') +
+      '<div style="display:flex;gap:10px;margin-top:20px"><button onclick="subClose()" style="' + primary + '">Done</button></div>';
+  }
+  c.innerHTML = h;
+}
+
+function subSendInvite(){
+  subCollect();
+  var st = SUB_STATE, trade = subTradeValue(), name = (st.name || '').trim(), contact = (st.contact || '').trim();
+  if (!trade) { st.err = 'Choose the trade.'; return subRenderModal(); }
+  if (!name || !contact) { st.err = 'Add their name and an email or mobile number.'; return subRenderModal(); }
+  var b = document.getElementById('sub-invite-btn'); if (b) { b.disabled = true; b.textContent = 'Creating…'; }
+  fetch('/api/auth', {method:'POST', headers:{'Content-Type':'application/json'}, credentials:'same-origin',
+    body:JSON.stringify({action:'invite', project:subProject(), role:'trade', trade:trade, name:name, identifier:contact})})
+  .then(function(r){ return r.json(); }).then(function(j){
+    if (!j.ok) { st.err = j.error === 'bad_identifier' ? 'That email or phone number doesn\'t look right.' : 'Could not create the invite (' + (j.error || 'error') + ').'; return subRenderModal(); }
+    if (st.fromReq) subPost({action:'sub-invited', id:st.fromReq, option:st.fromOpt, identifier:contact}).then(subLoad);
+    st.link = j.link; st.step = 'invited'; st.err = ''; subClearDraft(); subRenderModal();
+    if (typeof teamLoad === 'function') teamLoad();
+  }).catch(function(){ st.err = 'Network problem — try again.'; subRenderModal(); });
+}
+function subSendRequest(){
+  subCollect();
+  var st = SUB_STATE, trade = subTradeValue();
+  if (!trade) { st.err = 'Choose the trade.'; return subRenderModal(); }
+  if ((st.scope || '').trim().length < 5) { st.err = 'Add a sentence about the job.'; return subRenderModal(); }
+  if (!/\b\d{5}\b/.test(st.zip || '')) { st.err = 'Add the 5-digit zip code for the job.'; return subRenderModal(); }
+  var b = document.getElementById('sub-req-btn'); if (b) { b.disabled = true; b.textContent = 'Sending…'; }
+  subPost({action:'sub-request', trade:trade, scope:st.scope, zip:st.zip, timing:st.timing, budget:st.budget, phone:st.phone}).then(function(j){
+    if (!j.ok) { st.err = j.error === 'too_many' ? 'That\'s a lot of requests today — email us at commonground.helpme@gmail.com.' : 'Could not send the request (' + (j.error || 'error') + ').'; return subRenderModal(); }
+    subClearDraft();
+    SUB_STATE = { step:'done', dueAt:j.request.dueAt, doneTrade:j.request.trade };
+    subRenderModal(); subLoad();
+  }).catch(function(){ st.err = 'Network problem — try again.'; subRenderModal(); });
+}
+function subCancel(id){
+  if (!confirm('Cancel this request?')) return;
+  subPost({action:'sub-cancel', id:id}).then(subLoad);
+}
+function subInviteOption(reqId, optId){
+  var r = SUB_REQS.filter(function(x){ return x.id === reqId; })[0]; if (!r) return;
+  var o = (r.options || []).filter(function(x){ return x.id === optId; })[0]; if (!o) return;
+  subOpen({option:o, reqId:reqId, trade:r.trade});
+}
+
+/* ── list of requests + results (on the Progress / Overview page) ── */
+function subCard(r){
+  var open = r.status === 'searching', late = open && new Date(r.dueAt) < new Date();
+  var pill = open ? '<span style="font-size:10px;font-weight:700;color:var(--amb,#C9A84C);background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.3);border-radius:20px;padding:3px 9px">' + (late ? 'Almost there' : 'Searching · ready by ' + subEsc(subWhen(r.dueAt))) + '</span>'
+    : r.status === 'ready' ? '<span style="font-size:10px;font-weight:700;color:var(--lime);background:var(--l10);border:1px solid var(--l20);border-radius:20px;padding:3px 9px">' + r.options.length + ' option' + (r.options.length === 1 ? '' : 's') + ' ready</span>'
+    : '<span style="font-size:10px;font-weight:700;color:var(--w50);border:1px solid var(--w15);border-radius:20px;padding:3px 9px">Closed</span>';
+  var h = '<div data-subreq="' + r.id + '" style="border-top:1px solid var(--w08);padding:16px 0 4px">' +
+    '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px"><span style="font-size:14px;font-weight:700;color:var(--white)">' + subEsc(r.trade) + '</span>' + pill +
+    '<span style="font-size:11px;color:var(--w30);margin-left:auto">near ' + subEsc(r.zip) + '</span></div>' +
+    '<div style="font-size:12px;color:var(--w50);line-height:1.6;margin-bottom:8px">' + subEsc(r.scope) + '</div>';
+  if (open) h += '<div style="font-size:12px;color:var(--w50);line-height:1.6">' + (late ? 'This one is taking a little longer than usual — we\'ll email you the moment it\'s ready.' : 'We\'re checking ratings, reviews and licenses near ' + subEsc(r.zip) + '.') +
+    ' <button onclick="subCancel(\'' + r.id + '\')" style="background:none;border:none;color:var(--w30);font-size:11px;text-decoration:underline;cursor:pointer;font-family:inherit;padding:0 0 0 4px">Cancel request</button></div>';
+  if (r.status === 'ready') {
+    if (r.message) h += '<div style="font-size:12px;color:var(--w70);line-height:1.6;margin-bottom:10px;padding:10px 12px;background:var(--l10);border:1px solid var(--l20);border-radius:9px">' + subEsc(r.message) + '</div>';
+    h += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px;margin-bottom:10px">' + r.options.map(function(o){
+      var title = o.company || o.name, who = o.company && o.name ? o.name : '';
+      var stars = o.rating != null ? '<span style="color:var(--lime);font-weight:700">★ ' + Number(o.rating).toFixed(1) + '</span>' + (o.reviews != null ? ' <span style="color:var(--w50)">(' + o.reviews + (o.reviewSource ? ' on ' + subEsc(o.reviewSource) : ' reviews') + ')</span>' : '') : '';
+      var links = [];
+      if (o.phone) links.push('<a href="tel:' + subEsc(o.phone.replace(/[^\d+]/g, '')) + '" style="color:var(--w70)">' + subEsc(o.phone) + '</a>');
+      if (o.website) links.push('<a href="' + subEsc(o.website) + '" target="_blank" rel="noopener" style="color:var(--w70)">Website ↗</a>');
+      if (o.source) links.push('<a href="' + subEsc(o.source) + '" target="_blank" rel="noopener" style="color:var(--w50)">Reviews ↗</a>');
+      return '<div data-subopt="' + o.id + '" style="background:var(--d2);border:1px solid var(--w08);border-radius:10px;padding:14px">' +
+        '<div style="font-size:13px;font-weight:700;color:var(--white);line-height:1.35">' + subEsc(title) + '</div>' +
+        (who ? '<div style="font-size:11px;color:var(--w50);margin-top:2px">' + subEsc(who) + '</div>' : '') +
+        (stars ? '<div style="font-size:12px;margin-top:6px">' + stars + '</div>' : '') +
+        (o.license ? '<div style="font-size:11px;color:var(--w50);margin-top:4px">' + subEsc(o.license) + '</div>' : '') +
+        (o.why ? '<div style="font-size:12px;color:var(--w70);line-height:1.55;margin-top:8px">' + subEsc(o.why) + '</div>' : '') +
+        (links.length ? '<div style="display:flex;gap:12px;flex-wrap:wrap;font-size:11px;margin-top:8px">' + links.join('') + '</div>' : '') +
+        (o.invited ? '<div style="margin-top:10px;font-size:11px;font-weight:700;color:var(--ok,#4A9B6F)">Invited ✓</div>'
+                   : '<button onclick="subInviteOption(\'' + r.id + '\',\'' + o.id + '\')" style="margin-top:10px;width:100%;min-height:38px;background:var(--lime);border:none;border-radius:8px;font-size:12px;font-weight:700;color:#000;cursor:pointer;font-family:inherit">Invite to project</button>') +
+        '</div>';
+    }).join('') + '</div>';
+  }
+  return h + '</div>';
+}
+function subRenderList(){
+  var el = document.getElementById('sub-list'); if (!el) return;
+  var reqs = SUB_REQS.filter(function(r){ return r.status === 'searching' || r.status === 'ready'; });
+  if (!reqs.length) { el.innerHTML = ''; el.style.display = 'none'; return; }
+  el.style.display = '';
+  el.innerHTML = '<div style="background:var(--d3);border:1px solid var(--w08);border-radius:14px;padding:24px 26px;margin-bottom:18px">' +
+    '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px"><div style="font-family:Bungee,sans-serif;font-size:15px;font-weight:800;color:rgba(253,255,254,.9);text-transform:uppercase;letter-spacing:-.01em">Sub recommendations</div>' +
+    '<button onclick="subOpen()" style="margin-left:auto;background:none;border:1px solid var(--w15);border-radius:8px;padding:7px 12px;font-size:11px;font-weight:600;color:var(--w70);cursor:pointer;font-family:inherit">+ Find another sub</button></div>' +
+    reqs.map(subCard).join('') + '</div>';
+}
+/* Put the list on the page: after the first row of the Progress screen, or into #sub-list if the page has one */
+function subMount(){
+  if (!subCan() || document.getElementById('sub-list')) return;
+  var host = document.querySelector('#sc-progress .scrl');
+  if (!host || !host.firstElementChild) return;
+  var d = document.createElement('div'); d.id = 'sub-list'; d.style.display = 'none';
+  host.insertBefore(d, host.firstElementChild.nextElementSibling);
+}
+function subInit(){ if (!subCan()) return; subMount(); subLoad(); setInterval(subLoad, 120000); }
+/* SUBS_FRONT_END */</script>
+<script id="scan3d-front">/* SCAN3D_START */
+/* ══════════════════════════════════════════════════
+   3D SCAN WORKBENCH — 3D view, 2D plan (scan cut at a height, seen from above),
+   tap-to-measure, saved measurements per room + wall, typed-in measurements,
+   and an AI cross-check of the measurements against architectural drawings.
+   three.js loads on demand through the page's import map. Lengths are stored in meters.
+   Later declarations override the page's original scanPanel / afterScanRender.
+   ══════════════════════════════════════════════════ */
+var MEASURES = [], M3 = { dollhouse: true, mode: '3d', measuring: false, pts: [], pending: null, units: 'ft', cut: 1.2, showSaved: true, scanId: null, dom: null, xc: null, xcBusy: false };
+try { M3.units = localStorage.getItem('cg_units') === 'm' ? 'm' : 'ft'; } catch (e) {}
+function m3CanWrite(){ return !isTrade; }
+
+/* ── lengths ── */
+function m3Fmt(m, units){
+  units = units || M3.units;
+  if (units === 'm') return (Math.round(m * 100) / 100).toFixed(2) + ' m';
+  var inches = Math.round(m / 0.0254 * 2) / 2, ft = Math.floor(inches / 12), rest = inches - ft * 12;
+  var r = rest % 1 ? Math.floor(rest) + '½' : String(rest);
+  if (rest === 0.5) r = '½';
+  return ft + '′ ' + r + '″';
+}
+function m3Both(m){ return m3Fmt(m, 'ft') + ' (' + m3Fmt(m, 'm') + ')'; }
+function m3SetUnits(u){ M3.units = u; try { localStorage.setItem('cg_units', u); } catch (e) {} render(); }
+
+/* ── data ── */
+function m3LoadMeasures(){
+  return api('/api/tools?action=measures&project=' + encodeURIComponent(PID)).then(function(j){
+    if (j && j.ok) { MEASURES = j.measures || []; if (TAB === 'tools' && TOOL === 'scan') { m3RenderList(); m3DrawSaved(); } }
+  });
+}
+var _m3Load = load;
+load = function(){ var p = _m3Load.apply(this, arguments); m3LoadMeasures(); return p; };
+function m3Rooms(){
+  var seen = {}, out = [];
+  MEASURES.forEach(function(m){ if (!seen[m.room.toLowerCase()]) { seen[m.room.toLowerCase()] = 1; out.push(m.room); } });
+  (RESULTS || []).forEach(function(r){ if (r.tool === 'plans' && r.result && r.result.rooms) r.result.rooms.forEach(function(n){ if (n && !seen[String(n).toLowerCase()]) { seen[String(n).toLowerCase()] = 1; out.push(String(n)); } }); });
+  return out;
+}
+
+/* ── panel ── */
+function scanPanel(){
+  var canUp = isGC || ownerAccount || (typeof isDesigner !== 'undefined' && isDesigner);
+  var h = '<div class="two"><div>';
+  if (SCAN_VIEW) {
+    var glb = SCAN_VIEW.ext === 'glb';
+    var seg = function(k, t){ return '<button class="btn sm' + (M3.mode === k ? ' pri' : '') + '" data-m3mode="' + k + '" onclick="m3Mode(\'' + k + '\')">' + t + '</button>'; };
+    h += '<div class="card" id="scan-view"><div class="row" style="justify-content:space-between;margin-bottom:12px;gap:10px"><h2 style="margin:0;min-width:0">' + esc(SCAN_VIEW.label) + '</h2><button class="btn sm" onclick="SCAN_VIEW=null;m3Dispose();render()">Close</button></div>' +
+      (glb ? '<div class="row m3-bar" style="gap:6px;flex-wrap:wrap;margin-bottom:10px">' + seg('3d', '3D') + seg('2d', '2D plan') + seg('ar', 'AR view') +
+        (M3.mode === '3d' ? '<label class="small" style="display:flex;align-items:center;gap:6px;margin:0 0 0 6px;cursor:pointer"><input type="checkbox" id="m3-doll" style="width:auto;margin:0"' + (M3.dollhouse ? ' checked' : '') + ' onchange="M3.dollhouse=this.checked;m3ApplyMode()">Hide ceiling</label>' : '') +
+        '<span style="flex:1"></span>' +
+        (M3.mode !== 'ar' ? '<button class="btn sm' + (M3.measuring ? ' pri' : '') + '" id="m3-measure" onclick="m3ToggleMeasure()">' + (M3.measuring ? 'Measuring · tap 2 points' : 'Measure') + '</button>' : '') +
+        '<button class="btn sm" onclick="m3SetUnits(\'' + (M3.units === 'ft' ? 'm' : 'ft') + '\')" title="Switch units">' + (M3.units === 'ft' ? 'ft' : 'm') + '</button></div>' : '') +
+      '<div id="viewer-slot"><div class="muted small">Loading model…</div></div>' +
+      (glb && M3.mode === '2d' ? '<div class="row" style="gap:10px;margin-top:10px;align-items:center"><label for="m3-cut" style="margin:0;white-space:nowrap">Cut height</label><input id="m3-cut" type="range" min="0.3" max="2.4" step="0.05" value="' + M3.cut + '" oninput="m3Cut(this.value)" style="flex:1;margin:0"><span class="muted small" id="m3-cut-v" style="min-width:64px;text-align:right">' + m3Fmt(M3.cut) + '</span></div>' : '') +
+      '<div id="m3-pending">' + m3PendingHtml() + '</div>' +
+      '<div class="muted small" style="margin-top:8px" id="m3-hint">' + m3Hint() + '</div></div>';
+  }
+  h += '<div class="card"><h2>Scans on this project</h2>' + (SCANS.length ? SCANS.map(function(s){ return '<div class="item" data-scan="' + esc(s.id) + '"><div class="main"><div class="t">' + esc(s.label) + '</div><div class="muted small">' + esc(s.ext.toUpperCase()) + ' · ' + (s.size / 1048576).toFixed(1) + ' MB · ' + esc(s.by) + ' · ' + esc(when(s.at)) + '</div></div><button class="btn sm pri" onclick="viewScan(\'' + jsq(s.id) + '\')">' + (s.ext === 'usdz' ? 'Open' : 'View + measure') + '</button>' + (isGC ? '<button class="btn sm danger" onclick="delScan(\'' + jsq(s.id) + '\')">Delete</button>' : '') + '</div>'; }).join('') : '<div class="empty">No scans yet.</div>') + '</div>';
+  h += '<div id="m3-list">' + m3ListHtml() + '</div>';
+  h += '</div><div>';
+  if (canUp) h += '<div class="card hi"><h2>Scan the site in 3D</h2><div class="steps3"><div><b>1 · Capture</b><p>Walk the space with an iPhone or iPad Pro (LiDAR) using Polycam, Scaniverse or 3d Scanner App.</p></div><div><b>2 · Export</b><p>Export as <b>GLB</b> (or USDZ). Choose medium quality to keep it under 24 MB.</p></div><div><b>3 · Upload</b><p>Everyone on the project can walk the model, see it as a 2D plan and take measurements.</p></div></div>' +
+    '<label for="scan-label">Name</label><input id="scan-label" placeholder="e.g. Kitchen — existing conditions"><label for="scan-file">Scan file (.glb or .usdz · up to 24 MB)</label><input id="scan-file" type="file" accept=".glb,.usdz,model/gltf-binary,model/vnd.usdz+zip">' +
+    '<div class="prog" id="scan-prog"><i></i></div><button class="btn pri" id="scan-go" onclick="uploadScan()">Upload scan</button><div class="log" id="scan-log"></div></div>';
+  if (m3CanWrite()) h += '<div id="m3-xc">' + m3CrossHtml() + '</div>';
+  return h + '</div></div>';
+}
+function m3Hint(){
+  if (!SCAN_VIEW || SCAN_VIEW.ext !== 'glb') return '';
+  if (M3.mode === 'ar') return 'Drag to orbit · pinch or scroll to zoom · on iPhone, tap the AR button to place it in the room';
+  if (M3.measuring) return M3.mode === '2d' ? 'Tap two points on the plan. 2D measurements are flat (horizontal) distances.' : 'Tap two points on the model. 3D measurements are straight-line distances, so you can measure heights too.';
+  return M3.mode === '2d' ? 'The scan is cut at the height below and seen from above, like a floor plan. Drag to pan · scroll or pinch to zoom.' : 'Drag to orbit · right-drag or two fingers to pan · scroll or pinch to zoom';
+}
+function m3PendingHtml(){
+  var p = M3.pending; if (!p) return '';
+  var rooms = m3Rooms();
+  return '<div class="m3-save" style="margin-top:12px;background:var(--l10);border:1px solid var(--l20);border-radius:12px;padding:12px 14px">' +
+    '<div class="row" style="justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:8px"><b id="m3-len" style="font-size:18px;color:var(--lime)">' + esc(m3Fmt(p.meters)) + '</b><span class="muted small">' + esc(m3Fmt(p.meters, M3.units === 'ft' ? 'm' : 'ft')) + ' · ' + (p.view === '2d' ? 'flat, from the 2D plan' : 'straight line, 3D') + '</span></div>' +
+    '<div class="srow" style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><div><label for="m3-room">Room</label><input id="m3-room" list="m3-rooms" value="' + esc(p.room || '') + '" oninput="M3.pending.room=this.value" placeholder="e.g. Kitchen"></div>' +
+    '<div><label for="m3-what">What you measured</label><input id="m3-what" value="' + esc(p.label || '') + '" oninput="M3.pending.label=this.value" placeholder="e.g. North wall"></div></div>' +
+    '<datalist id="m3-rooms">' + rooms.map(function(r){ return '<option value="' + esc(r) + '">'; }).join('') + '</datalist>' +
+    '<div class="row" style="gap:8px;margin-top:4px"><button class="btn sm pri" id="m3-save" onclick="m3SavePending()">Save measurement</button><button class="btn sm" onclick="m3Discard()">Discard</button><span class="log" id="m3-log" style="margin:0"></span></div></div>';
+}
+
+/* ── measurement list + typed-in form ── */
+function m3ListHtml(){
+  var groups = {}, order = [];
+  MEASURES.forEach(function(m){ var k = m.room; if (!groups[k]) { groups[k] = []; order.push(k); } groups[k].push(m); });
+  var me = ME && ME.identifier;
+  var rows = order.map(function(room){
+    return '<div class="m3-room" data-room="' + esc(room) + '"><div class="eyebrow" style="margin:14px 0 6px">' + esc(room) + ' · ' + groups[room].length + '</div>' +
+      groups[room].map(function(m){
+        var src = m.source === 'scan' ? (m.view === '2d' ? 'Scan · 2D' : 'Scan · 3D') : 'Typed in';
+        var canDel = m.account === me || isGC || ownerAccount;
+        return '<div class="item" data-measure="' + esc(m.id) + '"><div class="main"><div class="t">' + esc(m.label) + '</div><div class="muted small">' + esc(src) + ' · ' + esc(m.by) + (m.note ? ' · ' + esc(m.note) : '') + '</div></div>' +
+          '<b style="white-space:nowrap">' + esc(m3Fmt(m.meters)) + '</b>' + (canDel ? '<button class="btn sm" aria-label="Delete measurement" onclick="m3Delete(\'' + jsq(m.id) + '\')">×</button>' : '') + '</div>';
+      }).join('') + '</div>';
+  }).join('');
+  var rooms = m3Rooms(), ft = M3.units === 'ft';
+  return '<div class="card" id="m3-measures"><div class="row" style="justify-content:space-between;align-items:center;gap:10px"><h2 style="margin:0">Measurements</h2><span class="muted small">' + MEASURES.length + ' saved · by room and wall</span></div>' +
+    (rows || '<div class="empty" style="margin-top:10px">No measurements yet. Open a scan and tap Measure, or type one in below.</div>') +
+    '<details id="m3-manual" style="margin-top:14px"' + (M3.manualOpen ? ' open' : '') + ' ontoggle="M3.manualOpen=this.open"><summary style="cursor:pointer;font-weight:700;color:var(--lime)">+ Type a measurement in</summary>' +
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px"><div><label for="mm-room">Room</label><input id="mm-room" list="mm-rooms" placeholder="e.g. Kitchen"></div><div><label for="mm-what">Wall or item</label><input id="mm-what" placeholder="e.g. East wall"></div></div>' +
+    '<datalist id="mm-rooms">' + rooms.map(function(r){ return '<option value="' + esc(r) + '">'; }).join('') + '</datalist>' +
+    (ft ? '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><div><label for="mm-ft">Feet</label><input id="mm-ft" type="number" min="0" step="1" inputmode="numeric"></div><div><label for="mm-in">Inches</label><input id="mm-in" type="number" min="0" max="11.75" step="0.25" inputmode="decimal"></div></div>'
+        : '<label for="mm-m">Meters</label><input id="mm-m" type="number" min="0" step="0.01" inputmode="decimal">') +
+    '<label for="mm-note">Note (optional)</label><input id="mm-note" placeholder="e.g. to the face of the drywall">' +
+    '<button class="btn pri sm" id="mm-save" onclick="m3SaveManual()">Save measurement</button><span class="log" id="mm-log"></span></details></div>';
+}
+function m3RenderList(){ var el = $('m3-list'); if (el) el.innerHTML = m3ListHtml(); var x = $('m3-xc'); if (x && !M3.xcBusy) x.innerHTML = m3CrossHtml(); }
+function m3SaveManual(){
+  var room = $('mm-room').value.trim(), what = $('mm-what').value.trim(), log = $('mm-log'), meters;
+  if (M3.units === 'ft') { var f = Number($('mm-ft').value || 0), i = Number($('mm-in').value || 0); meters = (f * 12 + i) * 0.0254; }
+  else meters = Number($('mm-m').value || 0);
+  if (!room) { log.textContent = 'Add the room.'; return; }
+  if (!(meters > 0)) { log.textContent = 'Add the length.'; return; }
+  $('mm-save').disabled = true;
+  api('/api/tools', { project: PID, action: 'measure-add', source: 'manual', room: room, label: what || 'Measurement', meters: meters, note: $('mm-note').value.trim() }).then(function(j){
+    if (!j.ok) { $('mm-save').disabled = false; log.textContent = 'Couldn’t save (' + (j.error || 'error') + ').'; return; }
+    MEASURES = j.measures; M3.manualOpen = true; m3RenderList(); toast('Measurement saved');
+  });
+}
+function m3Delete(id){
+  api('/api/tools', { project: PID, action: 'measure-delete', id: id }).then(function(j){ if (j.ok) { MEASURES = j.measures; m3RenderList(); m3DrawSaved(); } });
+}
+
+/* ── cross-check against drawings ── */
+function m3CrossHtml(){
+  var n = MEASURES.length;
+  return '<div class="card" id="m3-cross"><h2>Cross-check with drawings</h2><p class="muted small" style="margin-bottom:12px">Compare your ' + (n ? n + ' saved measurement' + (n === 1 ? '' : 's') : 'saved measurements') + ' with the architect’s drawings. Differences are flagged room by room, so small fixes get made before anything is ordered or built.</p>' +
+    '<label for="xc-file">Drawings (PDF, JPG or PNG · up to 3 MB)</label><input id="xc-file" type="file" accept="application/pdf,image/jpeg,image/png,image/webp">' +
+    '<button class="btn pri" id="xc-go" onclick="m3CrossRun()"' + (n ? '' : ' disabled') + '>' + (n ? 'Cross-check ' + n + ' measurement' + (n === 1 ? '' : 's') : 'Save a measurement first') + '</button><div class="log" id="xc-log"></div>' +
+    '<div id="xc-out">' + (M3.xc ? m3CrossResult(M3.xc) : '') + '</div></div>';
+}
+function m3CrossPrompt(){
+  var m = ST.meta || {};
+  var lines = MEASURES.map(function(x){ return '- ' + x.room + ' | ' + x.label + ' | ' + m3Fmt(x.meters, 'ft') + ' (' + x.meters.toFixed(3) + ' m) | ' + (x.source === 'scan' ? 'from 3D scan, ' + (x.view === '2d' ? 'horizontal plan distance' : 'straight-line 3D distance') : 'measured by hand') + (x.note ? ' | note: ' + x.note : ''); }).join('\n');
+  return 'You are an architect cross-checking field measurements against architectural drawings for ' + (m.address || 'this property') + '.\n' +
+    'Field measurements (room | what | length | source):\n' + lines + '\n\n' +
+    'Read the attached drawings. For each field measurement, find the matching dimension on the drawings (same room and wall or item). ' +
+    'Compare them. Status: "match" if within 1 inch (25 mm), "check" if 1 to 3 inches off, "mismatch" if more than 3 inches off, "not-on-drawing" if the drawings do not show that dimension. ' +
+    'Also list dimensions on the drawings for these rooms that nobody has measured yet, as suggestions.\n' +
+    'Return ONLY valid JSON, no other text: {"summary":"one or two sentences","rows":[{"room":"","item":"","measured":"as given","drawing":"dimension on the drawing, or empty","difference":"e.g. +2 in, or empty","status":"match|check|mismatch|not-on-drawing","note":"what to fix or confirm"}],"suggestions":["dimension worth measuring next"]}. ' +
+    'Order rows mismatch first, then check, then not-on-drawing, then match. If the file is not a drawing, say so in summary and return empty arrays.';
+}
+function m3CrossRun(){
+  var f = $('xc-file').files[0], log = $('xc-log'), btn = $('xc-go');
+  if (!f) { log.textContent = 'Choose the drawings first.'; return; }
+  if (f.size > 3 * 1024 * 1024) { log.textContent = 'That file is over 3 MB. Export just the floor plan sheets.'; return; }
+  btn.disabled = true; btn.textContent = 'Reading drawings…'; M3.xcBusy = true; log.textContent = 'Comparing ' + MEASURES.length + ' measurements… this takes about a minute.';
+  readFile(f).then(function(b64){
+    var content = [f.type === 'application/pdf' ? { type: 'document', source: { type: 'base64', media_type: 'application/pdf', data: b64 } } : { type: 'image', source: { type: 'base64', media_type: f.type, data: b64 } },
+                   { type: 'text', text: m3CrossPrompt() }];
+    return fetch('/api/analyze', { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'same-origin', body: JSON.stringify({ max_tokens: 4000, messages: [{ role: 'user', content: content }] }) });
+  }).then(function(r){ return r.json().then(function(j){ return { ok: r.ok, j: j }; }); }).then(function(x){
+    if (!x.ok) throw new Error((x.j.error && (x.j.error.message || (x.j.error.error && x.j.error.error.message))) || 'The AI engine returned an error.');
+    var txt = (x.j.content || []).map(function(b){ return b.text || ''; }).join(''), mm = txt.match(/\{[\s\S]*\}/);
+    if (!mm) throw new Error('Couldn’t read the result. Try again.');
+    var result = JSON.parse(mm[0]); M3.xc = result;
+    $('xc-out').innerHTML = m3CrossResult(result); log.textContent = 'Done. Saved to this project.';
+    return api('/api/tools', { project: PID, action: 'save-result', tool: 'crosscheck', title: 'Scan vs drawings — ' + f.name, fileName: f.name, result: result }).then(function(s){ if (s.ok) RESULTS.unshift(s.item); });
+  }).catch(function(e){ log.textContent = e.message || 'Something went wrong.'; }).then(function(){ M3.xcBusy = false; btn.disabled = false; btn.textContent = 'Cross-check ' + MEASURES.length + ' measurements'; });
+}
+function m3CrossResult(r){
+  var rows = r.rows || [], c = { match: 0, check: 0, mismatch: 0, 'not-on-drawing': 0 };
+  rows.forEach(function(x){ c[x.status] = (c[x.status] || 0) + 1; });
+  var pill = { match: 'pass', check: 'warn', mismatch: 'fail', 'not-on-drawing': 'warn' }, word = { match: 'Match', check: 'Check', mismatch: 'Off', 'not-on-drawing': 'Not shown' };
+  return '<div class="card" id="xc-result" style="margin-top:14px;background:var(--d3)"><div class="eyebrow">Scan vs drawings</div><p style="color:var(--w70)">' + esc(r.summary || '') + '</p>' +
+    '<div class="kpis"><div class="kpi"><b style="color:#f0a996">' + c.mismatch + '</b><span>Off</span></div><div class="kpi"><b style="color:#e0c67a">' + (c.check + c['not-on-drawing']) + '</b><span>To confirm</span></div><div class="kpi"><b style="color:#8fd6ab">' + c.match + '</b><span>Match</span></div></div>' +
+    rows.map(function(x){ return '<div class="find"><span class="st ' + (pill[x.status] || 'warn') + '">' + esc(word[x.status] || x.status) + '</span><div><div class="t" style="font-weight:700">' + esc(x.room) + ' · ' + esc(x.item) + '</div>' +
+      '<div class="small" style="color:var(--w70)">Measured ' + esc(x.measured || '—') + ' · Drawing ' + esc(x.drawing || '—') + (x.difference ? ' · <b>' + esc(x.difference) + '</b>' : '') + '</div>' + (x.note ? '<div class="small muted">' + esc(x.note) + '</div>' : '') + '</div></div>'; }).join('') +
+    ((r.suggestions || []).length ? '<div class="eyebrow" style="margin-top:12px">Worth measuring next</div>' + r.suggestions.map(function(q){ return '<div class="small" style="color:var(--w70)">• ' + esc(q) + '</div>'; }).join('') : '') + '</div>';
+}
+var _m3RenderResult = renderResult;
+renderResult = function(tool, r){ return tool === 'crosscheck' ? m3CrossResult(r) : _m3RenderResult(tool, r); };
+
+/* ── viewer ── */
+function viewScan(id){ SCAN_VIEW = SCANS.filter(function(s){ return s.id === id; })[0]; if (!M3.scanId || M3.scanId !== id) { m3Dispose(); M3.pending = null; M3.pts = []; } render(); window.scrollTo(0, 0); }
+function m3Mode(k){ if (M3.mode === k) return; M3.mode = k; if (k === 'ar') { M3.measuring = false; } m3ClearPick(); render(); }
+function m3ToggleMeasure(){ M3.measuring = !M3.measuring; if (!M3.measuring) m3ClearPick(); var b = $('m3-measure'); if (b) { b.className = 'btn sm' + (M3.measuring ? ' pri' : ''); b.textContent = M3.measuring ? 'Measuring · tap 2 points' : 'Measure'; } var hn = $('m3-hint'); if (hn) hn.textContent = m3Hint(); }
+function m3Cut(v){ M3.cut = Number(v); var t = $('m3-cut-v'); if (t) t.textContent = m3Fmt(M3.cut); m3ApplyMode(); }
+function m3Dispose(){
+  var V = M3.v; if (!V) return;
+  try { V.ro && V.ro.disconnect(); V.renderer.dispose(); } catch (e) {}
+  M3.v = null; M3.dom = null; M3.scanId = null;
+}
+function afterScanRender(){
+  if (!SCAN_VIEW) return;
+  var s = SCAN_VIEW;
+  if (s.ext === 'usdz' || M3.mode === 'ar') {
+    fetchScan(s).then(function(url){
+      if (!$('viewer-slot') || SCAN_VIEW !== s) return;
+      if (s.ext === 'usdz') { $('viewer-slot').innerHTML = '<a class="btn pri" rel="ar" href="' + url + '" download="' + esc(s.name) + '">Open in AR / download</a><div class="muted small" style="margin-top:8px">USDZ opens in AR Quick Look on iPhone and iPad. Export GLB to view, measure and see it as a 2D plan in the browser.</div>'; return; }
+      if (!MV_LOADED) { MV_LOADED = true; var sc = document.createElement('script'); sc.type = 'module'; sc.src = 'https://cdn.jsdelivr.net/npm/@google/model-viewer@3/dist/model-viewer.min.js'; document.head.appendChild(sc); }
+      $('viewer-slot').innerHTML = '<model-viewer id="mv" src="' + url + '" camera-controls touch-action="pan-y" auto-rotate ar shadow-intensity="0.6" exposure="1" alt="3D scan: ' + esc(s.label) + '"></model-viewer><a class="btn sm" style="margin-top:10px" href="' + url + '" download="' + esc(s.name) + '">Download .glb</a>';
+    }).catch(function(e){ if ($('viewer-slot')) $('viewer-slot').innerHTML = '<div class="msg" style="display:block">' + esc(e.message) + '</div>'; });
+    return;
+  }
+  // keep one live viewer across page refreshes, so a measurement in progress isn't lost
+  if (M3.dom && M3.scanId === s.id) { $('viewer-slot').innerHTML = ''; $('viewer-slot').appendChild(M3.dom); m3ApplyMode(); m3Resize(); return; }
+  m3Dispose(); M3.scanId = s.id;
+  var wrap = document.createElement('div'); wrap.id = 'm3-wrap';
+  wrap.style.cssText = 'position:relative;width:100%;height:' + (window.innerWidth <= 640 ? 340 : 440) + 'px;background:#0d0d11;border-radius:14px;overflow:hidden;touch-action:none';
+  wrap.innerHTML = '<div id="m3-status" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--w50);font-size:13px">Loading model…</div>';
+  M3.dom = wrap; $('viewer-slot').innerHTML = ''; $('viewer-slot').appendChild(wrap);
+  Promise.all([fetchScan(s), import('three'), import('three/addons/controls/OrbitControls.js'), import('three/addons/loaders/GLTFLoader.js')]).then(function(r){
+    if (M3.scanId !== s.id) return;
+    m3Build(r[0], r[1], r[2].OrbitControls, r[3].GLTFLoader, wrap);
+  }).catch(function(e){ var st = wrap.querySelector('#m3-status'); if (st) st.textContent = 'Couldn’t open the 3D viewer: ' + (e && e.message || e); });
+}
+function m3Build(url, THREE, OrbitControls, GLTFLoader, wrap){
+  var W = wrap.clientWidth, H = wrap.clientHeight;
+  var renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2)); renderer.setSize(W, H); renderer.localClippingEnabled = true;
+  renderer.domElement.style.display = 'block'; renderer.domElement.id = 'm3-canvas';
+  var scene = new THREE.Scene(); scene.background = new THREE.Color(0x0d0d11);
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x444444, 1.1));
+  scene.add(new THREE.AmbientLight(0xffffff, 0.45));
+  var dl = new THREE.DirectionalLight(0xffffff, 0.9); dl.position.set(3, 10, 6); scene.add(dl);
+  var persp = new THREE.PerspectiveCamera(50, W / H, 0.01, 2000);
+  var ortho = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.01, 2000);
+  var overlay = new THREE.Group(); scene.add(overlay);
+  var saved = new THREE.Group(); scene.add(saved);
+  var labels = document.createElement('div'); labels.style.cssText = 'position:absolute;inset:0;pointer-events:none;overflow:hidden'; wrap.appendChild(labels);
+  var scale = document.createElement('div'); scale.id = 'm3-scale'; scale.style.cssText = 'position:absolute;left:12px;bottom:12px;display:none;font-size:11px;color:#D9DAD4;pointer-events:none'; wrap.appendChild(scale);
+  var plane = new THREE.Plane(new THREE.Vector3(0, -1, 0), 0);
+  var V = M3.v = { THREE: THREE, renderer: renderer, scene: scene, persp: persp, ortho: ortho, overlay: overlay, saved: saved, labels: labels, scaleEl: scale, plane: plane, model: null, wrap: wrap };
+  wrap.appendChild(renderer.domElement);
+  var cp = new OrbitControls(persp, renderer.domElement), co = new OrbitControls(ortho, renderer.domElement);
+  co.enableRotate = false; co.screenSpacePanning = true;
+  co.mouseButtons = { LEFT: THREE.MOUSE.PAN, MIDDLE: THREE.MOUSE.DOLLY, RIGHT: THREE.MOUSE.PAN }; co.touches = { ONE: THREE.TOUCH.PAN, TWO: THREE.TOUCH.DOLLY_PAN };
+  V.cp = cp; V.co = co;
+  cp.addEventListener('change', m3Render); co.addEventListener('change', m3Render);
+  new GLTFLoader().load(url, function(g){
+    if (M3.v !== V) return;
+    var model = g.scene; V.model = model; scene.add(model);
+    var box = new THREE.Box3().setFromObject(model), size = box.getSize(new THREE.Vector3()), c = box.getCenter(new THREE.Vector3());
+    V.box = box; V.center = c; V.diag = size.length() || 1;
+    model.traverse(function(o){ if (o.isMesh) { (Array.isArray(o.material) ? o.material : [o.material]).forEach(function(m){ m.side = THREE.DoubleSide; }); } });
+    var d = V.diag;
+    persp.position.set(c.x + d * 0.55, c.y + d * 0.6, c.z + d * 0.75); persp.near = d / 500; persp.far = d * 50; persp.updateProjectionMatrix();
+    cp.target.copy(c); cp.update();
+    ortho.position.set(c.x, box.max.y + d, c.z + 1e-4); ortho.near = 0.01; ortho.far = d * 10;   // straight down, north (−z) at the top
+    co.target.set(c.x, box.min.y, c.z); co.update();
+    var st = wrap.querySelector('#m3-status'); if (st) st.remove();
+    m3Resize(); m3ApplyMode(); m3DrawSaved(); m3RedrawPick();
+    V.ready = true; wrap.setAttribute('data-ready', '1');
+  }, undefined, function(e){ var st = wrap.querySelector('#m3-status'); if (st) st.textContent = 'Couldn’t read this scan. Re-export it as GLB and upload again.'; });
+  // tap (not drag) to place a measuring point
+  var down = null;
+  renderer.domElement.addEventListener('pointerdown', function(e){ down = { x: e.clientX, y: e.clientY }; });
+  renderer.domElement.addEventListener('pointerup', function(e){
+    if (!down || !M3.measuring) return;
+    var moved = Math.hypot(e.clientX - down.x, e.clientY - down.y); down = null;
+    if (moved > 6) return;
+    var r = renderer.domElement.getBoundingClientRect();
+    m3PickAt(e.clientX - r.left, e.clientY - r.top);
+  });
+  if (window.ResizeObserver) { V.ro = new ResizeObserver(m3Resize); V.ro.observe(wrap); }
+}
+function m3Cam(){ var V = M3.v; return M3.mode === '2d' ? V.ortho : V.persp; }
+function m3Resize(){
+  var V = M3.v; if (!V) return;
+  var W = V.wrap.clientWidth, H = V.wrap.clientHeight; if (!W || !H) return;
+  V.renderer.setSize(W, H); V.persp.aspect = W / H; V.persp.updateProjectionMatrix();
+  if (V.box) {
+    var size = V.box.getSize(new V.THREE.Vector3()), half = Math.max(size.x / 2 * H / W, size.z / 2) * 1.12, halfW = half * W / H;
+    V.ortho.left = -halfW; V.ortho.right = halfW; V.ortho.top = half; V.ortho.bottom = -half; V.ortho.updateProjectionMatrix();
+  }
+  m3Render();
+}
+function m3ApplyMode(){
+  var V = M3.v; if (!V || !V.model) return;
+  var is2d = M3.mode === '2d';
+  // 2D plan: cut at the chosen height. 3D: dollhouse view, with the ceiling cut away so you can see into the rooms.
+  var ht = V.box.max.y - V.box.min.y;
+  V.plane.constant = is2d ? V.box.min.y + M3.cut : V.box.max.y - Math.max(0.08, ht * 0.04);
+  V.model.traverse(function(o){ if (o.isMesh) (Array.isArray(o.material) ? o.material : [o.material]).forEach(function(m){ m.clippingPlanes = (is2d || M3.dollhouse) ? [V.plane] : []; m.needsUpdate = true; }); });
+  V.cp.enabled = !is2d; V.co.enabled = is2d;
+  V.scaleEl.style.display = is2d ? 'block' : 'none';
+  m3Render();
+}
+function m3Render(){
+  var V = M3.v; if (!V) return;
+  var cam = m3Cam(); V.renderer.render(V.scene, cam);
+  // labels for the pending line and saved lines
+  var W = V.wrap.clientWidth, H = V.wrap.clientHeight, html = '';
+  (V.labelPts || []).forEach(function(L){
+    var p = new V.THREE.Vector3(L.at[0], L.at[1], L.at[2]).project(cam);
+    if (p.z > 1) return;
+    var x = (p.x + 1) / 2 * W, y = (1 - p.y) / 2 * H;
+    html += '<span class="m3-lbl" style="position:absolute;left:' + x.toFixed(1) + 'px;top:' + y.toFixed(1) + 'px;transform:translate(-50%,-130%);white-space:nowrap;font-size:12px;font-weight:700;padding:2px 8px;border-radius:20px;' +
+      (L.pending ? 'background:#D5DC99;color:#000' : 'background:rgba(0,0,0,.72);color:#D9DAD4;border:1px solid rgba(217,218,212,.3)') + '">' + esc(L.text) + '</span>';
+  });
+  V.labels.innerHTML = html;
+  if (M3.mode === '2d' && V.box) {   // scale bar
+    var wpp = (V.ortho.right - V.ortho.left) / V.ortho.zoom / W;   // meters per pixel
+    var target = wpp * 110, steps = M3.units === 'ft' ? [1, 2, 5, 10, 20, 50].map(function(f){ return f * 0.3048; }) : [0.25, 0.5, 1, 2, 5, 10, 20];
+    var len = steps.filter(function(s){ return s <= target; }).pop() || steps[0], px = len / wpp;
+    V.scaleEl.innerHTML = '<div style="width:' + px.toFixed(0) + 'px;height:6px;border:2px solid #D9DAD4;border-top:none"></div><div style="margin-top:2px">' + (M3.units === 'ft' ? Math.round(len / 0.3048) + ' ft' : len + ' m') + '</div>';
+  }
+}
+function m3PickAt(x, y){
+  var V = M3.v; if (!V || !V.model) return false;
+  var THREE = V.THREE, W = V.wrap.clientWidth, H = V.wrap.clientHeight;
+  var rc = new THREE.Raycaster(); rc.setFromCamera(new THREE.Vector2(x / W * 2 - 1, -(y / H) * 2 + 1), m3Cam());
+  var hits = rc.intersectObject(V.model, true);
+  if (M3.mode === '2d' || M3.dollhouse) hits = hits.filter(function(h){ return h.point.y <= V.plane.constant + 1e-4; });
+  if (!hits.length) return false;
+  m3AddPoint(hits[0].point.toArray());
+  return true;
+}
+function m3AddPoint(p){
+  if (M3.pts.length >= 2) { M3.pts = []; M3.pending = null; }
+  M3.pts.push(p);
+  if (M3.pts.length === 2) {
+    var a = M3.pts[0], b = M3.pts[1], is2d = M3.mode === '2d';
+    var d = is2d ? Math.hypot(a[0] - b[0], a[2] - b[2]) : Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]);
+    var prev = M3.lastRoom || '';
+    M3.pending = { a: a, b: b, meters: d, view: is2d ? '2d' : '3d', room: prev, label: '' };
+  }
+  m3RedrawPick();
+  var el = $('m3-pending'); if (el) el.innerHTML = m3PendingHtml();
+  if (M3.pending && $('m3-room')) { (M3.pending.room ? $('m3-what') : $('m3-room')).focus({ preventScroll: true }); }
+}
+function m3ClearPick(){ M3.pts = []; M3.pending = null; m3RedrawPick(); var el = $('m3-pending'); if (el) el.innerHTML = ''; }
+function m3Discard(){ m3ClearPick(); }
+function m3Line(group, a, b, color, flat){
+  var V = M3.v, THREE = V.THREE, r = V.diag * 0.006;
+  var mat = new THREE.MeshBasicMaterial({ color: color, depthTest: false, transparent: true });
+  [a, b].forEach(function(p){ if (!p) return; var s = new THREE.Mesh(new THREE.SphereGeometry(r, 12, 8), mat); s.position.set(p[0], p[1], p[2]); s.renderOrder = 10; group.add(s); });
+  if (a && b) {
+    var bb = flat ? [b[0], a[1], b[2]] : b;
+    var g = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(a[0], a[1], a[2]), new THREE.Vector3(bb[0], bb[1], bb[2])]);
+    var l = new THREE.Line(g, new THREE.LineBasicMaterial({ color: color, depthTest: false, transparent: true })); l.renderOrder = 10; group.add(l);
+  }
+}
+function m3Clear(group){ while (group.children.length) { var o = group.children.pop(); o.geometry && o.geometry.dispose(); } }
+function m3RedrawPick(){
+  var V = M3.v; if (!V || !V.model) return;
+  m3Clear(V.overlay);
+  V.labelPts = (V.labelPts || []).filter(function(L){ return !L.pending; });
+  if (M3.pts.length) {
+    m3Line(V.overlay, M3.pts[0], M3.pts[1], 0xD5DC99, M3.pending && M3.pending.view === '2d');
+    if (M3.pending) { var a = M3.pts[0], b = M3.pts[1]; V.labelPts.push({ pending: true, at: [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2, (a[2] + b[2]) / 2], text: m3Fmt(M3.pending.meters) }); }
+  }
+  m3Render();
+}
+function m3DrawSaved(){
+  var V = M3.v; if (!V || !V.model) return;
+  m3Clear(V.saved);
+  var pend = (V.labelPts || []).filter(function(L){ return L.pending; });
+  V.labelPts = pend;
+  MEASURES.forEach(function(m){
+    if (m.source !== 'scan' || m.scanId !== M3.scanId || !m.a || !m.b || !M3.showSaved) return;
+    m3Line(V.saved, m.a, m.b, 0xB79CFF, m.view === '2d');
+    V.labelPts.push({ at: [(m.a[0] + m.b[0]) / 2, (m.a[1] + m.b[1]) / 2, (m.a[2] + m.b[2]) / 2], text: m.label + ' · ' + m3Fmt(m.meters) });
+  });
+  m3Render();
+}
+function m3SavePending(){
+  var p = M3.pending, log = $('m3-log'); if (!p) return;
+  p.room = ($('m3-room').value || '').trim(); p.label = ($('m3-what').value || '').trim();
+  if (!p.room) { log.textContent = 'Add the room.'; $('m3-room').focus(); return; }
+  $('m3-save').disabled = true;
+  api('/api/tools', { project: PID, action: 'measure-add', source: 'scan', scanId: M3.scanId, view: p.view, room: p.room, label: p.label || 'Measurement', meters: p.meters, a: p.a, b: p.b }).then(function(j){
+    if (!j.ok) { $('m3-save').disabled = false; log.textContent = 'Couldn’t save (' + (j.error || 'error') + ').'; return; }
+    M3.lastRoom = p.room; MEASURES = j.measures; m3ClearPick(); m3RenderList(); m3DrawSaved(); toast('Measurement saved');
+  });
+}
+
+m3LoadMeasures();
+/* SCAN3D_END */</script>
+<script id="tour-front">/* TOUR_FRONT_START */
+/* ══════════════════════════════════════════════════
+   GUIDED TOURS — tooltip-led onboarding for each tool (workspace).
+   Started from the dashboard toolkit (localStorage cg_tour_next) or the practice-project banner.
+   ══════════════════════════════════════════════════ */
+var TOURS = {
+  schedule:{name:'Timeline + tasks', steps:[
+    {tab:'schedule', sel:'[data-tab="schedule"]', t:'One schedule for everyone', b:'Your client, your trades and you all see the same timeline — no more “when are you starting?” texts.'},
+    {tab:'schedule', sel:'#sched-template', alt:'#timeline-card', t:'Start from a template', b:'One tap lays out every phase for this kind of job. Then drag the dates to fit.'},
+    {tab:'schedule', sel:'#tk-title', t:'Assign tasks', b:'Add a task, pick who owns it and a due date. Trades see their own list when they sign in.'},
+    {tab:'schedule', sel:'#tk-go', t:'Your turn', b:'Add your first task — try “Order windows” for next Friday.'}]},
+  decisions:{name:'Change orders + approvals', steps:[
+    {tab:'decisions', sel:'[data-tab="decisions"]', t:'Change orders, signed', b:'Every change, price and approval lives here with a time stamp — the end of “I never agreed to that.”'},
+    {tab:'decisions', sel:'#co-title', t:'Describe the change', b:'Say what’s changing in plain words, like “Upgrade to a 200A panel.”'},
+    {tab:'decisions', sel:'#co-amt', t:'Add the price', b:'The owner sees exactly what it adds to the contract before they sign.'},
+    {tab:'decisions', sel:'#co-photos', alt:'#co-desc', t:'Show why', b:'Attach photos from the site. Approvals go faster when the owner can see the problem.'},
+    {tab:'decisions', sel:'#co-go', t:'Send it', b:'The owner approves with a signature from their phone, and you’re notified the moment they do.'}]},
+  codecheck:{name:'Code check', steps:[
+    {tab:'tools', tool:'codecheck', sel:'[data-tool="codecheck"]', t:'Catch it before plan check does', b:'Upload a plan set and get findings with code sections — egress, clearances, stairs, smoke alarms, energy.'},
+    {tab:'tools', tool:'codecheck', sel:'#ai-file', t:'Drop in the plans', b:'PDF or a photo of the sheets, up to 3 MB.'},
+    {tab:'tools', tool:'codecheck', sel:'#ai-jur', t:'Right code, right city', b:'We apply the code your jurisdiction adopted, plus local amendments we know about.'},
+    {tab:'tools', tool:'codecheck', sel:'#ai-go', t:'Run it', b:'About a minute later: what to fix, what to review and what passes. Results save to the project for your client to see.'}]},
+  plans:{name:'Plan analysis', steps:[
+    {tab:'tools', tool:'plans', sel:'[data-tool="plans"]', t:'Plans in, scope out', b:'Square footage, rooms, scope by trade, open questions and risks — ready to price or send to subs.'},
+    {tab:'tools', tool:'plans', sel:'#ai-file', t:'Upload a plan set', b:'Any PDF or photo of the plans.'},
+    {tab:'tools', tool:'plans', sel:'#ai-go', t:'Analyze', b:'Every result is saved under Saved results, so the whole team works from the same numbers.'}]},
+  scan:{name:'3D scan + measure', steps:[
+    {tab:'tools', tool:'scan', sel:'[data-tool="scan"]', alt:'#scan-file', t:'Walk the site in 3D', b:'Scan a room with an iPhone or iPad Pro (Polycam, Scaniverse or 3d Scanner App) and upload it here.'},
+    {tab:'tools', tool:'scan', sel:'#scan-label', t:'Name the space', b:'“Kitchen — existing conditions” keeps every scan easy to find.'},
+    {tab:'tools', tool:'scan', sel:'#scan-file', t:'Upload the GLB', b:'Then measure in 3D or on a flat 2D plan, save every wall by room, and check them against the drawings.'},
+    {tab:'tools', tool:'scan', sel:'#scan-go', t:'Share it', b:'Your client and trades can orbit the model from their phones — no app needed.'}]},
+  team:{name:'Team + trades', steps:[
+    {tab:'controls', sel:'[data-tab="controls"]', t:'Bring your team in', b:'Your client and every trade get their own sign-in. Everyone sees what they need — and nothing they shouldn’t.'},
+    {tab:'controls', sel:'#t-name', t:'Who are you inviting?', b:'Name plus email or mobile number. They get a link to set a password.'},
+    {tab:'controls', sel:'#t-role', t:'Pick their role', b:'Homeowner, trade or designer. Trades never see pricing or change orders.'},
+    {tab:'controls', sel:'#t-go', t:'Create the link', b:'Text it or email it. When they join, they show up on your team right away.'}]},
+  subs:{name:'Find a sub', steps:[
+    {tab:'overview', sel:'#find-sub', t:'Need a trade fast?', b:'Invite a sub you already trust, or ask Common Ground for 3–5 top-rated, licensed options near the job.'},
+    {tab:'overview', sel:'#find-sub .btn', t:'Within 12 hours', b:'Tell us the trade and the job. We send the short list to your project and your inbox.'}]},
+  progress:{name:'Progress updates', steps:[
+    {tab:'overview', sel:'#progress-card', t:'Keep your client in the loop', b:'Post where the job stands — they see it instantly instead of calling you.'},
+    {tab:'overview', sel:'#u-phase', t:'Pick the phase', b:'Demolition, framing, rough-ins… the phases match a real construction schedule.'},
+    {tab:'overview', sel:'#u-pct', t:'Slide the percent', b:'Five-percent steps. Your client’s progress bar moves with it.'},
+    {tab:'overview', sel:'#u-save', t:'Post it', b:'Saved with a time stamp so the history is always there.'}]},
+  design:{name:'Design approvals', steps:[
+    {tab:'decisions', sel:'#da-card', alt:'[data-tab="decisions"]', t:'Selections, signed off', b:'Send finishes, fixtures and layouts to your client for a signed approval — no more lost email threads.'},
+    {tab:'decisions', sel:'#da-title', t:'What needs approval', b:'For example “Primary bath tile — Calacatta 24×48.”'},
+    {tab:'decisions', sel:'#da-go', t:'Send it', b:'Your client signs from their phone; the GC sees it too, so it gets built the way you designed it.'}]}
+};
+var TOUR = null;
+function tourWait(sel, alt, ms){
+  return new Promise(function(res){
+    var t0 = Date.now();
+    (function poll(){
+      var el = document.querySelector(sel) || (alt && document.querySelector(alt));
+      if (el && el.getBoundingClientRect().height > 0) return res(el);
+      if (Date.now() - t0 > ms) return res(null);
+      setTimeout(poll, 100);
+    })();
+  });
+}
+function tourEls(){
+  var spot = document.getElementById('tour-spot'), bub = document.getElementById('tour-bub');
+  if (!spot) {
+    spot = document.createElement('div'); spot.id = 'tour-spot';
+    spot.style.cssText = 'position:fixed;z-index:9998;pointer-events:none;border-radius:12px;box-shadow:0 0 0 3px #D5DC99,0 0 0 9999px rgba(0,0,0,.62);transition:all .25s ease';
+    bub = document.createElement('div'); bub.id = 'tour-bub'; bub.setAttribute('role', 'dialog'); bub.setAttribute('aria-live', 'polite');
+    bub.style.cssText = 'position:fixed;z-index:9999;width:min(320px,calc(100vw - 24px));box-sizing:border-box;background:#17161C;border:1px solid #D5DC99;border-radius:14px;padding:14px 16px;box-shadow:0 20px 60px rgba(0,0,0,.6);color:#FDFFFE;font-family:inherit;transition:top .25s ease,left .25s ease';
+    document.body.appendChild(spot); document.body.appendChild(bub);
+    window.addEventListener('resize', tourPlace); window.addEventListener('scroll', tourPlace, true);
+  }
+  return {spot:spot, bub:bub};
+}
+function tourPlace(){
+  if (!TOUR || !TOUR.el) return;
+  if (!document.body.contains(TOUR.el)) {                 // the page re-rendered under the tour: find the same spot again
+    var st = TOURS[TOUR.key].steps[TOUR.i], again = document.querySelector(st.sel) || (st.alt && document.querySelector(st.alt));
+    if (!again) return; TOUR.el = again;
+  }
+  var r = TOUR.el.getBoundingClientRect(), e = tourEls(), pad = 6, vw = window.innerWidth, vh = window.innerHeight;
+  e.spot.style.left = (r.left - pad)+'px'; e.spot.style.top = (r.top - pad)+'px'; e.spot.style.width = (r.width + pad*2)+'px'; e.spot.style.height = (r.height + pad*2)+'px';
+  var bw = e.bub.offsetWidth, bh = e.bub.offsetHeight;
+  var top = r.bottom + 14; if (top + bh > vh - 10) top = Math.max(10, r.top - bh - 14);
+  var left = Math.min(Math.max(12, r.left), vw - bw - 12);
+  e.bub.style.top = top+'px'; e.bub.style.left = left+'px';
+}
+function tourShow(i){
+  if (!TOUR) return;
+  var steps = TOURS[TOUR.key].steps;
+  if (i < 0) i = 0;
+  if (i >= steps.length) return tourEnd(true);
+  TOUR.i = i;
+  var st = steps[i];
+  if (st.tab && (TAB !== st.tab || (st.tool && TOOL !== st.tool))) go(st.tab, st.tool);
+  tourWait(st.sel, st.alt, 2500).then(function(el){
+    if (!TOUR || TOUR.i !== i) return;
+    if (!el) return tourShow(i + (TOUR.dir || 1));               // a step that doesn't apply to this view is skipped
+    TOUR.el = el;
+    el.scrollIntoView({block:'center', behavior:'auto'});
+    var e = tourEls(), last = i === steps.length - 1;
+    var btn = 'border-radius:8px;padding:8px 13px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit';
+    e.bub.innerHTML = '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><span style="font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#D5DC99">'+esc(TOURS[TOUR.key].name)+'</span>'+
+        '<span style="margin-left:auto;font-size:11px;color:rgba(253,255,254,.5)">'+(i+1)+' / '+steps.length+'</span></div>'+
+      '<div style="font-family:Bungee,sans-serif;font-size:15px;line-height:1.3;margin-bottom:6px">'+esc(st.t)+'</div>'+
+      '<div style="font-size:13px;line-height:1.55;color:rgba(253,255,254,.78)">'+esc(st.b)+'</div>'+
+      '<div style="display:flex;gap:8px;margin-top:12px;align-items:center"><button id="tour-skip" onclick="tourEnd(false)" style="'+btn+';background:none;border:none;color:rgba(253,255,254,.5);padding-left:0">Skip tour</button>'+
+        '<span style="flex:1"></span>'+(i ? '<button id="tour-back" onclick="TOUR.dir=-1;tourShow('+(i-1)+')" style="'+btn+';background:none;border:1px solid rgba(253,255,254,.2);color:#FDFFFE">Back</button>' : '')+
+        '<button id="tour-next" onclick="TOUR.dir=1;tourShow('+(i+1)+')" style="'+btn+';background:#D5DC99;border:none;color:#000">'+(last ? 'Try it' : 'Next')+'</button></div>';
+    e.spot.style.display = e.bub.style.display = 'block';
+    setTimeout(tourPlace, 30); tourPlace();
+  });
+}
+function tourStart(key){
+  if (!TOURS[key]) return;
+  TOUR = {key:key, i:0, dir:1, el:null};
+  tourShow(0);
+}
+function tourEnd(finished){
+  var key = TOUR && TOUR.key, el = TOUR && TOUR.el;
+  TOUR = null;
+  ['tour-spot','tour-bub'].forEach(function(id){ var x = document.getElementById(id); if (x) x.style.display = 'none'; });
+  try { if (key) localStorage.setItem('cg_tour_done_'+key, '1'); } catch(e){}
+  if (finished) { if (typeof toast === 'function') toast('Your turn — it’s all live.'); if (el && el.focus && /INPUT|SELECT|TEXTAREA/.test(el.tagName)) el.focus(); }
+}
+document.addEventListener('keydown', function(e){ if (TOUR && e.key === 'Escape') tourEnd(false); });
+
+/* practice-project banner with every tour one tap away */
+function tourKeysForRole(){ return isDesigner ? ['scan','plans','codecheck','design','team'] : ['schedule','decisions','codecheck','plans','scan','team','subs','progress']; }
+function tourBanner(){
+  var m = (ST && ST.meta) || {};
+  var host = document.getElementById('practice-banner');
+  if (!m.sample) { if (host) host.remove(); return; }
+  if (!host) { host = document.createElement('div'); host.id = 'practice-banner'; var main = $('main'); main.parentNode.insertBefore(host, main); }
+  var mp = getComputedStyle($('main'));   // line up with the page content at any width
+  host.style.cssText = 'max-width:1120px;margin:14px auto -18px;padding:0 '+mp.paddingRight+' 0 '+mp.paddingLeft+';box-sizing:border-box';
+  host.innerHTML = '<div style="background:rgba(183,156,255,.1);border:1px solid rgba(183,156,255,.38);border-radius:14px;padding:12px 14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">'+
+    '<span style="font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#C9B5FF">Practice project</span>'+
+    '<span style="font-size:13px;color:rgba(253,255,254,.75);flex:1;min-width:200px">Try anything here — nothing goes to a real client. Pick a tool for a 1-minute tour:</span>'+
+    '<div style="display:flex;gap:6px;flex-wrap:wrap">'+tourKeysForRole().map(function(k){ return '<button data-tour="'+k+'" onclick="tourStart(\''+k+'\')" style="border-radius:20px;padding:5px 11px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;background:none;border:1px solid rgba(183,156,255,.38);color:#C9B5FF">'+esc(TOURS[k].name)+'</button>'; }).join('')+'</div></div>';
+}
+function tourInit(){
+  var key = null; try { key = localStorage.getItem('cg_tour_next'); localStorage.removeItem('cg_tour_next'); } catch(e){}
+  (function wait(n){
+    if (typeof ST !== 'undefined' && ST && $('main') && $('main').children.length) { tourBanner(); if (key && TOURS[key]) setTimeout(function(){ tourStart(key); }, 250); return; }
+    if (n > 80) return; setTimeout(function(){ wait(n+1); }, 100);
+  })(0);
+}
+tourInit();
+/* TOUR_FRONT_END */</script>
+</body>
+</html>
