@@ -16,7 +16,7 @@
 <link rel="icon" type="image/png" href="/favicon.png?v=2">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=2">
 <meta name="theme-color" content="#111015">
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{--black:#0B0B0E;--d1:#111015;--d2:#17161C;--d3:#1E1D24;--d4:#26252D;--white:#FDFFFE;--lime:#D5DC99;--sage:#737F73;
   --w08:rgba(253,255,254,.08);--w15:rgba(253,255,254,.15);--w30:rgba(253,255,254,.3);--w50:rgba(253,255,254,.55);--w70:rgba(253,255,254,.75);
@@ -28,8 +28,8 @@ button,input,select{font-family:inherit}
 .top{position:sticky;top:0;z-index:20;background:rgba(17,16,21,.94);backdrop-filter:blur(10px);border-bottom:1px solid var(--w08)}
 .bar{max-width:1120px;margin:0 auto;padding:14px 28px;display:flex;align-items:center;gap:12px}
 .mark{display:flex;align-items:center;gap:8px;text-decoration:none}
-.mark b{width:28px;height:28px;border-radius:7px;background:var(--lime);color:var(--black);display:flex;align-items:center;justify-content:center;font-family:Syne,sans-serif;font-size:11px;font-weight:800}
-.mark span{font-family:Syne,sans-serif;font-size:14px;font-weight:700;color:var(--lime)}
+.mark b{width:28px;height:28px;border-radius:7px;background:var(--lime);color:var(--black);display:flex;align-items:center;justify-content:center;font-family:Bungee,sans-serif;font-size:11px;font-weight:800}
+.mark span{font-family:Bungee,sans-serif;font-size:14px;font-weight:700;color:var(--lime)}
 .acct{margin-left:auto;position:relative}
 .chip{display:flex;align-items:center;gap:8px;background:var(--d3);border:1px solid var(--w15);border-radius:30px;padding:5px 12px 5px 5px;color:var(--white);cursor:pointer;font-size:13px;font-weight:600;max-width:240px}
 .chip i{font-style:normal;width:26px;height:26px;border-radius:50%;background:var(--lime);color:var(--black);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex:none}
@@ -40,8 +40,8 @@ button,input,select{font-family:inherit}
 .menu a:hover,.menu button:hover{background:var(--d3);color:var(--white)}
 main{max-width:1120px;margin:0 auto;padding:40px 28px 90px}
 .eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--sage);margin-bottom:8px}
-h1{font-family:Syne,sans-serif;font-size:32px;font-weight:800;letter-spacing:-.03em;line-height:1.2}
-h2{font-family:Syne,sans-serif;font-size:19px;font-weight:700;letter-spacing:-.02em;line-height:1.3}
+h1{font-family:Bungee,sans-serif;font-size:32px;font-weight:800;letter-spacing:-.03em;line-height:1.2}
+h2{font-family:Bungee,sans-serif;font-size:19px;font-weight:700;letter-spacing:-.02em;line-height:1.3}
 .lede{color:var(--w70);margin-top:8px;max-width:620px}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px 18px;border-radius:10px;border:1px solid var(--w15);background:var(--d3);color:var(--white);font-size:14px;font-weight:700;cursor:pointer;text-decoration:none;white-space:nowrap}
 .btn.pri{background:var(--lime);border-color:var(--lime);color:var(--black)}
@@ -57,7 +57,7 @@ h2{font-family:Syne,sans-serif;font-size:19px;font-weight:700;letter-spacing:-.0
 .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
 .pcard{background:var(--d2);border:1px solid var(--w08);border-radius:16px;padding:20px 20px 18px;text-decoration:none;color:inherit;display:flex;flex-direction:column;gap:10px;transition:border-color .15s}
 .pcard:hover{border-color:var(--w30)}
-.pcard .nm{font-family:Syne,sans-serif;font-size:18px;font-weight:700;letter-spacing:-.02em;line-height:1.25}
+.pcard .nm{font-family:Bungee,sans-serif;font-size:18px;font-weight:700;letter-spacing:-.02em;line-height:1.25}
 .pcard .ad{font-size:13px;color:var(--w50)}
 .pills{display:flex;gap:6px;flex-wrap:wrap}
 .pill{display:inline-block;font-size:10.5px;font-weight:700;padding:2px 9px;border-radius:20px;border:1px solid var(--w15);color:var(--w70);white-space:nowrap}
@@ -75,25 +75,25 @@ h2{font-family:Syne,sans-serif;font-size:19px;font-weight:700;letter-spacing:-.0
 .bid .t{font-weight:700}
 .bid .m{font-size:12.5px;color:var(--w50)}
 .upsell{margin-top:16px;background:var(--l10);border:1px solid var(--l20);border-radius:16px;padding:22px 24px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
-.upsell h3{font-family:Syne,sans-serif;font-size:18px;letter-spacing:-.02em}
+.upsell h3{font-family:Bungee,sans-serif;font-size:18px;letter-spacing:-.02em}
 .upsell p{color:var(--w70);font-size:14px;margin-top:4px;max-width:560px}
 .tools{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
 .tool{background:var(--d2);border:1px solid var(--w08);border-radius:16px;padding:20px;text-align:left;color:inherit;cursor:pointer;font:inherit;display:flex;flex-direction:column;gap:8px}
 .tool:hover{border-color:var(--w30)}
-.tool b{font-family:Syne,sans-serif;font-size:16px}
+.tool b{font-family:Bungee,sans-serif;font-size:16px}
 .tool span{font-size:13.5px;color:var(--w70)}
 .chooser{background:var(--d2);border:1px solid var(--l20);border-radius:18px;padding:24px;margin-bottom:34px}
 .cards2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
 #chooser .cards2{grid-template-columns:repeat(3,minmax(0,1fr))}
 @media(max-width:720px){#chooser .cards2{grid-template-columns:1fr}}
 .opt{background:var(--d3);border:1px solid var(--w08);border-radius:14px;padding:18px;text-align:left;color:var(--white);cursor:pointer;font:inherit}
-.opt b{display:block;font-family:Syne,sans-serif;font-size:16px;margin-bottom:4px}
+.opt b{display:block;font-family:Bungee,sans-serif;font-size:16px;margin-bottom:4px}
 .opt span{display:block;font-size:13px;color:var(--w50);line-height:1.5}
 .opt.on{border-color:var(--lime);background:var(--l10)}
 /* modal */
 #m-bg{position:fixed;inset:0;background:rgba(5,5,8,.72);backdrop-filter:blur(4px);z-index:60;display:none;align-items:center;justify-content:center;padding:16px}
 #m{width:100%;max-width:520px;max-height:calc(100vh - 32px);overflow-y:auto;background:var(--d2);border:1px solid var(--w15);border-radius:20px;padding:26px;box-shadow:0 30px 80px rgba(0,0,0,.6);position:relative}
-#m h3{font-family:Syne,sans-serif;font-size:22px;letter-spacing:-.02em;line-height:1.25;margin:4px 0 6px;padding-right:40px}
+#m h3{font-family:Bungee,sans-serif;font-size:22px;letter-spacing:-.02em;line-height:1.25;margin:4px 0 6px;padding-right:40px}
 #m .s{font-size:14px;color:var(--w50);margin-bottom:18px}
 #m label{display:block;font-size:12px;color:var(--sage);margin:0 0 6px}
 #m input,#m select{width:100%;background:var(--d3);border:1px solid var(--w08);border-radius:10px;padding:12px 13px;font-size:15px;color:var(--white);outline:none;margin-bottom:14px}
@@ -127,11 +127,12 @@ input[type=range]{accent-color:#D5DC99;padding:0!important;border:none!important
 </style>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&display=swap" id="brand-kit">
 <style id="brand-v2">
-:root{--black:#000000;--d1:#000000;--d2:#1A1A1A;--d3:#262626;--d4:#333333;--white:#D9DAD4;--sage:#A39684;--stone:#6D604F;--limestone:#D9DAD4;--graphite:#333333;
+:root{--dk:#000000;--black:#000000;--d1:#000000;--d2:#1A1A1A;--d3:#262626;--d4:#333333;--white:#D9DAD4;--sage:#A39684;--stone:#6D604F;--limestone:#D9DAD4;--graphite:#333333;
  --w08:rgba(217,218,212,.10);--w15:rgba(217,218,212,.18);--w30:rgba(217,218,212,.34);--w50:rgba(217,218,212,.6);--w70:rgba(217,218,212,.8)}
 html,body{background:#000}
 .nav,.top{background:rgba(0,0,0,.92)!important}
-h1,h2,#m h3,.pcard .nm,.start h2,.upsell h3{font-family:'Bungee',sans-serif!important;font-weight:400!important;letter-spacing:0!important}
+h1,h2,h3,h4,#m h3,.pcard .nm,.start h2,.upsell h3{font-family:'Bungee',sans-serif!important;font-weight:400!important;letter-spacing:0!important}
+*{font-synthesis:none}
 .mark b,.mark span,.top-mark span{font-family:'Bungee',sans-serif!important;font-weight:400!important;letter-spacing:0!important}
 </style>
 </head>

@@ -8,6 +8,7 @@ import {
   sendEmail, emailLayout, escHtml, siteOrigin, projectTitle, createInvite, addMember, projectMembers, SUPPORT_EMAIL,
   indexUser, projectPath, getProjectMeta, RESERVED_PATHS, BUILTIN, ROLES,
 } from './_lib.js';
+import { rosterState, rosterAction, rosterDocFile } from './_roster.js';
 import { createSubRequest, listSubRequests, publicSubRequest, cancelSubRequest, markSubInvited } from './_subs.js';
 
 export const config = { api: { bodyParser: { sizeLimit: '4.5mb' } } };
@@ -291,6 +292,22 @@ export default async function handler(req, res) {
       if (action === 'sub-cancel') { const out = await cancelSubRequest(project, u, role, clean(b.id, 20)); return res.status(out.status).json(out.body); }
       await markSubInvited(project, clean(b.id, 20), clean(b.option, 20), clean(b.identifier, 120));
       return res.status(200).json({ ok: true });
+    }
+
+    // ════════ TEAM & TRADES roster (send link · hire · work completed + documents) ════════
+    if (action === 'roster' && req.method === 'GET') return res.status(200).json(await rosterState(project, isOwner || isGC));
+    if (action === 'roster-doc' && req.method === 'GET') {
+      if (!(isOwner || isGC)) return res.status(403).json({ error: 'forbidden' });
+      const f = await rosterDocFile(project, clean(q.doc, 40));
+      if (!f) return res.status(404).json({ error: 'not_found' });
+      res.setHeader('Content-Type', f.doc.fileType);
+      res.setHeader('Content-Disposition', `inline; filename="${f.doc.fileName.replace(/[^\w.\- ]/g, '')}"`);
+      res.setHeader('Cache-Control', 'private, no-store');
+      return res.status(200).send(Buffer.from(f.data, 'base64'));
+    }
+    if (req.method === 'POST' && /^roster-/.test(action)) {
+      const [st, body] = await rosterAction(req, project, u, role, isOwner || isGC, action, b);
+      return res.status(st).json(body);
     }
 
     if (req.method === 'GET' && action === 'state') {

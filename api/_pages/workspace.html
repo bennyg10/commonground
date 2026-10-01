@@ -16,7 +16,7 @@
 <link rel="icon" type="image/png" href="/favicon.png?v=2">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=2">
 <meta name="theme-color" content="#111015">
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script type="importmap" id="three-map">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
 <style>
 :root{--black:#0B0B0E;--d1:#111015;--d2:#17161C;--d3:#1E1D24;--d4:#26252D;--white:#FDFFFE;--lime:#D5DC99;--sage:#737F73;
@@ -29,7 +29,7 @@ button,input,select,textarea{font-family:inherit}
 .top{position:sticky;top:0;z-index:20;background:rgba(17,16,21,.95);backdrop-filter:blur(10px);border-bottom:1px solid var(--w08)}
 .bar{max-width:1120px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:12px}
 .mark{display:flex;align-items:center;gap:8px;text-decoration:none;flex:none}
-.mark b{width:28px;height:28px;border-radius:7px;background:var(--lime);color:var(--black);display:flex;align-items:center;justify-content:center;font-family:Syne,sans-serif;font-size:11px;font-weight:800}
+.mark b{width:28px;height:28px;border-radius:7px;background:var(--lime);color:var(--black);display:flex;align-items:center;justify-content:center;font-family:Bungee,sans-serif;font-size:11px;font-weight:800}
 .crumb{font-size:13px;color:var(--w50);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
 .crumb a{color:var(--w70);text-decoration:none}
 .right{margin-left:auto;display:flex;align-items:center;gap:8px;flex:none}
@@ -40,8 +40,8 @@ button,input,select,textarea{font-family:inherit}
 .tab .ct{display:inline-block;min-width:18px;font-size:10px;font-weight:700;padding:1px 6px;border-radius:20px;background:var(--d4);color:var(--w70);margin-left:5px}
 main{max-width:1120px;margin:0 auto;padding:34px 28px 90px}
 .eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--sage);margin-bottom:8px}
-h1{font-family:Syne,sans-serif;font-size:30px;font-weight:800;letter-spacing:-.03em;line-height:1.2}
-h2{font-family:Syne,sans-serif;font-size:18px;font-weight:700;letter-spacing:-.02em;line-height:1.3;margin-bottom:12px}
+h1{font-family:Bungee,sans-serif;font-size:30px;font-weight:800;letter-spacing:-.03em;line-height:1.2}
+h2{font-family:Bungee,sans-serif;font-size:18px;font-weight:700;letter-spacing:-.02em;line-height:1.3;margin-bottom:12px}
 .lede{color:var(--w70);margin-top:6px}
 .muted{color:var(--w50)}.small{font-size:13px}
 .card{background:var(--d2);border:1px solid var(--w08);border-radius:16px;padding:22px 24px;margin-bottom:18px}
@@ -65,7 +65,7 @@ h2{font-family:Syne,sans-serif;font-size:18px;font-weight:700;letter-spacing:-.0
 .stages span.on{background:var(--l10);color:var(--lime);border-color:var(--l20)}
 .track{height:8px;background:var(--d4);border-radius:8px;overflow:hidden;margin:10px 0 6px}
 .fill{height:100%;background:var(--lime)}
-.big{font-family:Syne,sans-serif;font-size:40px;font-weight:800;letter-spacing:-.03em;line-height:1.1}
+.big{font-family:Bungee,sans-serif;font-size:40px;font-weight:800;letter-spacing:-.03em;line-height:1.1}
 label{display:block;font-size:12px;color:var(--sage);margin:0 0 6px}
 input,select,textarea{width:100%;background:var(--d3);border:1px solid var(--w08);border-radius:10px;padding:11px 12px;font-size:14.5px;color:var(--white);outline:none;margin-bottom:12px}
 input:focus,select:focus,textarea:focus{border-color:var(--l20)}
@@ -92,12 +92,12 @@ input[type=file]{padding:10px;font-size:13px}
 .find .st.fail{background:rgba(224,122,95,.16);color:#f0a996}.find .st.warn{background:rgba(201,168,76,.16);color:#e0c67a}.find .st.pass{background:rgba(74,155,111,.16);color:#8fd6ab}
 .kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:14px 0}
 .kpi{background:var(--d3);border-radius:12px;padding:12px 14px}
-.kpi b{display:block;font-family:Syne,sans-serif;font-size:22px}
+.kpi b{display:block;font-family:Bungee,sans-serif;font-size:22px}
 .kpi span{font-size:12px;color:var(--w50)}
 .log{font-size:12.5px;color:var(--w50);margin-top:8px;min-height:18px}
 .steps3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:12px 0 18px}
 .steps3 div{background:var(--d3);border-radius:12px;padding:14px}
-.steps3 b{font-family:Syne,sans-serif;color:var(--lime);font-size:13px}
+.steps3 b{font-family:Bungee,sans-serif;color:var(--lime);font-size:13px}
 .steps3 p{font-size:13px;color:var(--w70);margin-top:4px}
 .prog{height:6px;background:var(--d4);border-radius:6px;overflow:hidden;margin:8px 0;display:none}
 .prog i{display:block;height:100%;width:0;background:var(--lime);transition:width .2s}
@@ -105,7 +105,7 @@ input[type=file]{padding:10px;font-size:13px}
 model-viewer{width:100%;height:420px;background:#0d0d11;border-radius:14px;--poster-color:transparent}
 #m-bg{position:fixed;inset:0;background:rgba(5,5,8,.72);backdrop-filter:blur(4px);z-index:60;display:none;align-items:center;justify-content:center;padding:16px}
 #m{width:100%;max-width:500px;max-height:calc(100vh - 32px);overflow-y:auto;background:var(--d2);border:1px solid var(--w15);border-radius:20px;padding:26px;position:relative}
-#m h3{font-family:Syne,sans-serif;font-size:21px;letter-spacing:-.02em;line-height:1.25;margin-bottom:6px;padding-right:40px}
+#m h3{font-family:Bungee,sans-serif;font-size:21px;letter-spacing:-.02em;line-height:1.25;margin-bottom:6px;padding-right:40px}
 #m p{color:var(--w70);font-size:14px;margin-bottom:14px}
 #m .x{position:absolute;top:14px;right:14px;width:34px;height:34px;border-radius:9px;border:1px solid var(--w08);background:var(--d3);color:var(--w70);font-size:18px;cursor:pointer}
 .acts{display:flex;justify-content:flex-end;gap:8px;margin-top:6px;flex-wrap:wrap}
@@ -119,11 +119,12 @@ model-viewer{width:100%;height:420px;background:#0d0d11;border-radius:14px;--pos
 </style>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&display=swap" id="brand-kit">
 <style id="brand-v2">
-:root{--black:#000000;--d1:#000000;--d2:#1A1A1A;--d3:#262626;--d4:#333333;--white:#D9DAD4;--sage:#A39684;--stone:#6D604F;--limestone:#D9DAD4;--graphite:#333333;
+:root{--dk:#000000;--black:#000000;--d1:#000000;--d2:#1A1A1A;--d3:#262626;--d4:#333333;--white:#D9DAD4;--sage:#A39684;--stone:#6D604F;--limestone:#D9DAD4;--graphite:#333333;
  --w08:rgba(217,218,212,.10);--w15:rgba(217,218,212,.18);--w30:rgba(217,218,212,.34);--w50:rgba(217,218,212,.6);--w70:rgba(217,218,212,.8)}
 html,body{background:#000}
 .nav,.top{background:rgba(0,0,0,.92)!important}
-h1,h2,#m h3,.big{font-family:'Bungee',sans-serif!important;font-weight:400!important;letter-spacing:0!important}
+h1,h2,h3,h4,#m h3,.big{font-family:'Bungee',sans-serif!important;font-weight:400!important;letter-spacing:0!important}
+*{font-synthesis:none}
 .mark b,.mark span,.top-mark span{font-family:'Bungee',sans-serif!important;font-weight:400!important;letter-spacing:0!important}
 </style>
 </head>
@@ -194,7 +195,7 @@ function render(){
   document.title = 'Common Ground — '+(m.name||'Project');
   $('crumb-name').textContent = m.name || '';
   $('role-pill').textContent = {client:'Homeowner',gc:'GC',trade:'Trade',designer:'Designer'}[ROLE] || ROLE;
-  if (S.admin) $('admin-views').innerHTML = ['client','gc','designer','trade'].filter(function(r){return r!==ROLE;}).map(function(r){ return '<a class="btn sm" href="/'+esc(S.path)+'/'+(r==='client'?'homeowner':r)+location.hash+'">'+({client:'Homeowner',gc:'GC',trade:'Trade'}[r])+' view</a>'; }).join(' ');
+  if (S.admin) $('admin-views').innerHTML = ['client','gc','designer','trade'].filter(function(r){return r!==ROLE;}).map(function(r){ return '<a class="btn sm" href="/'+esc(S.path)+'/'+(r==='client'?'homeowner':r)+location.hash+'">'+({client:'Homeowner',gc:'GC',trade:'Trade',designer:'Designer'}[r])+' view</a>'; }).join(' ');
   var tabs = tabsFor(); if (!tabs.some(function(x){return x[0]===TAB;})) TAB='overview';
   var counts = {proposals:(ST.bids||[]).length, decisions:DEC.filter(function(d){return !decClosed(d);}).length, controls:MEMBERS.length, schedule:TASKS.items.filter(function(t){return !t.done;}).length};
   $('tabs').innerHTML = tabs.map(function(t){ return '<button class="tab'+(TAB===t[0]?' on':'')+'" data-tab="'+t[0]+'" onclick="go(\''+t[0]+'\')">'+t[1]+(counts[t[0]]?'<span class="ct">'+counts[t[0]]+'</span>':'')+'</button>'; }).join('');
@@ -486,7 +487,7 @@ function vControls(){
   // invite
   var give = (S.admin||ownerAccount||isGC) ? ['client','gc','designer','trade'] : isDesigner ? ['client','trade'] : [];
   h += '<div class="card"><h2>Invite someone</h2><p class="muted small" style="margin-bottom:12px">Choose who they are — that sets what they see and what they can approve.</p><div class="msg" id="t-msg"></div>'+
-    '<label for="t-role">They are the…</label><select id="t-role">'+give.map(function(r){ return '<option value="'+r+'"'+((isDesigner ? r===(hasOwner()?'trade':'client') : (isGC&&!hasOwner()&&r==='client')||(!isGC&&r==='gc'))?' selected':'')+'>'+{client:'Homeowner (final say on approvals)', gc:'General contractor / GC team', designer:'Designer (interior / architectural)', trade:'Trade / sub'}[r]+'</option>'; }).join('')+'</select>'+
+    '<label for="t-role">They are the…</label><select id="t-role">'+give.map(function(r){ return '<option value="'+r+'"'+((isDesigner ? r===(hasOwner()?'trade':'client') : (isGC&&!hasOwner()&&r==='client')||(!isGC&&r==='gc'))?' selected':'')+'>'+{client:'Homeowner (final say on approvals)', gc:'General Contractor / GC Team', designer:'Designer (Interior / Architectural)', trade:'Trade / Sub'}[r]+'</option>'; }).join('')+'</select>'+
     '<label for="t-name">Name</label><input id="t-name"><label for="t-id">Email or phone</label><input id="t-id"><button class="btn pri" id="t-go" onclick="teamInvite()">Create invite link</button>'+
     (TEAM_LINK?'<div class="linkbox" style="margin-top:12px"><input id="team-link" readonly value="'+esc(TEAM_LINK)+'"><button class="btn sm" onclick="copy(\'team-link\')">Copy</button></div><div class="muted small" style="margin-top:6px">Text or email this link — it lets them set a password and join.</div>':'')+'</div>';
   // project details
@@ -837,11 +838,11 @@ function subRenderModal(){
   var lbl = 'display:block;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--sage);margin:14px 0 6px';
   var inp = 'width:100%;box-sizing:border-box;background:var(--d3);border:1px solid var(--w15);border-radius:9px;padding:11px 12px;font-size:14px;color:var(--white);font-family:inherit;outline:none';
   var btn = 'flex:1;min-height:44px;padding:12px 16px;border-radius:10px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;';
-  var primary = btn + 'background:var(--lime);border:1px solid var(--lime);color:#111015';
+  var primary = btn + 'background:var(--lime);border:1px solid var(--lime);color:#000';
   var grey = btn + 'background:var(--d4);border:1px solid var(--w15);color:var(--w70)';
   var x = '<button id="sub-x" onclick="subClose()" aria-label="Close" style="position:absolute;top:12px;right:12px;width:36px;height:36px;border-radius:50%;background:var(--d3);border:1px solid var(--w08);color:var(--w70);font-size:18px;line-height:1;cursor:pointer;font-family:inherit">×</button>';
   var head = function(eye, title, sub){ return '<div style="font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--sage);margin-bottom:8px">' + eye + '</div>' +
-    '<div style="font-family:Syne,sans-serif;font-size:22px;font-weight:800;line-height:1.25;letter-spacing:-.01em;margin-bottom:6px;padding-right:36px">' + title + '</div>' +
+    '<div style="font-family:Bungee,sans-serif;font-size:22px;font-weight:800;line-height:1.25;letter-spacing:-.01em;margin-bottom:6px;padding-right:36px">' + title + '</div>' +
     (sub ? '<div style="font-size:13px;color:var(--w50);line-height:1.6">' + sub + '</div>' : ''); };
   var tradeSel = function(){
     var known = SUB_TRADES.indexOf(st.trade) >= 0 || !st.trade || st.trade === '__other';
@@ -974,7 +975,7 @@ function subCard(r){
         (o.why ? '<div style="font-size:12px;color:var(--w70);line-height:1.55;margin-top:8px">' + subEsc(o.why) + '</div>' : '') +
         (links.length ? '<div style="display:flex;gap:12px;flex-wrap:wrap;font-size:11px;margin-top:8px">' + links.join('') + '</div>' : '') +
         (o.invited ? '<div style="margin-top:10px;font-size:11px;font-weight:700;color:var(--ok,#4A9B6F)">Invited ✓</div>'
-                   : '<button onclick="subInviteOption(\'' + r.id + '\',\'' + o.id + '\')" style="margin-top:10px;width:100%;min-height:38px;background:var(--lime);border:none;border-radius:8px;font-size:12px;font-weight:700;color:#111015;cursor:pointer;font-family:inherit">Invite to project</button>') +
+                   : '<button onclick="subInviteOption(\'' + r.id + '\',\'' + o.id + '\')" style="margin-top:10px;width:100%;min-height:38px;background:var(--lime);border:none;border-radius:8px;font-size:12px;font-weight:700;color:#000;cursor:pointer;font-family:inherit">Invite to project</button>') +
         '</div>';
     }).join('') + '</div>';
   }
@@ -986,7 +987,7 @@ function subRenderList(){
   if (!reqs.length) { el.innerHTML = ''; el.style.display = 'none'; return; }
   el.style.display = '';
   el.innerHTML = '<div style="background:var(--d3);border:1px solid var(--w08);border-radius:14px;padding:24px 26px;margin-bottom:18px">' +
-    '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px"><div style="font-family:Syne,sans-serif;font-size:15px;font-weight:800;color:rgba(253,255,254,.9);text-transform:uppercase;letter-spacing:-.01em">Sub recommendations</div>' +
+    '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px"><div style="font-family:Bungee,sans-serif;font-size:15px;font-weight:800;color:rgba(253,255,254,.9);text-transform:uppercase;letter-spacing:-.01em">Sub recommendations</div>' +
     '<button onclick="subOpen()" style="margin-left:auto;background:none;border:1px solid var(--w15);border-radius:8px;padding:7px 12px;font-size:11px;font-weight:600;color:var(--w70);cursor:pointer;font-family:inherit">+ Find another sub</button></div>' +
     reqs.map(subCard).join('') + '</div>';
 }

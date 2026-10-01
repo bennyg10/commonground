@@ -18,7 +18,7 @@
 <link rel="icon" type="image/png" href="/favicon.png?v=2">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=2">
 <meta name="theme-color" content="#111015">
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{--black:#0B0B0E;--d1:#111015;--d2:#17161C;--d3:#1E1D24;--d4:#26252D;--white:#FDFFFE;--lime:#D5DC99;--sage:#737F73;
   --w08:rgba(253,255,254,.08);--w15:rgba(253,255,254,.15);--w30:rgba(253,255,254,.3);--w50:rgba(253,255,254,.5);--w70:rgba(253,255,254,.7);
@@ -28,10 +28,10 @@ html,body{min-height:100%;background:var(--d1);color:var(--white);font-family:"D
 body{display:flex;align-items:center;justify-content:center;padding:24px 16px}
 .card{width:100%;max-width:380px;background:var(--d2);border:1px solid var(--w08);border-radius:16px;padding:24px 22px;box-shadow:0 24px 60px rgba(0,0,0,.45)}
 .mark{display:flex;align-items:center;gap:8px;margin-bottom:20px}
-.mark b{width:28px;height:28px;border-radius:7px;background:var(--lime);color:var(--black);display:flex;align-items:center;justify-content:center;font-family:Syne,sans-serif;font-size:11px;font-weight:800}
-.mark span{font-family:Syne,sans-serif;font-size:13px;font-weight:700;color:var(--lime)}
+.mark b{width:28px;height:28px;border-radius:7px;background:var(--lime);color:var(--black);display:flex;align-items:center;justify-content:center;font-family:Bungee,sans-serif;font-size:11px;font-weight:800}
+.mark span{font-family:Bungee,sans-serif;font-size:13px;font-weight:700;color:var(--lime)}
 .eyebrow{font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--sage);margin-bottom:4px}
-h1{font-family:Syne,sans-serif;font-size:20px;font-weight:800;letter-spacing:-.03em;margin-bottom:6px}
+h1{font-family:Bungee,sans-serif;font-size:20px;font-weight:800;letter-spacing:-.03em;margin-bottom:6px}
 .sub{font-size:12px;color:var(--w50);line-height:1.6;margin-bottom:18px}
 label{display:block;font-size:10px;color:var(--sage);margin:0 0 5px}
 input{width:100%;background:var(--d3);border:1px solid var(--w08);border-radius:9px;padding:11px 12px;font-size:14px;color:var(--white);font-family:inherit;outline:none;margin-bottom:12px}
@@ -48,11 +48,12 @@ button.primary:disabled{opacity:.5;cursor:default}
 </style>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&display=swap" id="brand-kit">
 <style id="brand-v2">
-:root{--black:#000000;--d1:#000000;--d2:#1A1A1A;--d3:#262626;--d4:#333333;--white:#D9DAD4;--sage:#A39684;--stone:#6D604F;--limestone:#D9DAD4;--graphite:#333333;
+:root{--dk:#000000;--black:#000000;--d1:#000000;--d2:#1A1A1A;--d3:#262626;--d4:#333333;--white:#D9DAD4;--sage:#A39684;--stone:#6D604F;--limestone:#D9DAD4;--graphite:#333333;
  --w08:rgba(217,218,212,.10);--w15:rgba(217,218,212,.18);--w30:rgba(217,218,212,.34);--w50:rgba(217,218,212,.6);--w70:rgba(217,218,212,.8)}
 html,body{background:#000}
 .nav,.top{background:rgba(0,0,0,.92)!important}
-h1,h2,h3.never{font-family:'Bungee',sans-serif!important;font-weight:400!important;letter-spacing:0!important}
+h1,h2,h3,h4,h3.never{font-family:'Bungee',sans-serif!important;font-weight:400!important;letter-spacing:0!important}
+*{font-synthesis:none}
 .mark b,.mark span,.top-mark span{font-family:'Bungee',sans-serif!important;font-weight:400!important;letter-spacing:0!important}
 </style>
 </head>
@@ -64,7 +65,7 @@ h1,h2,h3.never{font-family:'Bungee',sans-serif!important;font-weight:400!importa
 <script>
 var L = window.CG_LOGIN || {project:'anita', role:'', invite:'', message:'', storage:false};
 var PROJECT_NAMES = {};
-var ROLE_NAMES = {client:'Owner', gc:'General Contractor', trade:'Trade / Sub'};
+var ROLE_NAMES = {client:'Homeowner', gc:'General Contractor', trade:'Trade / Sub', designer:'Designer'};
 var pname = L.projectName || L.project;
 var $ = function(id){ return document.getElementById(id); };
 function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
