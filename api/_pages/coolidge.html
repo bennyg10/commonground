@@ -4878,7 +4878,8 @@ function pjRenderProposals(){
            {t:'Open + compare', d:'Check Compare on two proposals to line them up.', done:PB_CMP.length>1 || !bidding},
            {t:'Choose your GC', d:'Hire one — they get the kickoff checklist.', done:!bidding}]});
   if (bidding && pjIsOwner()) {
-    h += '<div style="background:var(--d3);border:1px solid var(--l20);border-radius:var(--r);padding:14px;margin-bottom:12px">'+
+    h += '<div id="pp-top" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:12px;margin-bottom:12px;align-items:stretch">';
+    h += '<div id="pp-invite-card" style="background:var(--d3);border:1px solid var(--l20);border-radius:var(--r);padding:14px;min-width:0">'+
       '<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px"><i class="ti ti-send" style="font-size:14px;color:var(--lime)"></i><span style="font-size:12px;font-weight:700;color:var(--white)">Invite a GC to bid</span></div>'+
       '<div style="font-size:10px;color:var(--w50);margin-bottom:10px;line-height:1.5">They get a link to upload their proposal and create an account in one step.</div>'+
       '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:6px;margin-bottom:8px">'+
@@ -4892,13 +4893,15 @@ function pjRenderProposals(){
         return '<div style="display:flex;align-items:center;gap:8px;font-size:10px;padding:4px 0;flex-wrap:wrap"><span style="color:var(--white);font-weight:600">'+decEsc(i.name)+'</span><span style="color:var(--w30);overflow-wrap:anywhere">'+decEsc(i.email)+'</span><span style="margin-left:auto;font-weight:700;color:'+(i.status==='submitted'?'var(--ok)':'var(--amb)')+'">'+(i.status==='submitted'?'Submitted ✓':'Invited')+'</span></div>';
       }).join('')+'</div>' : '')+
     '</div>';
-    h += '<div id="pp-upload-card" style="background:var(--d3);border:1px solid var(--w08);border-radius:var(--r);padding:14px;margin-bottom:12px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">'+
-      '<span style="width:34px;height:34px;border-radius:9px;background:var(--l10);border:1px solid var(--l20);display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="ti ti-file-upload" style="font-size:16px;color:var(--lime)"></i></span>'+
-      '<div style="flex:1;min-width:200px"><div style="font-size:12px;font-weight:700;color:var(--white)">Already have a proposal?</div>'+
-      '<div style="font-size:10px;color:var(--w50);line-height:1.5;margin-top:2px">Got one by email or on paper? Upload it yourself — we scan it into the same format and line it up with the others.</div></div>'+
-      '<button onclick="pbBidUploadForm()" id="pp-upload-btn" style="padding:9px 16px;background:var(--lime);border:none;border-radius:8px;font-size:11px;font-weight:700;color:var(--dk);cursor:pointer;font-family:inherit"><i class="ti ti-upload" style="font-size:11px"></i> Upload a proposal</button></div>';
+    h += '<div id="pp-upload-card" ondragover="pbDragOver(event,true)" ondragleave="pbDragOver(event,false)" ondrop="pbDropBid(event)" style="background:var(--d3);border:1.5px dashed var(--w15);border-radius:var(--r);padding:18px 16px;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:6px;transition:border-color .15s,background .15s">'+
+      '<span style="width:40px;height:40px;border-radius:11px;background:var(--l10);border:1px solid var(--l20);display:flex;align-items:center;justify-content:center"><i class="ti ti-file-upload" style="font-size:19px;color:var(--lime)"></i></span>'+
+      '<div style="font-size:13px;font-weight:700;color:var(--white)">Already have a proposal?</div>'+
+      '<div style="font-size:11px;color:var(--w50);line-height:1.55;max-width:320px">Drop a PDF or photo here — we scan it into the same format and line it up with the others.</div>'+
+      '<button onclick="pbBidUploadForm()" id="pp-upload-btn" style="margin-top:6px;padding:9px 16px;background:var(--lime);border:none;border-radius:8px;font-size:11px;font-weight:700;color:var(--dk);cursor:pointer;font-family:inherit"><i class="ti ti-upload" style="font-size:11px"></i> Upload a proposal</button></div>';
+    h += '</div>';
   }
   var narrow = (el.clientWidth || window.innerWidth) < 620;
+  var showTip = pjIsOwner() && bids.some(function(b){ return b.file; }) && !PB_CMP.length && !cgTipSeen('compare');
   var cols = 'minmax(0,1.3fr) minmax(0,1.5fr) 72px minmax(0,.8fr)';
   var head = narrow ? '' : '<div style="display:grid;grid-template-columns:'+cols+';gap:10px;padding:9px 14px;border-bottom:1px solid var(--w08);font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--sage)"><span>General Contractor</span><span>Proposal</span><span style="text-align:center">Compare</span><span style="text-align:right">Decision</span></div>';
   h += '<div style="background:var(--d3);border:1px solid var(--w08);border-radius:var(--r);overflow:hidden;margin-bottom:12px">'+head+
@@ -4917,12 +4920,13 @@ function pjRenderProposals(){
         : '<span style="font-size:10px;color:var(--w30)">No file</span>';
       var box = '<label title="Compare" style="display:inline-flex;align-items:center;gap:6px;cursor:pointer;font-size:10px;font-weight:700;color:'+(cmp?'var(--lime)':'var(--w50)')+'">'+
         '<input type="checkbox" data-cmp="'+b.id+'" '+(cmp?'checked ':'')+(b.file?'':'disabled ')+'onchange="pbToggleCmp('+q+',this.checked)" style="width:18px;height:18px;accent-color:#D5DC99;cursor:pointer;margin:0">'+(narrow?'Compare':'')+'</label>';
+      if (b === bids[0] && showTip) box = narrow ? box + pbCompareTip(true, bids.length) : '<span style="position:relative;display:inline-block">'+box+pbCompareTip(false, bids.length)+'</span>';
       if (narrow) return '<div data-bid="'+b.id+'" style="padding:12px 14px;border-bottom:1px solid var(--w08)'+(cmp?';background:var(--l10)':'')+'">'+
         '<div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:8px"><div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:600;color:var(--white);overflow-wrap:anywhere">'+decEsc(b.gcName)+'</div><div style="font-size:10px;color:var(--w50);margin-top:2px">'+sub+'</div></div><div>'+decision+'</div></div>'+
         docBtns+'<div style="margin-top:9px">'+box+'</div></div>';
       return '<div data-bid="'+b.id+'" style="display:grid;grid-template-columns:'+cols+';gap:10px;align-items:center;padding:12px 14px;border-bottom:1px solid var(--w08)'+(cmp?';background:var(--l10)':'')+'">'+
         '<div style="min-width:0"><div style="font-size:12px;font-weight:600;color:var(--white);overflow-wrap:anywhere">'+decEsc(b.gcName)+'</div><div style="font-size:10px;color:var(--w50);margin-top:2px">'+sub+'</div></div>'+
-        '<div>'+docBtns+'</div><div style="text-align:center">'+box+'</div><div style="text-align:right">'+decision+'</div></div>';
+        '<div>'+docBtns+'</div><div style="text-align:center;position:relative">'+box+'</div><div style="text-align:right">'+decision+'</div></div>';
     }).join('') : '<div style="padding:22px 14px;text-align:center;font-size:11px;color:var(--w30)">No proposals yet. Invite GCs above.</div>')+
   '</div>';
   h += '<div id="pb-compare">'+pbCompareHtml(narrow)+'</div>';
@@ -4932,6 +4936,7 @@ var PB_RESIZE_T = null;
 window.addEventListener('resize', function(){ clearTimeout(PB_RESIZE_T); PB_RESIZE_T = setTimeout(function(){ var s = document.getElementById('sc-proposals'); if (s && s.classList.contains('on')) pjRenderProposals(); }, 200); });
 
 function pbToggleCmp(id, on){
+  if (on) try { localStorage.setItem('cg_tip_compare', '1'); } catch(e){}
   PB_CMP = PB_CMP.filter(function(x){ return x !== id; });
   if (on) { PB_CMP.push(id); if (PB_CMP.length > 3) PB_CMP.shift(); }
   pbSaveCmp();
@@ -4941,14 +4946,31 @@ function pbToggleCmp(id, on){
   var c = document.getElementById('pb-compare'); if (on && c && c.scrollIntoView) c.scrollIntoView({behavior:'smooth', block:'start'});
 }
 
+/* first-visit tip beside the Compare box */
+function pbCompareTip(narrow, n){
+  var txt = n > 1 ? 'Tick two to compare side by side' : 'Tick to see it organized';
+  var x = '<button onclick="event.preventDefault();cgTipDone(\'compare\',this);pjRenderProposals()" aria-label="Close tip" style="background:none;border:none;color:#000;font-size:15px;line-height:1;cursor:pointer;padding:0 0 0 8px;font-family:inherit">×</button>';
+  if (narrow) return '<span data-tip="compare" style="display:inline-flex;align-items:center;margin-left:10px;padding:5px 8px 5px 10px;border-radius:8px;background:#B79CFF;color:#000;font-size:10px;font-weight:700;line-height:1.35;vertical-align:middle">'+txt+x+'</span>';
+  // sits just above the box (over the column heading), pointing down at it
+  return '<span data-tip="compare" style="position:absolute;left:50%;bottom:calc(100% + 4px);transform:translateX(-50%);white-space:nowrap;display:flex;align-items:center;padding:6px 8px 6px 11px;border-radius:9px;background:#B79CFF;color:#000;font-size:11px;font-weight:700;line-height:1.2;box-shadow:0 8px 24px rgba(0,0,0,.4);z-index:3">'+
+    txt+x+'<span style="position:absolute;left:50%;bottom:-6px;margin-left:-6px;border:6px solid transparent;border-bottom:0;border-top-color:#B79CFF"></span></span>';
+}
+/* drag a proposal file onto “Already have a proposal?” */
+function pbDragOver(e, on){ e.preventDefault(); var c = document.getElementById('pp-upload-card'); if (c) { c.style.borderColor = on ? 'var(--lime)' : 'var(--w15)'; c.style.background = on ? 'var(--l10)' : 'var(--d3)'; } }
+function pbDropBid(e){
+  e.preventDefault(); pbDragOver(e, false);
+  var f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+  pbBidUploadForm();
+  if (!f) return;
+  try { var dt = new DataTransfer(); dt.items.add(f); var inp = document.getElementById('pu-file'); if (inp) inp.files = dt.files; } catch(err){}
+  var g = document.getElementById('pu-gc'); if (g) g.focus();
+}
+
 /* compare panel */
 function pbCompareHtml(narrow){
   var sel = PB_CMP.map(pjBid).filter(Boolean);
   if (!pbBids().length) return '';
-  if (!sel.length) return '<div style="border:1px dashed var(--w15);border-radius:var(--r);padding:18px 16px;text-align:center">'+
-    '<i class="ti ti-checkbox" style="font-size:22px;color:var(--lime)"></i>'+
-    '<div style="font-size:12px;font-weight:700;color:var(--white);margin:6px 0 4px">Check Compare on a proposal</div>'+
-    '<div style="font-size:11px;color:var(--w50);line-height:1.6;max-width:460px;margin:0 auto">One proposal: every line item organized, plus what it covers from your list. Two or three: side by side, with why one costs more.</div></div>';
+  if (!sel.length) return '';
   var pending = sel.filter(function(b){ return !b.breakdown; });
   if (pending.length) return pbCard(pending.map(function(b){
     var err = PB_SCAN_ERR[b.id];
@@ -5014,63 +5036,64 @@ function pbSingleHtml(b){
 /* two or three proposals, side by side + why one is higher */
 function pbCatTotals(b){ var m = {}; b.breakdown.items.forEach(function(x){ if (x.optional) return; m[x.category||'Other'] = (m[x.category||'Other']||0) + (Number(x.amount)||0); }); return m; }
 function pbHas(b, scopeId){ return PB_ST[pbCov(b, scopeId).status].score > 0; }
-/* scope X prices that the other proposal leaves out, per priced line:
-   full = every item that line covers is missing there (its whole price is extra scope);
-   part = some of it is missing (the price includes work the other doesn't do, but can't be split) */
-function pbMissingCost(x, y){
-  var sc = pbScope(), out = [];
-  (x.breakdown.items||[]).forEach(function(l){
+function pbList(a){ return a.length < 2 ? a.join('') : a.slice(0,-1).join(', ')+' and '+a[a.length-1]; }
+/* scope every selected proposal includes */
+function pbShared(sel){ var o = {}; pbScope().forEach(function(s){ if (sel.every(function(b){ return pbHas(b, s.id); })) o[s.id] = 1; }); return o; }
+/* what a proposal costs for the shared scope only: drop each priced line whose main purpose isn't shared.
+   A line's main purpose is the scope item marked primary, or — when none is marked — every item it covers. */
+function pbSameScope(b, shared){
+  var sc = pbScope(), extras = [], tot = pbTotal(b);
+  (b.breakdown.items||[]).forEach(function(l){
     if (l.optional || !(Number(l.amount) > 0)) return;
-    var mapped = sc.filter(function(s){ var c = pbCov(x, s.id); return c.lineId === l.id && PB_ST[c.status].score > 0; });
-    var miss = mapped.filter(function(s){ return !pbHas(y, s.id); });
-    if (miss.length) out.push({line:l, scope:miss, full:miss.length === mapped.length, weight:l.amount * miss.length / mapped.length});
+    var mapped = sc.filter(function(s){ var c = pbCov(b, s.id); return c.lineId === l.id && PB_ST[c.status].score > 0; });
+    if (!mapped.length) return;
+    var prim = mapped.filter(function(s){ return pbCov(b, s.id).primary; });
+    var extra = prim.length ? prim.every(function(s){ return !shared[s.id]; }) : mapped.every(function(s){ return !shared[s.id]; });
+    if (extra) extras.push({line:l, scope:mapped.filter(function(s){ return !shared[s.id]; }), alsoShared:mapped.filter(function(s){ return shared[s.id]; })});
   });
-  return out.sort(function(a,b){ return b.weight - a.weight; });   // rough share of the line's price that's missing work
+  extras.sort(function(a,c){ return c.line.amount - a.line.amount; });
+  return {price: tot - pbSum(extras.map(function(e){ return e.line; })), extras: extras};
 }
 function pbWhy(hi, lo){
   var diff = pbTotal(hi) - pbTotal(lo), sc = pbScope(), out = {tone:'mute', headline:'', key:'', bullets:[]};
   var H = pbEsc(hi.gcName), L = pbEsc(lo.gcName);
   var hiMore = [], loMore = [];
   sc.forEach(function(s){ var a = PB_ST[pbCov(hi, s.id).status].score, c = PB_ST[pbCov(lo, s.id).status].score; if (a > c) hiMore.push(s); else if (c > a) loMore.push(s); });
+  var shared = pbShared([hi, lo]), sH = sc.length ? pbSameScope(hi, shared) : {price:pbTotal(hi), extras:[]}, sL = sc.length ? pbSameScope(lo, shared) : {price:pbTotal(lo), extras:[]};
+  var same = sH.price - sL.price, more = sc.length && hiMore.length > loMore.length;
   if (Math.abs(diff) < 1) out.headline = H+' and '+L+' are the same price.';
-  else if (sc.length && hiMore.length > loMore.length) { out.tone = 'ok'; out.headline = H+' is '+pbMoney(diff)+' higher — and more complete.'; }
+  else if (sH.extras.length && same < 0) { out.tone = 'ok'; out.headline = H+' is '+pbMoney(diff)+' higher overall — but '+pbMoney(-same)+' less for the same work'+(more?', and more complete.':'.'); }
+  else if (sH.extras.length && same < diff) { out.tone = more ? 'ok' : 'am'; out.headline = H+' is '+pbMoney(diff)+' higher — '+pbMoney(diff - Math.max(same,0))+' of that is extra scope'+(more?', and it’s more complete.':'.'); }
+  else if (more) { out.tone = 'ok'; out.headline = H+' is '+pbMoney(diff)+' higher — and more complete.'; }
   else if (sc.length && hiMore.length < loMore.length) { out.tone = 'bad'; out.headline = H+' is '+pbMoney(diff)+' higher and covers less of your list.'; }
   else { out.tone = 'am'; out.headline = H+' is '+pbMoney(diff)+' higher for '+(sc.length?'about the same scope':'the scope shown')+'.'; }
-  // the key difference: priced scope one side has and the other leaves out — biggest dollars first
-  var missLo = sc.length ? pbMissingCost(hi, lo) : [], missHi = sc.length ? pbMissingCost(lo, hi) : [];
-  var fullLo = missLo.filter(function(m){ return m.full; }), partLo = missLo.filter(function(m){ return !m.full; });
-  var mLo = pbSum(fullLo.map(function(m){ return m.line; })), mHi = pbSum(missHi.filter(function(m){ return m.full; }).map(function(m){ return m.line; }));
-  var adj = diff - mLo + mHi;
-  var top = missLo[0];
-  if (top && !top.full) {
-    out.key = 'Key difference: '+H+' includes '+top.scope.map(function(s){ return pbEsc(s.item); }).join(', ')+' in its '+pbEsc(top.line.item)+' line ('+pbMoney(top.line.amount)+') — '+L+' doesn’t, so it isn’t pricing the same job.'+
-      (fullLo.length ? ' '+L+' also leaves out '+fullLo.map(function(m){ return pbEsc(m.line.item)+' ('+pbMoney(m.line.amount)+')'; }).join(' and ')+'.' : '')+
-      (adj > 0 ? (fullLo.length ? ' Count those and '+L+' is only about '+pbMoney(adj)+' lower — for a job without the '+pbEsc(top.scope[0].item.split(/[+(\/]/)[0].trim().toLowerCase())+'.' : '')+' Ask '+L+' to price the missing work before comparing totals.'
-        : ' Add the missing work back and '+L+' is no longer cheaper.');
-  } else if (top) {
-    out.key = 'Key difference: '+L+' leaves out '+fullLo.map(function(m){ return pbEsc(m.line.item)+' ('+pbMoney(m.line.amount)+')'; }).join(' and ')+' — '+pbMoney(mLo)+' of '+H+'’s price. '+
-      (adj > 0 ? 'Add those back and the real gap is about '+pbMoney(adj)+', not '+pbMoney(diff)+'.' : 'Add those back and '+L+' is no longer cheaper.')+
-      (partLo.length ? ' It also skips part of '+partLo.map(function(m){ return pbEsc(m.line.item); }).join(', ')+'.' : '');
-  } else if (missHi.length) {
-    out.key = 'Key difference: '+H+' leaves out '+missHi.map(function(m){ return pbEsc(m.line.item); }).join(' and ')+' that '+L+' prices — and is still higher.';
+  // why the totals differ: the work one price includes and the other doesn't — in dollars
+  if (sH.extras.length) {
+    var ex = sH.extras.map(function(e){ return pbEsc(e.line.item)+' ('+pbMoney(e.line.amount)+')'; });
+    var excl = []; sH.extras.forEach(function(e){ e.scope.forEach(function(s){ if (pbCov(lo, s.id).status === 'excluded') excl.push(pbEsc(s.item)); }); });
+    var also = sH.extras.filter(function(e){ return e.alsoShared.length; });
+    out.key = 'Why the totals differ: '+H+'’s price includes '+pbList(ex)+' — '+L+'’s doesn’t. '+
+      'For the same scope, '+H+' comes to about <b>'+pbMoney(sH.price)+'</b> vs '+L+'’s <b>'+pbMoney(sL.price)+'</b> — '+(same < 0 ? pbMoney(-same)+' less.' : same > 0 ? pbMoney(same)+' more.' : 'the same.')+
+      (excl.length ? ' '+L+' lists '+pbList(excl)+' as '+(excl.length===1?'an exclusion':'exclusions')+', so you’d pay for '+(excl.length===1?'it':'them')+' separately.' : '')+
+      (also.length ? ' <span style="font-weight:400;color:var(--w70)">('+pbEsc(also[0].line.item)+' also covers '+pbList(also[0].alsoShared.map(function(x){ return pbEsc(x.item).toLowerCase(); }))+', so the same-scope number is a little low.)</span>' : '');
+  } else if (sL.extras.length) {
+    out.key = 'Why the totals differ: '+L+'’s price includes '+pbList(sL.extras.map(function(e){ return pbEsc(e.line.item)+' ('+pbMoney(e.line.amount)+')'; }))+' that '+H+'’s doesn’t — and '+H+' is still higher.';
   }
   var lumpHi = pbLump(hi), lumpLo = pbLump(lo);
   if (lumpHi || lumpLo) {
-    out.bullets.push((lumpLo ? L : H)+' priced the whole job as one lump sum with no line prices, so the gap can’t be split by category. Compare what’s included below — and ask for a breakdown before signing.');
+    out.bullets.push((lumpLo ? L : H)+' priced the whole job as one number with no line prices, so the gap can’t be split by category. Compare what’s included below — a line-item breakdown is worth asking for before signing.');
   } else {
     var ch = pbCatTotals(hi), cl = pbCatTotals(lo), cats = {};
     Object.keys(ch).concat(Object.keys(cl)).forEach(function(c){ cats[c] = (ch[c]||0) - (cl[c]||0); });
     Object.keys(cats).filter(function(c){ return cats[c] > 0; }).sort(function(a,b){ return cats[b] - cats[a]; }).slice(0,3).forEach(function(c){
       out.bullets.push('<b>'+pbMoney(cats[c])+'</b> of the gap is in '+pbEsc(c)+' ('+H+' '+pbMoney(ch[c]||0)+' vs '+L+' '+pbMoney(cl[c]||0)+').'); });
   }
-  var priced = {}; missLo.forEach(function(m){ m.scope.forEach(function(s){ priced[s.id] = 1; }); });  // already named in the key difference
-  var bundled = hiMore.filter(function(s){ return !priced[s.id]; });
-  if (bundled.length) out.bullets.push(H+' also covers '+bundled.map(function(s){ return pbEsc(s.item); }).join(', ')+' — '+L+' '+(bundled.length===1?'doesn’t':'doesn’t')+' include or only partly covers '+(bundled.length===1?'it':'them')+'. Get a price for '+(bundled.length===1?'it':'them')+' before comparing; missing items usually come back as change orders.');
-  if (loMore.length) out.bullets.push(L+' covers '+loMore.length+' item'+(loMore.length===1?'':'s')+' '+H+' doesn’t: '+loMore.slice(0,4).map(function(s){ return pbEsc(s.item); }).join(', ')+(loMore.length>4?'…':'')+'.');
-  var exLo = lo.breakdown.exclusions||[];
-  if (exLo.length) out.bullets.push(L+'’s own exclusions: '+exLo.map(pbEsc).join('; ')+'.');
-  [hi, lo].forEach(function(b){ var a = (b.breakdown.allowances||[]); if (a.length) out.bullets.push(pbEsc(b.gcName)+' has '+a.length+' open-ended allowance'+(a.length===1?'':'s')+' ('+a.map(function(x){ return pbEsc(x.item)+' '+pbMoney(x.amount)+(x.unit?' '+pbEsc(x.unit):''); }).join(', ')+') — real cost depends on the site.'); });
-  [hi, lo].forEach(function(b){ var o = b.breakdown.items.filter(function(x){ return x.optional; }); if (o.length) out.bullets.push(pbEsc(b.gcName)+'’s total leaves out '+pbMoney(pbSum(o))+' in optional items ('+o.map(function(x){ return pbEsc(x.item); }).join(', ')+').'); });
+  var named = {}; sH.extras.forEach(function(e){ e.scope.forEach(function(s){ named[s.id] = 1; }); });
+  var bundled = hiMore.filter(function(s){ return !named[s.id]; });
+  if (bundled.length) out.bullets.push('Also in '+H+'’s price, not '+L+'’s: '+pbList(bundled.map(function(s){ return pbEsc(s.item); }))+'. Worth getting a price for '+(bundled.length===1?'it':'these')+' from '+L+' so you’re comparing the same job.');
+  if (loMore.length) out.bullets.push('In '+L+'’s price, not '+H+'’s: '+pbList(loMore.slice(0,4).map(function(s){ return pbEsc(s.item); }))+(loMore.length>4?'…':'')+'.');
+  [hi, lo].forEach(function(b){ var a = (b.breakdown.allowances||[]); if (a.length) out.bullets.push(pbEsc(b.gcName)+' has '+a.length+' open-ended allowance'+(a.length===1?'':'s')+' ('+a.map(function(x){ return pbEsc(x.item)+' '+pbMoney(x.amount)+(x.unit?' '+pbEsc(x.unit):''); }).join(', ')+') — the final cost depends on the site.'); });
+  [hi, lo].forEach(function(b){ var o = b.breakdown.items.filter(function(x){ return x.optional; }); if (o.length) out.bullets.push(pbEsc(b.gcName)+'’s total doesn’t include '+pbMoney(pbSum(o))+' in optional items ('+o.map(function(x){ return pbEsc(x.item); }).join(', ')+').'); });
   if (!sc.length) out.bullets.push('Add what you asked for to see which proposal is more complete.');
   return out;
 }
@@ -5081,7 +5104,7 @@ function pbCompareManyHtml(sel, narrow){
   var toneC = {ok:'var(--ok)', am:'var(--amb)', bad:'#E07A5F', mute:'var(--w70)'}[why.tone];
   var toneBg = {ok:'var(--ok15)', am:'var(--am15)', bad:'rgba(224,122,95,.1)', mute:'var(--d3)'}[why.tone];
   var h = '<div style="background:'+toneBg+';border:1px solid '+toneC+';border-radius:var(--r);padding:14px 16px;margin-bottom:12px">'+
-    pbEyebrow('Why is one higher?')+'<div style="font-family:Bungee,sans-serif;font-size:16px;color:'+toneC+';line-height:1.3;margin-bottom:8px">'+why.headline+'</div>'+
+    pbEyebrow('Why the prices differ')+'<div style="font-family:Bungee,sans-serif;font-size:16px;color:'+toneC+';line-height:1.3;margin-bottom:8px">'+why.headline+'</div>'+
     (why.key ? '<div data-key-diff style="font-size:12px;font-weight:700;color:var(--white);line-height:1.55;background:rgba(0,0,0,.25);border-radius:9px;padding:10px 12px;margin-bottom:8px"><i class="ti ti-key" style="color:'+toneC+'"></i> '+why.key+'</div>' : '')+
     why.bullets.map(function(t){ return '<div style="display:flex;gap:8px;font-size:11px;color:var(--w70);line-height:1.6;padding:2px 0"><span style="color:'+toneC+'">•</span><span>'+t+'</span></div>'; }).join('')+
     (sorted.length > 2 ? '<div style="font-size:10px;color:var(--w50);margin-top:6px">Comparing the highest and lowest of the '+sorted.length+' you checked.</div>' : '')+'</div>';
@@ -5096,6 +5119,15 @@ function pbCompareManyHtml(sel, narrow){
   var t = '<div style="display:grid;grid-template-columns:'+gcols+';gap:8px;padding:12px;background:var(--d2)"><div></div>'+sel.map(function(b){
       return '<div style="min-width:0"><div style="font-size:12px;font-weight:700;color:var(--white);overflow-wrap:anywhere">'+pbEsc(b.gcName)+'</div><div style="display:flex;gap:6px;margin-top:5px;flex-wrap:wrap"><button onclick="pbOpenProposal(\''+b.id+'\')" style="background:none;border:none;padding:0;font-size:10px;font-weight:700;color:var(--lime);cursor:pointer;font-family:inherit">Open</button><button onclick="pbToggleCmp(\''+b.id+'\',false)" style="background:none;border:none;padding:0;font-size:10px;color:var(--w50);cursor:pointer;font-family:inherit">Remove</button></div></div>'; }).join('')+'</div>';
   t += row('Base total', tots.map(function(v){ return '<span style="font-family:Bungee,sans-serif;font-size:15px;color:'+(v===minT?'var(--ok)':'var(--white)')+'">'+pbMoney(v)+'</span>'+(v>minT?'<div style="font-size:10px;color:var(--amb)">+'+pbMoney(v-minT)+'</div>':'<div style="font-size:10px;color:var(--ok)">Lowest</div>'); }), {bold:true});
+  if (pbScope().length) {
+    var shAll = pbShared(sel), ss = sel.map(function(b){ return pbSameScope(b, shAll); });
+    if (ss.some(function(x){ return x.extras.length; })) {
+      var minS = Math.min.apply(null, ss.map(function(x){ return x.price; }));
+      t += row('Same scope only<div style="font-size:9px;font-weight:400;color:var(--w50);margin-top:2px">Only the work every proposal here includes</div>', ss.map(function(x){
+        return '<span data-same-scope style="font-family:Bungee,sans-serif;font-size:15px;color:'+(x.price===minS?'var(--ok)':'var(--white)')+'">≈ '+pbMoney(x.price)+'</span>'+
+          (x.extras.length ? '<div style="font-size:10px;color:var(--w50);line-height:1.4">without '+pbList(x.extras.map(function(e){ return pbEsc(e.line.item); }))+'</div>' : '<div style="font-size:10px;color:var(--w50)">Nothing to take out</div>'); }), {bold:true, bg:'rgba(213,220,153,.04)'});
+    }
+  }
   if (pbScope().length) t += row('Covers your list', sel.map(function(b){ var p = pbComplete(b); return '<b style="color:'+(p>=90?'var(--ok)':p>=70?'var(--amb)':'#E07A5F')+';font-size:13px">'+p+'%</b>'; }), {bold:true});
   t += row('Exclusions', sel.map(function(b){ return String((b.breakdown.exclusions||[]).length); }));
   t += row('Allowances', sel.map(function(b){ var a = b.breakdown.allowances||[]; return a.length ? a.map(function(x){ return pbEsc(x.item)+' '+pbMoney(x.amount)+(x.unit?' '+pbEsc(x.unit):''); }).join('<br>') : 'None'; }), {align:'start'});

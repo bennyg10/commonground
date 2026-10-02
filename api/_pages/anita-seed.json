@@ -42,8 +42,8 @@
           {
             "id": "l4",
             "category": "Site work & grading",
-            "item": "Soil grading + removal (excavation)",
-            "desc": "Excavate + remove soil off site, backfill demolition excavations and rough grade for safe temporary drainage and Phase 2 handoff",
+            "item": "Excavation + soil removal (site lowered)",
+            "desc": "Excavate and export soil to take the property down to the lower level, then backfill demolition excavations and rough grade for drainage + Phase 2 handoff",
             "amount": 45000
           },
           {
@@ -75,7 +75,8 @@
             "scopeId": "s-permit",
             "status": "included",
             "lineId": "l1",
-            "note": ""
+            "note": "",
+            "primary": true
           },
           {
             "scopeId": "s-survey",
@@ -87,7 +88,8 @@
             "scopeId": "s-env",
             "status": "included",
             "lineId": "l2",
-            "note": "Testing included; abatement excluded"
+            "note": "Testing included; abatement excluded",
+            "primary": true
           },
           {
             "scopeId": "s-util",
@@ -99,7 +101,8 @@
             "scopeId": "s-house",
             "status": "included",
             "lineId": "l3",
-            "note": ""
+            "note": "",
+            "primary": true
           },
           {
             "scopeId": "s-garage",
@@ -129,7 +132,8 @@
             "scopeId": "s-excavate",
             "status": "included",
             "lineId": "l4",
-            "note": "Soil removal priced in this line; extra soil loads beyond the base are $1,500 each"
+            "note": "Takes the property down to the lower level; extra soil loads beyond the base are $1,500 each",
+            "primary": true
           },
           {
             "scopeId": "s-grade",
@@ -223,5 +227,6 @@
       "item": "Temporary fencing + dust / erosion control",
       "category": "Site work & grading"
     }
-  ]
+  ],
+  "seedRev": 4
 }

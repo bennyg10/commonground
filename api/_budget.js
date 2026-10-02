@@ -16,6 +16,23 @@ const MAX_INVOICES = 200;
 export async function seedPatch(project) {
   await seedV2(project);
   await seedV3(project);
+  await seedRefresh(project);
+}
+// seeded proposals (never AI-scanned ones) are refreshed whenever the seed file's revision moves forward
+async function seedRefresh(project) {
+  const seedPath = path.join(process.cwd(), 'api', '_pages', `${project}-seed.json`);
+  if (!fs.existsSync(seedPath)) return;
+  const seed = JSON.parse(fs.readFileSync(seedPath, 'utf8'));
+  const rev = String(seed.seedRev || 0);
+  if ((await redis(['GET', `cg:seedrev:${project}`])) === rev) return;
+  for (const sb of seed.bids || []) {
+    if (!sb.breakdown) continue;
+    const raw = await redis(['HGET', `cg:bids:${project}`, sb.id]);
+    if (!raw) continue;
+    const bid = JSON.parse(raw);
+    if (!bid.breakdown || bid.breakdown.source === 'seed') { bid.breakdown = cleanBreakdown(sb.breakdown, 'seed'); await redis(['HSET', `cg:bids:${project}`, sb.id, JSON.stringify(bid)]); }
+  }
+  await redis(['SET', `cg:seedrev:${project}`, rev]);
 }
 // v3: the excavation phase (soil removal / export) is its own item on the homeowner's list, and seeded proposals are refreshed to match
 async function seedV3(project) {
@@ -81,7 +98,7 @@ export function cleanBreakdown(b, source) {
     allowances: (Array.isArray(b.allowances) ? b.allowances : []).slice(0, 40).map((x) => ({ item: clean(x.item, 140), amount: money(x.amount), unit: clean(x.unit, 40) })).filter((x) => x.item),
     coverage: (Array.isArray(b.coverage) ? b.coverage : []).slice(0, 80).map((x) => ({
       scopeId: clean(x.scopeId, 20), status: STATUSES.includes(x.status) ? x.status : 'unclear',
-      lineId: ids.has(clean(x.lineId, 20)) ? clean(x.lineId, 20) : '', note: clean(x.note, 200) })).filter((x) => x.scopeId),
+      lineId: ids.has(clean(x.lineId, 20)) ? clean(x.lineId, 20) : '', note: clean(x.note, 200), primary: x.primary === true })).filter((x) => x.scopeId),
     baseTotal: money(b.baseTotal), total: money(b.total), timeline: clean(b.timeline, 200), terms: clean(b.terms, 300),
     source: source || (b.source === 'seed' ? 'seed' : 'ai'), at: now(),
   };
