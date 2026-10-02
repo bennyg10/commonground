@@ -57,11 +57,7 @@
         ],
         "exclusions": [
           "Extra soil hauling ($1,500 per load, not included)",
-          "Hazardous-material abatement",
-          "Contaminated soil",
-          "Concealed utilities",
-          "Unusual foundations",
-          "Other unforeseen conditions (change order)"
+          "Hazardous-material abatement"
         ],
         "allowances": [
           {
@@ -228,5 +224,5 @@
       "category": "Site work & grading"
     }
   ],
-  "seedRev": 5
+  "seedRev": 6
 }
