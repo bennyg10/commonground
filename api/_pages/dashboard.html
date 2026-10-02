@@ -167,7 +167,7 @@ var SCOPE = {'new-build':'New build', remodel:'Remodel', addition:'Addition', ad
 /* ── header ── */
 $('av').textContent = initials(); $('nm').textContent = U.name;
 $('menu').innerHTML = '<div style="padding:4px 10px 10px;border-bottom:1px solid var(--w08);margin-bottom:6px"><div style="font-weight:700;font-size:13px">'+esc(U.name)+'</div><div style="font-size:11.5px;color:var(--w50)">'+esc(U.identifier)+'</div></div>'+
-  (D.admin ? '<a href="/admin">Platform console ↗</a>' : '')+'<a href="/help">Help + contact</a><button onclick="signOut()">Sign out</button>';
+  (D.admin ? '<a href="/admin">Admin ↗</a>' : '')+'<a href="/help">Help + contact</a><button onclick="signOut()">Sign out</button>';
 function toggleMenu(e){ e.stopPropagation(); $('menu').classList.toggle('on'); }
 document.addEventListener('click', function(){ $('menu').classList.remove('on'); });
 function signOut(){ fetch('/api/auth',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify({action:'logout'})}).finally(function(){ location.href='/'; }); }
@@ -178,7 +178,8 @@ function render(){
   var others = D.projects.filter(function(p){ return !p.member; });
   var h = '';
   h += '<div class="hero"><div><div class="eyebrow">'+(U.accountType==='contractor'?'Contractor':U.accountType==='homeowner'?'Homeowner':U.accountType==='designer'?'Designer':'Your dashboard')+(U.company?' · '+esc(U.company):'')+'</div>'+
-       '<h1>Good '+dayPart()+', '+esc(first())+'.</h1><div class="lede">'+esc(ledeText(mine))+'</div></div></div>';
+       '<h1>Good '+dayPart()+', '+esc(first())+'.</h1><div class="lede">'+esc(ledeText(mine))+'</div></div>'+
+       (D.admin ? '<a class="btn pri" id="go-admin" href="/admin" style="align-self:center">Admin</a>' : '')+'</div>';
   if (!U.accountType) {
     h += '<div class="chooser" id="chooser"><h2>How will you use Common Ground?</h2><div class="lede" style="margin-top:4px">We’ll set up the right tools. You can still be on any project either way.</div>'+
       '<div class="cards2"><button class="opt" id="pick-home" onclick="setType(\'homeowner\')"><b>I’m a homeowner</b><span>Start a project for my property and collect GC bids</span></button>'+

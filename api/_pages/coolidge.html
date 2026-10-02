@@ -4485,7 +4485,8 @@ function renderTeam(){
       '</div>'+
       (r.kind === 'party' ? '' : '<div class="team-rating" style="margin-top:8px">'+stars+'</div>')+
     '</div>';
-  }).join('') + (mgr ? '<button onclick="tmAddForm()" style="width:100%;padding:11px;background:none;border:1px dashed var(--w15);border-radius:var(--r);font-size:11px;font-weight:700;color:var(--w70);cursor:pointer;font-family:inherit"><i class="ti ti-plus" style="font-size:12px"></i> Add a Specialty Trade or Designer</button>' : '');
+  }).join('') + (mgr ? '<div style="display:flex;gap:8px;flex-wrap:wrap"><button onclick="tmAddForm()" style="flex:1;min-width:200px;padding:11px;background:none;border:1px dashed var(--w15);border-radius:var(--r);font-size:11px;font-weight:700;color:var(--w70);cursor:pointer;font-family:inherit"><i class="ti ti-plus" style="font-size:12px"></i> Add a Specialty Trade or Designer</button>'+
+    (typeof subCan === 'function' && subCan() ? '<button id="tm-find-sub" onclick="subOpen()" style="flex:1;min-width:200px;padding:11px;background:none;border:1px dashed var(--l20);border-radius:var(--r);font-size:11px;font-weight:700;color:var(--lime);cursor:pointer;font-family:inherit"><i class="ti ti-search" style="font-size:12px"></i> Find a sub — top-rated options within 12 hours</button>' : '')+'</div>' : '');
 }
 
 function tmLoad(){
@@ -5072,12 +5073,10 @@ function pbWhy(hi, lo){
     var ex = sH.extras.map(function(e){ return pbEsc(e.line.item)+' ('+pbMoney(e.line.amount)+')'; });
     var excl = []; sH.extras.forEach(function(e){ e.scope.forEach(function(s){ if (pbCov(lo, s.id).status === 'excluded') excl.push(pbEsc(s.item)); }); });
     var also = sH.extras.filter(function(e){ return e.alsoShared.length; });
-    out.key = 'Why the totals differ: '+H+'’s price includes '+pbList(ex)+' — '+L+'’s doesn’t. '+
-      'For the same scope, '+H+' comes to about <b>'+pbMoney(sH.price)+'</b> vs '+L+'’s <b>'+pbMoney(sL.price)+'</b> — '+(same < 0 ? pbMoney(-same)+' less.' : same > 0 ? pbMoney(same)+' more.' : 'the same.')+
-      (excl.length ? ' '+L+' lists '+pbList(excl)+' as '+(excl.length===1?'an exclusion':'exclusions')+', so you’d pay for '+(excl.length===1?'it':'them')+' separately.' : '')+
-      (also.length ? ' <span style="font-weight:400;color:var(--w70)">('+pbEsc(also[0].line.item)+' also covers '+pbList(also[0].alsoShared.map(function(x){ return pbEsc(x.item).toLowerCase(); }))+', so the same-scope number is a little low.)</span>' : '');
+    out.key = 'Why '+H+' is higher: its price includes '+ex[0]+(ex.length > 1 ? ', plus '+pbList(ex.slice(1)) : '')+' — '+L+'’s doesn’t.'+
+      (excl.length ? ' '+L+' lists '+pbList(excl)+' as '+(excl.length===1?'an exclusion':'exclusions')+', so you’d pay for '+(excl.length===1?'it':'them')+' separately.' : '');
   } else if (sL.extras.length) {
-    out.key = 'Why the totals differ: '+L+'’s price includes '+pbList(sL.extras.map(function(e){ return pbEsc(e.line.item)+' ('+pbMoney(e.line.amount)+')'; }))+' that '+H+'’s doesn’t — and '+H+' is still higher.';
+    out.key = 'Why the prices differ: '+L+'’s price includes '+pbList(sL.extras.map(function(e){ return pbEsc(e.line.item)+' ('+pbMoney(e.line.amount)+')'; }))+' that '+H+'’s doesn’t — and '+H+' is still higher.';
   }
   var lumpHi = pbLump(hi), lumpLo = pbLump(lo);
   if (lumpHi || lumpLo) {
@@ -5097,6 +5096,48 @@ function pbWhy(hi, lo){
   if (!sc.length) out.bullets.push('Add what you asked for to see which proposal is more complete.');
   return out;
 }
+var PB_CAT_WORD = {'Hauling & disposal':'haul-off', 'Site work & grading':'rough grade to drain', 'Testing & consultants':'testing', 'Pre-construction & permits':'permits', 'Landscape & hardscape':'site clearing'};
+/* the main point of a bid is the price: shared work side by side, then each piece of work only one includes */
+function pbPriceCard(sel, hi, narrow){
+  var shared = pbShared(sel), ss = sel.map(function(b){ return pbSameScope(b, shared); });
+  if (!pbScope().length) return '';
+  var cats = {}; pbScope().forEach(function(s){ if (shared[s.id]) cats[s.category||'Other'] = (cats[s.category||'Other']||0) + 1; });
+  var main = cats['Demolition'] ? 'Demolition' : Object.keys(cats).sort(function(a,b){ return cats[b]-cats[a]; })[0] || 'Shared work';
+  var also = Object.keys(cats).filter(function(c){ return c !== main && PB_CAT_WORD[c]; }).map(function(c){ return PB_CAT_WORD[c]; });
+  var rows = [{key:'shared', label:main, sub:'Both include'+(also.length ? ' '+pbList(also) : ' this work'), vals:ss.map(function(x){ return {amt:x.price}; })}];
+  var byKey = {};
+  sel.forEach(function(b, bi){ ss[bi].extras.forEach(function(e){
+    var prim = e.scope.filter(function(s){ return pbCov(b, s.id).primary; })[0] || e.scope[0];
+    var k = prim ? prim.id : e.line.id;
+    if (!byKey[k]) { byKey[k] = {key:k, label:e.line.item, sub:'', vals:sel.map(function(){ return null; }), scope:prim}; rows.push(byKey[k]); }
+    byKey[k].vals[bi] = {amt:e.line.amount};
+  }); });
+  rows.forEach(function(r){ if (r.key === 'shared') return; r.vals = r.vals.map(function(v, bi){ if (v) return v; var st = r.scope ? pbCov(sel[bi], r.scope.id).status : 'unclear'; return {missing: st === 'excluded' ? 'Excluded' : 'Not included'}; }); r.total = pbSum(r.vals.filter(function(v){ return v.amt; }).map(function(v){ return {amount:v.amt}; })); });
+  var extraRows = rows.slice(1).sort(function(a,b){ return b.total - a.total; });
+  var hiIdx = sel.indexOf(hi), why = extraRows.filter(function(r){ return r.vals[hiIdx] && r.vals[hiIdx].amt; })[0];
+  rows = [rows[0]].concat(extraRows);
+  var n = sel.length, gcols = (narrow ? '118px' : 'minmax(0,1.5fr)') + ' repeat('+n+',minmax('+(narrow?'104px':'0')+',1fr))';
+  var minW = narrow ? 118 + n*112 : 0;
+  var minShared = Math.min.apply(null, rows[0].vals.map(function(v){ return v.amt; }));
+  var head = '<div style="display:grid;grid-template-columns:'+gcols+';gap:10px;padding:12px 14px;background:var(--d2)"><div style="font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--sage);align-self:end">Price</div>'+
+    sel.map(function(b){ return '<div style="min-width:0;font-size:12px;font-weight:700;color:var(--white);overflow-wrap:anywhere">'+pbEsc(b.gcName)+'</div>'; }).join('')+'</div>';
+  var body = rows.map(function(r){
+    var isWhy = r === why;
+    return '<div data-price-row="'+pbEsc(r.key)+'" style="display:grid;grid-template-columns:'+gcols+';gap:10px;align-items:center;padding:14px;border-top:1px solid var(--w08)'+(isWhy?';background:rgba(213,220,153,.06)':'')+'">'+
+      '<div style="min-width:0"><div style="font-size:13px;font-weight:700;color:var(--white)">'+pbEsc(r.label)+'</div>'+
+        (r.sub ? '<div style="font-size:10px;color:var(--w50);margin-top:2px">'+pbEsc(r.sub)+'</div>' : '')+
+        (isWhy ? '<div style="display:inline-block;margin-top:5px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;padding:2px 8px;border-radius:20px;background:var(--lime);color:#000">Why '+pbEsc(hi.gcName)+' is higher</div>' : '')+'</div>'+
+      r.vals.map(function(v){
+        if (v.missing) return '<div style="font-size:12px;font-weight:700;color:'+(v.missing==='Excluded'?'#E07A5F':'var(--w30)')+'">'+v.missing+'</div>';
+        var low = r.key === 'shared' && v.amt === minShared && n > 1;
+        return '<div><span style="font-family:Bungee,sans-serif;font-size:16px;color:'+(low?'var(--ok)':'var(--white)')+'">'+pbMoney(v.amt)+'</span>'+(r.key==='shared' && pbLump(sel[r.vals.indexOf(v)]) ? '<div style="font-size:10px;color:var(--w50)">one lump sum</div>' : '')+'</div>';
+      }).join('')+'</div>';
+  }).join('');
+  var tots = sel.map(pbTotal);
+  body += '<div style="display:grid;grid-template-columns:'+gcols+';gap:10px;align-items:center;padding:14px;border-top:1px solid var(--w15);background:var(--d2)"><div style="font-size:13px;font-weight:800;color:var(--white)">Total</div>'+
+    tots.map(function(v){ return '<div style="font-family:Bungee,sans-serif;font-size:18px;color:var(--lime)">'+pbMoney(v)+'</div>'; }).join('')+'</div>';
+  return '<div id="pb-price-card" style="background:var(--d3);border:1px solid var(--w08);border-radius:var(--r);overflow:hidden;margin-bottom:12px"><div style="overflow-x:auto"><div style="min-width:'+minW+'px">'+head+body+'</div></div></div>';
+}
 function pbCompareManyHtml(sel, narrow){
   var sorted = sel.slice().sort(function(a,b){ return pbTotal(b) - pbTotal(a); });
   var hi = sorted[0], lo = sorted[sorted.length-1];
@@ -5105,9 +5146,11 @@ function pbCompareManyHtml(sel, narrow){
   var toneBg = {ok:'var(--ok15)', am:'var(--am15)', bad:'rgba(224,122,95,.1)', mute:'var(--d3)'}[why.tone];
   var h = '<div style="background:'+toneBg+';border:1px solid '+toneC+';border-radius:var(--r);padding:14px 16px;margin-bottom:12px">'+
     pbEyebrow('Why the prices differ')+'<div style="font-family:Bungee,sans-serif;font-size:16px;color:'+toneC+';line-height:1.3;margin-bottom:8px">'+why.headline+'</div>'+
-    (why.key ? '<div data-key-diff style="font-size:12px;font-weight:700;color:var(--white);line-height:1.55;background:rgba(0,0,0,.25);border-radius:9px;padding:10px 12px;margin-bottom:8px"><i class="ti ti-key" style="color:'+toneC+'"></i> '+why.key+'</div>' : '')+
-    why.bullets.map(function(t){ return '<div style="display:flex;gap:8px;font-size:11px;color:var(--w70);line-height:1.6;padding:2px 0"><span style="color:'+toneC+'">•</span><span>'+t+'</span></div>'; }).join('')+
+    (why.key ? '<div data-key-diff style="font-size:12px;font-weight:700;color:var(--white);line-height:1.55;background:rgba(0,0,0,.25);border-radius:9px;padding:10px 12px"><i class="ti ti-key" style="color:'+toneC+'"></i> '+why.key+'</div>' : '')+
     (sorted.length > 2 ? '<div style="font-size:10px;color:var(--w50);margin-top:6px">Comparing the highest and lowest of the '+sorted.length+' you checked.</div>' : '')+'</div>';
+  h += pbPriceCard(sel, hi, narrow);
+  if (why.bullets.length) h += '<div id="pb-why-more" style="background:var(--d3);border:1px solid var(--w08);border-radius:var(--r);padding:12px 16px;margin-bottom:12px">'+pbEyebrow('Also worth knowing')+
+    why.bullets.map(function(t){ return '<div style="display:flex;gap:8px;font-size:11px;color:var(--w70);line-height:1.6;padding:2px 0"><span style="color:var(--sage)">•</span><span>'+t+'</span></div>'; }).join('')+'</div>';
   var n = sel.length, lab = narrow ? '120px' : 'minmax(0,1.6fr)';
   var gcols = lab + ' repeat('+n+',minmax('+(narrow?'110px':'0')+',1fr))';
   var minW = narrow ? (120 + n*120) : 0;
@@ -5118,16 +5161,6 @@ function pbCompareManyHtml(sel, narrow){
   var tots = sel.map(pbTotal), minT = mins(tots);
   var t = '<div style="display:grid;grid-template-columns:'+gcols+';gap:8px;padding:12px;background:var(--d2)"><div></div>'+sel.map(function(b){
       return '<div style="min-width:0"><div style="font-size:12px;font-weight:700;color:var(--white);overflow-wrap:anywhere">'+pbEsc(b.gcName)+'</div><div style="display:flex;gap:6px;margin-top:5px;flex-wrap:wrap"><button onclick="pbOpenProposal(\''+b.id+'\')" style="background:none;border:none;padding:0;font-size:10px;font-weight:700;color:var(--lime);cursor:pointer;font-family:inherit">Open</button><button onclick="pbToggleCmp(\''+b.id+'\',false)" style="background:none;border:none;padding:0;font-size:10px;color:var(--w50);cursor:pointer;font-family:inherit">Remove</button></div></div>'; }).join('')+'</div>';
-  t += row('Base total', tots.map(function(v){ return '<span style="font-family:Bungee,sans-serif;font-size:15px;color:'+(v===minT?'var(--ok)':'var(--white)')+'">'+pbMoney(v)+'</span>'+(v>minT?'<div style="font-size:10px;color:var(--amb)">+'+pbMoney(v-minT)+'</div>':'<div style="font-size:10px;color:var(--ok)">Lowest</div>'); }), {bold:true});
-  if (pbScope().length) {
-    var shAll = pbShared(sel), ss = sel.map(function(b){ return pbSameScope(b, shAll); });
-    if (ss.some(function(x){ return x.extras.length; })) {
-      var minS = Math.min.apply(null, ss.map(function(x){ return x.price; }));
-      t += row('Same scope only<div style="font-size:9px;font-weight:400;color:var(--w50);margin-top:2px">Only the work every proposal here includes</div>', ss.map(function(x){
-        return '<span data-same-scope style="font-family:Bungee,sans-serif;font-size:15px;color:'+(x.price===minS?'var(--ok)':'var(--white)')+'">≈ '+pbMoney(x.price)+'</span>'+
-          (x.extras.length ? '<div style="font-size:10px;color:var(--w50);line-height:1.4">without '+pbList(x.extras.map(function(e){ return pbEsc(e.line.item); }))+'</div>' : '<div style="font-size:10px;color:var(--w50)">Nothing to take out</div>'); }), {bold:true, bg:'rgba(213,220,153,.04)'});
-    }
-  }
   if (pbScope().length) t += row('Covers your list', sel.map(function(b){ var p = pbComplete(b); return '<b style="color:'+(p>=90?'var(--ok)':p>=70?'var(--amb)':'#E07A5F')+';font-size:13px">'+p+'%</b>'; }), {bold:true});
   t += row('Exclusions', sel.map(function(b){ return String((b.breakdown.exclusions||[]).length); }));
   t += row('Allowances', sel.map(function(b){ var a = b.breakdown.allowances||[]; return a.length ? a.map(function(x){ return pbEsc(x.item)+' '+pbMoney(x.amount)+(x.unit?' '+pbEsc(x.unit):''); }).join('<br>') : 'None'; }), {align:'start'});
@@ -5148,6 +5181,12 @@ function pbCompareManyHtml(sel, narrow){
     return row('<b>'+pbEsc(c)+'</b>', sel.map(function(b, i){
       var items = b.breakdown.items.filter(function(x){ return !x.optional && (x.category||'Other') === c; });
       if (pbLump(b)) return '<div style="font-size:11px;font-weight:700;color:var(--w50)">'+(items.length?'In lump sum':'Not listed')+'</div>'+items.map(function(x){ return '<div style="font-size:10px;color:var(--w50);line-height:1.45;margin-top:3px">'+pbEsc(x.item)+(x.qty?' · '+pbEsc(x.qty):'')+'</div>'; }).join('');
+      if (!items.length) {
+        var lines = {}; pbScope().forEach(function(sc){ if ((sc.category||'Other') !== c) return; var cv = pbCov(b, sc.id); if (PB_ST[cv.status].score > 0 && cv.lineId) lines[cv.lineId] = 1; });
+        var ln = b.breakdown.items.filter(function(x){ return lines[x.id]; });
+        return ln.length ? '<div style="font-size:11px;font-weight:700;color:var(--w70)">Included in '+ln.map(function(x){ return pbEsc(x.item)+' ('+pbMoney(x.amount)+')'; }).join(', ')+'</div>'
+                         : '<div style="font-size:11px;font-weight:700;color:var(--w30)">Not included</div>';
+      }
       return '<div style="font-size:12px;font-weight:700;color:'+(!items.length?'#E07A5F':vals[i]===mn?'var(--white)':'var(--amb)')+'">'+(items.length?pbMoney(vals[i]):'Not priced')+(items.length && vals[i]>mn && mn>0?'<span style="font-size:10px;font-weight:600"> +'+pbMoney(vals[i]-mn)+'</span>':'')+'</div>'+
         items.map(function(x){ return '<div style="font-size:10px;color:var(--w50);line-height:1.45;margin-top:3px">'+pbEsc(x.item)+' · '+pbMoney(x.amount)+'</div>'; }).join('');
     }), {align:'start', pad:'10px 12px'});

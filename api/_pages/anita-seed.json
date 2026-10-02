@@ -36,14 +36,14 @@
             "id": "l3",
             "category": "Demolition",
             "item": "Demolition",
-            "desc": "Utility disconnections · main house · detached garage · CMU wall between 135 + 141 N Anita · landscape removal along the south CMU wall. Includes load, haul, recycle + disposal",
+            "desc": "Utility disconnections · main house · detached garage · CMU wall between 135 + 141 N Anita · landscape removal along the south CMU wall. Includes haul-off (load, haul, recycle + disposal) and a rough grade so the site drains",
             "amount": 85000
           },
           {
             "id": "l4",
             "category": "Site work & grading",
-            "item": "Excavation + soil removal (site lowered)",
-            "desc": "Excavate and export soil to take the property down to the lower level, then backfill demolition excavations and rough grade for drainage + Phase 2 handoff",
+            "item": "Excavation (site lowered)",
+            "desc": "Excavate and export soil to take the property down to the lower level",
             "amount": 45000
           },
           {
@@ -124,22 +124,22 @@
           },
           {
             "scopeId": "s-haul",
-            "status": "partial",
+            "status": "included",
             "lineId": "l3",
-            "note": "Standard hauling included; extra soil loads $1,500 each"
+            "note": "Haul-off included in the demolition price; extra soil loads beyond the base are $1,500 each"
           },
           {
             "scopeId": "s-excavate",
             "status": "included",
             "lineId": "l4",
-            "note": "Takes the property down to the lower level; extra soil loads beyond the base are $1,500 each",
+            "note": "Takes the property down to the lower level",
             "primary": true
           },
           {
             "scopeId": "s-grade",
             "status": "included",
-            "lineId": "l4",
-            "note": ""
+            "lineId": "l3",
+            "note": "Rough grade so the site drains — part of the demolition price"
           },
           {
             "scopeId": "s-protect",
@@ -228,5 +228,5 @@
       "category": "Site work & grading"
     }
   ],
-  "seedRev": 4
+  "seedRev": 5
 }

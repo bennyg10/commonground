@@ -119,11 +119,12 @@ h1,h2,h3,h4,.stat .v{font-family:'Bungee',sans-serif!important;font-weight:400!i
 <body>
 <div class="top">
   <div class="bar">
-    <div class="mark"><b>CG</b><span>Common Ground</span><em>Admin</em></div>
-    <div class="who"><span class="nm" id="me-name"></span><button class="btn" onclick="signOut()">Sign out</button></div>
+    <div class="mark"><b>CG</b><span id="mark-word">Common Ground</span><em>Admin</em></div>
+    <div class="who" style="gap:6px"><a class="btn" id="go-dash" href="/dashboard" style="padding:6px 10px;white-space:nowrap">Dashboard</a><span class="nm" id="me-name"></span><button class="btn" onclick="signOut()" style="padding:6px 10px;white-space:nowrap">Sign out</button></div>
   </div>
   <nav class="tabs" id="tabs"></nav>
 </div>
+<script>(function(){ function fit(){ var w=document.getElementById('mark-word'); if (w) w.style.display = window.innerWidth < 480 ? 'none' : ''; } fit(); window.addEventListener('resize', fit); })();</script>
 <main id="main"><div class="muted">Loading the platform…</div></main>
 <div id="modal-bg"><div id="modal"></div></div>
 <div id="toast"></div>
