@@ -1,0 +1,63 @@
+COMMON GROUND — LIVE SIGN-IN + APPROVALS (141 N Anita)
+=====================================================
+
+WHAT'S IN THIS FOLDER
+  vercel.json              → replaces the one in your repo (keeps your analyze.js setting, adds the /anita/... links)
+  api/_lib.js              → shared helpers (passwords, sessions, database, notifications)
+  api/auth.js              → sign in / sign out / invites / team / usage
+  api/page.js              → only sends the Anita page to signed-in people
+  api/decisions.js         → approvals, change orders, discussion, notifications
+  api/_pages/anita.html    → the Anita project (private — no longer a public file)
+  api/_pages/login.html    → sign-in / invite / first-time setup screen
+
+LINKS WHEN LIVE
+  Owner:  https://commonground-v1.vercel.app/anita/client
+  GC:     https://commonground-v1.vercel.app/anita/gc
+  Subs:   https://commonground-v1.vercel.app/anita/trade
+
+
+STEP 1 — Add the free database (Vercel)
+  Vercel → your commonground project → Storage → Create Database → "Upstash for Redis" → Free
+  → Connect it to the project (all environments). This adds the database keys automatically.
+
+STEP 2 — Add your setup code (Vercel)
+  Settings → Environment Variables → Add:
+     Name:  CG_ADMIN_SETUP_CODE
+     Value: any private phrase only you know (you type it once in Step 6)
+
+STEP 3 — Remove the old public Anita page (GitHub)
+  Open the repo → anita → index.html → "..." menu → Delete file → Commit to main.
+  (If it stays, anyone could still open /anita/index.html without signing in.)
+
+STEP 4 — Upload the new files (GitHub)
+  Go to: https://github.com/bennyg10/commonground/upload/main
+  Drag in BOTH the "api" folder and "vercel.json" from this folder.
+  Before committing, the file list should show api/_lib.js, api/auth.js, api/decisions.js,
+  api/page.js, api/_pages/anita.html, api/_pages/login.html and vercel.json.
+  Commit to main. Vercel redeploys on its own (about a minute).
+
+STEP 5 — Check the lock works
+  In a private/incognito window open  commonground-v1.vercel.app/anita/client  → you should see "Sign in".
+  Also open  commonground-v1.vercel.app/api/_pages/anita.html  → should NOT show the project.
+
+STEP 6 — Create your GC admin account (one time)
+  Open /anita/gc → "First-time setup (GC)" → setup code from Step 2, your name,
+  your email or phone, a password. You land in the GC view.
+
+STEP 7 — Invite the owner (and subs)
+  Team & trades → Team access → name, email or mobile, role → Create invite link
+  → Copy / Text it / Email it. They open it, set a password, and they're in.
+  Forgot password = click "Reset password link" next to their name and send the new link.
+
+
+OPTIONAL — EMAIL NOTIFICATIONS (free up to 3,000/mo)
+  1. Make a Resend account (resend.com) and verify a domain you own (so emails come from you).
+  2. Create an API key.
+  3. Vercel → Environment Variables:
+        RESEND_API_KEY = (the key)
+        CG_NOTIFY_FROM = Common Ground <updates@yourdomain.com>
+  4. Redeploy. Owner approvals + questions email you; new change orders email the owner.
+  In-app bell notifications work without this.
+
+AFTER YOU UPGRADE VERCEL TO PRO
+  Add CG_VERCEL_PLAN = pro  (clears the reminder in your usage panel).
