@@ -10,7 +10,26 @@ const origin = (req) => siteOrigin(req);
 const canManage = (u, project) => !!u && (u.admin || (u.projects || {})[project] === 'gc');
 // owners can see the team and add co-owners (e.g. a spouse); GCs/admins manage everyone
 const canSeeTeam = (u, project) => canManage(u, project) || (!!u && (u.projects || {})[project] === 'client');
-const ACCOUNT_TYPES = ['homeowner', 'contractor', 'designer'];
+const ACCOUNT_TYPES = ['homeowner', 'contractor', 'designer', 'architect', 'trade'];
+// ── Specialty Trades: the list Common Ground uses to answer "Find a sub" requests near a job
+export const TRADE_LIST = ['Electrical', 'Plumbing', 'HVAC', 'Framing', 'Concrete', 'Roofing', 'Drywall', 'Painting', 'Tile', 'Flooring', 'Cabinets',
+  'Landscape', 'Demolition', 'Surveying', 'Environmental testing', 'Other'];
+const TRADE_RADII = [10, 25, 50, 100];
+function cleanTradeProfile(t) {
+  t = t || {};
+  const trades = (Array.isArray(t.trades) ? t.trades : []).map((x) => clean(x, 40)).filter((x) => TRADE_LIST.includes(x));
+  const uniq = [...new Set(trades)];
+  if (!uniq.length) return { error: 'trade_required' };
+  const zip = String(t.zip || '').replace(/\D/g, '').slice(0, 5);
+  if (zip.length !== 5) return { error: 'zip_required' };
+  const radius = TRADE_RADII.includes(Number(t.radius)) ? Number(t.radius) : 25;
+  return { profile: { trades: uniq, zip, radius, updatedAt: new Date().toISOString() } };
+}
+async function saveTradeProfile(u, profile) {
+  u.tradeProfile = profile;
+  await setJSON(`cg:user:${u.identifier}`, u);
+  await redis(['HSET', 'cg:trades', u.identifier, JSON.stringify(Object.assign({ name: u.name, company: u.company || '', identifier: u.identifier, joinedAt: u.createdAt }, profile))]);
+}
 // ── project hierarchy: owner (client) > GC > trade ──
 // Owners have final say: they can invite, re-role or remove anyone. A GC can start a project and invite
 // any role (including the homeowner, who then sits above them), and manages trades + GC team.
@@ -136,11 +155,14 @@ export default async function handler(req, res) {
       const accountType = clean(b.accountType, 20);
       if (!ACCOUNT_TYPES.includes(accountType)) return res.status(400).json({ error: 'account_type_required' });
       const pp = passwordProblem(b.password); if (pp) return res.status(400).json({ error: 'weak_password', message: pp });
+      let tp = null;
+      if (accountType === 'trade') { tp = cleanTradeProfile(b.trade); if (tp.error) return res.status(400).json({ error: tp.error }); }
       if (await getJSON(`cg:user:${identifier}`)) return res.status(409).json({ error: 'account_exists' });
       const user = { name, identifier, hash: hashPassword(b.password), admin: false, projects: {}, accountType,
                      company: clean(b.company, 80), createdAt: new Date().toISOString(), source: 'signup' };
       await setJSON(`cg:user:${identifier}`, user);
       await indexUser(identifier);
+      if (tp) await saveTradeProfile(user, tp.profile);
       await createSession(req, res, identifier);
       return res.status(200).json({ ok: true, user: publicUser(user), next: '/dashboard' });
     }
@@ -152,6 +174,19 @@ export default async function handler(req, res) {
       const accountType = clean(b.accountType, 20);
       if (!ACCOUNT_TYPES.includes(accountType)) return res.status(400).json({ error: 'account_type_required' });
       u.accountType = accountType; await setJSON(`cg:user:${u.identifier}`, u);
+      return res.status(200).json({ ok: true, user: publicUser(u) });
+    }
+
+    // ── a Specialty Trade's list entry: trades + where they work (also used to join the list after signing in)
+    if (action === 'trade-profile') {
+      const u = await currentUser(req);
+      if (!u) return res.status(401).json({ error: 'sign_in_required' });
+      if (b.leave === true) { delete u.tradeProfile; await setJSON(`cg:user:${u.identifier}`, u); await redis(['HDEL', 'cg:trades', u.identifier]); return res.status(200).json({ ok: true, user: publicUser(u) }); }
+      const tp = cleanTradeProfile(b.trade);
+      if (tp.error) return res.status(400).json({ error: tp.error });
+      if (!u.accountType) u.accountType = 'trade';
+      if (clean(b.company, 80)) u.company = clean(b.company, 80);
+      await saveTradeProfile(u, tp.profile);
       return res.status(200).json({ ok: true, user: publicUser(u) });
     }
 

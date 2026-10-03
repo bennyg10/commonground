@@ -141,7 +141,7 @@ export async function currentUser(req) {
 // every account id, for the admin console (SADD wherever an account is created)
 export const indexUser = (identifier) => redis(['SADD', 'cg:users', identifier]).catch(() => {});
 // public shape sent to the browser (never the hash)
-export const publicUser = (u) => u && ({ name: u.name, identifier: u.identifier, admin: !!u.admin, projects: u.projects || {}, accountType: u.accountType || '', company: u.company || '' });
+export const publicUser = (u) => u && ({ name: u.name, identifier: u.identifier, admin: !!u.admin, projects: u.projects || {}, accountType: u.accountType || '', company: u.company || '', tradeProfile: u.tradeProfile || null });
 
 // role on a project: admin can act as any role; others get what they were invited as
 export function roleFor(u, project) {

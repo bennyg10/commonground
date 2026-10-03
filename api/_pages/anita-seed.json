@@ -153,7 +153,7 @@
         "baseTotal": 136700,
         "total": 136700,
         "timeline": "Pre-construction, testing + permits ~4–8+ weeks; demolition + clearing ~2–4 weeks after permits; Phase 1 ~6–12+ weeks",
-        "terms": "Priced for conventional demolition conditions and a non-retaining CMU wall; unforeseen conditions by change order"
+        "terms": "Priced for conventional demolition conditions and a non-retaining CMU wall"
       }
     }
   ],
@@ -224,5 +224,5 @@
       "category": "Site work & grading"
     }
   ],
-  "seedRev": 6
+  "seedRev": 7
 }

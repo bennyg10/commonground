@@ -28,7 +28,7 @@ function kickoffTemplate(gcName) {
     t('k-draws', 'Contract + agreements', 'Draw schedule + retention agreed', 'Deposit, progress draws tied to milestones, final payment at completion.', 'both', 'agreement'),
     t('k-co', 'Contract + agreements', 'Change-order rule: written, priced, approved before work', 'No verbal changes. Every CO is priced and approved by the owner in Common Ground first.', 'both', 'agreement'),
     t('k-unpermitted', 'Contract + agreements', 'Unpermitted work identified — agree how it’s handled', 'Document any existing unpermitted work now. Tag it Permits Later if it is legalized or permitted in a later phase, so it doesn’t block demo.', 'both', 'agreement', { agreeTag: 'Permits Later' }),
-    t('k-allow', 'Contract + agreements', 'Allowances + exclusions walked through with owner', 'Hazmat abatement, contaminated soil, concealed utilities, extra soil haul ($1,500/load).', 'both', 'agreement'),
+    t('k-allow', 'Contract + agreements', 'Allowances + exclusions walked through with owner', 'Hazardous-material abatement, extra soil haul ($1,500/load).', 'both', 'agreement'),
     t('k-comms', 'Contract + agreements', 'Communication cadence set', 'Weekly owner meeting, daily log in Common Ground, 48-hour decision turnaround.', 'both', 'agreement'),
     t('k-license', 'Compliance + insurance', 'CSLB license verified + on file', 'Active license, correct classification for demolition / grading.', 'gc'),
     t('k-insurance', 'Compliance + insurance', 'Insurance certificates on file — owner named additional insured', 'General liability + workers’ comp for GC and every sub on site.', 'gc'),
@@ -129,7 +129,7 @@ function cleanStatus(b, prev) {
 }
 // ── practice project: a private sandbox so a new GC or designer can try every tool before they're hired anywhere ──
 async function createPractice(req, res, u) {
-  const as = u.accountType === 'designer' ? 'designer' : 'gc';
+  const as = u.accountType === 'designer' || u.accountType === 'architect' ? 'designer' : 'gc';
   const roleUrl = as;
   if (u.sampleProject && (u.projects || {})[u.sampleProject] && (await getProjectMeta(u.sampleProject))) {
     return res.status(200).json({ ok: true, existing: true, project: { id: u.sampleProject, path: u.sampleProject }, url: `/${u.sampleProject}/${roleUrl}` });
@@ -152,9 +152,12 @@ async function createPractice(req, res, u) {
   if (!u.accountType) u.accountType = 'contractor';
   u.sampleProject = id;
   await setJSON(`cg:user:${u.identifier}`, u);
-  await addMember(id, u.identifier, { name: u.name, role: as, status: 'active', joinedAt: now() });
+  await addMember(id, u.identifier, Object.assign({ name: u.name, role: as, status: 'active', joinedAt: now() }, u.accountType === 'architect' ? { title: 'Architect' } : {}));
   return res.status(200).json({ ok: true, project: { id, path: id }, url: `/${id}/${roleUrl}` });
 }
+const INTAKE_STAGES = ['idea', 'plans', 'proposals', 'started'];
+const INTAKE_DRAWINGS = ['schematic', 'design-development', 'construction-documents', 'plan-check'];
+const INTAKE_FOCUS = ['interiors', 'exteriors', 'both'];
 async function createProject(req, res, b) {
   const u = await currentUser(req);
   if (!u) return res.status(401).json({ error: 'sign_in_required' });
@@ -166,7 +169,7 @@ async function createProject(req, res, b) {
   if (!['residential', 'commercial'].includes(classification)) return res.status(400).json({ error: 'classification_required' });
   const subtype = (SUBTYPES[classification] || []).includes(clean(b.subtype, 30)) ? clean(b.subtype, 30) : '';
   const scope = SCOPES.includes(clean(b.scope, 30)) ? clean(b.scope, 30) : '';
-  const as = clean(b.as, 10) || (u.accountType === 'contractor' ? 'gc' : u.accountType === 'homeowner' ? 'client' : u.accountType === 'designer' ? 'designer' : '');
+  const as = clean(b.as, 10) || (u.accountType === 'contractor' ? 'gc' : u.accountType === 'homeowner' ? 'client' : (u.accountType === 'designer' || u.accountType === 'architect') ? 'designer' : '');
   if (!['client', 'gc', 'designer'].includes(as)) return res.status(400).json({ error: 'account_type_required' });
   const mode = as === 'gc' && clean(b.mode, 10) === 'underway' ? 'underway' : 'new';
   // unique, readable URL: "123 Main St, …" → /123mainst
@@ -176,6 +179,14 @@ async function createProject(req, res, b) {
   const taken = new Set(RESERVED_PATHS.concat(Object.values(BUILTIN).flatMap((x) => [x.id, x.path])));
   const meta = { name: clean(b.name, 80) || address.split(',')[0].trim(), address, classification, subtype, scope, mode,
     createdBy: u.identifier, createdByName: u.name, creatorRole: as, createdAt: now() };
+  // what the new-user flow learned (where the homeowner is today, the drawing stage, what a designer works on)
+  const intake = {};
+  if (as === 'client' && INTAKE_STAGES.includes(clean(b.startStage, 20))) intake.stage = clean(b.startStage, 20);
+  if (as === 'designer' && INTAKE_DRAWINGS.includes(clean(b.drawingStage, 30))) intake.drawings = clean(b.drawingStage, 30);
+  if (as === 'designer' && INTAKE_FOCUS.includes(clean(b.designFocus, 20))) intake.focus = clean(b.designFocus, 20);
+  if (Object.keys(intake).length) meta.intake = intake;
+  const title = u.accountType === 'architect' && as === 'designer' ? 'Architect' : '';
+  if (title) meta.creatorTitle = title;
   if (as === 'gc') meta.status = cleanStatus(mode === 'underway' ? b : { phase: 'Pre-construction', percent: 0 }, null);
   let id = null;
   for (let i = 1; i <= 60 && !id; i++) {
@@ -192,7 +203,7 @@ async function createProject(req, res, b) {
   u.projects = Object.assign({}, u.projects, { [id]: as });
   if (!u.accountType) u.accountType = as === 'gc' ? 'contractor' : as === 'designer' ? 'designer' : 'homeowner';
   await setJSON(`cg:user:${u.identifier}`, u);
-  await addMember(id, u.identifier, { name: u.name, role: as, status: 'active', joinedAt: now() });
+  await addMember(id, u.identifier, Object.assign({ name: u.name, role: as, status: 'active', joinedAt: now() }, title ? { title } : {}));
   // a GC or designer can bring their client in right away
   let clientInvite = null;
   const cEmail = normalizeIdentifier(b.clientEmail || ''), cName = clean(b.clientName, 80);
@@ -379,13 +390,14 @@ export default async function handler(req, res) {
       const meta = await getProjectMeta(project);
       const out = { ok: true, stage: p.stage, hiredGc: p.hiredGc, startedAt: p.startedAt, clientName: await clientName(project), clientNames: owners,
         meta: { name: meta.name, address: meta.address || '', classification: meta.classification || '', subtype: meta.subtype || '', scope: meta.scope || '',
-                mode: meta.mode || '', status: meta.status || null, path: projectPath(project), builtin: !!meta.builtin, sample: !!meta.sample }, phases: PHASES };
+                mode: meta.mode || '', status: meta.status || null, path: projectPath(project), builtin: !!meta.builtin, sample: !!meta.sample, intake: meta.intake || null }, phases: PHASES };
       if (isOwner) {
         out.bids = (await listBids(project)).map(publicBid);
         const flat = (await redis(['HGETALL', `cg:bidinvites:${project}`])) || [];
         out.bidInvites = []; for (let i = 0; i < flat.length; i += 2) { try { const x = JSON.parse(flat[i + 1]); delete x.token; out.bidInvites.push(x); } catch (e) {} }
       }
       if (role !== 'trade') out.kickoff = (await getJSON(`cg:kickoff:${project}`)) || { items: [] };
+      if (out.kickoff && out.kickoff.items) out.kickoff.items.forEach((it) => { if (it.id === 'k-allow' && /contaminated soil|concealed utilities/i.test(it.detail || '')) it.detail = 'Hazardous-material abatement, extra soil haul ($1,500/load).'; });   // older kickoffs: same wording as the proposal
       if (isOwner || isGC) {
         out.scope = await getScope(project);
         if (p.hiredGc) {

@@ -175,6 +175,7 @@ function load(){
     if (r[0].error) { $('main').innerHTML='<div class="card">Couldn’t load this project. <a href="/dashboard">Back to dashboard</a></div>'; return; }
     ST=r[0]; DEC=r[1].decisions||[]; NOTES=r[1].notifications||[]; MEMBERS=r[2].members||[]; RESULTS=r[3].results||[]; SCANS=r[4].scans||[]; SCHED=(r[5].schedule||{items:[]}); TASKS=(r[5].tasks||{items:[]});
     render();
+    if (NEXT_STEP) runNextStep();
   });
 }
 function signOut(){ api('/api/auth',{action:'logout'}).then(function(){ location.href='/'; }); }
@@ -194,7 +195,7 @@ function render(){
   var m = ST.meta || {};
   document.title = 'Common Ground — '+(m.name||'Project');
   $('crumb-name').textContent = m.name || '';
-  $('role-pill').textContent = {client:'Homeowner',gc:'GC',trade:'Trade',designer:'Designer'}[ROLE] || ROLE;
+  $('role-pill').textContent = ROLE==='designer' && ME.accountType==='architect' ? 'Architect' : ({client:'Homeowner',gc:'GC',trade:'Trade',designer:'Designer'}[ROLE] || ROLE);
   if (S.admin) $('admin-views').innerHTML = ['client','gc','designer','trade'].filter(function(r){return r!==ROLE;}).map(function(r){ return '<a class="btn sm" href="/'+esc(S.path)+'/'+(r==='client'?'homeowner':r)+location.hash+'">'+({client:'Homeowner',gc:'GC',trade:'Trade',designer:'Designer'}[r])+' view</a>'; }).join(' ');
   var tabs = tabsFor(); if (!tabs.some(function(x){return x[0]===TAB;})) TAB='overview';
   var counts = {proposals:(ST.bids||[]).length, decisions:DEC.filter(function(d){return !decClosed(d);}).length, controls:MEMBERS.length, schedule:TASKS.items.filter(function(t){return !t.done;}).length};
@@ -227,7 +228,8 @@ function vOverview(){
       '<button class="btn pri" onclick="go(\'proposals\')">'+(n?'Review proposals':'Get your bid link')+'</button></div>';
   }
   if (ST.stage==='bidding' && isGC) h += '<div class="card">This project is collecting bids. You’ll see it here once the owner hires a GC.</div>';
-  if (isDesigner) h += hasOwner()
+  if (isDesigner && ME.accountType==='architect' && hasOwner()) h += '<div class="card hi" id="next-step"><div class="eyebrow">Next step</div><h2>Check your plans against code</h2><p class="muted small" style="margin-bottom:14px">Upload your plan set and get findings with code sections before plan check does. Results save to this project for the homeowner and GC.</p><button class="btn pri" onclick="go(\'tools\',\'codecheck\')">Check my plans</button></div>';
+  else if (isDesigner) h += hasOwner()
     ? '<div class="card hi" id="next-step"><div class="eyebrow">Next step</div><h2>Scan and measure the rooms</h2><p class="muted small" style="margin-bottom:14px">Upload a LiDAR scan, measure walls in 3D or on the 2D plan, check them against the drawings, then send design approvals for your client to sign.</p><button class="btn pri" onclick="go(\'tools\',\'scan\')">Open 3D scan + measure</button></div>'
     : '<div class="card hi" id="next-step"><div class="eyebrow">Next step</div><h2>Bring your client in</h2><p class="muted small" style="margin-bottom:14px">Your client gets their own sign-in to see your measurements and sign off on design approvals.</p><button class="btn pri" onclick="go(\'controls\')">Invite your client</button></div>';
   // progress
@@ -310,11 +312,30 @@ function vProposals(){
       (BIDLINK ? '<div class="linkbox"><input id="bid-link" readonly value="'+esc(BIDLINK)+'" onclick="this.select()"><button class="btn sm" onclick="copy(\'bid-link\')">Copy</button></div>'+
         '<div class="row" style="margin-top:10px"><a class="btn sm" href="sms:?&body='+encodeURIComponent('Please submit your proposal for '+ST.meta.name+' here: '+BIDLINK)+'">Text it</a><a class="btn sm" href="mailto:?subject='+encodeURIComponent('Proposal request — '+ST.meta.name)+'&body='+encodeURIComponent('Please upload your proposal here: '+BIDLINK)+'">Email it</a></div>'
         : '<button class="btn pri" id="make-link" onclick="makeLink()">Create bid link</button>')+'</div>';
+    h += '<div class="card" id="own-upload"><h2>Already have a proposal?</h2><p class="muted small" style="margin-bottom:12px">Got one by email? Upload it here and it joins your list. Sending your bid link is easier next time: the contractor fills in the details for you.</p><div class="msg" id="ou-msg"></div>'+
+      '<label for="ou-name">Contractor or company</label><input id="ou-name"><label for="ou-amt">Total price (optional)</label><input id="ou-amt" inputmode="decimal" placeholder="$">'+
+      '<label for="ou-file">Proposal (PDF or photo, up to 3 MB)</label><input id="ou-file" type="file" accept="application/pdf,image/jpeg,image/png,image/webp,image/heic">'+
+      '<button class="btn pri" id="ou-go" onclick="ownUpload()">Add proposal</button></div>';
     h += '<div class="card"><h2>Invite a contractor</h2><div class="msg" id="inv-msg"></div><label for="bi-name">Name</label><input id="bi-name"><label for="bi-email">Email</label><input id="bi-email" type="email"><label for="bi-phone">Phone (optional)</label><input id="bi-phone" type="tel">'+
       '<button class="btn pri" id="bi-go" onclick="inviteGC()">Send invite</button>'+
       (inv.length?'<div style="margin-top:16px">'+inv.map(function(x){ return '<div class="item"><div class="main"><div class="t">'+esc(x.name)+'</div><div class="muted small">'+esc(x.email)+'</div></div><span class="pill '+(x.status==='submitted'?'ok':'gray')+'">'+(x.status==='submitted'?'Submitted':'Invited')+'</span></div>'; }).join('')+'</div>':'')+'</div>';
   }
   return h+'</div></div>';
+}
+function ownUpload(){
+  var f = $('ou-file').files[0], m = $('ou-msg'), b = $('ou-go');
+  var say = function(t){ m.style.display='block'; m.textContent=t; };
+  if (!$('ou-name').value.trim()) return say('Add the contractor’s name.');
+  if (!f) return say('Choose the proposal file.');
+  if (f.size > 3*1024*1024) return say('That file is over 3 MB. Try a smaller PDF or a photo.');
+  b.disabled = true; b.textContent = 'Uploading…';
+  readFile(f).then(function(data){
+    return api(P(), {project:PID, action:'bid-upload', gcName:$('ou-name').value, amount:$('ou-amt').value, file:{name:f.name, type:f.type||'application/pdf', data:data}});
+  }).then(function(j){
+    b.disabled = false; b.textContent = 'Add proposal';
+    if (!j.ok) return say({file_too_large:'That file is over 3 MB.', bad_file_type:'Use a PDF or a photo.', gc_name_required:'Add the contractor’s name.'}[j.error]||'Couldn’t add that — try again.');
+    toast('Proposal added'); load();
+  }).catch(function(){ b.disabled = false; b.textContent = 'Add proposal'; say('Couldn’t read that file.'); });
 }
 function copy(id){ var i=$(id); i.select(); try{ navigator.clipboard.writeText(i.value).then(function(){toast('Copied');},function(){document.execCommand('copy');toast('Copied');}); }catch(e){ document.execCommand('copy'); toast('Copied'); } }
 function makeLink(){ api(P(), {project:PID, action:'bid-link'}).then(function(j){ if (!j.ok) return toast('Couldn’t create the link.'); BIDLINK=j.link; render(); }); }
@@ -469,7 +490,7 @@ function vControls(){
     var act = canActOn(x), roles = rolesICanGive();
     var sel = act && roles.indexOf(x.role)>=0 && roles.length>1
       ? '<select class="role-sel" data-id="'+esc(x.identifier)+'" style="width:auto;margin:0;padding:6px 8px;font-size:12.5px" onchange="setMemberRole(\''+jsq(x.identifier)+'\',this.value)">'+roles.map(function(r){ return '<option value="'+r+'"'+(x.role===r?' selected':'')+'>'+RL[r]+'</option>'; }).join('')+'</select>'
-      : '<span class="pill lime">'+esc(RL[x.role]||x.role)+'</span>';
+      : '<span class="pill lime">'+esc(x.title||RL[x.role]||x.role)+'</span>';
     return '<div class="item" data-member="'+esc(x.identifier)+'"><div class="main"><div class="t">'+esc(x.name)+(x.identifier===ME.identifier?' <span class="muted small">(you)</span>':'')+'</div><div class="muted small">'+esc(x.identifier)+(ST.hiredGc&&ST.hiredGc.identifier===x.identifier?' · hired GC':'')+'</div></div>'+
       sel+'<span class="pill '+(x.status==='active'?'ok':'gray')+'">'+(x.status==='active'?'Active':'Invited')+'</span>'+
       (act?'<button class="btn sm danger" onclick="removeMember(\''+jsq(x.identifier)+'\',\''+jsq(x.name)+'\')">Remove</button>':'')+'</div>';
@@ -548,7 +569,7 @@ function vSchedule(){
         (canPlan()?'<button class="btn sm" aria-label="Delete task" onclick="taskDelete(\''+jsq(t.id)+'\')">×</button>':'')+'</div>';
     }).join('') : '<div class="empty">'+(canPlan()?'No tasks yet.':'Nothing assigned to you.')+'</div>')+'</div><div>';
   if (canPlan()) h += '<div class="card"><h2>Add a task</h2><label for="tk-title">Task</label><input id="tk-title" placeholder="e.g. Order 200A panel">'+
-    '<label for="tk-who">Assign to</label><select id="tk-who"><option value="">Unassigned</option>'+MEMBERS.map(function(x){ return '<option value="'+esc(x.identifier)+'" data-name="'+esc(x.name)+'">'+esc(x.name)+' · '+esc(RL[x.role]||x.role)+'</option>'; }).join('')+'</select>'+
+    '<label for="tk-who">Assign to</label><select id="tk-who"><option value="">Unassigned</option>'+MEMBERS.map(function(x){ return '<option value="'+esc(x.identifier)+'" data-name="'+esc(x.name)+'">'+esc(x.name)+' · '+esc(x.title||RL[x.role]||x.role)+'</option>'; }).join('')+'</select>'+
     '<div class="row" style="gap:10px;align-items:flex-end"><div style="flex:1;min-width:140px"><label for="tk-due">Due</label><input id="tk-due" type="date"></div><div style="flex:1;min-width:120px"><label for="tk-pri">Priority</label><select id="tk-pri"><option value="normal">Normal</option><option value="high">High</option></select></div></div>'+
     '<button class="btn pri" id="tk-go" onclick="taskAdd()">Add task</button></div>';
   return h+'</div></div>';
@@ -760,6 +781,16 @@ function fromHash(){
   else if (h==='tools') TAB='tools'; else if (h==='team') TAB='controls'; else if (['proposals','decisions','controls','schedule'].indexOf(h)>=0) TAB=h; else if (!h) TAB='overview';
 }
 window.addEventListener('hashchange', function(){ fromHash(); if (ST) { render(); load(); } });
+var NEXT_STEP = (function(){ var m = location.search.match(/[?&]next=([a-z-]+)/); return m ? m[1] : ''; })();
+function runNextStep(){
+  var n = NEXT_STEP; if (!n) return; NEXT_STEP = '';
+  try { history.replaceState(null, '', location.pathname + location.hash); } catch(e){}
+  if (n==='bids') { go('proposals'); if (!BIDLINK && $('make-link')) makeLink(); }
+  else if (n==='upload') { go('proposals'); setTimeout(function(){ var c=$('own-upload'); if (c) { c.scrollIntoView({block:'center'}); $('ou-name').focus(); } }, 60); }
+  else if (n==='invite-gc' || n==='invite-client') { go('controls'); setTimeout(function(){ var r=$('t-role'); if (r) { r.value = n==='invite-gc' ? 'gc' : 'client'; r.scrollIntoView({block:'center'}); } if ($('t-name')) $('t-name').focus(); }, 60); }
+  else if (n==='find-designer') { if (typeof subOpen==='function') subOpen({trade:'Architect / designer', fresh:true}); }
+  else if (n==='codecheck') go('tools','codecheck');
+}
 (function init(){
   fromHash();
   load();

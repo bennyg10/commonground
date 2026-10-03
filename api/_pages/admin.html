@@ -175,18 +175,18 @@ function activity(){
 }
 
 /* ── shell ── */
-var TABS = [['overview','Overview'],['subs','Sub requests'],['people','People'],['projects','Projects'],['activity','Activity'],['help','Help inbox'],['usage','Platform usage']];
+var TABS = [['overview','Overview'],['subs','Sub requests'],['trades','Trades'],['people','People'],['projects','Projects'],['activity','Activity'],['help','Help inbox'],['usage','Platform usage']];
 function renderTabs(){
-  var counts = {people: D.accounts.length, projects: D.projects.length, help: D.supportTotal, subs: subOpenList().length || null};
+  var counts = {trades: (D.trades||[]).length, people: D.accounts.length, projects: D.projects.length, help: D.supportTotal, subs: subOpenList().length || null};
   $('tabs').innerHTML = TABS.map(function(t){
     return '<button class="tab'+(TAB===t[0]?' on':'')+'" data-tab="'+t[0]+'" onclick="go(\''+t[0]+'\')">'+t[1]+(counts[t[0]]!=null?'<span class="ct">'+counts[t[0]]+'</span>':'')+'</button>';
   }).join('');
 }
-function go(t){ TAB=t; try{ history.replaceState(null,'','#'+t); }catch(e){} render(); window.scrollTo(0,0); if (t==='subs') load(); }
+function go(t){ TAB=t; try{ history.replaceState(null,'','#'+t); }catch(e){} render(); window.scrollTo(0,0); if (t==='subs' || t==='trades') load(); }
 function render(){
   $('me-name').textContent = D.me.name + ' · ' + D.me.identifier;
   renderTabs();
-  $('main').innerHTML = ({overview:vOverview, subs:vSubs, people:vPeople, projects:vProjects, activity:vActivity, help:vHelp, usage:vUsage}[TAB] || vOverview)();
+  $('main').innerHTML = ({overview:vOverview, subs:vSubs, trades:vTrades, people:vPeople, projects:vProjects, activity:vActivity, help:vHelp, usage:vUsage}[TAB] || vOverview)();
 }
 
 /* ── Overview ── */
@@ -232,6 +232,7 @@ function vSubs(){
       '<div style="min-width:0"><div class="eyebrow">'+esc(r.projectName)+' · '+esc(r.address||'')+'</div><div style="font-family:Bungee,sans-serif;font-size:19px;font-weight:800">'+esc(r.trade)+' near '+esc(r.zip)+'</div>'+
       '<div class="small muted" style="margin-top:4px">'+esc(r.byName)+' ('+(r.byRole==='client'?'homeowner':r.byRole==='designer'?'designer':'GC')+') · '+esc([r.contactEmail,r.phone].filter(Boolean).join(' · '))+' · asked '+esc(when(r.at))+'</div></div>'+pill+'</div>'+
       '<p style="margin:12px 0 4px;color:var(--w70)">'+esc(r.scope)+'</p><div class="small muted" style="margin-bottom:14px">When: '+esc(r.timing||'—')+' · Budget: '+esc(r.budget||'—')+'</div>'+
+      tradeMatchHtml(r)+
       (e.draft ? '<div class="alert soon">AI draft loaded — check each business, rating, license and phone before sending.</div>' : '')+
       rows+
       '<div class="row" style="gap:8px;flex-wrap:wrap;margin:6px 0 14px"><button class="btn" onclick="subAdd(\''+jsq(k)+'\')">+ Add option</button><button class="btn" id="draft-'+esc(r.id)+'" onclick="subDraft(\''+jsq(r.project)+'\',\''+jsq(r.id)+'\',this)">Draft with AI web search</button></div>'+
@@ -278,6 +279,33 @@ function statusPill(s){ return '<span class="pill '+(s==='approved'?'ok':s==='di
 function actRow(n){ return '<div class="item"><div class="main"><div>'+esc(n.text)+'</div><div class="small muted">'+esc(pname(n.project))+' · '+when(n.at)+(n.by?' · '+esc(n.by):'')+'</div></div></div>'; }
 
 /* ── People ── */
+/* ── Trades: Specialty Trades who joined from the landing page ── */
+var TR_Q = {trade:'', zip:''};
+var TRADE_STEMS = {'Electrical':'electric','Plumbing':'plumb','HVAC':'hvac','Framing':'fram','Concrete':'concrete','Roofing':'roof','Drywall':'drywall','Painting':'paint','Tile':'tile','Flooring':'floor',
+  'Cabinets':'cabinet','Landscape':'landscap','Demolition':'demoli','Surveying':'survey','Environmental testing':'environmental'};
+function tradeFits(t, tradeText){ var q = String(tradeText||'').toLowerCase(); return (t.trades||[]).some(function(x){ var st = TRADE_STEMS[x]; return st && q.indexOf(st) >= 0; }); }
+function zipNear(t, zip){ return !!zip && String(t.zip||'').slice(0,3) === String(zip).slice(0,3); }   // same 3-digit ZIP area — a rough first pass, not a distance check
+function tradeMatches(r){ return (D.trades||[]).filter(function(t){ return tradeFits(t, r.trade) && zipNear(t, r.zip); }); }
+function tradeMatchHtml(r){
+  var m = tradeMatches(r); if (!m.length) return '';
+  return '<div class="card" style="background:var(--d3);padding:12px 16px;margin-bottom:14px" data-trade-matches="'+m.length+'"><div class="eyebrow" style="margin-bottom:6px">From your trade list · same ZIP area</div>'+
+    m.map(function(t){ return '<div class="small" style="margin:3px 0"><b>'+esc(t.name)+'</b>'+(t.company?' · '+esc(t.company):'')+' · '+esc(t.identifier)+' · '+esc(t.trades.join(', '))+' · within '+t.radius+' mi of '+esc(t.zip)+'</div>'; }).join('')+'</div>';
+}
+function vTrades(){
+  var all = D.trades||[];
+  var list = all.filter(function(t){ return (!TR_Q.trade || t.trades.indexOf(TR_Q.trade)>=0) && (!TR_Q.zip || String(t.zip).indexOf(TR_Q.zip)===0); });
+  var names = Object.keys(TRADE_STEMS).concat(['Other']);
+  return '<div class="eyebrow">Specialty Trades</div><h1>Trade list</h1><div class="lede">Trades who joined from the landing page. Use it to answer Sub requests: matches in the same ZIP area also show on each request.</div>'+
+    '<div class="card"><div class="row" style="gap:10px;flex-wrap:wrap;align-items:flex-end">'+
+      '<label style="font-size:11px;color:var(--w50)">Trade<select id="tr-trade" onchange="TR_Q.trade=this.value;render()" style="display:block;margin-top:4px">'+['<option value="">All trades</option>'].concat(names.map(function(n){ return '<option'+(TR_Q.trade===n?' selected':'')+'>'+esc(n)+'</option>'; })).join('')+'</select></label>'+
+      '<label style="font-size:11px;color:var(--w50)">ZIP starts with<input id="tr-zip" inputmode="numeric" maxlength="5" value="'+esc(TR_Q.zip)+'" onchange="TR_Q.zip=this.value.replace(/\\D/g,\'\');render()" style="display:block;margin-top:4px;width:120px"></label>'+
+      '<span class="small muted">'+list.length+' of '+all.length+'</span></div></div>'+
+    (list.length ? list.map(function(t){
+      return '<div class="card" data-trade-row="'+esc(t.identifier)+'" style="padding:16px 20px"><div class="row" style="justify-content:space-between;gap:12px;flex-wrap:wrap"><div style="min-width:0"><div style="font-weight:700">'+esc(t.name)+(t.company?' <span class="muted">· '+esc(t.company)+'</span>':'')+'</div>'+
+        '<div class="small muted">'+esc(t.identifier)+' · within '+t.radius+' mi of '+esc(t.zip)+' · joined '+esc(when(t.joinedAt||t.updatedAt))+'</div></div>'+
+        '<div class="row" style="gap:6px;flex-wrap:wrap">'+t.trades.map(function(x){ return '<span class="pill lime">'+esc(x)+'</span>'; }).join('')+'</div></div></div>';
+    }).join('') : '<div class="card"><div class="empty">'+(all.length?'No trades match that filter.':'No trades on the list yet. They join from the landing page by choosing “Specialty Trade.”')+'</div></div>');
+}
 function vPeople(){
   var opts = function(sel){ return (A.projects||[]).map(function(p){ return '<option value="'+esc(p.slug)+'"'+(p.slug===sel?' selected':'')+'>'+esc(p.name)+'</option>'; }).join(''); };
   var inv = pendingInvites();
@@ -447,7 +475,7 @@ function recordDec(p, id, title){ modal({eyebrow:'Record paper approval', title:
 (function init(){
   var h = (location.hash||'').slice(1); if (TABS.some(function(t){return t[0]===h;})) TAB = h;
   load();
-  window.addEventListener('hashchange', function(){ var h=(location.hash||'').slice(1); if (h!==TAB && TABS.some(function(t){return t[0]===h;})) { TAB=h; if (D) render(); if (h==='subs') load(); } });
+  window.addEventListener('hashchange', function(){ var h=(location.hash||'').slice(1); if (h!==TAB && TABS.some(function(t){return t[0]===h;})) { TAB=h; if (D) render(); if (h==='subs' || h==='trades') load(); } });
   setInterval(function(){ if (!MODAL && document.visibilityState==='visible' && !(document.activeElement && document.activeElement.matches('input,textarea,select'))) load(); }, 60000);
 })();
 </script>

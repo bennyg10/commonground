@@ -165,6 +165,111 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
   .cta-row .btn{flex:1}
 }
 </style>
+<style id="funnel-css">
+/* ── hero: I am the… ── */
+.hero2{padding:88px 0 64px;text-align:center}
+.hero2 .eyebrow{font-size:13px;letter-spacing:.14em;color:#A39684;margin-bottom:18px}
+.hero2 h1{font-size:68px;line-height:1.05;margin:0 auto;max-width:none;color:#D9DAD4}
+.hero2 .lede{margin:20px auto 0;max-width:700px;font-size:20px;line-height:1.55;color:rgba(217,218,212,.75)}
+.hero2 .lede .sm{display:none}
+.iam-h{margin-top:60px;font-family:'Bungee',sans-serif;font-size:20px;color:#D5DC99}
+.roles{margin:20px auto 0;max-width:1240px;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:16px;text-align:left}
+.role{display:flex;flex-direction:column;gap:12px;padding:24px 22px;border-radius:18px;background:#1A1A1A;border:1px solid rgba(217,218,212,.14);color:#D9DAD4;min-height:196px;cursor:pointer;font:inherit;text-align:left;transition:border-color .15s,transform .15s,background .15s}
+.role:hover{border-color:rgba(213,220,153,.55);transform:translateY(-2px)}
+.role:focus-visible{outline:2px solid #D5DC99;outline-offset:3px}
+.role .ri{width:48px;height:48px;flex-shrink:0;border-radius:12px;background:rgba(213,220,153,.10);border:1px solid rgba(213,220,153,.28);color:#D5DC99;display:flex;align-items:center;justify-content:center}
+.role .txt{display:flex;flex-direction:column;gap:12px;min-width:0}
+.role b{font-family:'Bungee',sans-serif;font-weight:400;font-size:18px;line-height:1.2}
+.role .d{font-size:14px;line-height:1.5;color:rgba(217,218,212,.68)}
+.role .chev{display:none;flex-shrink:0;color:rgba(217,218,212,.6)}
+.role .resume{display:inline-block;margin-top:2px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#D5DC99}
+.invite-note{margin-top:32px;font-size:15px;color:rgba(217,218,212,.68)}
+.howlink{display:inline-flex;align-items:center;gap:8px;margin-top:36px;font-size:14px;color:rgba(217,218,212,.68);text-decoration:none;min-height:44px}
+.howlink:hover{color:#D9DAD4}
+#how{border-top:1px solid rgba(217,218,212,.10);padding:72px 0}
+@media(max-width:1100px){.roles{grid-template-columns:repeat(3,minmax(0,1fr))}.hero2 h1{font-size:56px}}
+@media(max-width:640px){
+  .hero2{padding:34px 0 40px;text-align:left}
+  .hero2 h1{font-size:34px;line-height:1.1}
+  .hero2 .lede{font-size:16px;margin-top:12px}
+  .hero2 .lede .lg{display:none}.hero2 .lede .sm{display:inline}
+  .iam-h{margin-top:28px;font-size:16px}
+  .roles{grid-template-columns:1fr;gap:10px;margin-top:12px}
+  .role{flex-direction:row;align-items:center;gap:14px;min-height:72px;padding:12px 14px;border-radius:14px}
+  .role:hover{transform:none}
+  .role .ri{width:44px;height:44px;border-radius:11px;border:none}
+  .role .txt{flex:1;gap:2px}
+  .role b{font-size:15px}
+  .role .d{font-size:13px}
+  .role .chev{display:block}
+  .invite-note{margin-top:18px;font-size:14px;text-align:center}
+  .howlink{margin-top:14px;display:flex;justify-content:center}
+  #how{padding:48px 0}
+}
+
+/* ── the flow: one question per screen ── */
+#fl{position:fixed;inset:0;z-index:70;background:#000;overflow-y:auto;display:none;-webkit-overflow-scrolling:touch}
+#fl.on{display:block}
+#m-bg{z-index:80}
+.fl-in{max-width:480px;margin:0 auto;min-height:100vh;min-height:100dvh;box-sizing:border-box;display:flex;flex-direction:column;padding:14px 20px 28px;color:#D9DAD4}
+.fl-top{display:flex;align-items:center;gap:12px;min-height:48px}
+.fl-mark{width:30px;height:30px;border-radius:8px;background:#D5DC99;color:#000;font-family:'Bungee',sans-serif;font-size:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.fl-step{flex:1;font-size:13px;color:rgba(217,218,212,.65)}
+.fl-x{width:44px;height:44px;box-sizing:border-box;border-radius:12px;border:1px solid rgba(217,218,212,.14);background:#1A1A1A;color:#D9DAD4;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
+.fl-bar{display:grid;gap:6px;margin-top:12px}
+.fl-bar i{height:4px;border-radius:2px;background:rgba(217,218,212,.14)}
+.fl-bar i.on{background:#D5DC99}
+.fl-head{margin-top:44px;display:flex;flex-direction:column;gap:10px}
+.fl-head h2{margin:0;font-family:'Bungee',sans-serif;font-weight:400;font-size:30px;line-height:1.15;color:#D9DAD4;letter-spacing:0}
+.fl-head p{margin:0;font-size:15px;line-height:1.55;color:rgba(217,218,212,.72)}
+.fl-body{margin-top:28px;display:flex;flex-direction:column;gap:10px}
+.fl-field{display:flex;flex-direction:column;gap:8px;margin-bottom:6px}
+.fl-field label,.fl-lbl{font-size:13px;color:#A39684}
+.fl-field input{height:54px;box-sizing:border-box;border-radius:12px;border:1px solid rgba(217,218,212,.14);background:#1A1A1A;color:#D9DAD4;font-size:16px;padding:0 16px;font-family:inherit;outline:none;width:100%}
+.fl-field input:focus{border-color:rgba(213,220,153,.6)}
+.fl-field input::placeholder{color:rgba(217,218,212,.45)}
+.fl-help{font-size:13px;color:rgba(217,218,212,.6)}
+.fl-seg{display:grid;gap:4px;padding:4px;border-radius:12px;background:#1A1A1A;border:1px solid rgba(217,218,212,.14)}
+.fl-seg button{height:44px;border:0;border-radius:9px;background:transparent;color:rgba(217,218,212,.78);font-weight:700;font-size:15px;font-family:inherit;cursor:pointer}
+.fl-seg button.on{background:#D5DC99;color:#000}
+.fl-opt{display:flex;align-items:center;gap:14px;min-height:68px;box-sizing:border-box;padding:12px 16px;border-radius:14px;background:#1A1A1A;border:1px solid rgba(217,218,212,.14);color:#D9DAD4;cursor:pointer;font:inherit;text-align:left;width:100%}
+.fl-opt .t{flex:1;display:flex;flex-direction:column;gap:2px}
+.fl-opt .t b{font-weight:700;font-size:16px}
+.fl-opt .t span{font-size:13px;color:rgba(217,218,212,.65)}
+.fl-opt .dot{width:24px;height:24px;box-sizing:border-box;border-radius:12px;border:1.5px solid rgba(217,218,212,.35);flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.fl-opt.on{background:rgba(213,220,153,.08);border:1.5px solid #D5DC99}
+.fl-opt.on .dot{background:#D5DC99;border:0;color:#000}
+.fl-tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.fl-tiles .fl-opt{min-height:76px}
+.fl-chips{display:flex;flex-wrap:wrap;gap:8px}
+.fl-chips button{height:44px;padding:0 16px;border-radius:22px;border:1px solid rgba(217,218,212,.18);background:#1A1A1A;color:#D9DAD4;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer}
+.fl-chips button.on{background:#D5DC99;border-color:#D5DC99;color:#000}
+.fl-link{align-self:center;min-height:44px;display:flex;align-items:center;font-size:15px;font-weight:700;color:#D5DC99;background:none;border:0;cursor:pointer;font-family:inherit;margin-top:12px}
+.fl-msg{display:none;font-size:14px;border-radius:10px;padding:10px 12px;background:rgba(224,122,95,.12);border:1px solid rgba(224,122,95,.3);color:#f0a996;margin-top:14px}
+.fl-msg .linkbtn{color:#D9DAD4}
+.fl-alt{margin-top:16px;font-size:14px;color:rgba(217,218,212,.65);text-align:center}
+.fl-alt button{background:none;border:0;color:#D5DC99;font:inherit;font-weight:700;cursor:pointer;padding:0;min-height:44px}
+.fl-grow{flex:1;min-height:28px}
+.fl-acts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.fl-acts.one{grid-template-columns:1fr}
+.fl-acts button,.fl-acts a{height:54px;border-radius:13px;font-weight:700;font-size:16px;font-family:inherit;display:flex;align-items:center;justify-content:center;text-decoration:none;cursor:pointer;box-sizing:border-box}
+.fl-back{background:#262626;border:1px solid rgba(217,218,212,.14);color:#D9DAD4}
+.fl-go{background:#D5DC99;border:1px solid #D5DC99;color:#000}
+.fl-go[disabled]{opacity:.55;cursor:default}
+.fl-sec{height:48px!important;background:none;border:0;color:#D9DAD4}
+.fl-done{margin-top:56px;display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center}
+.fl-done .ok{width:68px;height:68px;border-radius:34px;background:#D5DC99;color:#000;display:flex;align-items:center;justify-content:center}
+.fl-done h2{margin:0;font-family:'Bungee',sans-serif;font-weight:400;font-size:30px;line-height:1.15;letter-spacing:0}
+.fl-card{margin-top:28px;padding:16px 18px;border-radius:14px;background:#1A1A1A;border:1px solid rgba(217,218,212,.14);display:flex;flex-direction:column;gap:4px}
+.fl-card b{font-size:16px}
+.fl-card span{font-size:13px;color:rgba(217,218,212,.65)}
+.fl-next{margin-top:14px;padding:18px;border-radius:14px;background:rgba(213,220,153,.08);border:1px solid rgba(213,220,153,.35);display:flex;flex-direction:column;gap:8px}
+.fl-next .e{font-size:12px;text-transform:uppercase;letter-spacing:.1em;color:#D5DC99;font-weight:700}
+.fl-next .h{font-family:'Bungee',sans-serif;font-size:18px;line-height:1.25}
+.fl-next p{margin:0;font-size:14px;line-height:1.55;color:rgba(217,218,212,.75)}
+.fl-note{margin-top:16px;font-size:14px;line-height:1.55;color:rgba(217,218,212,.65);text-align:center}
+@media(min-width:700px){.fl-in{padding-top:40px}}
+</style>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&display=swap" id="brand-kit">
 <style id="brand-v2">
 :root{--dk:#000000;--black:#000000;--d1:#000000;--d2:#1A1A1A;--d3:#262626;--d4:#333333;--white:#D9DAD4;--sage:#A39684;--stone:#6D604F;--limestone:#D9DAD4;--graphite:#333333;
@@ -193,25 +298,29 @@ h1,h2,h3,h4,.compare h3,.free h3,#m h3,.calc .big{font-family:'Bungee',sans-seri
 <nav class="nav"><div class="wrap">
   <a class="mark" href="/"><b>CG</b><span>Common Ground</span></a>
   <div class="links">
-    <a class="t" href="#problems">Why</a>
-    <a class="t" href="#tools">Free tools</a>
+    <a class="t" href="#how">How it works</a>
     <button class="btn" id="nav-signin" onclick="openTool('signin')">Sign in</button>
-    <button class="btn pri" id="nav-use" onclick="useTool()">Use Tool</button>
   </div>
 </div></nav>
 
-<header class="hero"><div class="wrap">
-  <div class="eyebrow">For homeowners and contractors</div>
-  <h1>Building is hard. <em>Working together</em> shouldn’t be.</h1>
-  <p class="lede" style="margin-bottom:14px"><b style="color:var(--white);font-weight:700">Sound familiar?</b> Bids return in five separate formats. Approvals that got lost in text threads. Surprise change orders. A plan check that sends you back to square one.</p>
-  <p class="lede" style="margin-top:0">Common Ground puts the homeowner and the contractor on the same page so decisions happen instantly and projects move faster.</p>
-  <div class="cta-row">
-    <button class="btn pri lg" id="hero-use" onclick="useTool()">Use Tool — it’s free</button>
-    <a class="btn lg" href="#problems">See what it fixes</a>
+<header class="hero hero2" id="iam"><div class="wrap">
+  <div class="eyebrow">Free for everyone on the project</div>
+  <h1>Build better on day one.</h1>
+  <p class="lede"><span class="lg">Proposals, approvals, code checks and progress in one place, for the homeowner and everyone they hire.</span><span class="sm">Proposals, approvals, code checks and progress in one place. Free.</span></p>
+  <div class="iam-h" id="iam-h">I am the…</div>
+  <div class="roles" id="roles" role="group" aria-labelledby="iam-h">
+    <button type="button" class="role" id="role-homeowner" data-role="homeowner" onclick="flowStart('homeowner')"><span class="ri"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg></span><span class="txt"><b>Homeowner</b><span class="d">Building or renovating my property</span></span><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>
+    <button type="button" class="role" id="role-contractor" data-role="contractor" onclick="flowStart('contractor')"><span class="ri"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 18h18"/><path d="M5 18v-3a7 7 0 0 1 14 0v3"/><path d="M10 9V6h4v3"/></svg></span><span class="txt"><b>General Contractor</b><span class="d">Running jobs and bidding work</span></span><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>
+    <button type="button" class="role" id="role-architect" data-role="architect" onclick="flowStart('architect')"><span class="ri"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="5" r="2"/><path d="M11 7L6 20"/><path d="M13 7l5 13"/><path d="M8 15h8"/></svg></span><span class="txt"><b>Architect</b><span class="d">Drawing plans and getting them permitted</span></span><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>
+    <button type="button" class="role" id="role-designer" data-role="designer" onclick="flowStart('designer')"><span class="ri"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11V9a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v2"/><path d="M3 12h18v5H3z"/><path d="M5 17v2M19 17v2"/></svg></span><span class="txt"><b>Designer</b><span class="d">Interior or exterior design</span></span><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>
+    <button type="button" class="role" id="role-trade" data-role="trade" onclick="flowStart('trade')"><span class="ri"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L4 17l3 3 5.3-5.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.4-.6-.6-2.4z"/></svg></span><span class="txt"><b>Specialty Trade</b><span class="d">Electrical, plumbing, tile and more</span></span><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>
   </div>
-  <p class="fine" style="margin-top:14px">No credit card. Set up a project in two minutes.</p>
+  <p class="fine invite-note">Got an invite link? Just open it, and it takes you straight to your project.</p>
+  <a class="howlink" href="#how">See how it works<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></a>
+</div></header>
 
-  <div class="compare" id="compare">
+<section class="block" id="how"><div class="wrap">
+  <div class="compare" id="compare" style="margin-top:0">
     <h3>Same project. Two ways to run it.</h3>
     <p class="fine">Work waits on work when every step is sequential. On Common Ground the steps run side by side.</p>
     <div class="lane"><div class="lh"><b>The usual way</b><span id="old-lbl">about 5 months to break ground</span></div>
@@ -220,7 +329,7 @@ h1,h2,h3,h4,.compare h3,.free h3,#m h3,.calc .big{font-family:'Bungee',sans-seri
       <div class="track" id="new-track"></div></div>
     <div class="axis"><span>Plans ready</span><span>1 mo</span><span>2 mo</span><span>3 mo</span><span>4 mo</span><span>5 mo</span></div>
   </div>
-</div></header>
+</div></section>
 
 <section class="block" id="problems"><div class="wrap">
   <div class="eyebrow">The problems</div>
@@ -272,7 +381,7 @@ h1,h2,h3,h4,.compare h3,.free h3,#m h3,.calc .big{font-family:'Bungee',sans-seri
   </div>
   <div class="free">
     <div><h3>Build better in one place.</h3><p>Join the 1000+ homeowners and contractors enjoying the platform.</p></div>
-    <button class="btn pri lg" id="free-use" onclick="useTool()">Use Tool</button>
+    <a class="btn pri lg" id="free-use" href="#iam">Get started</a>
   </div>
 </div></section>
 
@@ -281,6 +390,7 @@ h1,h2,h3,h4,.compare h3,.free h3,#m h3,.calc .big{font-family:'Bungee',sans-seri
   <span><a href="/help" style="color:var(--w70)">Contact us</a> · <button class="linkbtn" onclick="openTool('signin')">Sign in</button></span>
 </div></footer>
 
+<div id="fl" role="dialog" aria-modal="true" aria-label="Get started"><div class="fl-in" id="fl-in"></div></div>
 <div id="m-bg" role="dialog" aria-modal="true"><div id="m"></div></div>
 
 <script>
@@ -446,7 +556,7 @@ function post(body){
     .then(function(r){ return r.json().then(function(j){ j._s=r.status; return j; }).catch(function(){ return {error:'network'}; }); })
     .catch(function(){ return {error:'network'}; });
 }
-function useTool(){ if (ME) { location.href='/dashboard'; return; } openTool('new'); }
+function useTool(){ if (ME) { location.href='/dashboard'; return; } location.hash = 'iam'; }
 function openTool(mode){
   if (ME && mode==='signin') { location.href='/dashboard'; return; }
   FORM.mode = mode; $('m-bg').style.display='flex'; document.body.style.overflow='hidden'; drawModal();
@@ -487,7 +597,7 @@ function pickType(t){ FORM.type=t; setTimeout(signupSave,0); if($('nm')){ FORM.n
 function submit(body, label){
   var b=$('go'); b.disabled=true; b.textContent='One moment…';
   post(body).then(function(j){
-    if (j.ok) { try { localStorage.removeItem('cg_signup_draft'); } catch(e){} location.href = '/dashboard'; return; }
+    if (j.ok) { try { localStorage.removeItem('cg_signup_draft'); } catch(e){} if (j.user) ME = j.user; if (typeof flowAfterSignin==='function' && flowAfterSignin()) { closeTool(); return; } location.href = '/dashboard'; return; }
     b.disabled=false; b.textContent=label; var m=$('msg'); m.style.display='block'; m.textContent = ERR[j.error] || j.message || 'That didn’t work. Try again.';
     if (j.error==='account_exists') { m.innerHTML = esc(ERR.account_exists)+' <button class="linkbtn" onclick="FORM.mode=\'signin\';drawModal()">Sign in</button>'; }
   });
@@ -503,6 +613,280 @@ fetch('/api/auth?action=me',{credentials:'same-origin'}).then(function(r){return
   if (j && j.user) { ME=j.user; $('nav-signin').textContent='Dashboard'; $('nav-signin').onclick=function(){ location.href='/dashboard'; }; }
   if (/[?&]signin=1/.test(location.search) && !ME) openTool('signin');
 }).catch(function(){ if (/[?&]signin=1/.test(location.search)) openTool('signin'); });
+</script>
+<script id="funnel-js">
+/* ══════════════════════════════════════════════════
+   NEW-USER FLOW — "I am the…" → one question per screen → account last → one next step.
+   Only the × closes it (answers are saved, so reopening picks up where they left off).
+   ══════════════════════════════════════════════════ */
+var FL = null, FL_BUSY = false, FL_KEY = 'cg_flow';
+var FL_ROLE = {
+  homeowner: {label:'Homeowner', steps:['address','plan','stage','account'], acct:'homeowner', as:'client'},
+  contractor:{label:'General Contractor', steps:['start','job','account'], acct:'contractor', as:'gc'},
+  architect: {label:'Architect', steps:['project','drawings','account'], acct:'architect', as:'designer'},
+  designer:  {label:'Designer', steps:['focus','client','account'], acct:'designer', as:'designer'},
+  trade:     {label:'Specialty Trade', steps:['trades','area','account'], acct:'trade', as:''}
+};
+var FL_PLAN = [['new-build','New home'],['remodel','Remodel'],['addition','Addition'],['adu','ADU'],['demolition','Demolition'],['repair','Repair']];
+var FL_STAGE = [['idea','Just an idea','No plans or contractors yet'],['plans','I have plans','Ready to get bids'],['proposals','I have proposals','Keep them all in one place'],['started','Work has started','Bring your contractor in']];
+var FL_START = [['job','Add a job I’m running','New, or already underway'],['bid','Bid on a project','A homeowner sent me a link'],['sample','Look around first','Try every tool on a sample project']];
+var FL_DRAW = [['schematic','Schematic design'],['design-development','Design development'],['construction-documents','Construction documents'],['plan-check','In plan check']];
+var FL_FOCUS = [['interiors','Interiors','Kitchens, baths, finishes, furniture'],['exteriors','Exteriors','Landscape, hardscape, facades'],['both','Both','Inside and out']];
+var FL_TRADES = ['Electrical','Plumbing','HVAC','Framing','Concrete','Roofing','Drywall','Painting','Tile','Flooring','Cabinets','Landscape','Demolition','Surveying','Environmental testing','Other'];
+var FL_RADII = [10,25,50,100];
+var FL_X = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>';
+var FL_CHECK = function(n, w){ return '<svg width="'+n+'" height="'+n+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="'+(w||3)+'" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg>'; };
+function flLabel(list, k){ for (var i=0;i<list.length;i++) if (list[i][0]===k) return list[i][1]; return ''; }
+
+/* ── saving ── */
+function flowSave(){ try { if (FL && !FL.done) { var c = JSON.parse(JSON.stringify(FL)); delete c.a.pw; localStorage.setItem(FL_KEY, JSON.stringify(c)); } } catch(e){} }
+function flowLoad(){ try { var d = JSON.parse(localStorage.getItem(FL_KEY) || 'null'); return d && FL_ROLE[d.role] && d.a ? d : null; } catch(e){ return null; } }
+function flowClear(){ try { localStorage.removeItem(FL_KEY); } catch(e){} }
+function flowMarkTiles(){
+  var d = flowLoad();
+  [].forEach.call(document.querySelectorAll('.role .resume'), function(x){ x.parentNode.removeChild(x); });
+  if (!d) return;
+  var t = document.querySelector('#role-'+d.role+' .txt'); if (!t) return;
+  var r = document.createElement('span'); r.className = 'resume'; r.textContent = 'Pick up where you left off'; t.appendChild(r);
+}
+
+/* ── open / close ── */
+function flowStart(role){
+  var d = flowLoad();
+  FL = d && d.role === role ? d : {role:role, i:0, a:{cls:'residential', mode:'new', radius:25, trades:[]}};
+  $('fl').classList.add('on'); document.body.style.overflow = 'hidden';
+  flowRender(); $('fl').scrollTop = 0;
+}
+function flowClose(){ flowGrab(); flowSave(); $('fl').classList.remove('on'); document.body.style.overflow = ''; flowMarkTiles(); }
+function flowSteps(){
+  var r = FL.role, a = FL.a, s = FL_ROLE[r].steps.slice();
+  if (r === 'contractor' && a.start === 'bid') s = a.bidAccount ? ['start','bid','account'] : ['start','bid'];
+  if (r === 'contractor' && a.start === 'sample') s = ['start','account'];
+  if (r === 'architect' && a.looking) s = ['project','account'];
+  return s;
+}
+function flowCur(){ var s = flowSteps(); if (FL.i >= s.length) FL.i = s.length - 1; if (FL.i < 0) FL.i = 0; return s[FL.i]; }
+
+/* ── read what's typed ── */
+function flowGrab(){
+  if (!FL) return;
+  var v = function(id){ var e = $(id); return e ? e.value : null; };
+  var a = FL.a;
+  if (v('fl-addr') !== null) a.address = v('fl-addr');
+  if (v('fl-zip') !== null) a.zip = v('fl-zip');
+  if (v('fl-nm') !== null) a.name = v('fl-nm');
+  if (v('fl-co') !== null) a.company = v('fl-co');
+  if (v('fl-id') !== null) a.id = v('fl-id');
+  if (v('fl-pw') !== null) a.pw = v('fl-pw');
+}
+
+/* ── pieces ── */
+function flHead(h, p){ return '<div class="fl-head"><h2 id="fl-h">'+h+'</h2>'+(p?'<p>'+p+'</p>':'')+'</div>'; }
+function flField(id, label, val, attrs){ return '<div class="fl-field"><label for="'+id+'">'+label+'</label><input id="'+id+'" value="'+esc(val||'')+'" '+(attrs||'')+'></div>'; }
+function flSeg(key, opts, help, label){
+  return '<div class="fl-field">'+(label?'<span class="fl-lbl">'+label+'</span>':'')+'<div class="fl-seg" style="grid-template-columns:repeat('+opts.length+',minmax(0,1fr))">'+opts.map(function(o){
+    var on = String(FL.a[key]) === String(o[0]);
+    return '<button type="button" class="'+(on?'on':'')+'" aria-pressed="'+on+'" data-'+key+'="'+o[0]+'" onclick="flowPick(\''+key+'\','+JSON.stringify(o[0]).replace(/"/g,'&quot;')+')">'+o[1]+'</button>'; }).join('')+'</div>'+(help?'<span class="fl-help">'+help+'</span>':'')+'</div>';
+}
+function flOpts(key, list, tiles){
+  return '<div class="'+(tiles?'fl-tiles':'fl-body')+'" role="radiogroup" aria-labelledby="fl-h"'+(tiles?'':' style="margin-top:0"')+'>'+list.map(function(o){
+    var on = FL.a[key] === o[0];
+    return '<button type="button" class="fl-opt'+(on?' on':'')+'" role="radio" aria-checked="'+on+'" data-opt="'+o[0]+'" onclick="flowPick(\''+key+'\',\''+o[0]+'\',true)">'+
+      '<span class="t"><b>'+esc(o[1])+'</b>'+(o[2]?'<span>'+esc(o[2])+'</span>':'')+'</span><span class="dot">'+(on?FL_CHECK(14):'')+'</span></button>'; }).join('')+'</div>';
+}
+function flAddr(label, ph){ return flField('fl-addr', label, FL.a.address, 'autocomplete="street-address" placeholder="'+(ph||'123 Main St, Los Angeles, CA 90049')+'"'); }
+
+/* ── render ── */
+function flowRender(msg){
+  if (!FL) return;
+  if (FL.done) return flowDone();
+  var r = FL.role, R = FL_ROLE[r], a = FL.a, step = flowCur(), base = R.steps, idx = Math.max(0, base.indexOf(step === 'bid' ? 'job' : step));
+  var h = '<div class="fl-top"><div class="fl-mark">CG</div><div class="fl-step" id="fl-step">'+R.label+' · Step '+(idx+1)+' of '+base.length+'</div>'+
+    '<button type="button" class="fl-x" id="fl-x" onclick="flowClose()" aria-label="Close. Your answers are saved.">'+FL_X+'</button></div>'+
+    '<div class="fl-bar" style="grid-template-columns:repeat('+base.length+',minmax(0,1fr))">'+base.map(function(x, j){ return '<i class="'+(j<=idx?'on':'')+'"></i>'; }).join('')+'</div>';
+  var go = 'Continue';
+  if (step === 'address') h += flHead('Where’s the property?', 'Your project gets its own page, like buildcommonground.io/123mainst.') + '<div class="fl-body">'+flAddr('Property address')+
+      flSeg('cls', [['residential','Residential'],['commercial','Commercial']], 'Sets which building codes we check against.', 'Property type')+'</div>';
+  else if (step === 'plan') h += flHead('What are you planning?', 'Pick the closest match. You can change it later.') + '<div class="fl-body">'+flOpts('scope', FL_PLAN, true)+'</div>';
+  else if (step === 'stage') h += flHead('Where are you today?', 'We’ll show you the one thing to do next.') + '<div class="fl-body">'+flOpts('stage', FL_STAGE)+'</div>';
+  else if (step === 'start') h += flHead('What brings you here?', 'Unlimited projects, free. Every tool works from day one.') + '<div class="fl-body">'+flOpts('start', FL_START)+'</div>';
+  else if (step === 'job') h += flHead('Where’s the job?', 'Your client gets a link to follow progress and approve decisions.') + '<div class="fl-body">'+flAddr('Job address')+
+      flSeg('mode', [['new','New project'],['underway','Underway']], 'You can post the current phase right after.', 'Where does it stand?')+'</div>';
+  else if (step === 'bid') { h += flHead('Open your bid link', 'The link from the homeowner’s text or email takes you straight to their bid page. You create your account there when you send your proposal.') +
+      '<button type="button" class="fl-link" id="fl-bid-acct" onclick="FL.a.bidAccount=true;FL.i=2;flowSave();flowRender()">Create an account anyway</button>'; go = 'Got it'; }
+  else if (step === 'project') h += flHead('Where’s the project?', 'The property you’re drawing for. The homeowner and GC can join it later.') + '<div class="fl-body">'+flAddr('Property address')+
+      flSeg('cls', [['residential','Residential'],['commercial','Commercial']], '', 'Property type')+'</div>'+
+      '<button type="button" class="fl-link" id="fl-looking" onclick="flowSkip(\'looking\')">No project yet, I’m just looking</button>';
+  else if (step === 'drawings') h += flHead('Where are the drawings?', 'So we show your team what matters right now.') + '<div class="fl-body">'+flOpts('drawings', FL_DRAW)+'</div>';
+  else if (step === 'focus') h += flHead('What do you design?', 'We’ll set up the right tools for your work.') + '<div class="fl-body">'+flOpts('focus', FL_FOCUS)+'</div>';
+  else if (step === 'client') h += flHead('Starting with a client project?', 'Add your client’s property. You can invite them next.') + '<div class="fl-body">'+flAddr('Client’s address')+'</div>'+
+      '<button type="button" class="fl-link" id="fl-skip" onclick="flowSkip(\'skip\')">Skip for now</button>';
+  else if (step === 'trades') h += flHead('What’s your trade?', 'Pick all that apply.') + '<div class="fl-body"><div class="fl-chips" role="group" aria-labelledby="fl-h">'+FL_TRADES.map(function(t){
+      var on = (a.trades||[]).indexOf(t) >= 0; return '<button type="button" class="'+(on?'on':'')+'" aria-pressed="'+on+'" data-trade="'+esc(t)+'" onclick="flowTrade(this)">'+esc(t)+'</button>'; }).join('')+'</div></div>';
+  else if (step === 'area') h += flHead('Where do you work?', 'We match you with projects nearby that need your trade.') + '<div class="fl-body">'+
+      flField('fl-zip', 'Your ZIP code', a.zip, 'inputmode="numeric" autocomplete="postal-code" maxlength="5" placeholder="90049"')+
+      flSeg('radius', FL_RADII.map(function(x){ return [x, x+' mi']; }), '', 'How far will you travel?')+'</div>';
+  else if (step === 'account') {
+    var sample = (r==='contractor' && a.start==='sample') || (r==='architect' && a.looking) || (r==='designer' && a.skip);
+    go = r==='trade' ? 'Join' : r==='homeowner' ? 'Create project' : sample ? 'Open practice project' : r==='designer' ? 'Create studio' : (r==='contractor' && a.start==='bid') ? 'Create account' : 'Create workspace';
+    if (ME) h += flHead('Almost done', 'Signed in as '+esc(ME.name)+'. '+(r==='trade'?'We’ll add you to the trade list.':sample?'We’ll open a private practice project.':'We’ll set this up on your account.'));
+    else {
+      var co = {contractor:'Company (optional)', architect:'Firm (optional)', designer:'Studio (optional)', trade:'Company (optional)'}[r];
+      h += flHead(r==='homeowner'?'Save your project':r==='designer'?'Save your studio':r==='trade'?'Save your profile':'Save your workspace', 'Free. No credit card.') + '<div class="fl-body">'+
+        flField('fl-nm', 'Your name', a.name, 'autocomplete="name"')+(co?flField('fl-co', co, a.company, 'autocomplete="organization"'):'')+
+        flField('fl-id', 'Email or phone', a.id, 'autocomplete="username"')+flField('fl-pw', 'Create a password (8+ characters)', a.pw, 'type="password" autocomplete="new-password" minlength="8"')+'</div>'+
+        '<div class="fl-alt">Already have an account? <button type="button" id="fl-signin" onclick="flowGrab();flowSave();openTool(\'signin\')">Sign in</button></div>';
+    }
+  }
+  h += '<div class="fl-msg" id="fl-msg" role="alert"'+(msg?' style="display:block"':'')+'>'+(msg||'')+'</div><div class="fl-grow"></div>'+
+    '<div class="fl-acts"><button type="button" class="fl-back" id="fl-back" onclick="flowBack()">Back</button><button type="button" class="fl-go" id="fl-go" onclick="flowNext()">'+go+'</button></div>';
+  $('fl-in').innerHTML = h;
+  $('fl').oninput = function(){ flowGrab(); flowSave(); flowHideMsg(); };
+  if (window.matchMedia && matchMedia('(pointer:fine)').matches) { var f = $('fl-in').querySelector('input'); if (f && !msg) f.focus(); }
+}
+
+/* ── moving ── */
+function flowPick(key, val, auto){
+  flowGrab(); FL.a[key] = val; flowSave(); flowRender();
+  if (auto) setTimeout(function(){ if (FL && FL.a[key] === val && !FL.done) flowNext(); }, 220);
+}
+function flowHideMsg(){ var m = $('fl-msg'); if (m) m.style.display = 'none'; }
+function flowTrade(b){ flowHideMsg(); var t = b.getAttribute('data-trade'), l = FL.a.trades = FL.a.trades || [], i = l.indexOf(t); if (i >= 0) l.splice(i, 1); else l.push(t); b.classList.toggle('on', i < 0); b.setAttribute('aria-pressed', String(i < 0)); flowSave(); }
+function flowSkip(flag){ flowGrab(); FL.a[flag] = true; FL.i += 1; flowSave(); flowRender(); }
+function flowBack(){ flowGrab(); if (FL.i === 0) return flowClose(); FL.i -= 1; flowSave(); flowRender(); }
+function flowNext(){
+  if (FL_BUSY) return;
+  flowGrab();
+  var a = FL.a, step = flowCur(), bad = function(t){ flowRender(t); };
+  var addrOk = String(a.address||'').trim().length >= 5;
+  if (step === 'address' || step === 'job') { if (!addrOk) return bad('Enter the property address.'); }
+  if (step === 'project') { if (!addrOk) return bad('Enter the property address, or choose “I’m just looking.”'); a.looking = false; }
+  if (step === 'client') { if (!addrOk) return bad('Enter your client’s address, or skip for now.'); a.skip = false; }
+  if (step === 'plan' && !a.scope) return bad('Pick the closest match.');
+  if (step === 'stage' && !a.stage) return bad('Pick one to continue.');
+  if (step === 'start' && !a.start) return bad('Pick one to continue.');
+  if (step === 'drawings' && !a.drawings) return bad('Pick one to continue.');
+  if (step === 'focus' && !a.focus) return bad('Pick one to continue.');
+  if (step === 'trades' && !(a.trades||[]).length) return bad('Pick at least one trade.');
+  if (step === 'area' && !/^\d{5}$/.test(String(a.zip||'').trim())) return bad('Enter a 5-digit ZIP code.');
+  if (step === 'bid') { flowClear(); FL = null; $('fl').classList.remove('on'); document.body.style.overflow = ''; flowMarkTiles(); return; }
+  if (step === 'account') return flowSubmit();
+  FL.i += 1; flowSave(); flowRender(); $('fl').scrollTop = 0;
+}
+
+/* ── account, then the project ── */
+function flowBusy(on, label){ FL_BUSY = on; var b = $('fl-go'); if (b) { b.disabled = on; if (label) b.textContent = label; } }
+function flowPost(url, body){
+  return fetch(url, {method:'POST', headers:{'Content-Type':'application/json'}, credentials:'same-origin', body:JSON.stringify(body)})
+    .then(function(r){ return r.json().catch(function(){ return {error:'network'}; }); }).catch(function(){ return {error:'network'}; });
+}
+function flowSubmit(){
+  var a = FL.a, r = FL.role;
+  if (ME) return flowFinish();
+  if (String(a.name||'').trim().length < 2) return flowRender('Add your name.');
+  if (!String(a.id||'').trim()) return flowRender('Enter your email or phone.');
+  if (String(a.pw||'').length < 8) return flowRender('Use at least 8 characters for your password.');
+  var label = $('fl-go').textContent; flowBusy(true, 'One moment…');
+  var body = {action:'signup', accountType:FL_ROLE[r].acct, name:a.name, company:a.company||'', identifier:a.id, password:a.pw};
+  if (r === 'trade') body.trade = {trades:a.trades, zip:String(a.zip||'').trim(), radius:a.radius};
+  flowPost('/api/auth', body).then(function(j){
+    if (!j.ok) {
+      flowBusy(false);
+      if (j.error === 'account_exists') return flowRender(esc(ERR.account_exists)+' <button type="button" class="linkbtn" onclick="openTool(\'signin\');setTimeout(function(){ if ($(\'id\')) $(\'id\').value='+esc(JSON.stringify(String(a.id||'')))+'; },40)">Sign in</button>');
+      return flowRender(esc(({trade_required:'Pick at least one trade.', zip_required:'Enter a 5-digit ZIP code.'})[j.error] || ERR[j.error] || j.message || 'That didn’t work. Try again.'));
+    }
+    ME = j.user; FL.signedUp = true; delete FL.a.pw; flowSave();
+    if ($('nav-signin')) { $('nav-signin').textContent = 'Dashboard'; $('nav-signin').onclick = function(){ location.href = '/dashboard'; }; }
+    flowFinish(label);
+  });
+}
+function flowAfterSignin(){
+  if (!FL || FL.done || !$('fl').classList.contains('on') || flowCur() !== 'account') return false;
+  setTimeout(function(){ document.body.style.overflow = 'hidden'; flowRender(); flowFinish(); }, 0);
+  return true;
+}
+function flowFinish(){
+  var a = FL.a, r = FL.role;
+  flowBusy(true, 'Setting things up…');
+  var done = function(res){ FL.done = true; FL.result = res; flowClear(); flowBusy(false); flowRender(); $('fl').scrollTop = 0; };
+  var fail = function(j){
+    flowBusy(false);
+    flowRender(esc(({address_taken:'That address already has a project on Common Ground. Ask its owner to invite you, or contact us.', address_required:'Enter the property address.',
+      too_many_attempts:'Too many projects today. Try again tomorrow.', sign_in_required:'Sign in to continue.'})[j.error] || ERR[j.error] || 'Couldn’t set that up. Try again.'));
+  };
+  if (r === 'contractor' && a.start === 'bid') { flowClear(); location.href = '/dashboard'; return; }
+  if (r === 'trade') {
+    if (FL.signedUp) return done({kind:'trade'});
+    return flowPost('/api/auth', {action:'trade-profile', trade:{trades:a.trades, zip:String(a.zip||'').trim(), radius:a.radius}, company:a.company||''})
+      .then(function(j){ if (!j.ok) return fail(j); ME = j.user; done({kind:'trade'}); });
+  }
+  if ((r === 'contractor' && a.start === 'sample') || (r === 'architect' && a.looking) || (r === 'designer' && a.skip)) {
+    return flowPost('/api/project', {action:'create', sample:true}).then(function(j){ if (!j.ok) return fail(j); done({kind:'practice', url:j.url}); });
+  }
+  var body = {action:'create', address:a.address, classification:a.cls || 'residential', as:FL_ROLE[r].as};
+  if (r === 'homeowner') { body.scope = a.scope; body.startStage = a.stage; }
+  if (r === 'contractor') body.mode = a.mode === 'underway' ? 'underway' : 'new';
+  if (r === 'architect') body.drawingStage = a.drawings;
+  if (r === 'designer') body.designFocus = a.focus;
+  flowPost('/api/project', body).then(function(j){ if (!j.ok) return fail(j); done({kind:'project', url:j.url}); });
+}
+
+/* ── the last screen: one next step ── */
+var FL_NEXT = {
+  idea:     ['Find an architect or designer', 'Tell us what you need and we send 3–5 top-rated options near you within 12 hours.', 'Find a designer', 'find-designer'],
+  plans:    ['Invite contractors to bid', 'Send one link to every contractor. Their proposals land in one list, so you can review them and hire in one place.', 'Invite contractors', 'bids'],
+  proposals:['Add your proposals', 'Upload the proposals you already have so they’re all in one place, then choose your GC.', 'Add proposals', 'upload'],
+  started:  ['Invite your contractor', 'Bring your GC in so progress, approvals and change orders live in one place.', 'Invite your contractor', 'invite-gc'],
+  gc:       ['Invite your client', 'They follow progress and approve decisions from their phone, so nothing gets lost in a text thread.', 'Invite your client', 'invite-client'],
+  architect:['Check your plans against code', 'Upload your plan set and get findings with code sections before plan check does. Results save to the project for the homeowner and GC.', 'Check my plans', 'codecheck'],
+  designer: ['Invite your client', 'Share selections and get design approvals signed from their phone.', 'Invite your client', 'invite-client']
+};
+function flowDone(){
+  var r = FL.role, a = FL.a, res = FL.result || {}, title, card, nx, acts;
+  var street = esc(String(a.address||'').split(',')[0].trim());
+  if (res.kind === 'trade') {
+    title = 'You’re on the list.';
+    card = '<b>'+esc((a.trades||[]).join(' · '))+'</b><span>Within '+esc(a.radius)+' mi of '+esc(String(a.zip||'').trim())+'</span>';
+    nx = ['What happens next', 'Work comes to you', 'When a homeowner or GC near you needs your trade, we’ll send the job your way.'];
+    acts = '<div class="fl-acts one"><a class="fl-go" id="fl-done-go" href="/dashboard">Go to my dashboard</a></div>';
+  } else if (res.kind === 'practice') {
+    title = 'Your practice project is ready.';
+    card = '<b>Practice project</b><span>Private. Nothing goes to a client.</span>';
+    nx = ['Your next step', 'Try every tool', 'Each tool opens with a 1-minute guided tour. When you’re ready, add your real project from your dashboard.'];
+    acts = '<div class="fl-acts one"><a class="fl-go" id="fl-done-go" href="'+esc(res.url)+'">Open the practice project</a><a class="fl-sec" href="/dashboard">Go to my dashboard</a></div>';
+  } else {
+    var key = r === 'homeowner' ? (a.stage || 'plans') : r === 'contractor' ? 'gc' : r;
+    var n = FL_NEXT[key] || FL_NEXT.gc;
+    title = r === 'contractor' ? 'Your job is set up.' : r === 'architect' ? 'Your project is set up.' : 'You’re all set.';
+    var sub = r === 'homeowner' ? (a.cls === 'commercial' ? 'Commercial' : 'Residential') + ' · ' + flLabel(FL_PLAN, a.scope)
+      : r === 'contractor' ? (a.mode === 'underway' ? 'Underway' : 'New project · Pre-construction')
+      : r === 'architect' ? (a.cls === 'commercial' ? 'Commercial' : 'Residential') + ' · ' + flLabel(FL_DRAW, a.drawings)
+      : 'Client project · ' + flLabel(FL_FOCUS, a.focus);
+    card = '<b>'+street+'</b><span>'+esc(sub)+'</span>';
+    nx = ['Your next step', n[0], n[1]];
+    acts = '<div class="fl-acts one"><a class="fl-go" id="fl-done-go" data-next="'+n[3]+'" href="'+esc(res.url)+'?next='+n[3]+'">'+n[2]+'</a><a class="fl-sec" id="fl-done-project" href="'+esc(res.url)+'">Go to my project</a></div>';
+  }
+  $('fl-in').innerHTML = '<div class="fl-top"><div class="fl-mark">CG</div></div>'+
+    '<div class="fl-done"><div class="ok">'+FL_CHECK(32, 2.5)+'</div><h2 id="fl-h">'+title+'</h2></div>'+
+    '<div class="fl-card" id="fl-done-card">'+card+'</div>'+
+    '<div class="fl-next" id="fl-done-next"><span class="e">'+nx[0]+'</span><span class="h">'+nx[1]+'</span><p>'+nx[2]+'</p></div>'+
+    (res.kind === 'trade' ? '<p class="fl-note">Already invited to a project? Open the link from your text or email.</p>' : '')+
+    '<div class="fl-grow"></div>'+acts;
+  $('fl').oninput = null;
+}
+
+/* the sign-in window's “new here” link points at the role tiles now */
+(function(){
+  var orig = window.drawModal;
+  if (typeof orig !== 'function') return;
+  window.drawModal = function(){
+    if (FORM.mode === 'new') { FORM.mode = 'signin'; closeTool(); location.hash = 'iam'; if ($('iam')) $('iam').scrollIntoView(); return; }
+    orig();
+    var alt = document.querySelector('#m .alt .linkbtn');
+    if (alt && /Use the tool free/.test(alt.textContent)) { alt.textContent = 'Get started free'; alt.onclick = function(){ closeTool(); location.hash = 'iam'; if ($('iam')) $('iam').scrollIntoView(); }; }
+  };
+})();
+flowMarkTiles();
 </script>
 </body>
 </html>

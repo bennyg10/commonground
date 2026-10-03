@@ -121,7 +121,10 @@ export default async function handler(req, res) {
       const accounts = await allAccounts(projects);
       const support = ((await redis(['LRANGE', 'cg:support', '0', '49'])) || []).map((r) => { try { return JSON.parse(r); } catch (e) { return null; } }).filter(Boolean);
       const supportTotal = Number(await redis(['LLEN', 'cg:support'])) || 0;
-      return res.status(200).json({ ok: true, me: publicUser(me), projects, accounts, support, supportTotal, at: now() });
+      const tradesRaw = (await redis(['HGETALL', 'cg:trades'])) || [];
+      const trades = []; for (let i = 0; i < tradesRaw.length; i += 2) { try { trades.push(JSON.parse(tradesRaw[i + 1])); } catch (e) {} }
+      trades.sort((x, y) => String(y.updatedAt || '').localeCompare(String(x.updatedAt || '')));
+      return res.status(200).json({ ok: true, me: publicUser(me), projects, accounts, support, supportTotal, trades, at: now() });
     }
 
     if (req.method === 'GET' && action === 'sub-queue') return res.status(200).json({ ok: true, requests: await subQueue(), at: now() });
@@ -227,6 +230,7 @@ export default async function handler(req, res) {
       }
       await redis(['DEL', `cg:user:${identifier}`]);
       await redis(['SREM', 'cg:users', identifier]);
+      await redis(['HDEL', 'cg:trades', identifier]);
       return res.status(200).json({ ok: true });
     }
 

@@ -159,7 +159,9 @@ function initials(){ return String(U.name||'?').trim().split(/\s+/).map(function
 function money(n){ return n==null ? '' : '$'+Math.round(n).toLocaleString('en-US'); }
 function dayPart(){ var h=new Date().getHours(); return h<12?'morning':h<17?'afternoon':'evening'; }
 function isGC(){ return U.accountType==='contractor'; }
-function isDesigner(){ return U.accountType==='designer'; }
+function isDesigner(){ return U.accountType==='designer' || U.accountType==='architect'; }
+function isTradeAcct(){ return U.accountType==='trade'; }
+var TYPE_LABEL = {contractor:'General Contractor', homeowner:'Homeowner', designer:'Designer', architect:'Architect', trade:'Specialty Trade'};
 var ROLE = {client:'Homeowner', gc:'GC', trade:'Trade', designer:'Designer'};
 function roleUrl(r){ return r==='client' ? 'homeowner' : r; }
 var SCOPE = {'new-build':'New build', remodel:'Remodel', addition:'Addition', adu:'ADU', demolition:'Demolition', 'tenant-improvement':'Tenant improvement', repair:'Repair'};
@@ -177,14 +179,16 @@ function render(){
   var mine = D.projects.filter(function(p){ return p.member; });
   var others = D.projects.filter(function(p){ return !p.member; });
   var h = '';
-  h += '<div class="hero"><div><div class="eyebrow">'+(U.accountType==='contractor'?'Contractor':U.accountType==='homeowner'?'Homeowner':U.accountType==='designer'?'Designer':'Your dashboard')+(U.company?' · '+esc(U.company):'')+'</div>'+
+  h += '<div class="hero"><div><div class="eyebrow">'+(TYPE_LABEL[U.accountType]||'Your dashboard')+(U.company?' · '+esc(U.company):'')+'</div>'+
        '<h1>Good '+dayPart()+', '+esc(first())+'.</h1><div class="lede">'+esc(ledeText(mine))+'</div></div>'+
        (D.admin ? '<a class="btn pri" id="go-admin" href="/admin" style="align-self:center">Admin</a>' : '')+'</div>';
   if (!U.accountType) {
     h += '<div class="chooser" id="chooser"><h2>How will you use Common Ground?</h2><div class="lede" style="margin-top:4px">We’ll set up the right tools. You can still be on any project either way.</div>'+
       '<div class="cards2"><button class="opt" id="pick-home" onclick="setType(\'homeowner\')"><b>I’m a homeowner</b><span>Start a project for my property and collect GC bids</span></button>'+
       '<button class="opt" id="pick-gc" onclick="setType(\'contractor\')"><b>I’m a contractor</b><span>Run my projects, code checks, plans and 3D scans</span></button>'+
-      '<button class="opt" id="pick-designer" onclick="setType(\'designer\')"><b>I’m a designer</b><span>Scan and measure rooms, and get design approvals signed</span></button></div></div>';
+      '<button class="opt" id="pick-designer" onclick="setType(\'designer\')"><b>I’m a designer</b><span>Scan and measure rooms, and get design approvals signed</span></button>'+
+      '<button class="opt" id="pick-architect" onclick="setType(\'architect\')"><b>I’m an architect</b><span>Check plans against code and share every set with the owner and GC</span></button>'+
+      '<button class="opt" id="pick-trade" onclick="setType(\'trade\');tradeEdit()"><b>I’m a specialty trade</b><span>Get matched with projects near you that need your trade</span></button></div></div>';
   }
   // bidders see their proposals first
   if (D.bids.length) h += bidsSection();
@@ -192,10 +196,11 @@ function render(){
   var dr = (C && !C.created) ? C : draftLoad();
   if (dr && U.accountType) { C = dr; h += '<div class="resume" id="resume-card"><div class="t"><div class="eyebrow" style="margin:0 0 4px">Pick up where you left off</div><div style="font-weight:700">'+esc(dr.address || (dr.mode==='underway'?'Project already underway':'New project'))+'</div><div class="muted" style="font-size:13px;color:var(--w50)">Step '+(steps().indexOf(dr.step)+1)+' of '+steps().length+' · your answers are saved</div></div>'+
     '<button class="btn" onclick="draftDiscard()">Start over</button><button class="btn pri" id="resume-btn" onclick="openCreate()">Continue</button></div>'; }
-  if (U.accountType && !D.bids.length) h += startCard();   // bidders get the upsell card instead
+  if (isTradeAcct()) h += tradeCard();
+  else if (U.accountType && !D.bids.length) h += startCard();   // bidders get the upsell card instead
   h += '<div class="sec"><div class="sec-h"><h2>Your projects</h2><span class="ct">'+mine.length+'</span></div>'+
        (mine.length ? '<div class="grid" id="proj-grid">'+mine.map(projCard).join('')+'</div>'
-         : '<div class="empty" id="proj-empty">'+(U.accountType==='homeowner' ? 'No projects yet. Start one for your property above — it takes two minutes.' : U.accountType==='contractor' ? 'No projects yet. Add a new one or one that’s already underway.' : U.accountType==='designer' ? 'No projects yet. Start one for a client above, or ask your client or their GC to invite you.' : 'You’re not on a project yet.')+'</div>')+'</div>';
+         : '<div class="empty" id="proj-empty">'+(U.accountType==='homeowner' ? 'No projects yet. Start one for your property above — it takes two minutes.' : U.accountType==='contractor' ? 'No projects yet. Add a new one or one that’s already underway.' : isTradeAcct() ? 'No projects yet. When a homeowner or GC invites you, the project shows up here.' : isDesigner() ? 'No projects yet. Start one for a client above, or ask your client or their GC to invite you.' : 'You’re not on a project yet.')+'</div>')+'</div>';
   if ((isGC() || isDesigner() || !U.accountType) && !(D.bids.length && !mine.filter(function(p){return !p.sample;}).length)) h += toolsSection(mine);
   if (others.length) h += '<div class="sec"><div class="sec-h"><h2>All platform projects</h2><span class="ct">Admin view · '+others.length+'</span></div><div class="grid">'+others.map(projCard).join('')+'</div></div>';
   $('main').innerHTML = h;
@@ -203,9 +208,38 @@ function render(){
 function ledeText(mine){
   if (U.accountType==='homeowner') return mine.length ? 'Here’s where your projects stand.' : 'Start your project, share one link with contractors, and hire with confidence.';
   if (U.accountType==='contractor') return mine.length ? 'Your projects and tools, all in one place.' : 'Add a project and start using the tools right away. Unlimited projects, free.';
+  if (U.accountType==='architect') return mine.length ? 'Your projects, plan checks and approvals in one place.' : 'Add a project, check your plans against code, and bring the owner and GC in.';
+  if (isTradeAcct()) return mine.length ? 'Your projects and where you’re listed.' : 'You’re on the list. Work near you comes to you.';
   if (U.accountType==='designer') return mine.length ? 'Your client projects, scans, measurements and approvals in one place.' : 'Start a project for a client, scan and measure the rooms, and get design approvals signed.';
   return 'Everything you’re working on, in one place.';
 }
+/* ── Specialty Trades: their spot on the list ── */
+var TRADES = ['Electrical','Plumbing','HVAC','Framing','Concrete','Roofing','Drywall','Painting','Tile','Flooring','Cabinets','Landscape','Demolition','Surveying','Environmental testing','Other'];
+function tradeCard(){
+  var t = U.tradeProfile;
+  if (!t) return '<div class="start" id="trade-card"><div><h2>Join the trade list</h2><p>Tell us your trade and where you work. When a homeowner or GC nearby needs you, we send the job your way.</p></div><button class="btn pri" id="trade-edit" onclick="tradeEdit()">Join the list</button></div>';
+  return '<div class="start" id="trade-card"><div><div class="eyebrow" style="margin:0 0 6px">You’re on the list</div><h2>'+esc(t.trades.join(' · '))+'</h2><p>Within '+t.radius+' miles of '+esc(t.zip)+'. When a homeowner or GC near you needs your trade, we send the job your way. Already invited to a project? Open the link from your text or email.</p></div>'+
+    '<button class="btn" id="trade-edit" onclick="tradeEdit()">Edit</button></div>';
+}
+var TE = null;
+function tradeEdit(){
+  var t = U.tradeProfile || {};
+  TE = TE || {trades:(t.trades||[]).slice(), zip:t.zip||'', radius:t.radius||25};
+  showModal('<div class="eyebrow">Specialty Trade</div><h3>Your trade and area</h3><div class="s">Pick all that apply.</div><div class="msg" id="te-msg"></div>'+
+    '<div class="chips" id="te-trades">'+TRADES.map(function(x){ return '<button type="button" class="'+(TE.trades.indexOf(x)>=0?'on':'')+'" aria-pressed="'+(TE.trades.indexOf(x)>=0)+'" data-trade="'+esc(x)+'" onclick="teToggle(this)">'+esc(x)+'</button>'; }).join('')+'</div>'+
+    '<label for="te-zip" style="margin-top:14px">Your ZIP code</label><input id="te-zip" inputmode="numeric" maxlength="5" value="'+esc(TE.zip)+'" oninput="TE.zip=this.value">'+
+    '<label>How far will you travel?</label><div class="chips">'+[10,25,50,100].map(function(r){ return '<button type="button" class="'+(TE.radius===r?'on':'')+'" data-radius="'+r+'" onclick="TE.radius='+r+';tradeEdit()">'+r+' mi</button>'; }).join('')+'</div>'+
+    '<div class="acts" style="margin-top:18px">'+(U.tradeProfile?'<button class="btn" id="te-leave" onclick="tradeLeave()">Leave the list</button>':'')+'<button class="btn pri" id="te-save" onclick="tradeSave()">Save</button></div>');
+}
+function teToggle(b){ var x=b.getAttribute('data-trade'), i=TE.trades.indexOf(x); if (i>=0) TE.trades.splice(i,1); else TE.trades.push(x); b.classList.toggle('on', i<0); b.setAttribute('aria-pressed', String(i<0)); }
+function tradePost(body){ return fetch('/api/auth',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify(body)}).then(function(r){return r.json();}); }
+function tradeSave(){
+  var m=$('te-msg'); TE.zip = ($('te-zip').value||'').trim();
+  if (!TE.trades.length) { m.style.display='block'; m.textContent='Pick at least one trade.'; return; }
+  if (!/^\d{5}$/.test(TE.zip)) { m.style.display='block'; m.textContent='Enter a 5-digit ZIP code.'; return; }
+  tradePost({action:'trade-profile', trade:TE}).then(function(j){ if (!j.ok) { m.style.display='block'; m.textContent='Couldn’t save that — try again.'; return; } U=j.user; D.user=j.user; TE=null; closeModal(); render(); });
+}
+function tradeLeave(){ tradePost({action:'trade-profile', leave:true}).then(function(j){ if (j.ok) { U=j.user; D.user=j.user; TE=null; closeModal(); render(); } }); }
 function startCard(){
   if (U.accountType==='homeowner') return '<div class="start"><div><h2>Start a project for your property</h2><p>Tell us the address and property type. We’ll set up code checks for residential or commercial, and a bid page to share with contractors.</p></div>'+
     '<button class="btn pri" id="start-btn" onclick="openCreate()">Start a project</button></div>';
