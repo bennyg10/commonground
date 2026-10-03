@@ -1,0 +1,57 @@
+COMMON GROUND — UPDATE: GC BIDDING → HIRE → KICKOFF → START (141 N Anita)
+========================================================================
+Also includes the homeowner-view updates (v05): owner names in the greeting, trades-on-site +
+highlighted action items, 0% Start, correct nav highlight, roomier spacing, new Facts & features layout.
+And the PLATFORM CONSOLE for your master account: https://commonground-v1.vercel.app/admin
+
+UPLOAD (about 2 minutes)
+  1. Go to https://github.com/bennyg10/commonground/upload/main
+  2. From this folder, drag in the "api" folder AND "vercel.json".
+     It replaces the old versions and adds the new files. Your api/analyze.js is untouched.
+  3. Check the list includes these NEW files:
+       api/project.js, api/support.js, api/admin.js,
+       api/_pages/bid.html, api/_pages/help.html, api/_pages/admin.html,
+       api/_pages/anita-seed.json, api/_pages/anita-trujillo.pdf
+  4. Commit to main. Vercel redeploys in about a minute.
+
+NEW LINKS
+  Platform console:         /admin               (your master account only)
+  Bid page (from invites):  /anita/bid?t=...     (created for you on the Proposals screen)
+  Help form:                /help                (sends to bmgordon10@gmail.com + saves in your admin panel)
+
+AFTER IT DEPLOYS
+  • Owner view (/anita/client) → Proposals: Trujillo's proposal is listed already.
+  • Invite a GC: name + email + phone → Send invite (or Copy link).
+  • GC opens the link → uploads proposal + creates account → Submit proposal.
+  • Owner → Choose → Hire / Don't hire → confirm.
+  • Hired GC → Open project → Progress page → kickoff checklist → Start Project.
+
+EMAILS (invite, welcome, you're hired, project started, help requests)
+  They send automatically once Resend is set up (see SETUP.txt, "Optional — email").
+  Until then everything still works: links show up on screen with Copy / Text it /
+  Email it buttons, notifications show in the app, and help requests are saved in
+  your admin panel (Team & trades → Platform usage → Help requests).
+  Tip: help requests to bmgordon10@gmail.com work even before you verify a domain,
+  if your Resend account uses that same email.
+
+LIMITS TO KNOW
+  • Proposal files: up to 3 MB each (PDF or image). Bigger needs Vercel Blob storage.
+  • Automatic texts need Twilio (paid). For now "Text it" opens the phone's messages app.
+  • Hobby → Pro reminder still applies before real homeowners use it.
+
+PLATFORM CONSOLE (/admin) — your master account
+  Sign in at /admin with the admin account from setup step 6 (or do first-time setup right there).
+  From your account menu on any project page: "Platform console ↗".
+  • Overview: every project, open decisions, latest activity, upgrade alerts.
+  • People: add anyone to any project as Owner / GC / Trade, change roles, remove,
+    password-reset link (2 days), sign out everywhere, pause / unpause, make admin, delete.
+  • Projects: move a project between Bidding / Kickoff / Active (Bidding releases the hired GC),
+    open any proposal, void an owner approval, or record a contract the owner signed on paper.
+    Owner approvals stay the owner's — the console never signs in their name, and anything
+    you record or void is labelled and the owner + GC are notified.
+  • Activity, Help inbox (reply by email), Usage + upgrades.
+
+YOUR DOMAIN (buildcommonground.io)
+  Vercel → Environment Variables: CG_SITE_URL = https://buildcommonground.io
+  Every invite, bid, hire and notification link then uses your domain, and pages opened on
+  commonground-v1.vercel.app jump to buildcommonground.io. Delete the variable to undo.
