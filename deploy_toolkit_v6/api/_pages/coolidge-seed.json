@@ -1,9 +1,0 @@
-{
-  "project": {
-    "stage": "active",
-    "hiredGc": { "name": "Lance Todd", "company": "Lance Todd Construction", "identifier": "", "phone": "", "bidId": null, "amount": null, "hiredAt": "2025-10-01T16:00:00.000Z", "hiredBy": "seed" },
-    "startedAt": "2025-10-01T16:00:00.000Z",
-    "startedBy": "Lance Todd"
-  },
-  "bids": []
-}
