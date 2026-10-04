@@ -166,45 +166,121 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
 }
 </style>
 <style id="funnel-css">
-/* ── hero: I am the… ── */
-.hero2{padding:88px 0 64px;text-align:center}
-.hero2 .eyebrow{font-size:13px;letter-spacing:.14em;color:#A39684;margin-bottom:18px}
-.hero2 h1{font-size:68px;line-height:1.05;margin:0 auto;max-width:none;color:#D9DAD4}
-.hero2 .lede{margin:20px auto 0;max-width:700px;font-size:20px;line-height:1.55;color:rgba(217,218,212,.75)}
+/* ── hero: I am the… — exactly one screen tall, ending on "See how it works".
+   Every size below is a base value × --k; heroFit() lowers --k on short screens until it all fits. ── */
+.hero2{--k:1;--h1:68px;--lede:20px;--top:40px;--iam:52px;--tile:196px;--tpad:24px;--tgap:12px;--ri:48px;--tb:18px;--td:14px;--note:28px;
+  box-sizing:border-box;min-height:calc(100vh - 68px);min-height:calc(100svh - 68px);display:flex;flex-direction:column;padding:0;text-align:center}
+.hero2 > .wrap{flex:1;display:flex;flex-direction:column;width:100%;box-sizing:border-box}
+.hero-main{flex:1;display:flex;flex-direction:column;justify-content:center;padding-top:calc(var(--k)*var(--top))}
+.hero2 .eyebrow{font-size:13px;letter-spacing:.14em;color:#A39684;margin:0 0 calc(var(--k)*18px)}
+.hero2 h1{font-size:max(26px,calc(var(--k)*var(--h1)));line-height:1.05;margin:0 auto;max-width:none;color:#D9DAD4;text-wrap:balance}
+.hero2 .lede{margin:calc(var(--k)*20px) auto 0;max-width:700px;font-size:max(14px,calc(var(--k)*var(--lede)));line-height:1.55;color:rgba(217,218,212,.75);text-wrap:pretty}
 .hero2 .lede .sm{display:none}
-.iam-h{margin-top:60px;font-family:'Bungee',sans-serif;font-size:20px;color:#D5DC99}
-.roles{margin:20px auto 0;max-width:1240px;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:16px;text-align:left}
-.role{display:flex;flex-direction:column;gap:12px;padding:24px 22px;border-radius:18px;background:#1A1A1A;border:1px solid rgba(217,218,212,.14);color:#D9DAD4;min-height:196px;cursor:pointer;font:inherit;text-align:left;transition:border-color .15s,transform .15s,background .15s}
+.iam-h{margin-top:calc(var(--k)*var(--iam));font-family:'Bungee',sans-serif;font-size:max(14px,calc(var(--k)*20px));color:#D5DC99}
+.roles{margin:calc(var(--k)*18px) auto 0;width:100%;max-width:1240px;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:16px;text-align:left}
+.role{display:flex;flex-direction:column;gap:var(--tgap);padding:calc(var(--k)*var(--tpad)) 22px;border-radius:18px;background:#1A1A1A;border:1px solid rgba(217,218,212,.14);color:#D9DAD4;min-height:calc(var(--k)*var(--tile));cursor:pointer;font:inherit;text-align:left;transition:border-color .15s,transform .15s,background .15s;box-sizing:border-box}
 .role:hover{border-color:rgba(213,220,153,.55);transform:translateY(-2px)}
 .role:focus-visible{outline:2px solid #D5DC99;outline-offset:3px}
-.role .ri{width:48px;height:48px;flex-shrink:0;border-radius:12px;background:rgba(213,220,153,.10);border:1px solid rgba(213,220,153,.28);color:#D5DC99;display:flex;align-items:center;justify-content:center}
-.role .txt{display:flex;flex-direction:column;gap:12px;min-width:0}
-.role b{font-family:'Bungee',sans-serif;font-weight:400;font-size:18px;line-height:1.2}
-.role .d{font-size:14px;line-height:1.5;color:rgba(217,218,212,.68)}
+.role .ri{width:calc(var(--k)*var(--ri));height:calc(var(--k)*var(--ri));flex-shrink:0;border-radius:12px;background:rgba(213,220,153,.10);border:1px solid rgba(213,220,153,.28);color:#D5DC99;display:flex;align-items:center;justify-content:center}
+.role .txt{display:flex;flex-direction:column;gap:calc(var(--k)*var(--tgap));min-width:0}
+.role b{font-family:'Bungee',sans-serif;font-weight:400;font-size:var(--tb);line-height:1.2}
+.role .d{font-size:var(--td);line-height:1.5;color:rgba(217,218,212,.68)}
 .role .chev{display:none;flex-shrink:0;color:rgba(217,218,212,.6)}
 .role .resume{display:inline-block;margin-top:2px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#D5DC99}
-.invite-note{margin-top:32px;font-size:15px;color:rgba(217,218,212,.68)}
-.howlink{display:inline-flex;align-items:center;gap:8px;margin-top:36px;font-size:14px;color:rgba(217,218,212,.68);text-decoration:none;min-height:44px}
+.invite-note{margin:calc(var(--k)*var(--note)) 0 0;font-size:15px;color:rgba(217,218,212,.68)}
+.howlink{align-self:center;display:inline-flex;align-items:center;gap:8px;margin:calc(var(--k)*20px) 0 calc(var(--k)*14px);font-size:14px;color:rgba(217,218,212,.68);text-decoration:none;min-height:44px}
 .howlink:hover{color:#D9DAD4}
 #how{border-top:1px solid rgba(217,218,212,.10);padding:72px 0}
-@media(max-width:1100px){.roles{grid-template-columns:repeat(3,minmax(0,1fr))}.hero2 h1{font-size:56px}}
+@media(max-width:1100px){.roles{grid-template-columns:repeat(3,minmax(0,1fr))}.hero2{--h1:56px;--tile:150px}}
 @media(max-width:640px){
-  .hero2{padding:34px 0 40px;text-align:left}
-  .hero2 h1{font-size:34px;line-height:1.1}
-  .hero2 .lede{font-size:16px;margin-top:12px}
+  .hero2{--h1:34px;--lede:16px;--top:22px;--iam:24px;--tile:68px;--tpad:11px;--ri:42px;--tb:15px;--td:13px;--note:14px;text-align:left}
+  .hero2 h1{line-height:1.1;text-wrap:wrap}
   .hero2 .lede .lg{display:none}.hero2 .lede .sm{display:inline}
-  .iam-h{margin-top:28px;font-size:16px}
-  .roles{grid-template-columns:1fr;gap:10px;margin-top:12px}
-  .role{flex-direction:row;align-items:center;gap:14px;min-height:72px;padding:12px 14px;border-radius:14px}
+  .iam-h{font-size:16px}
+  .roles{grid-template-columns:1fr;gap:calc(var(--k)*10px);margin-top:12px}
+  .role{flex-direction:row;align-items:center;gap:14px;padding-left:14px;padding-right:14px;border-radius:14px}
   .role:hover{transform:none}
-  .role .ri{width:44px;height:44px;border-radius:11px;border:none}
+  .role .ri{border-radius:11px;border:none}
   .role .txt{flex:1;gap:2px}
-  .role b{font-size:15px}
-  .role .d{font-size:13px}
   .role .chev{display:block}
-  .invite-note{margin-top:18px;font-size:14px;text-align:center}
-  .howlink{margin-top:14px;display:flex;justify-content:center}
+  .invite-note{font-size:14px;text-align:center}
+  .howlink{margin-top:calc(var(--k)*6px);margin-bottom:calc(var(--k)*6px)}
   #how{padding:48px 0}
+}
+
+/* ── landing = this one screen. The old sections stay in the page, hidden, so any of them can be layered back in. ── */
+#how,#problems,#mission,#tools,body > footer{display:none!important}
+/* short screens drop extras before any text gets smaller (heroFit adds these one at a time) */
+.hero2.c1 .eyebrow{display:none}
+.hero2.c2 .role .d{display:none}
+.hero2.c3 .invite-note{display:none}
+.whylink{align-self:center;display:inline-flex;align-items:center;gap:8px;margin-top:calc(var(--k)*22px);min-height:48px;padding:0 22px;box-sizing:border-box;border-radius:24px;border:1px solid rgba(213,220,153,.45);background:none;color:#D5DC99;font:inherit;font-weight:700;font-size:15px;cursor:pointer}
+.whylink:hover{background:rgba(213,220,153,.08)}
+.whylink:focus-visible{outline:2px solid #D5DC99;outline-offset:3px}
+.hero-foot{display:flex;justify-content:center;align-items:center;gap:18px;padding:calc(var(--k)*10px) 0 calc(var(--k)*8px);font-size:13px;color:rgba(217,218,212,.55)}
+.hero-foot a{color:rgba(217,218,212,.75);text-decoration:none;min-height:44px;display:flex;align-items:center}
+.hero-foot a:hover{color:#D9DAD4}
+@media(max-width:640px){.whylink{min-height:44px;padding:0 18px;font-size:14px;margin-top:calc(var(--k)*12px)}.hero-foot{font-size:12px;gap:16px}}
+
+/* ── layer 2: "See why in 30 seconds", one point per screen, then sign-up try #2 ── */
+#why{position:fixed;inset:0;z-index:72;background:#000;overflow-y:auto;display:none;-webkit-overflow-scrolling:touch}
+#why.on{display:block}
+.why-in{max-width:1180px;margin:0 auto;min-height:100vh;min-height:100dvh;box-sizing:border-box;display:flex;flex-direction:column;padding:14px 20px 28px;color:#D9DAD4}
+.why-top{display:flex;align-items:center;gap:12px;min-height:48px}
+.why-lbl{flex:1;font-size:13px;color:rgba(217,218,212,.65)}
+.why-skip{min-height:44px;padding:0 6px;background:none;border:0;color:#D5DC99;font:inherit;font-size:14px;font-weight:700;cursor:pointer}
+.why-bar{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin-top:12px}
+.why-bar i{height:4px;border-radius:2px;background:rgba(217,218,212,.14)}
+.why-bar i.on{background:#D5DC99}
+.why-body{flex:1;display:grid;grid-template-columns:minmax(0,1fr);gap:22px;align-content:center;padding:24px 0}
+.why-txt{display:flex;flex-direction:column;gap:12px}
+.why-e{font-size:12px;text-transform:uppercase;letter-spacing:.12em;color:#D5DC99;font-weight:700}
+.why-h{margin:0;font-family:'Bungee',sans-serif;font-weight:400;font-size:34px;line-height:1.1;color:#D9DAD4;letter-spacing:0;text-wrap:balance}
+.why-p{margin:0;font-size:17px;line-height:1.55;color:rgba(217,218,212,.75);max-width:520px}
+.wc{padding:6px 16px;border-radius:16px;background:#1A1A1A;border:1px solid rgba(217,218,212,.14);display:flex;flex-direction:column}
+.wc-row{display:flex;align-items:center;gap:12px;min-height:56px}
+.wc-row + .wc-row{border-top:1px solid rgba(217,218,212,.10)}
+.wc-row b{flex:1;font-size:15px}
+.wc-row .amt{font-weight:700;font-size:15px}
+.wc-row .muted{color:rgba(217,218,212,.65)}
+.wc-row .t2{flex:1;display:flex;flex-direction:column;gap:2px}
+.wc-row .t2 b{font-size:14px}
+.wc-row .t2 span{font-size:12px;color:rgba(217,218,212,.6)}
+.wc-tag{font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;border:1px solid rgba(217,218,212,.2);color:rgba(217,218,212,.7);white-space:nowrap}
+.wc-tag.fix{background:rgba(224,122,95,.15);border-color:rgba(224,122,95,.4);color:#F0A996}
+.wc-tag.pass{background:rgba(213,220,153,.12);border-color:rgba(213,220,153,.4);color:#D5DC99}
+.wc-pad{padding:16px}
+.wc-co{font-size:12px;color:#A39684}
+.wc-btns{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:10px}
+.wc-btns span{height:44px;border-radius:11px;font-weight:700;font-size:15px;display:flex;align-items:center;justify-content:center;background:#262626;border:1px solid rgba(217,218,212,.14)}
+.wc-btns span.go{background:#D5DC99;border-color:#D5DC99;color:#000}
+.wc-big{font-family:'Bungee',sans-serif;font-size:30px;color:#D5DC99}
+.wc-track{height:8px;border-radius:4px;background:#262626;margin:10px 0}
+.wc-track i{display:block;height:8px;border-radius:4px;background:#D5DC99}
+.wc-chips{display:flex;flex-wrap:wrap;gap:8px}
+.wc-chips span{min-height:40px;padding:0 14px;border-radius:20px;background:#1A1A1A;border:1px solid rgba(217,218,212,.18);font-size:14px;font-weight:700;display:flex;align-items:center}
+.why-acts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.why-acts button{height:54px;border-radius:13px;font-weight:700;font-size:16px;font-family:inherit;cursor:pointer;box-sizing:border-box}
+.why-ready{width:100%;max-width:480px;margin:0 auto;display:flex;flex-direction:column}
+.why-ready .why-h{margin-top:34px}
+.why-ready .why-p{margin-top:10px}
+.why-roles{margin-top:24px;display:flex;flex-direction:column;gap:8px}
+.why-role{display:flex;align-items:center;gap:14px;min-height:64px;box-sizing:border-box;padding:10px 14px;border-radius:14px;background:#1A1A1A;border:1px solid rgba(217,218,212,.14);color:#D9DAD4;font:inherit;text-align:left;cursor:pointer;width:100%}
+.why-role:hover{border-color:rgba(213,220,153,.55)}
+.why-role .ri{width:42px;height:42px;flex-shrink:0;border-radius:11px;background:rgba(213,220,153,.10);color:#D5DC99;display:flex;align-items:center;justify-content:center}
+.why-role b{flex:1;font-family:'Bungee',sans-serif;font-weight:400;font-size:15px}
+.why-role .chev{color:rgba(217,218,212,.6)}
+@media(min-width:900px){
+  .why-in{padding:0 64px 48px}
+  .why-top{min-height:72px}
+  .why-body{grid-template-columns:repeat(2,minmax(0,1fr));gap:80px;align-items:center}
+  .why-h{font-size:56px;line-height:1.08}
+  .why-p{font-size:20px}
+  .wc{padding:10px 26px;border-radius:22px}
+  .wc-row{min-height:72px}
+  .wc-row b,.wc-row .amt{font-size:18px}
+  .why-acts{grid-template-columns:repeat(2,200px);justify-content:center}
+  .why-ready .why-h{font-size:44px}
 }
 
 /* ── the flow: one question per screen ── */
@@ -298,25 +374,25 @@ h1,h2,h3,h4,.compare h3,.free h3,#m h3,.calc .big{font-family:'Bungee',sans-seri
 <nav class="nav"><div class="wrap">
   <a class="mark" href="/"><b>CG</b><span>Common Ground</span></a>
   <div class="links">
-    <a class="t" href="#how">How it works</a>
     <button class="btn" id="nav-signin" onclick="openTool('signin')">Sign in</button>
   </div>
 </div></nav>
 
-<header class="hero hero2" id="iam"><div class="wrap">
-  <div class="eyebrow">Free for everyone on the project</div>
-  <h1>Build better on day one.</h1>
-  <p class="lede"><span class="lg">Proposals, approvals, code checks and progress in one place, for the homeowner and everyone they hire.</span><span class="sm">Proposals, approvals, code checks and progress in one place. Free.</span></p>
+<header class="hero hero2" id="iam"><div class="wrap"><div class="hero-main">
+  <div class="eyebrow" id="hero-eyebrow">Plans, bids and subs, side by side</div>
+  <h1 id="hero-h1">Build better on day one.</h1>
+  <p class="lede" id="hero-lede"><span class="lg">Code checks, bids and subs move at the same time instead of waiting in line. Free for everyone on the project.</span><span class="sm">Code checks, bids and subs move at the same time. Free.</span></p>
   <div class="iam-h" id="iam-h">I am the…</div>
   <div class="roles" id="roles" role="group" aria-labelledby="iam-h">
-    <button type="button" class="role" id="role-homeowner" data-role="homeowner" onclick="flowStart('homeowner')"><span class="ri"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg></span><span class="txt"><b>Homeowner</b><span class="d">Building or renovating my property</span></span><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>
-    <button type="button" class="role" id="role-contractor" data-role="contractor" onclick="flowStart('contractor')"><span class="ri"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 18h18"/><path d="M5 18v-3a7 7 0 0 1 14 0v3"/><path d="M10 9V6h4v3"/></svg></span><span class="txt"><b>General Contractor</b><span class="d">Running jobs and bidding work</span></span><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>
-    <button type="button" class="role" id="role-architect" data-role="architect" onclick="flowStart('architect')"><span class="ri"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="5" r="2"/><path d="M11 7L6 20"/><path d="M13 7l5 13"/><path d="M8 15h8"/></svg></span><span class="txt"><b>Architect</b><span class="d">Drawing plans and getting them permitted</span></span><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>
-    <button type="button" class="role" id="role-designer" data-role="designer" onclick="flowStart('designer')"><span class="ri"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11V9a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v2"/><path d="M3 12h18v5H3z"/><path d="M5 17v2M19 17v2"/></svg></span><span class="txt"><b>Designer</b><span class="d">Interior or exterior design</span></span><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>
-    <button type="button" class="role" id="role-trade" data-role="trade" onclick="flowStart('trade')"><span class="ri"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L4 17l3 3 5.3-5.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.4-.6-.6-2.4z"/></svg></span><span class="txt"><b>Specialty Trade</b><span class="d">Electrical, plumbing, tile and more</span></span><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>
+    <button type="button" class="role" id="role-homeowner" data-role="homeowner" onclick="flowStart('homeowner')"><span class="ri"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg></span><span class="txt"><b>Homeowner</b><span class="d">Bids you can compare, decisions on the record</span></span><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>
+    <button type="button" class="role" id="role-contractor" data-role="contractor" onclick="flowStart('contractor')"><span class="ri"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 18h18"/><path d="M5 18v-3a7 7 0 0 1 14 0v3"/><path d="M10 9V6h4v3"/></svg></span><span class="txt"><b>General Contractor</b><span class="d">Win the bid, run the job, keep your client in the loop</span></span><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>
+    <button type="button" class="role" id="role-architect" data-role="architect" onclick="flowStart('architect')"><span class="ri"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="5" r="2"/><path d="M11 7L6 20"/><path d="M13 7l5 13"/><path d="M8 15h8"/></svg></span><span class="txt"><b>Architect</b><span class="d">Plans, code checks and approvals in one place</span></span><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>
+    <button type="button" class="role" id="role-designer" data-role="designer" onclick="flowStart('designer')"><span class="ri"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11V9a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v2"/><path d="M3 12h18v5H3z"/><path d="M5 17v2M19 17v2"/></svg></span><span class="txt"><b>Designer</b><span class="d">Instantly get selections approved in writing, not lost in a text thread</span></span><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>
+    <button type="button" class="role" id="role-trade" data-role="trade" onclick="flowStart('trade')"><span class="ri"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L4 17l3 3 5.3-5.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.4-.6-.6-2.4z"/></svg></span><span class="txt"><b>Specialty Trade</b><span class="d">Get matched with jobs near you that need your trade</span></span><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>
   </div>
   <p class="fine invite-note">Got an invite link? Just open it, and it takes you straight to your project.</p>
-  <a class="howlink" href="#how">See how it works<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></a>
+  <button type="button" class="whylink" id="why-open" onclick="whyOpen()">See how it can help you<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+  </div><div class="hero-foot"><span>© Common Ground</span><a href="/help">Contact us</a></div>
 </div></header>
 
 <section class="block" id="how"><div class="wrap">
@@ -390,6 +466,7 @@ h1,h2,h3,h4,.compare h3,.free h3,#m h3,.calc .big{font-family:'Bungee',sans-seri
   <span><a href="/help" style="color:var(--w70)">Contact us</a> · <button class="linkbtn" onclick="openTool('signin')">Sign in</button></span>
 </div></footer>
 
+<div id="why" role="dialog" aria-modal="true" aria-label="Why Common Ground"><div class="why-in" id="why-in"></div></div>
 <div id="fl" role="dialog" aria-modal="true" aria-label="Get started"><div class="fl-in" id="fl-in"></div></div>
 <div id="m-bg" role="dialog" aria-modal="true"><div id="m"></div></div>
 
@@ -621,14 +698,14 @@ fetch('/api/auth?action=me',{credentials:'same-origin'}).then(function(r){return
    ══════════════════════════════════════════════════ */
 var FL = null, FL_BUSY = false, FL_KEY = 'cg_flow';
 var FL_ROLE = {
-  homeowner: {label:'Homeowner', steps:['address','plan','stage','account'], acct:'homeowner', as:'client'},
+  homeowner: {label:'Homeowner', steps:['address','stage','account'], acct:'homeowner', as:'client'},
   contractor:{label:'General Contractor', steps:['start','job','account'], acct:'contractor', as:'gc'},
-  architect: {label:'Architect', steps:['project','drawings','account'], acct:'architect', as:'designer'},
-  designer:  {label:'Designer', steps:['focus','client','account'], acct:'designer', as:'designer'},
+  architect: {label:'Architect', steps:['project','account'], acct:'architect', as:'designer'},
+  designer:  {label:'Designer', steps:['client','account'], acct:'designer', as:'designer'},
   trade:     {label:'Specialty Trade', steps:['trades','area','account'], acct:'trade', as:''}
 };
 var FL_PLAN = [['new-build','New home'],['remodel','Remodel'],['addition','Addition'],['adu','ADU'],['demolition','Demolition'],['repair','Repair']];
-var FL_STAGE = [['idea','Just an idea','No plans or contractors yet'],['plans','I have plans','Ready to get bids'],['proposals','I have proposals','Keep them all in one place'],['started','Work has started','Bring your contractor in']];
+var FL_STAGE = [['idea','Just an idea','We’ll help you find a designer or architect'],['plans','I have plans','Ready to collect bids'],['proposals','I have proposals','Let’s get them in one place'],['started','Work has started','Bring your contractor in']];
 var FL_START = [['job','Add a job I’m running','New, or already underway'],['bid','Bid on a project','A homeowner sent me a link'],['sample','Look around first','Try every tool on a sample project']];
 var FL_DRAW = [['schematic','Schematic design'],['design-development','Design development'],['construction-documents','Construction documents'],['plan-check','In plan check']];
 var FL_FOCUS = [['interiors','Interiors','Kitchens, baths, finishes, furniture'],['exteriors','Exteriors','Landscape, hardscape, facades'],['both','Both','Inside and out']];
@@ -705,25 +782,24 @@ function flowRender(msg){
     '<button type="button" class="fl-x" id="fl-x" onclick="flowClose()" aria-label="Close. Your answers are saved.">'+FL_X+'</button></div>'+
     '<div class="fl-bar" style="grid-template-columns:repeat('+base.length+',minmax(0,1fr))">'+base.map(function(x, j){ return '<i class="'+(j<=idx?'on':'')+'"></i>'; }).join('')+'</div>';
   var go = 'Continue';
-  if (step === 'address') h += flHead('Where’s the property?', 'Your project gets its own page, like buildcommonground.io/123mainst.') + '<div class="fl-body">'+flAddr('Property address')+
-      flSeg('cls', [['residential','Residential'],['commercial','Commercial']], 'Sets which building codes we check against.', 'Property type')+'</div>';
+  if (step === 'address') h += flHead('Where’s the property?', 'Your address sets up the right building codes and your project’s own page, so every next step fits your home.') + '<div class="fl-body">'+flAddr('Property address')+
+      flSeg('cls', [['residential','Residential'],['commercial','Commercial']], 'Residential or commercial changes which codes apply.', 'Property type')+'</div>';
   else if (step === 'plan') h += flHead('What are you planning?', 'Pick the closest match. You can change it later.') + '<div class="fl-body">'+flOpts('scope', FL_PLAN, true)+'</div>';
-  else if (step === 'stage') h += flHead('Where are you today?', 'We’ll show you the one thing to do next.') + '<div class="fl-body">'+flOpts('stage', FL_STAGE)+'</div>';
-  else if (step === 'start') h += flHead('What brings you here?', 'Unlimited projects, free. Every tool works from day one.') + '<div class="fl-body">'+flOpts('start', FL_START)+'</div>';
-  else if (step === 'job') h += flHead('Where’s the job?', 'Your client gets a link to follow progress and approve decisions.') + '<div class="fl-body">'+flAddr('Job address')+
-      flSeg('mode', [['new','New project'],['underway','Underway']], 'You can post the current phase right after.', 'Where does it stand?')+'</div>';
-  else if (step === 'bid') { h += flHead('Open your bid link', 'The link from the homeowner’s text or email takes you straight to their bid page. You create your account there when you send your proposal.') +
+  else if (step === 'stage') h += flHead('Project status', 'Tell us where things stand to get you moving right away into your next steps.') + '<div class="fl-body">'+flOpts('stage', FL_STAGE)+'</div>';
+  else if (step === 'start') h += flHead('What brings you here?', 'Pick one to start. Everything else is one tap away.') + '<div class="fl-body">'+flOpts('start', FL_START)+'</div>';
+  else if (step === 'job') h += flHead('Where’s the job?', 'Add the job and you can invite your client to follow progress and sign off on decisions, so you’re not chasing texts.') + '<div class="fl-body">'+flAddr('Job address')+
+      flSeg('mode', [['new','New project'],['underway','Underway']], 'Already underway? You can post where it stands right after.', 'Where does it stand?')+'</div>';
+  else if (step === 'bid') { h += flHead('Open your bid link', 'Upload bids directly on the platform, receive architectural plans and use the pre-code check tool for accurate bids. Start with the link the homeowner texted or emailed you.') +
       '<button type="button" class="fl-link" id="fl-bid-acct" onclick="FL.a.bidAccount=true;FL.i=2;flowSave();flowRender()">Create an account anyway</button>'; go = 'Got it'; }
-  else if (step === 'project') h += flHead('Where’s the project?', 'The property you’re drawing for. The homeowner and GC can join it later.') + '<div class="fl-body">'+flAddr('Property address')+
+  else if (step === 'project') h += flHead('Where’s the project?', 'Upload drawings, organize drafts and finals, keep meeting notes, and get access to good expeditors.') + '<div class="fl-body">'+flAddr('Property address')+
       flSeg('cls', [['residential','Residential'],['commercial','Commercial']], '', 'Property type')+'</div>'+
-      '<button type="button" class="fl-link" id="fl-looking" onclick="flowSkip(\'looking\')">No project yet, I’m just looking</button>';
+      '<button type="button" class="fl-link" id="fl-looking" onclick="flowSkip(\'looking\')">No project yet? Look around first.</button>';
   else if (step === 'drawings') h += flHead('Where are the drawings?', 'So we show your team what matters right now.') + '<div class="fl-body">'+flOpts('drawings', FL_DRAW)+'</div>';
   else if (step === 'focus') h += flHead('What do you design?', 'We’ll set up the right tools for your work.') + '<div class="fl-body">'+flOpts('focus', FL_FOCUS)+'</div>';
-  else if (step === 'client') h += flHead('Starting with a client project?', 'Add your client’s property. You can invite them next.') + '<div class="fl-body">'+flAddr('Client’s address')+'</div>'+
-      '<button type="button" class="fl-link" id="fl-skip" onclick="flowSkip(\'skip\')">Skip for now</button>';
-  else if (step === 'trades') h += flHead('What’s your trade?', 'Pick all that apply.') + '<div class="fl-body"><div class="fl-chips" role="group" aria-labelledby="fl-h">'+FL_TRADES.map(function(t){
+  else if (step === 'client') h += flHead('Starting with a client project?', 'Send your client design drawings, request fast approvals and manage on-site walkthroughs.') + '<div class="fl-body">'+flAddr('Client’s address')+'</div>';
+  else if (step === 'trades') h += flHead('What’s your trade?', 'Pick all that apply, so the right jobs find you.') + '<div class="fl-body"><div class="fl-chips" role="group" aria-labelledby="fl-h">'+FL_TRADES.map(function(t){
       var on = (a.trades||[]).indexOf(t) >= 0; return '<button type="button" class="'+(on?'on':'')+'" aria-pressed="'+on+'" data-trade="'+esc(t)+'" onclick="flowTrade(this)">'+esc(t)+'</button>'; }).join('')+'</div></div>';
-  else if (step === 'area') h += flHead('Where do you work?', 'We match you with projects nearby that need your trade.') + '<div class="fl-body">'+
+  else if (step === 'area') h += flHead('Where do you work?', 'Invite a client to a project, send bids to GCs and schedule site visits.') + '<div class="fl-body">'+
       flField('fl-zip', 'Your ZIP code', a.zip, 'inputmode="numeric" autocomplete="postal-code" maxlength="5" placeholder="90049"')+
       flSeg('radius', FL_RADII.map(function(x){ return [x, x+' mi']; }), '', 'How far will you travel?')+'</div>';
   else if (step === 'account') {
@@ -732,7 +808,7 @@ function flowRender(msg){
     if (ME) h += flHead('Almost done', 'Signed in as '+esc(ME.name)+'. '+(r==='trade'?'We’ll add you to the trade list.':sample?'We’ll open a private practice project.':'We’ll set this up on your account.'));
     else {
       var co = {contractor:'Company (optional)', architect:'Firm (optional)', designer:'Studio (optional)', trade:'Company (optional)'}[r];
-      h += flHead(r==='homeowner'?'Save your project':r==='designer'?'Save your studio':r==='trade'?'Save your profile':'Save your workspace', 'Free. No credit card.') + '<div class="fl-body">'+
+      h += flHead('Now open your '+(r==='homeowner'?'project':r==='designer'?'studio':r==='trade'?'profile':'workspace')+'.', 'It’s free.') + '<div class="fl-body">'+
         flField('fl-nm', 'Your name', a.name, 'autocomplete="name"')+(co?flField('fl-co', co, a.company, 'autocomplete="organization"'):'')+
         flField('fl-id', 'Email or phone', a.id, 'autocomplete="username"')+flField('fl-pw', 'Create a password (8+ characters)', a.pw, 'type="password" autocomplete="new-password" minlength="8"')+'</div>'+
         '<div class="fl-alt">Already have an account? <button type="button" id="fl-signin" onclick="flowGrab();flowSave();openTool(\'signin\')">Sign in</button></div>';
@@ -761,7 +837,7 @@ function flowNext(){
   var addrOk = String(a.address||'').trim().length >= 5;
   if (step === 'address' || step === 'job') { if (!addrOk) return bad('Enter the property address.'); }
   if (step === 'project') { if (!addrOk) return bad('Enter the property address, or choose “I’m just looking.”'); a.looking = false; }
-  if (step === 'client') { if (!addrOk) return bad('Enter your client’s address, or skip for now.'); a.skip = false; }
+  if (step === 'client') { if (!addrOk) return bad('Enter your client’s address.'); a.skip = false; }
   if (step === 'plan' && !a.scope) return bad('Pick the closest match.');
   if (step === 'stage' && !a.stage) return bad('Pick one to continue.');
   if (step === 'start' && !a.start) return bad('Pick one to continue.');
@@ -824,10 +900,8 @@ function flowFinish(){
     return flowPost('/api/project', {action:'create', sample:true}).then(function(j){ if (!j.ok) return fail(j); done({kind:'practice', url:j.url}); });
   }
   var body = {action:'create', address:a.address, classification:a.cls || 'residential', as:FL_ROLE[r].as};
-  if (r === 'homeowner') { body.scope = a.scope; body.startStage = a.stage; }
+  if (r === 'homeowner') body.startStage = a.stage;
   if (r === 'contractor') body.mode = a.mode === 'underway' ? 'underway' : 'new';
-  if (r === 'architect') body.drawingStage = a.drawings;
-  if (r === 'designer') body.designFocus = a.focus;
   flowPost('/api/project', body).then(function(j){ if (!j.ok) return fail(j); done({kind:'project', url:j.url}); });
 }
 
@@ -858,10 +932,9 @@ function flowDone(){
     var key = r === 'homeowner' ? (a.stage || 'plans') : r === 'contractor' ? 'gc' : r;
     var n = FL_NEXT[key] || FL_NEXT.gc;
     title = r === 'contractor' ? 'Your job is set up.' : r === 'architect' ? 'Your project is set up.' : 'You’re all set.';
-    var sub = r === 'homeowner' ? (a.cls === 'commercial' ? 'Commercial' : 'Residential') + ' · ' + flLabel(FL_PLAN, a.scope)
-      : r === 'contractor' ? (a.mode === 'underway' ? 'Underway' : 'New project · Pre-construction')
-      : r === 'architect' ? (a.cls === 'commercial' ? 'Commercial' : 'Residential') + ' · ' + flLabel(FL_DRAW, a.drawings)
-      : 'Client project · ' + flLabel(FL_FOCUS, a.focus);
+    var sub = r === 'contractor' ? (a.mode === 'underway' ? 'Underway' : 'New project · Pre-construction')
+      : r === 'designer' ? 'Client project'
+      : (a.cls === 'commercial' ? 'Commercial' : 'Residential');
     card = '<b>'+street+'</b><span>'+esc(sub)+'</span>';
     nx = ['Your next step', n[0], n[1]];
     acts = '<div class="fl-acts one"><a class="fl-go" id="fl-done-go" data-next="'+n[3]+'" href="'+esc(res.url)+'?next='+n[3]+'">'+n[2]+'</a><a class="fl-sec" id="fl-done-project" href="'+esc(res.url)+'">Go to my project</a></div>';
@@ -887,6 +960,93 @@ function flowDone(){
   };
 })();
 flowMarkTiles();
+
+/* ── the main section is exactly one screen tall and ends on "See how it works", on any screen ── */
+var HERO_WH = [0, 0];
+function heroFit(force){
+  var h = $('iam'); if (!h) return;
+  var w = innerWidth, ht = innerHeight;
+  // phones resize the window as the address bar slides away while scrolling: only refit on a real change
+  var fine = window.matchMedia && matchMedia('(pointer:fine)').matches;
+  if (!force && w === HERO_WH[0] && (fine ? ht === HERO_WH[1] : Math.abs(ht - HERO_WH[1]) < 160)) return;
+  HERO_WH = [w, ht];
+  var nav = document.querySelector('.nav'), avail = ht - (nav ? nav.offsetHeight : 0);
+  h.style.minHeight = avail + 'px'; h.style.height = avail + 'px';
+  var k = 1; h.style.setProperty('--k', '1'); h.classList.remove('c1', 'c2', 'c3');
+  var over = function(){ return h.scrollHeight > avail; };
+  var step = function(min){ while (k > min && over()) { k = Math.round((k - 0.03) * 100) / 100; h.style.setProperty('--k', String(k)); } };
+  // 1) tighten spacing a little, 2) drop extras (eyebrow, tile descriptions, invite line), 3) tighten further; text never goes below a readable size
+  step(0.8);
+  ['c1', 'c2', 'c3'].forEach(function(c){ if (over()) h.classList.add(c); });
+  step(0.55);
+  h.style.height = '';
+  h.setAttribute('data-fit', String(k));
+}
+heroFit(true);
+window.addEventListener('resize', function(){ clearTimeout(window._hfT); window._hfT = setTimeout(function(){ heroFit(false); }, 80); });
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(function(){ heroFit(true); });
+window.addEventListener('load', function(){ heroFit(true); });
+
+
+/* ══════════════════════════════════════════════════
+   LAYER 2 — "Not sure yet? See why in 30 seconds": five points, one per screen,
+   then the same five choices again (sign-up try #2). Every point is a feature that's live today.
+   ══════════════════════════════════════════════════ */
+var WHY_I = 0, WHY_X = null;
+var WHY = [
+  {e:'Proposals', h:'One link. Every bid in one place.', p:'Send one link to every contractor. Their proposals land in one list, so you choose with everything in front of you.',
+   c:'<div class="wc"><div class="wc-row"><b>Oak &amp; Stone Builders</b><span class="amt">$142,500</span></div><div class="wc-row"><b>Harbor Construction</b><span class="amt">$128,900</span></div><div class="wc-row"><b class="muted">Pacific Ridge GC</b><span class="wc-tag">Invited</span></div></div>'},
+  {e:'Approvals', h:'Every decision on the record.', p:'Change orders and selections get approved from your phone, with photos, the price and the date. Nobody has to remember what was said.',
+   c:'<div class="wc wc-pad"><span class="wc-co">Change order 3</span><div class="wc-row" style="min-height:40px"><b>Upgrade to a 200A panel</b><span class="amt">+$4,200</span></div><div class="wc-btns"><span class="go">Approve</span><span>Discuss</span></div></div>'},
+  {e:'Code check', h:'Catch it before plan check does.', p:'Upload your plans and get findings with the code section, so the scope doesn’t change after you’ve hired.',
+   c:'<div class="wc"><div class="wc-row"><span class="wc-tag fix">Fix</span><span class="t2"><b>Bedroom window too small for egress</b><span>CRC R310.2.1</span></span></div><div class="wc-row"><span class="wc-tag pass">Pass</span><span class="t2"><b>Stair risers at 7¾ in or less</b><span>CRC R311.7.5.1</span></span></div></div>'},
+  {e:'Progress', h:'Know where it stands. No calls.', p:'The GC posts the phase and what’s next. Everyone on the project sees it the moment it changes.',
+   c:'<div class="wc wc-pad"><div style="display:flex;align-items:baseline;gap:10px"><span class="wc-big">45%</span><span style="font-size:14px;color:rgba(217,218,212,.7)">Framing</span></div><div class="wc-track"><i style="width:45%"></i></div><span style="font-size:13px;color:rgba(217,218,212,.65)">Next: framing inspection</span></div>'},
+  {e:'Everyone', h:'Free for the whole team.', p:'Everyone gets their own sign-in and sees only what they need. Unlimited projects. No credit card.',
+   c:'<div class="wc-chips"><span>Homeowner</span><span>General Contractor</span><span>Architect</span><span>Designer</span><span>Specialty Trade</span></div>'}
+];
+function whyOpen(i){
+  WHY_I = i || 0; $('why').classList.add('on'); document.body.style.overflow = 'hidden';
+  try { history.replaceState(null, '', location.pathname + location.search + '#why'); } catch(e){}
+  whyRender();
+}
+function whyClose(){
+  $('why').classList.remove('on'); document.body.style.overflow = '';
+  try { history.replaceState(null, '', location.pathname + location.search); } catch(e){}
+}
+function whyGo(i){ if (i < 0) return whyClose(); WHY_I = Math.min(i, WHY.length); whyRender(); $('why').scrollTop = 0; }
+function whyPick(role){ whyClose(); flowStart(role); }
+function whyRender(){
+  var mark = '<div class="fl-mark">CG</div>', h;
+  if (WHY_I >= WHY.length) {
+    var roles = [].map.call(document.querySelectorAll('#roles .role'), function(b){
+      var r = b.getAttribute('data-role'), ic = b.querySelector('.ri').innerHTML, nm = b.querySelector('b').textContent;
+      return '<button type="button" class="why-role" id="why-role-'+r+'" onclick="whyPick(\''+r+'\')"><span class="ri">'+ic+'</span><b>'+esc(nm)+'</b>'+
+        '<svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>';
+    }).join('');
+    h = '<div class="why-top">'+mark+'<div class="why-lbl"></div><button type="button" class="fl-x" id="why-x" onclick="whyClose()" aria-label="Close">'+FL_X+'</button></div>'+
+      '<div class="why-ready" id="why-ready"><h2 class="why-h" id="why-h">Ready when you are.</h2><p class="why-p">Pick who you are. It takes about a minute.</p><div class="why-roles" role="group" aria-labelledby="why-h">'+roles+'</div></div>';
+  } else {
+    var w = WHY[WHY_I];
+    h = '<div class="why-top">'+mark+'<div class="why-lbl" id="why-lbl">Why Common Ground · '+(WHY_I+1)+' of '+WHY.length+'</div><button type="button" class="why-skip" id="why-skip" onclick="whyGo(WHY.length)">Skip</button></div>'+
+      '<div class="why-bar">'+WHY.map(function(x, j){ return '<i class="'+(j<=WHY_I?'on':'')+'"></i>'; }).join('')+'</div>'+
+      '<div class="why-body"><div class="why-txt"><span class="why-e">'+w.e+'</span><h2 class="why-h" id="why-h">'+w.h+'</h2><p class="why-p">'+w.p+'</p></div><div class="why-card" id="why-card">'+w.c+'</div></div>'+
+      '<div class="why-acts"><button type="button" class="fl-back" id="why-back" onclick="whyGo(WHY_I-1)">Back</button><button type="button" class="fl-go" id="why-next" onclick="whyGo(WHY_I+1)">'+(WHY_I === WHY.length-1 ? 'Get started' : 'Next')+'</button></div>';
+  }
+  $('why-in').innerHTML = h;
+}
+(function(){
+  var el = $('why'); if (!el) return;
+  // swipe between points on phones
+  el.addEventListener('touchstart', function(e){ WHY_X = e.touches.length === 1 ? e.touches[0].clientX : null; }, {passive:true});
+  el.addEventListener('touchend', function(e){
+    if (WHY_X === null || WHY_I >= WHY.length) return;
+    var dx = e.changedTouches[0].clientX - WHY_X; WHY_X = null;
+    if (Math.abs(dx) > 60) whyGo(WHY_I + (dx < 0 ? 1 : -1));
+  }, {passive:true});
+  if (location.hash === '#why') whyOpen(0);
+  window.addEventListener('hashchange', function(){ if (location.hash === '#why' && !$('why').classList.contains('on')) whyOpen(0); });
+})();
 </script>
 </body>
 </html>
