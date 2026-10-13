@@ -558,6 +558,7 @@ function goS2() {
     if (!state.projectAddress) { document.getElementById('ds-address').focus(); return; }
   } else if (state.role === 'trade') {
     state.projectAddress = document.getElementById('tr-address').value.trim();
+    state.projectType = 'residential';
     if (!state.projectAddress) { document.getElementById('tr-address').focus(); return; }
   }
   goStep(2);
@@ -710,7 +711,7 @@ async function createAccount() {
         action: 'create',
         address: state.projectAddress,
         name: state.projectName || state.projectAddress,
-        classification: state.projectType,
+        classification: state.projectType || 'residential',
         scope: state.projectScope,
         budget: state.projectBudget,
         stage: state.projectStage || 'planning',

@@ -165,12 +165,12 @@ async function createProject(req, res, b) {
   if (b.sample === true) return createPractice(req, res, u);
   const address = clean(b.address, 160);
   if (address.length < 5) return res.status(400).json({ error: 'address_required' });
-  const classification = clean(b.classification, 20);
-  if (!['residential', 'commercial'].includes(classification)) return res.status(400).json({ error: 'classification_required' });
+  const classificationRaw = clean(b.classification, 20);
+  const classification = ['residential', 'commercial'].includes(classificationRaw) ? classificationRaw : 'residential';
   const subtype = (SUBTYPES[classification] || []).includes(clean(b.subtype, 30)) ? clean(b.subtype, 30) : '';
   const scope = SCOPES.includes(clean(b.scope, 30)) ? clean(b.scope, 30) : '';
-  const as = clean(b.as, 10) || (u.accountType === 'contractor' ? 'gc' : u.accountType === 'homeowner' ? 'client' : (u.accountType === 'designer' || u.accountType === 'architect') ? 'designer' : '');
-  if (!['client', 'gc', 'designer'].includes(as)) return res.status(400).json({ error: 'account_type_required' });
+  const asRaw = clean(b.as, 10) || (u.accountType === 'contractor' ? 'gc' : u.accountType === 'homeowner' ? 'client' : (u.accountType === 'designer' || u.accountType === 'architect') ? 'designer' : 'gc');
+  const as = ['client', 'gc', 'designer'].includes(asRaw) ? asRaw : 'gc';
   const mode = as === 'gc' && clean(b.mode, 10) === 'underway' ? 'underway' : 'new';
   // unique, readable URL: "123 Main St, …" → /123mainst
   let base = slugFromAddress(address);
