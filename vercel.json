@@ -31,6 +31,10 @@
   ],
   "rewrites": [
     {
+      "source": "/start",
+      "destination": "/api/page?view=start"
+    },
+    {
       "source": "/dashboard",
       "destination": "/api/page?view=dashboard"
     },

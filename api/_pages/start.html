@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Get started — Common Ground</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0b0d10;
+  --surface:#111417;
+  --card:#181c21;
+  --card2:#1e2530;
+  --border:rgba(255,255,255,.07);
+  --border2:rgba(255,255,255,.12);
+  --lime:#D5DC99;
+  --sage:#737F73;
+  --ok:#4A9B6F;
+  --amb:#C9A84C;
+  --del:#E07A5F;
+  --text:#FDFFFE;
+  --muted:rgba(253,255,254,.5);
+  --muted2:rgba(253,255,254,.35);
+  --radius:14px;
+  --radius-sm:10px;
+}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:'DM Sans',system-ui,sans-serif;font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+body{overflow-x:hidden}
+
+/* ── topbar ── */
+.topbar{height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;border-bottom:1px solid var(--border);background:var(--surface);position:sticky;top:0;z-index:100}
+.topbar-logo{font-family:'Bungee',sans-serif;font-size:16px;letter-spacing:.02em;color:var(--lime);text-decoration:none;display:flex;align-items:center;gap:8px}
+.logo-dot{width:8px;height:8px;border-radius:50%;background:var(--lime);display:inline-block}
+.topbar-signin{font-size:13px;color:var(--muted);text-decoration:none;padding:7px 14px;border:1px solid var(--border2);border-radius:8px;transition:color .15s,border-color .15s}
+.topbar-signin:hover{color:var(--text);border-color:var(--border2)}
+
+/* ── page shell ── */
+.page{min-height:calc(100vh - 52px);display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:48px 20px 80px}
+
+/* ── steps ── */
+.step{width:100%;max-width:640px;display:none;flex-direction:column;gap:0;animation:fadeUp .25s ease both}
+.step.active{display:flex}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── progress indicator ── */
+.progress-wrap{width:100%;max-width:640px;margin-bottom:36px;display:flex;gap:6px}
+.progress-pip{height:3px;flex:1;border-radius:3px;background:var(--border2);transition:background .3s}
+.progress-pip.done{background:var(--lime)}
+.progress-pip.active{background:rgba(213,220,153,.5)}
+
+/* ── step header ── */
+.step-head{margin-bottom:28px}
+.step-eyebrow{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--sage);margin-bottom:10px}
+.step-title{font-family:'Bungee',sans-serif;font-size:clamp(22px,4vw,30px);line-height:1.15;letter-spacing:.01em;color:var(--text);margin-bottom:10px}
+.step-sub{font-size:15px;color:var(--muted);line-height:1.6}
+
+/* ── role cards ── */
+.role-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-bottom:28px}
+.role-card{background:var(--card);border:1.5px solid var(--border);border-radius:var(--radius);padding:20px 18px 18px;cursor:pointer;transition:border-color .2s,background .2s,transform .12s;position:relative;overflow:hidden}
+.role-card:hover{border-color:rgba(213,220,153,.35);background:var(--card2);transform:translateY(-2px)}
+.role-card.selected{border-color:var(--lime);background:rgba(213,220,153,.06)}
+.role-card.selected::after{content:'✓';position:absolute;top:10px;right:12px;font-size:14px;font-weight:700;color:var(--lime)}
+.role-icon{font-size:28px;margin-bottom:10px}
+.role-name{font-weight:700;font-size:15px;color:var(--text);margin-bottom:4px}
+.role-desc{font-size:12px;color:var(--muted);line-height:1.45}
+
+/* ── option cards ── */
+.option-grid{display:flex;flex-direction:column;gap:8px;margin-bottom:24px}
+.option-card{background:var(--card);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:14px 16px;cursor:pointer;transition:border-color .2s,background .2s;display:flex;align-items:flex-start;gap:12px}
+.option-card:hover{border-color:rgba(213,220,153,.3);background:var(--card2)}
+.option-card.selected{border-color:var(--lime);background:rgba(213,220,153,.05)}
+.option-radio{width:18px;height:18px;border-radius:50%;border:2px solid var(--border2);flex-shrink:0;margin-top:2px;transition:border-color .2s,background .2s;display:flex;align-items:center;justify-content:center}
+.option-card.selected .option-radio{border-color:var(--lime);background:var(--lime)}
+.option-card.selected .option-radio::after{content:'';width:6px;height:6px;border-radius:50%;background:#0b0d10;display:block}
+.option-label{font-weight:600;font-size:14px;margin-bottom:2px}
+.option-sub{font-size:12px;color:var(--muted)}
+
+/* ── fields ── */
+.field-group{display:flex;flex-direction:column;gap:14px;margin-bottom:24px}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:13px;font-weight:600;color:rgba(253,255,254,.75)}
+.field input,.field textarea,.field select{background:var(--card);border:1.5px solid var(--border2);border-radius:var(--radius-sm);padding:11px 14px;font-family:inherit;font-size:14px;color:var(--text);outline:none;transition:border-color .2s;width:100%}
+.field input::placeholder,.field textarea::placeholder{color:var(--muted2)}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:rgba(213,220,153,.5)}
+.field textarea{resize:vertical;min-height:80px}
+.field select option{background:#1e2530}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.field-hint{font-size:12px;color:var(--muted);margin-top:2px}
+.field .err{font-size:12px;color:var(--del);margin-top:3px;display:none}
+.field.has-err input,.field.has-err textarea{border-color:var(--del)}
+.field.has-err .err{display:block}
+
+/* ── upload zone ── */
+.upload-zone{border:2px dashed var(--border2);border-radius:var(--radius);padding:32px 24px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;margin-bottom:24px;position:relative}
+.upload-zone:hover,.upload-zone.drag{border-color:rgba(213,220,153,.4);background:rgba(213,220,153,.03)}
+.upload-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.upload-icon{font-size:32px;margin-bottom:10px}
+.upload-title{font-weight:600;font-size:15px;margin-bottom:4px}
+.upload-sub{font-size:13px;color:var(--muted)}
+.upload-files{display:flex;flex-direction:column;gap:8px;margin-top:16px}
+.upload-file-row{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:9px 12px}
+.upload-file-name{flex:1;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.upload-file-size{font-size:11px;color:var(--muted);white-space:nowrap}
+.upload-file-rm{background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;line-height:1;padding:0 2px;transition:color .15s}
+.upload-file-rm:hover{color:var(--del)}
+
+/* ── info card ── */
+.info-card{background:rgba(74,155,111,.08);border:1px solid rgba(74,155,111,.2);border-radius:var(--radius-sm);padding:13px 16px;font-size:13px;color:rgba(253,255,254,.75);line-height:1.55;margin-bottom:20px;display:flex;gap:10px}
+.info-card-icon{font-size:16px;flex-shrink:0;margin-top:1px}
+.warn-card{background:rgba(201,168,76,.07);border:1px solid rgba(201,168,76,.2);border-radius:var(--radius-sm);padding:13px 16px;font-size:13px;color:rgba(253,255,254,.75);line-height:1.55;margin-bottom:20px;display:flex;gap:10px}
+
+/* ── summary card ── */
+.summary-card{background:var(--card);border:1px solid var(--border2);border-radius:var(--radius);padding:20px 22px;margin-bottom:24px}
+.summary-row{display:flex;justify-content:space-between;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--border)}
+.summary-row:last-child{border-bottom:none}
+.summary-key{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;flex-shrink:0;margin-right:16px}
+.summary-val{font-size:14px;text-align:right;color:var(--text)}
+
+/* ── buttons ── */
+.btn-row{display:flex;gap:10px;align-items:center}
+.btn{padding:12px 22px;border-radius:var(--radius-sm);font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;border:none;transition:opacity .15s,transform .1s}
+.btn:active{transform:scale(.97)}
+.btn-primary{background:var(--lime);color:#0b0d10}
+.btn-primary:hover{opacity:.9}
+.btn-primary:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.btn-ghost{background:transparent;border:1.5px solid var(--border2);color:var(--muted);padding:11px 22px}
+.btn-ghost:hover{border-color:var(--border);color:var(--text)}
+.btn-sm{padding:9px 16px;font-size:13px}
+.btn-full{width:100%}
+.back-link{font-size:13px;color:var(--muted);cursor:pointer;display:flex;align-items:center;gap:5px;background:none;border:none;font-family:inherit;transition:color .15s}
+.back-link:hover{color:var(--text)}
+
+/* ── divider ── */
+.divider{display:flex;align-items:center;gap:12px;margin:20px 0;color:var(--muted);font-size:12px}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* ── badge ── */
+.badge{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase}
+.badge-lime{background:rgba(213,220,153,.12);color:var(--lime)}
+.badge-sage{background:rgba(115,127,115,.12);color:var(--sage)}
+
+/* ── role tag ── */
+.role-tag{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;background:rgba(213,220,153,.08);border:1px solid rgba(213,220,153,.2);border-radius:6px;font-size:12px;font-weight:600;color:var(--lime);margin-bottom:8px}
+
+/* ── spinner ── */
+.spinner{width:18px;height:18px;border:2px solid rgba(11,13,16,.3);border-top-color:#0b0d10;border-radius:50%;animation:spin .6s linear infinite;display:inline-block;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── success ── */
+.success-icon{width:64px;height:64px;border-radius:50%;background:rgba(74,155,111,.15);border:2px solid rgba(74,155,111,.3);display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 24px}
+.success-title{font-family:'Bungee',sans-serif;font-size:26px;text-align:center;margin-bottom:10px}
+.success-sub{font-size:15px;color:var(--muted);text-align:center;margin-bottom:28px;line-height:1.6}
+
+/* ── existing account note ── */
+.signin-note{text-align:center;font-size:13px;color:var(--muted);margin-top:20px}
+.signin-note a{color:var(--lime);text-decoration:none}
+.signin-note a:hover{text-decoration:underline}
+
+/* ── mobile ── */
+@media(max-width:500px){
+  .page{padding:28px 16px 60px}
+  .field-row{grid-template-columns:1fr}
+  .role-grid{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="/" class="topbar-logo"><span class="logo-dot"></span>Common Ground</a>
+  <a href="/?signin=1" class="topbar-signin">Sign in</a>
+</div>
+
+<div class="page">
+
+  <!-- progress pips -->
+  <div class="progress-wrap" id="progressWrap">
+    <div class="progress-pip active" id="pip0"></div>
+    <div class="progress-pip" id="pip1"></div>
+    <div class="progress-pip" id="pip2"></div>
+    <div class="progress-pip" id="pip3"></div>
+    <div class="progress-pip" id="pip4"></div>
+  </div>
+
+  <!-- ── Step 0: Role Selection ── -->
+  <div class="step active" id="s0">
+    <div class="step-head">
+      <div class="step-eyebrow">Get started</div>
+      <h1 class="step-title">Who are you on this project?</h1>
+      <p class="step-sub">Tell us your role so we can set up the right workspace for you.</p>
+    </div>
+    <div class="role-grid" id="roleGrid">
+      <div class="role-card" data-role="homeowner" onclick="selectRole(this)">
+        <div class="role-icon">🏡</div>
+        <div class="role-name">Homeowner</div>
+        <div class="role-desc">Managing your own renovation or build project</div>
+      </div>
+      <div class="role-card" data-role="gc" onclick="selectRole(this)">
+        <div class="role-icon">🏗️</div>
+        <div class="role-name">General Contractor</div>
+        <div class="role-desc">Running the project and coordinating trades</div>
+      </div>
+      <div class="role-card" data-role="architect" onclick="selectRole(this)">
+        <div class="role-icon">📐</div>
+        <div class="role-name">Architect</div>
+        <div class="role-desc">Design lead on a residential or commercial project</div>
+      </div>
+      <div class="role-card" data-role="designer" onclick="selectRole(this)">
+        <div class="role-icon">🎨</div>
+        <div class="role-name">Designer</div>
+        <div class="role-desc">Interior design, selections, and finishes</div>
+      </div>
+      <div class="role-card" data-role="trade" onclick="selectRole(this)">
+        <div class="role-icon">🔧</div>
+        <div class="role-name">Trade / Sub</div>
+        <div class="role-desc">Electrician, plumber, framer, or other specialty</div>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" id="s0Next" onclick="goS1()" disabled>Continue →</button>
+    </div>
+    <div class="signin-note">Already have an account? <a href="/?signin=1">Sign in</a></div>
+  </div>
+
+  <!-- ── Step 1: Project basics (varies by role) ── -->
+  <div class="step" id="s1">
+    <div class="step-head">
+      <div class="step-eyebrow" id="s1eyebrow">Your project</div>
+      <h1 class="step-title" id="s1title">Tell us about the project</h1>
+      <p class="step-sub" id="s1sub">We'll create a dedicated workspace for it.</p>
+    </div>
+
+    <!-- Homeowner fields -->
+    <div id="fields-homeowner" class="fields-role" style="display:none">
+      <div class="field-group">
+        <div class="field">
+          <label>Project address</label>
+          <input type="text" id="hw-address" placeholder="123 Oak Street, Portland OR 97201" autocomplete="street-address">
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Project type</label>
+            <select id="hw-type">
+              <option value="">Select…</option>
+              <option>Full remodel</option>
+              <option>Addition</option>
+              <option>New construction</option>
+              <option>Kitchen / bath</option>
+              <option>ADU / guest house</option>
+              <option>Repair / maintenance</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Approx. budget</label>
+            <select id="hw-budget">
+              <option value="">Select…</option>
+              <option>Under $50K</option>
+              <option>$50K – $150K</option>
+              <option>$150K – $500K</option>
+              <option>$500K – $1M</option>
+              <option>Over $1M</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label>Scope description <span style="font-weight:400;color:var(--muted)">(optional)</span></label>
+          <textarea id="hw-scope" placeholder="Main level kitchen remodel, open up the dining room wall, add an island…" rows="3"></textarea>
+        </div>
+        <div class="field">
+          <label>Where are you in the process?</label>
+          <select id="hw-stage">
+            <option value="">Select…</option>
+            <option value="planning">Just planning / exploring</option>
+            <option value="design">In design / permitting</option>
+            <option value="bidding">Getting bids from GCs</option>
+            <option value="hired">GC hired, not started yet</option>
+            <option value="construction">Under construction</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- GC fields -->
+    <div id="fields-gc" class="fields-role" style="display:none">
+      <div class="field-group">
+        <div class="field">
+          <label>Company name</label>
+          <input type="text" id="gc-company" placeholder="Acme Construction LLC">
+        </div>
+        <div class="field">
+          <label>Project address</label>
+          <input type="text" id="gc-address" placeholder="123 Oak Street, Portland OR 97201">
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Project type</label>
+            <select id="gc-type">
+              <option value="">Select…</option>
+              <option>Residential remodel</option>
+              <option>New residential</option>
+              <option>Addition</option>
+              <option>Commercial TI</option>
+              <option>Multi-family</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Contract value</label>
+            <select id="gc-value">
+              <option value="">Select…</option>
+              <option>Under $100K</option>
+              <option>$100K – $500K</option>
+              <option>$500K – $2M</option>
+              <option>Over $2M</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label>Project name <span style="font-weight:400;color:var(--muted)">(optional)</span></label>
+          <input type="text" id="gc-name" placeholder="Smith Residence, Building B…">
+          <span class="field-hint">Used as the project's display name. Defaults to the address if left blank.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Architect / Designer fields -->
+    <div id="fields-design" class="fields-role" style="display:none">
+      <div class="field-group">
+        <div class="field">
+          <label>Firm name <span style="font-weight:400;color:var(--muted)">(optional)</span></label>
+          <input type="text" id="ds-firm" placeholder="Studio XYZ">
+        </div>
+        <div class="field">
+          <label>Project address</label>
+          <input type="text" id="ds-address" placeholder="123 Oak Street, Portland OR 97201">
+        </div>
+        <div class="field">
+          <label>Project type</label>
+          <select id="ds-type">
+            <option value="">Select…</option>
+            <option>Residential remodel</option>
+            <option>New residential</option>
+            <option>Commercial</option>
+            <option>Hospitality</option>
+            <option>Other</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Trade fields -->
+    <div id="fields-trade" class="fields-role" style="display:none">
+      <div class="info-card">
+        <span class="info-card-icon">💡</span>
+        <span>Trades are typically invited to a project by the GC or homeowner. If you received a bid link, use that directly. Otherwise you can create your own workspace below to track your work.</span>
+      </div>
+      <div class="field-group">
+        <div class="field">
+          <label>Company name</label>
+          <input type="text" id="tr-company" placeholder="Smith Electric LLC">
+        </div>
+        <div class="field">
+          <label>Trade specialty</label>
+          <select id="tr-specialty">
+            <option value="">Select…</option>
+            <option>Electrical</option>
+            <option>Plumbing</option>
+            <option>HVAC / Mechanical</option>
+            <option>Framing / Carpentry</option>
+            <option>Drywall / Plaster</option>
+            <option>Tile / Stone</option>
+            <option>Painting</option>
+            <option>Flooring</option>
+            <option>Roofing</option>
+            <option>Concrete / Foundation</option>
+            <option>Landscaping</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Project address</label>
+          <input type="text" id="tr-address" placeholder="123 Oak Street, Portland OR 97201">
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="back-link" onclick="goStep(0)">← Back</button>
+      <button class="btn btn-primary" onclick="goS2()">Continue →</button>
+    </div>
+  </div>
+
+  <!-- ── Step 2: Upload documents ── -->
+  <div class="step" id="s2">
+    <div class="step-head">
+      <div class="step-eyebrow">Documents</div>
+      <h1 class="step-title" id="s2title">Upload your plans & files</h1>
+      <p class="step-sub" id="s2sub">Add any documents you already have — plans, permits, contracts, photos. You can always upload more later.</p>
+    </div>
+    <div class="upload-zone" id="uploadZone">
+      <input type="file" id="fileInput" multiple accept=".pdf,.jpg,.jpeg,.png,.dwg,.dxf,.xlsx,.xls,.doc,.docx">
+      <div class="upload-icon">📎</div>
+      <div class="upload-title">Drop files here or click to browse</div>
+      <div class="upload-sub">PDF, images, DWG, DXF, Excel, Word — up to 50 MB each</div>
+    </div>
+    <div class="upload-files" id="uploadFileList"></div>
+    <div class="info-card" id="uploadSkipNote" style="display:none">
+      <span class="info-card-icon">✓</span>
+      <span>No files yet? No problem — your workspace will be ready and you can upload documents anytime.</span>
+    </div>
+    <div class="btn-row">
+      <button class="back-link" onclick="goStep(1)">← Back</button>
+      <button class="btn btn-ghost btn-sm" onclick="skipUpload()">Skip for now</button>
+      <button class="btn btn-primary" id="s2Next" onclick="goS3()">Continue →</button>
+    </div>
+  </div>
+
+  <!-- ── Step 3: Create account ── -->
+  <div class="step" id="s3">
+    <div class="step-head">
+      <div class="step-eyebrow">Your account</div>
+      <h1 class="step-title">Create your free account</h1>
+      <p class="step-sub">Your workspace lives here — invite your team, track decisions, and manage everything in one place.</p>
+    </div>
+    <div class="field-group">
+      <div class="field-row">
+        <div class="field">
+          <label>First name</label>
+          <input type="text" id="a-first" placeholder="Jordan" autocomplete="given-name">
+          <span class="err" id="a-first-err">Required</span>
+        </div>
+        <div class="field">
+          <label>Last name</label>
+          <input type="text" id="a-last" placeholder="Smith" autocomplete="family-name">
+          <span class="err" id="a-last-err">Required</span>
+        </div>
+      </div>
+      <div class="field" id="field-email">
+        <label>Email</label>
+        <input type="email" id="a-email" placeholder="you@example.com" autocomplete="email">
+        <span class="err" id="a-email-err">Enter a valid email</span>
+      </div>
+      <div class="field" id="field-pw">
+        <label>Password</label>
+        <input type="password" id="a-pw" placeholder="8+ characters" autocomplete="new-password">
+        <span class="err" id="a-pw-err">Must be at least 8 characters</span>
+      </div>
+    </div>
+    <div id="s3-api-err" style="display:none" class="warn-card"><span>⚠️</span><span id="s3-api-err-text"></span></div>
+    <div class="btn-row">
+      <button class="back-link" onclick="goStep(2)">← Back</button>
+      <button class="btn btn-primary" id="s3Submit" onclick="createAccount()">
+        <span id="s3BtnText">Create account & launch workspace</span>
+        <span id="s3Spinner" class="spinner" style="display:none"></span>
+      </button>
+    </div>
+    <div class="signin-note" style="margin-top:16px">Already have an account? <a href="/?signin=1">Sign in instead →</a></div>
+  </div>
+
+  <!-- ── Step 4: Success ── -->
+  <div class="step" id="s4">
+    <div class="success-icon">🏗️</div>
+    <div class="success-title">Your workspace is ready</div>
+    <p class="success-sub" id="successSub">We're setting up your project and sending you a confirmation email.</p>
+    <div class="summary-card" id="successSummary"></div>
+    <button class="btn btn-primary btn-full" id="launchBtn" onclick="launchProject()">
+      <span id="launchBtnText">Open my workspace →</span>
+      <span id="launchSpinner" class="spinner" style="display:none"></span>
+    </button>
+  </div>
+
+</div><!-- /page -->
+
+<script>
+// ── State ──
+const state = {
+  role: null,
+  projectAddress: '',
+  projectType: '',
+  projectName: '',
+  projectScope: '',
+  projectBudget: '',
+  projectStage: '',
+  files: [],
+  accountName: '',
+  accountEmail: '',
+  accountPassword: '',
+  projectId: null,
+  projectPath: null,
+};
+
+const STEPS = 5;
+let currentStep = 0;
+
+// ── Role selection ──
+function selectRole(card) {
+  document.querySelectorAll('.role-card').forEach(c => c.classList.remove('selected'));
+  card.classList.add('selected');
+  state.role = card.dataset.role;
+  document.getElementById('s0Next').disabled = false;
+}
+
+function goS1() {
+  if (!state.role) return;
+  // Configure step 1 content based on role
+  document.querySelectorAll('.fields-role').forEach(el => el.style.display = 'none');
+  const roleLabels = {
+    homeowner: { eyebrow:'Your project', title:'Tell us about your project', sub:'We\'ll create a dedicated workspace for your renovation.' },
+    gc: { eyebrow:'Your project', title:'Set up your project workspace', sub:'Invite your client and trades once the workspace is live.' },
+    architect: { eyebrow:'Your project', title:'Create your project workspace', sub:'Collaborate with your client, GC, and consultants in one place.' },
+    designer: { eyebrow:'Your project', title:'Create your project workspace', sub:'Track selections, share mood boards, and keep decisions organized.' },
+    trade: { eyebrow:'Your company', title:'Set up your workspace', sub:'Manage bids, scope, and RFIs from a central project hub.' },
+  };
+  const lbl = roleLabels[state.role] || roleLabels.homeowner;
+  document.getElementById('s1eyebrow').textContent = lbl.eyebrow;
+  document.getElementById('s1title').textContent = lbl.title;
+  document.getElementById('s1sub').textContent = lbl.sub;
+
+  const fieldMap = { homeowner:'homeowner', gc:'gc', architect:'design', designer:'design', trade:'trade' };
+  const fieldId = fieldMap[state.role];
+  if (fieldId) document.getElementById('fields-' + fieldId).style.display = '';
+
+  const uploadLabels = {
+    homeowner: { title:'Upload your existing plans & files', sub:'Architectural plans, permits, photos, contractor quotes — anything you have.' },
+    gc: { title:'Upload project documents', sub:'Plans, specs, permits, allowances, contracts — share with your team.' },
+    architect: { title:'Upload drawings & specs', sub:'Your current drawing set, specs, or permit documents.' },
+    designer: { title:'Upload design files', sub:'Mood boards, selections, finish schedules, or any reference documents.' },
+    trade: { title:'Upload scope & bid files', sub:'Your bid, scope of work, submittals, or any relevant documents.' },
+  };
+  const ul = uploadLabels[state.role] || uploadLabels.homeowner;
+  document.getElementById('s2title').textContent = ul.title;
+  document.getElementById('s2sub').textContent = ul.sub;
+
+  goStep(1);
+}
+
+function goS2() {
+  // Collect role-specific fields
+  if (state.role === 'homeowner') {
+    state.projectAddress = document.getElementById('hw-address').value.trim();
+    state.projectType = document.getElementById('hw-type').value;
+    state.projectBudget = document.getElementById('hw-budget').value;
+    state.projectScope = document.getElementById('hw-scope').value.trim();
+    state.projectStage = document.getElementById('hw-stage').value;
+    if (!state.projectAddress) { document.getElementById('hw-address').focus(); return; }
+  } else if (state.role === 'gc') {
+    state.projectAddress = document.getElementById('gc-address').value.trim();
+    state.projectType = document.getElementById('gc-type').value;
+    state.projectName = document.getElementById('gc-name').value.trim();
+    if (!state.projectAddress) { document.getElementById('gc-address').focus(); return; }
+  } else if (state.role === 'architect' || state.role === 'designer') {
+    state.projectAddress = document.getElementById('ds-address').value.trim();
+    state.projectType = document.getElementById('ds-type').value;
+    if (!state.projectAddress) { document.getElementById('ds-address').focus(); return; }
+  } else if (state.role === 'trade') {
+    state.projectAddress = document.getElementById('tr-address').value.trim();
+    if (!state.projectAddress) { document.getElementById('tr-address').focus(); return; }
+  }
+  goStep(2);
+}
+
+function goS3() {
+  goStep(3);
+}
+
+// ── Step navigation ──
+function goStep(n) {
+  document.querySelectorAll('.step').forEach((s,i) => {
+    s.classList.toggle('active', i === n);
+  });
+  currentStep = n;
+  updatePips();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function updatePips() {
+  const hide = currentStep === 4; // success
+  document.getElementById('progressWrap').style.display = hide ? 'none' : '';
+  for (let i = 0; i < STEPS; i++) {
+    const pip = document.getElementById('pip' + i);
+    if (!pip) continue;
+    pip.className = 'progress-pip' + (i < currentStep ? ' done' : i === currentStep ? ' active' : '');
+  }
+}
+
+// ── File upload ──
+const uploadZone = document.getElementById('uploadZone');
+const fileInput = document.getElementById('fileInput');
+
+uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('drag'); });
+uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('drag'));
+uploadZone.addEventListener('drop', e => {
+  e.preventDefault(); uploadZone.classList.remove('drag');
+  addFiles(e.dataTransfer.files);
+});
+fileInput.addEventListener('change', () => { addFiles(fileInput.files); fileInput.value = ''; });
+
+function addFiles(fileList) {
+  for (const f of fileList) {
+    if (state.files.find(x => x.name === f.name && x.size === f.size)) continue;
+    state.files.push(f);
+  }
+  renderFileList();
+}
+
+function removeFile(i) {
+  state.files.splice(i, 1);
+  renderFileList();
+}
+
+function renderFileList() {
+  const list = document.getElementById('uploadFileList');
+  list.innerHTML = state.files.map((f, i) => `
+    <div class="upload-file-row">
+      <span style="font-size:18px">${fileEmoji(f.name)}</span>
+      <span class="upload-file-name">${f.name}</span>
+      <span class="upload-file-size">${fmtSize(f.size)}</span>
+      <button class="upload-file-rm" onclick="removeFile(${i})" title="Remove">×</button>
+    </div>`).join('');
+  document.getElementById('uploadSkipNote').style.display = 'none';
+}
+
+function skipUpload() {
+  document.getElementById('uploadSkipNote').style.display = 'flex';
+  goS3();
+}
+
+function fileEmoji(name) {
+  const ext = name.split('.').pop().toLowerCase();
+  if (['jpg','jpeg','png','gif','webp','heic'].includes(ext)) return '🖼️';
+  if (ext === 'pdf') return '📄';
+  if (['dwg','dxf'].includes(ext)) return '📐';
+  if (['xls','xlsx','csv'].includes(ext)) return '📊';
+  if (['doc','docx'].includes(ext)) return '📝';
+  return '📎';
+}
+
+function fmtSize(b) {
+  if (b < 1024) return b + ' B';
+  if (b < 1048576) return (b/1024).toFixed(1) + ' KB';
+  return (b/1048576).toFixed(1) + ' MB';
+}
+
+// ── Account creation ──
+async function createAccount() {
+  const first = document.getElementById('a-first').value.trim();
+  const last = document.getElementById('a-last').value.trim();
+  const email = document.getElementById('a-email').value.trim();
+  const pw = document.getElementById('a-pw').value;
+
+  let ok = true;
+  const markErr = (fieldId, errId, condition) => {
+    const f = document.getElementById(fieldId)?.closest('.field') || document.getElementById('field-' + fieldId);
+    const e = document.getElementById(errId);
+    if (condition) { f?.classList.add('has-err'); e && (e.style.display = ''); ok = false; }
+    else { f?.classList.remove('has-err'); e && (e.style.display = 'none'); }
+  };
+
+  // clear previous
+  ['a-first','a-last'].forEach(id => {
+    document.getElementById(id)?.closest('.field')?.classList.remove('has-err');
+  });
+  document.getElementById('field-email')?.classList.remove('has-err');
+  document.getElementById('field-pw')?.classList.remove('has-err');
+
+  if (!first) { document.getElementById('a-first').closest('.field').classList.add('has-err'); document.getElementById('a-first-err').style.display=''; ok=false; }
+  if (!last) { document.getElementById('a-last').closest('.field').classList.add('has-err'); document.getElementById('a-last-err').style.display=''; ok=false; }
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { document.getElementById('field-email').classList.add('has-err'); document.getElementById('a-email-err').style.display=''; ok=false; }
+  if (!pw || pw.length < 8) { document.getElementById('field-pw').classList.add('has-err'); document.getElementById('a-pw-err').style.display=''; ok=false; }
+  if (!ok) return;
+
+  state.accountName = first + ' ' + last;
+  state.accountEmail = email;
+  state.accountPassword = pw;
+
+  const btn = document.getElementById('s3Submit');
+  btn.disabled = true;
+  document.getElementById('s3BtnText').style.display = 'none';
+  document.getElementById('s3Spinner').style.display = 'inline-block';
+  document.getElementById('s3-api-err').style.display = 'none';
+
+  // Map role → accountType
+  const accountTypeMap = { homeowner:'homeowner', gc:'contractor', architect:'architect', designer:'designer', trade:'trade' };
+
+  try {
+    const signupRes = await fetch('/api/auth', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: 'signup',
+        identifier: email,
+        password: pw,
+        name: state.accountName,
+        accountType: accountTypeMap[state.role] || 'homeowner',
+      }),
+    });
+    const signupData = await signupRes.json();
+    if (!signupData.ok) throw new Error(signupData.error || 'Signup failed');
+
+    // Create project
+    const roleAs = state.role === 'homeowner' ? 'client' : state.role === 'trade' ? 'trade' : state.role === 'gc' ? 'gc' : 'designer';
+    const projRes = await fetch('/api/project', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: 'create',
+        address: state.projectAddress,
+        name: state.projectName || state.projectAddress,
+        classification: state.projectType,
+        scope: state.projectScope,
+        budget: state.projectBudget,
+        stage: state.projectStage || 'planning',
+        as: roleAs,
+      }),
+    });
+    const projData = await projRes.json();
+    if (!projData.ok) throw new Error(projData.error || 'Could not create project');
+
+    state.projectId = projData.project.id;
+    state.projectPath = projData.project.path;
+
+    // Upload files (best-effort, don't block success)
+    if (state.files.length) {
+      try { await uploadFiles(state.projectId); } catch(e) { console.warn('File upload skipped:', e); }
+    }
+
+    showSuccess();
+  } catch (err) {
+    document.getElementById('s3-api-err').style.display = 'flex';
+    document.getElementById('s3-api-err-text').textContent = err.message || 'Something went wrong — please try again.';
+    btn.disabled = false;
+    document.getElementById('s3BtnText').style.display = '';
+    document.getElementById('s3Spinner').style.display = 'none';
+  }
+}
+
+async function uploadFiles(projectId) {
+  const fd = new FormData();
+  state.files.forEach(f => fd.append('files', f));
+  fd.append('projectId', projectId);
+  await fetch('/api/project?action=upload', { method: 'POST', body: fd });
+}
+
+function showSuccess() {
+  const roleLabel = {
+    homeowner:'Homeowner', gc:'General Contractor', architect:'Architect',
+    designer:'Interior Designer', trade:'Trade / Subcontractor',
+  }[state.role] || state.role;
+
+  document.getElementById('successSub').textContent =
+    `Your workspace is live. We've sent a confirmation to ${state.accountEmail}.`;
+
+  const rows = [
+    ['Project', state.projectAddress],
+    ['Your role', roleLabel],
+    ['Account', state.accountEmail],
+    state.files.length ? ['Documents uploaded', `${state.files.length} file${state.files.length > 1 ? 's' : ''}`] : null,
+  ].filter(Boolean);
+
+  document.getElementById('successSummary').innerHTML = rows.map(([k,v]) =>
+    `<div class="summary-row"><span class="summary-key">${k}</span><span class="summary-val">${v}</span></div>`
+  ).join('');
+
+  goStep(4);
+}
+
+function launchProject() {
+  if (!state.projectPath) { window.location.href = '/dashboard'; return; }
+  const btn = document.getElementById('launchBtn');
+  btn.disabled = true;
+  document.getElementById('launchBtnText').style.display = 'none';
+  document.getElementById('launchSpinner').style.display = 'inline-block';
+  const slug = state.role === 'homeowner' ? 'homeowner' : state.role === 'gc' ? 'gc' : state.role === 'trade' ? 'trade' : 'gc';
+  window.location.href = `/${state.projectPath}/${slug}`;
+}
+
+// ── Init ──
+updatePips();
+</script>
+</body>
+</html>
