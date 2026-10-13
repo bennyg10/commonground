@@ -72,6 +72,12 @@ export default async function handler(req, res) {
   const role = urlRole === 'homeowner' ? 'client' : urlRole;          // /homeowner in the address, 'client' inside
   const invite = clean(q.invite, 80);
 
+  // ── start / onboarding (public — no auth required)
+  if (view === 'start') {
+    if (canonicalRedirect(req, res, '/start')) return;
+    return send(res, readPage('start.html'));
+  }
+
   // ── dashboard
   if (view === 'dashboard') {
     if (canonicalRedirect(req, res, '/dashboard')) return;
