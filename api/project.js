@@ -155,6 +155,67 @@ async function createPractice(req, res, u) {
   await addMember(id, u.identifier, Object.assign({ name: u.name, role: as, status: 'active', joinedAt: now() }, u.accountType === 'architect' ? { title: 'Architect' } : {}));
   return res.status(200).json({ ok: true, project: { id, path: id }, url: `/${id}/${roleUrl}` });
 }
+// ── auto-seed: inject role-based starter content on new project creation ──
+async function autoSeedNewProject(id, as, u, meta) {
+  try {
+    const ts = now();
+    const activityKey = `cg:activity:${id}`;
+
+    if (as === 'client') {
+      // Homeowner: bidding stage, share-bid link + hire GC tasks, welcoming activity
+      const tasks = [
+        { id: 'hs-share', group: 'Get your first bids', text: 'Share your bid link with contractors', detail: 'Common Ground gives you a private link you can text or email to any GC — they submit a proposal without needing an account.', owner: 'client', type: 'task', required: false, done: false, tags: [], addedBy: 'template', at: ts },
+        { id: 'hs-compare', group: 'Get your first bids', text: 'Review and compare bids', detail: 'Once bids come in you can compare scope, price and timeline side by side here.', owner: 'client', type: 'task', required: false, done: false, tags: [], addedBy: 'template', at: ts },
+        { id: 'hs-hire', group: 'Get your first bids', text: 'Hire a GC to start construction', detail: 'Select the proposal you want to move forward with — Common Ground will notify your GC and move the project into the kickoff stage.', owner: 'client', type: 'task', required: false, done: false, tags: [], addedBy: 'template', at: ts },
+        { id: 'hs-contract', group: 'Before work begins', text: 'Sign the construction contract', detail: 'Both you and your GC sign in Common Ground before any deposit or work starts.', owner: 'both', type: 'agreement', required: true, done: false, tags: [], gcAgreed: false, clientAgreed: false, addedBy: 'template', at: ts },
+        { id: 'hs-contact', group: 'Before work begins', text: 'Confirm your point of contact + preferred way to reach you', detail: 'Let your GC know who to call for decisions and how quickly you can respond.', owner: 'client', type: 'task', required: false, done: false, tags: [], addedBy: 'template', at: ts },
+      ];
+      await setJSON(`cg:tasks:${id}`, tasks);
+      const activity = [
+        { id: 'a-welcome', type: 'note', text: `Project created by ${u.name}. Share your bid link to get your first proposals.`, at: ts, by: u.identifier, byName: u.name },
+      ];
+      await setJSON(activityKey, activity);
+
+    } else if (as === 'gc') {
+      // GC signing themselves up — they are already hired, project is active
+      const gcName = u.name;
+      const tasks = genericKickoff(meta);
+      await setJSON(`cg:tasks:${id}`, tasks);
+      const activity = [
+        { id: 'a-welcome', type: 'note', text: `${gcName} created this project on Common Ground. Kickoff checklist is ready — complete each item with your client before work starts.`, at: ts, by: u.identifier, byName: gcName },
+        { id: 'a-hired', type: 'hired', text: `${gcName} added as general contractor.`, at: ts, by: u.identifier, byName: gcName },
+      ];
+      await setJSON(activityKey, activity);
+      // GC: status already set on the project meta; also drop a share note
+      const existing = (await getJSON(`cg:project:${id}`)) || {};
+      await setJSON(`cg:project:${id}`, Object.assign({}, existing, {
+        stage: 'active',
+        hiredGc: { name: u.name, company: u.company || u.name, identifier: u.identifier, phone: u.phone || '', bidId: null, amount: null, hiredAt: ts, hiredBy: 'self' },
+        startedAt: ts,
+        startedBy: u.name,
+      }));
+
+    } else if (as === 'designer') {
+      // Designer / architect — bidding stage, focused on drawing deliverables and client invite
+      const drawingStage = (meta.intake && meta.intake.drawings) || 'schematic';
+      const tasks = [
+        { id: 'ds-upload', group: 'Design deliverables', text: 'Upload your current drawings', detail: 'Share your latest set in Common Ground so the homeowner and any consultants are always looking at the same version.', owner: 'designer', type: 'task', required: false, done: false, tags: [], addedBy: 'template', at: ts },
+        { id: 'ds-client', group: 'Design deliverables', text: 'Invite your client to the project', detail: 'The homeowner can follow progress, review drawings and approve decisions without needing to email you.', owner: 'designer', type: 'task', required: false, done: false, tags: [], addedBy: 'template', at: ts },
+        { id: 'ds-gc', group: 'Design deliverables', text: 'Invite a GC to review drawings for constructability', detail: 'Early GC feedback reduces change orders. Share a bid link or invite them directly.', owner: 'designer', type: 'task', required: false, done: false, tags: [], addedBy: 'template', at: ts },
+        { id: 'ds-permit', group: 'Permitting', text: 'Track permit submittal and approvals here', detail: `Upload your permit set and mark it submitted when filed. ${drawingStage === 'construction-documents' || drawingStage === 'plan-check' ? 'You're already at the right drawing stage.' : 'Work toward construction documents before submitting.'}`, owner: 'designer', type: 'task', required: false, done: false, tags: [], addedBy: 'template', at: ts },
+        { id: 'ds-budget', group: 'Budget', text: 'Share a construction budget estimate with your client', detail: 'Use the Budget tool to give the homeowner a realistic cost picture at this stage.', owner: 'designer', type: 'task', required: false, done: false, tags: [], addedBy: 'template', at: ts },
+      ];
+      await setJSON(`cg:tasks:${id}`, tasks);
+      const activity = [
+        { id: 'a-welcome', type: 'note', text: `Project created by ${u.name}. Upload drawings and invite your client to get started.`, at: ts, by: u.identifier, byName: u.name },
+      ];
+      await setJSON(activityKey, activity);
+    }
+  } catch (e) {
+    // non-fatal: project is still created, just without starter content
+    console.error('autoSeedNewProject error', e && e.message);
+  }
+}
 const INTAKE_STAGES = ['idea', 'plans', 'proposals', 'started'];
 const INTAKE_DRAWINGS = ['schematic', 'design-development', 'construction-documents', 'plan-check'];
 const INTAKE_FOCUS = ['interiors', 'exteriors', 'both'];
@@ -204,6 +265,9 @@ async function createProject(req, res, b) {
   if (!u.accountType) u.accountType = as === 'gc' ? 'contractor' : as === 'designer' ? 'designer' : 'homeowner';
   await setJSON(`cg:user:${u.identifier}`, u);
   await addMember(id, u.identifier, Object.assign({ name: u.name, role: as, status: 'active', joinedAt: now() }, title ? { title } : {}));
+  // ── auto-seed starter content based on role ──
+  await autoSeedNewProject(id, as, u, meta);
+
   // a GC or designer can bring their client in right away
   let clientInvite = null;
   const cEmail = normalizeIdentifier(b.clientEmail || ''), cName = clean(b.clientName, 80);
