@@ -719,7 +719,7 @@ html,body{font-size:14px}
       <button class="nav-btn" onclick="sbNav(this,'team')"><i class="ti ti-users"></i>Team &amp; Trades</button>
       <button id="nav-btn-proposals" class="nav-btn role-hidden" onclick="sbNav(this,'proposals')"><i class="ti ti-file-certificate"></i>Proposals<span class="nav-badge" id="nav-proposals-badge" style="background:var(--l10);color:var(--lime);border-color:var(--l20)">0</span></button>
       <button class="nav-btn" onclick="sbNav(this,'products')"><i class="ti ti-package"></i>Products<span class="nav-badge">5</span></button>
-      <button class="nav-btn" onclick="sbNav(this,'scanner')"><i class="ti ti-scan"></i>Plan scanner<span class="nav-badge" style="color:#C9B5FF;background:rgba(183,156,255,.14);border:1px solid rgba(183,156,255,.38);font-weight:700">Coming soon</span></button>
+      <button class="nav-btn" onclick="sbNav(this,'scanner')"><i class="ti ti-file-search"></i>Plans</button>
       
     </div>
 
@@ -1348,9 +1348,145 @@ html,body{font-size:14px}
     </div>
   </div>
 
-  <!-- ══ SCREEN: AI PLAN SCANNER ══ -->
+  <!-- ══ SCREEN: PLANS ══ -->
   <div class="screen" id="sc-scanner">
-    <div class="scrl" id="ps-soon" style="padding:32px 28px 40px;overflow-x:hidden;width:100%;max-width:100%;box-sizing:border-box"><div style="max-width:1000px;margin:0 auto"><div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px"><span style="font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--sage)">Plan scanner</span><span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;border-radius:20px;padding:3px 10px;color:#C9B5FF;background:rgba(183,156,255,.14);border:1px solid rgba(183,156,255,.38)">Coming soon</span></div><div style="font-family:Bungee,sans-serif;font-size:34px;line-height:1.15;color:var(--white);margin-bottom:14px">Your plans, read in a minute.</div><div style="font-size:15px;color:var(--w70);line-height:1.7;max-width:640px;margin-bottom:28px">Upload a plan set and Common Ground reads every sheet: the layout room by room, the code issues, and the scope for each trade. We’re testing it on real projects now, and it switches on right here when it’s ready.</div><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px"><div class="ps-feat" style="background:var(--d3);border:1px solid var(--w08);border-radius:16px;padding:22px 22px 20px"><div style="width:42px;height:42px;border-radius:11px;background:rgba(183,156,255,.12);border:1px solid rgba(183,156,255,.3);display:flex;align-items:center;justify-content:center;margin-bottom:14px"><i class="ti ti-file-search" style="font-size:20px;color:#C9B5FF"></i></div><div style="font-family:Bungee,sans-serif;font-size:15px;color:var(--white);line-height:1.3;margin-bottom:6px">Reads the whole plan set</div><div style="font-size:13px;color:var(--w70);line-height:1.6">Drop in the PDF. It finds the floor plans, elevations, sections and schedules on its own.</div></div><div class="ps-feat" style="background:var(--d3);border:1px solid var(--w08);border-radius:16px;padding:22px 22px 20px"><div style="width:42px;height:42px;border-radius:11px;background:rgba(183,156,255,.12);border:1px solid rgba(183,156,255,.3);display:flex;align-items:center;justify-content:center;margin-bottom:14px"><i class="ti ti-layout-2" style="font-size:20px;color:#C9B5FF"></i></div><div style="font-family:Bungee,sans-serif;font-size:15px;color:var(--white);line-height:1.3;margin-bottom:6px">Room-by-room layout</div><div style="font-size:13px;color:var(--w70);line-height:1.6">Every room laid out in 2D with its dimensions, so everyone works from the same picture.</div></div><div class="ps-feat" style="background:var(--d3);border:1px solid var(--w08);border-radius:16px;padding:22px 22px 20px"><div style="width:42px;height:42px;border-radius:11px;background:rgba(183,156,255,.12);border:1px solid rgba(183,156,255,.3);display:flex;align-items:center;justify-content:center;margin-bottom:14px"><i class="ti ti-shield-check" style="font-size:20px;color:#C9B5FF"></i></div><div style="font-family:Bungee,sans-serif;font-size:15px;color:var(--white);line-height:1.3;margin-bottom:6px">Code issues flagged early</div><div style="font-size:13px;color:var(--w70);line-height:1.6">Egress, clearances, stairs and energy notes checked against your city’s code before plan check does.</div></div><div class="ps-feat" style="background:var(--d3);border:1px solid var(--w08);border-radius:16px;padding:22px 22px 20px"><div style="width:42px;height:42px;border-radius:11px;background:rgba(183,156,255,.12);border:1px solid rgba(183,156,255,.3);display:flex;align-items:center;justify-content:center;margin-bottom:14px"><i class="ti ti-tools" style="font-size:20px;color:#C9B5FF"></i></div><div style="font-family:Bungee,sans-serif;font-size:15px;color:var(--white);line-height:1.3;margin-bottom:6px">Scope for every trade</div><div style="font-size:13px;color:var(--w70);line-height:1.6">Quantities and scope split by trade, ready for bids and sub quotes.</div></div><div class="ps-feat" style="background:var(--d3);border:1px solid var(--w08);border-radius:16px;padding:22px 22px 20px"><div style="width:42px;height:42px;border-radius:11px;background:rgba(183,156,255,.12);border:1px solid rgba(183,156,255,.3);display:flex;align-items:center;justify-content:center;margin-bottom:14px"><i class="ti ti-git-compare" style="font-size:20px;color:#C9B5FF"></i></div><div style="font-family:Bungee,sans-serif;font-size:15px;color:var(--white);line-height:1.3;margin-bottom:6px">Compare revisions</div><div style="font-size:13px;color:var(--w70);line-height:1.6">Upload a new set and see exactly what changed, sheet by sheet.</div></div><div class="ps-feat" style="background:var(--d3);border:1px solid var(--w08);border-radius:16px;padding:22px 22px 20px"><div style="width:42px;height:42px;border-radius:11px;background:rgba(183,156,255,.12);border:1px solid rgba(183,156,255,.3);display:flex;align-items:center;justify-content:center;margin-bottom:14px"><i class="ti ti-file-export" style="font-size:20px;color:#C9B5FF"></i></div><div style="font-family:Bungee,sans-serif;font-size:15px;color:var(--white);line-height:1.3;margin-bottom:6px">Export for designers</div><div style="font-size:13px;color:var(--w70);line-height:1.6">Take the 2D layout into your design tools, then upload new designs back for review.</div></div></div><div style="margin-top:22px;display:flex;align-items:center;gap:10px;padding:14px 18px;border-radius:12px;background:var(--d2);border:1px solid var(--w08);font-size:13px;color:var(--w70)"><span style="width:8px;height:8px;border-radius:50%;background:#B79CFF;flex-shrink:0;box-shadow:0 0 0 4px rgba(183,156,255,.18)"></span>In testing now. Nothing to set up: when it’s ready, it’ll be here for this project.</div></div></div>
+    <!-- Plans hub: role-based view -->
+    <div class="scrl" id="ps-hub" style="display:flex;flex-direction:column;height:100%;overflow:hidden;width:100%">
+
+      <!-- Header row -->
+      <div style="padding:14px 18px 12px;border-bottom:1px solid var(--w08);background:var(--d1);display:flex;align-items:center;gap:10px;flex-shrink:0">
+        <div style="flex:1">
+          <div style="font-family:Bungee,sans-serif;font-size:16px;color:var(--white);letter-spacing:-.02em">Plans</div>
+          <div id="ps-sub" style="font-size:10px;color:var(--w30);margin-top:1px">Upload, view and analyze your plan set</div>
+        </div>
+        <!-- GC / Designer: upload button -->
+        <button id="ps-upload-btn" onclick="psStartUpload()" style="display:none;padding:7px 14px;background:var(--lime);border:none;border-radius:8px;font-size:11px;font-weight:700;color:var(--dk);cursor:pointer;font-family:inherit;align-items:center;gap:6px">
+          <i class="ti ti-upload" style="font-size:12px"></i> Upload plans
+        </button>
+      </div>
+
+      <!-- Body: switches between states -->
+      <div style="flex:1;overflow-y:auto;padding:20px 18px 40px;box-sizing:border-box" id="ps-body">
+
+        <!-- ── STATE A: no plans uploaded yet ── -->
+        <div id="ps-empty" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:320px;text-align:center;padding:0 24px">
+          <div style="width:52px;height:52px;border-radius:14px;background:var(--d3);border:1px solid var(--w08);display:flex;align-items:center;justify-content:center;margin-bottom:16px">
+            <i class="ti ti-blueprint" style="font-size:24px;color:var(--w30)"></i>
+          </div>
+          <div id="ps-empty-title" style="font-family:Bungee,sans-serif;font-size:18px;color:var(--white);margin-bottom:8px">No plans yet</div>
+          <div id="ps-empty-body" style="font-size:13px;color:var(--w50);line-height:1.65;max-width:340px;margin-bottom:22px">When your designer or GC uploads the plan set, it shows up here for everyone on the project.</div>
+          <!-- GC/designer see upload CTA; homeowner sees waiting message -->
+          <button id="ps-empty-cta" onclick="psStartUpload()" style="display:none;padding:10px 22px;background:var(--lime);border:none;border-radius:9px;font-size:12px;font-weight:700;color:var(--dk);cursor:pointer;font-family:inherit">
+            <i class="ti ti-upload" style="font-size:13px"></i> Upload plan set
+          </button>
+        </div>
+
+        <!-- ── STATE B: upload flow (GC / designer) ── -->
+        <div id="ps-upload" style="display:none;max-width:560px;margin:0 auto">
+          <button onclick="psShowEmpty()" style="background:none;border:none;color:var(--w40);cursor:pointer;font-size:12px;display:flex;align-items:center;gap:5px;margin-bottom:18px;padding:0;font-family:inherit">
+            <i class="ti ti-arrow-left" style="font-size:12px"></i> Back
+          </button>
+
+          <!-- Drop zone -->
+          <div id="ps-dropzone" style="background:var(--d3);border:1.5px dashed var(--w15);border-radius:14px;padding:36px 24px;text-align:center;cursor:pointer;margin-bottom:14px;transition:border-color .2s,background .15s"
+            onclick="document.getElementById(‘ps-file-input’).click()"
+            ondragover="event.preventDefault();this.style.borderColor=’var(--lime)’;this.style.background=’var(--l05)’"
+            ondragleave="this.style.borderColor=’var(--w15)’;this.style.background=’var(--d3)’"
+            ondrop="event.preventDefault();this.style.borderColor=’var(--w15)’;this.style.background=’var(--d3)’;psHandleFile(event.dataTransfer.files[0])">
+            <input id="ps-file-input" type="file" accept=".pdf,.png,.jpg,.jpeg" style="display:none" onchange="psHandleFile(this.files[0]);this.value=’’">
+            <i class="ti ti-cloud-upload" style="font-size:40px;color:var(--w20);display:block;margin-bottom:10px"></i>
+            <div style="font-size:13px;font-weight:600;color:var(--white);margin-bottom:4px">Drop your plan set here</div>
+            <div style="font-size:11px;color:var(--w40);margin-bottom:12px">PDF recommended — Claude reads every page</div>
+            <div style="display:inline-flex;gap:5px">
+              <span style="font-size:9px;background:var(--d4);color:var(--w40);border:1px solid var(--w08);border-radius:20px;padding:2px 8px;font-weight:600">.pdf</span>
+              <span style="font-size:9px;background:var(--d4);color:var(--w40);border:1px solid var(--w08);border-radius:20px;padding:2px 8px;font-weight:600">.jpg/.png</span>
+            </div>
+          </div>
+
+          <!-- File chosen indicator -->
+          <div id="ps-file-chosen" style="display:none;background:var(--d2);border:1px solid var(--ok30);border-radius:9px;padding:10px 13px;margin-bottom:12px;align-items:center;gap:9px">
+            <i class="ti ti-file-filled" style="font-size:22px;color:var(--ok);flex-shrink:0"></i>
+            <div style="flex:1;min-width:0">
+              <div id="ps-file-chosen-name" style="font-size:11px;font-weight:600;color:var(--white);white-space:nowrap;overflow:hidden;text-overflow:ellipsis"></div>
+              <div id="ps-file-chosen-size" style="font-size:9px;color:var(--w40);margin-top:1px"></div>
+            </div>
+            <button onclick="psClearFile()" style="background:none;border:none;color:var(--w30);cursor:pointer;font-size:18px;padding:0;line-height:1">×</button>
+          </div>
+
+          <!-- Settings row -->
+          <div style="display:flex;gap:8px;margin-bottom:14px">
+            <select id="ps-jurisdiction" style="flex:1;background:var(--d4);border:1px solid var(--w08);border-radius:8px;padding:8px 10px;font-size:11px;color:var(--white);font-family:inherit">
+              <option value="los_angeles">Los Angeles, CA</option>
+              <option value="santa_monica">Santa Monica, CA</option>
+              <option value="west_hollywood">West Hollywood, CA</option>
+              <option value="culver_city">Culver City, CA</option>
+            </select>
+            <select id="ps-proj-type" style="flex:1;background:var(--d4);border:1px solid var(--w08);border-radius:8px;padding:8px 10px;font-size:11px;color:var(--white);font-family:inherit">
+              <option value="remodel">Full Remodel</option>
+              <option value="adu">ADU Conversion</option>
+              <option value="addition">Addition</option>
+              <option value="new_build">New Build</option>
+            </select>
+          </div>
+
+          <!-- Status log -->
+          <div id="ps-log" style="display:none;background:var(--d4);border:1px solid var(--w08);border-radius:9px;padding:12px;margin-bottom:12px;font-family:monospace;font-size:10px;color:var(--ok);line-height:1.8;max-height:110px;overflow-y:auto"></div>
+          <div id="ps-error" style="display:none;background:rgba(224,100,80,.1);border:1px solid rgba(224,100,80,.3);border-radius:9px;padding:10px 13px;margin-bottom:12px;font-size:11px;color:#E07A5F"></div>
+
+          <button id="ps-analyze-btn" onclick="psRunAnalysis()" disabled style="width:100%;padding:12px 20px;background:var(--lime);border:none;border-radius:10px;font-size:13px;font-weight:700;color:var(--dk);cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;opacity:.45">
+            <i class="ti ti-cpu" style="font-size:14px"></i> Read plans + run code check
+          </button>
+          <div style="font-size:10px;color:var(--w30);text-align:center;margin-top:8px">Takes ~30 seconds · results saved to this project</div>
+        </div>
+
+        <!-- ── STATE C: results (after analysis or from Redis) ── -->
+        <div id="ps-results" style="display:none;max-width:680px;margin:0 auto">
+
+          <!-- Viewer: inline PDF display -->
+          <div id="ps-viewer-wrap" style="display:none;background:var(--d3);border:1px solid var(--w08);border-radius:12px;overflow:hidden;margin-bottom:16px">
+            <div style="padding:10px 14px;border-bottom:1px solid var(--w08);display:flex;align-items:center;gap:8px">
+              <i class="ti ti-file-text" style="font-size:14px;color:var(--lime)"></i>
+              <span id="ps-viewer-name" style="font-size:11px;font-weight:600;color:var(--white);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"></span>
+              <button id="ps-new-upload-btn" onclick="psStartUpload()" style="padding:5px 11px;background:var(--d4);border:1px solid var(--w08);border-radius:7px;font-size:10px;font-weight:600;color:var(--w60);cursor:pointer;font-family:inherit">
+                <i class="ti ti-refresh" style="font-size:10px"></i> New version
+              </button>
+            </div>
+            <!-- PDF rendered via PDF.js: canvas per page -->
+            <div id="ps-pdf-pages" style="background:#1a1a1a;padding:12px;display:flex;flex-direction:column;gap:10px;max-height:480px;overflow-y:auto"></div>
+          </div>
+
+          <!-- Extraction summary -->
+          <div id="ps-extraction" style="background:var(--d3);border:1px solid var(--w08);border-radius:10px;padding:14px 16px;margin-bottom:14px">
+            <div style="font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--lime);margin-bottom:10px">✓ Extracted from plans</div>
+            <div id="ps-ext-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:6px"></div>
+            <div id="ps-ext-rooms" style="margin-top:10px;font-size:10px;color:var(--w50);line-height:1.65"></div>
+          </div>
+
+          <!-- Compliance results -->
+          <div style="font-size:11px;font-weight:600;color:var(--white);margin-bottom:8px" id="ps-compliance-title">Compliance check</div>
+          <div id="ps-compliance-list" style="display:flex;flex-direction:column;gap:5px;margin-bottom:16px"></div>
+
+          <!-- Summary bar -->
+          <div id="ps-summary-bar" style="background:var(--d3);border:1px solid var(--w08);border-radius:10px;padding:12px 16px;margin-bottom:16px;display:flex;gap:14px;align-items:center">
+            <div style="text-align:center"><div id="ps-sum-pass" style="font-size:18px;font-weight:700;color:var(--ok)">-</div><div style="font-size:8px;color:var(--w40)">Pass</div></div>
+            <div style="text-align:center"><div id="ps-sum-warn" style="font-size:18px;font-weight:700;color:var(--amb)">-</div><div style="font-size:8px;color:var(--w40)">Warn</div></div>
+            <div style="text-align:center"><div id="ps-sum-fail" style="font-size:18px;font-weight:700;color:#E07A5F">-</div><div style="font-size:8px;color:var(--w40)">Fail</div></div>
+            <div style="flex:1"></div>
+            <div id="ps-ready-badge" style="font-size:10px;font-weight:700;padding:4px 12px;border-radius:20px"></div>
+          </div>
+
+          <!-- GC-only: send to subs CTA -->
+          <div id="ps-gc-cta" style="display:none;background:var(--d2);border:1px solid var(--w08);border-radius:10px;padding:14px 16px;margin-bottom:14px">
+            <div style="font-size:11px;font-weight:600;color:var(--white);margin-bottom:6px">Next step — send in parallel</div>
+            <div style="font-size:11px;color:var(--w50);line-height:1.6;margin-bottom:12px">Share the clean plan set with subs for pricing while you prep the permit application. Weeks recovered.</div>
+            <button onclick="sbNav(document.querySelector(‘[onclick*=team]’),’team’)" style="padding:9px 18px;background:var(--lime);border:none;border-radius:8px;font-size:11px;font-weight:700;color:var(--dk);cursor:pointer;font-family:inherit">
+              <i class="ti ti-users" style="font-size:11px"></i> Go to Team &amp; Trades
+            </button>
+          </div>
+        </div>
+
+      </div><!-- /ps-body -->
+    </div><!-- /ps-hub -->
     <div class="scrl" id="ps-old" style="display:none !important;padding:0;overflow-x:hidden;width:100%;max-width:100%">
 
       <!-- HEADER -->
@@ -8307,6 +8443,464 @@ closeGCPipeline = function() {
   if (bar) bar.style.display = 'none';
   _origClosePipeline();
 };
+
+
+/* ══════════════════════════════════════════
+   PLANS TAB — full role-based experience
+   State A: ps-empty  | State B: ps-upload  | State C: ps-results
+   ══════════════════════════════════════════ */
+
+var PS_FILE = null;         // File object chosen by user
+var PS_FILE_DATA = null;    // base64 string (no prefix)
+var PS_RESULT_CACHE = null; // last analysis result JSON
+
+/* Called by goScreen('scanner') — hook below */
+function psInitPlans() {
+  var role = CG_ROLE || 'client';
+  var canUpload = (role === 'gc' || role === 'designer' || role === 'architect');
+
+  // Upload buttons: header + empty-state CTA
+  var upBtn = document.getElementById('ps-upload-btn');
+  if (upBtn) upBtn.style.display = canUpload ? 'flex' : 'none';
+  var emCta = document.getElementById('ps-empty-cta');
+  if (emCta) emCta.style.display = canUpload ? 'inline-flex' : 'none';
+
+  // Role-tailored empty state copy
+  var titleEl = document.getElementById('ps-empty-title');
+  var bodyEl  = document.getElementById('ps-empty-body');
+  var subEl   = document.getElementById('ps-sub');
+  if (role === 'gc' || role === 'architect') {
+    if (titleEl) titleEl.textContent = 'No plans uploaded yet';
+    if (bodyEl)  bodyEl.textContent  = 'Upload the plan set to run an instant code compliance check. Results and issues are saved here for the whole team.';
+    if (subEl)   subEl.textContent   = 'Upload your plan set — AI reads every page, flags code issues';
+  } else if (role === 'designer') {
+    if (titleEl) titleEl.textContent = 'Ready for your drawings';
+    if (bodyEl)  bodyEl.textContent  = 'Upload your current plan set. Claude reads every sheet and runs a California code compliance check so you catch issues before the building department does.';
+    if (subEl)   subEl.textContent   = 'Upload drawings — AI compliance check included';
+  } else {
+    if (titleEl) titleEl.textContent = 'Plans not uploaded yet';
+    if (bodyEl)  bodyEl.textContent  = 'When your GC or designer uploads the plan set, it shows up here for everyone on the project. You\'ll see a full code compliance summary.';
+    if (subEl)   subEl.textContent   = 'View and track your architectural plans';
+  }
+
+  // New-upload button on results view (GC/designer only)
+  var newUpBtn = document.getElementById('ps-new-upload-btn');
+  if (newUpBtn) newUpBtn.style.display = canUpload ? 'flex' : 'none';
+
+  // GC-only "send to subs" CTA in results
+  var gcCta = document.getElementById('ps-gc-cta');
+  if (gcCta) gcCta.style.display = (role === 'gc') ? 'block' : 'none';
+
+  // Compliance section label
+  var compTitle = document.getElementById('ps-compliance-title');
+  if (compTitle) {
+    compTitle.textContent = canUpload ? 'Code compliance check' : 'Compliance review';
+  }
+
+  // If we have a cached result in memory, show it; else show empty state
+  if (PS_RESULT_CACHE) {
+    psShowResults(PS_RESULT_CACHE, null);
+  } else {
+    psShowEmpty();
+  }
+}
+
+/* ── State helpers ── */
+function psShowEmpty() {
+  _psState('empty');
+}
+function psStartUpload() {
+  _psState('upload');
+  // Reset upload form
+  psClearFile();
+  var log = document.getElementById('ps-log');
+  if (log) { log.innerHTML = ''; log.style.display = 'none'; }
+  var err = document.getElementById('ps-error');
+  if (err) { err.style.display = 'none'; }
+}
+function psShowResults(result, fileName) {
+  _psState('results');
+  psRenderResults(result, fileName);
+}
+function _psState(state) {
+  ['empty','upload','results'].forEach(function(s) {
+    var el = document.getElementById('ps-' + s);
+    if (el) el.style.display = (s === state) ? (s === 'empty' ? 'flex' : 'block') : 'none';
+  });
+}
+
+/* ── File handling ── */
+function psHandleFile(file) {
+  if (!file) return;
+  PS_FILE = file;
+  PS_FILE_DATA = null;
+
+  var nameEl = document.getElementById('ps-file-chosen-name');
+  var sizeEl = document.getElementById('ps-file-chosen-size');
+  var chosen = document.getElementById('ps-file-chosen');
+  var btn    = document.getElementById('ps-analyze-btn');
+
+  if (nameEl) nameEl.textContent = file.name;
+  if (sizeEl) sizeEl.textContent = (file.size / 1024 / 1024).toFixed(1) + ' MB';
+  if (chosen) chosen.style.display = 'flex';
+
+  // Shrink dropzone text
+  var dzIcon = document.querySelector('#ps-dropzone .ti-cloud-upload');
+  if (dzIcon) dzIcon.style.opacity = '0.3';
+
+  // Enable analyze button
+  if (btn) {
+    btn.disabled = false;
+    btn.style.opacity = '1';
+  }
+
+  // Read file into base64 immediately (so analysis is fast later)
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var raw = e.target.result; // data:...;base64,XXX
+    PS_FILE_DATA = raw.split(',')[1] || raw;
+  };
+  reader.readAsDataURL(file);
+}
+
+function psClearFile() {
+  PS_FILE = null;
+  PS_FILE_DATA = null;
+  var chosen = document.getElementById('ps-file-chosen');
+  if (chosen) chosen.style.display = 'none';
+  var btn = document.getElementById('ps-analyze-btn');
+  if (btn) { btn.disabled = true; btn.style.opacity = '.45'; }
+  var fi = document.getElementById('ps-file-input');
+  if (fi) fi.value = '';
+  var dzIcon = document.querySelector('#ps-dropzone .ti-cloud-upload');
+  if (dzIcon) dzIcon.style.opacity = '';
+}
+
+/* ── Status log ── */
+function psLog(msg, color) {
+  var log = document.getElementById('ps-log');
+  if (!log) return;
+  log.style.display = 'block';
+  var line = document.createElement('div');
+  line.style.color = color || 'var(--lime)';
+  line.textContent = '› ' + msg;
+  log.appendChild(line);
+  log.scrollTop = log.scrollHeight;
+}
+
+/* ── Main analysis ── */
+async function psRunAnalysis() {
+  if (!PS_FILE) return;
+
+  var btn = document.getElementById('ps-analyze-btn');
+  var errEl = document.getElementById('ps-error');
+  var jurisdiction = (document.getElementById('ps-jurisdiction') || {}).value || 'los_angeles';
+  var projType     = (document.getElementById('ps-proj-type') || {}).value || 'remodel';
+
+  // Reset UI
+  if (errEl) errEl.style.display = 'none';
+  var log = document.getElementById('ps-log');
+  if (log) { log.innerHTML = ''; log.style.display = 'block'; }
+
+  if (btn) {
+    btn.innerHTML = '<i class="ti ti-loader-2" style="font-size:14px;animation:spin 1s linear infinite"></i> Reading plans…';
+    btn.disabled = true;
+  }
+
+  // Wait for base64 to be ready (usually instant — FileReader already ran)
+  var waited = 0;
+  while (!PS_FILE_DATA && waited < 5000) {
+    await new Promise(function(r){ setTimeout(r, 100); });
+    waited += 100;
+  }
+  if (!PS_FILE_DATA) {
+    psAnalysisError('Could not read file. Please try again.', btn);
+    return;
+  }
+
+  var jContext = JURISDICTION_CONTEXT[jurisdiction] || JURISDICTION_CONTEXT.santa_monica;
+  var fileType = PS_FILE.type;
+  var isImage  = fileType.startsWith('image/');
+  var isPDF    = fileType === 'application/pdf';
+
+  psLog('File loaded — ' + (isPDF ? 'reading all pages…' : 'reading image…'));
+  psLog('Checking ' + jurisdiction.replace(/_/g,' ') + ' building code…');
+
+  try {
+    var contentArr = [];
+
+    if (isPDF && PS_FILE_DATA) {
+      contentArr.push({ type:'document', source:{ type:'base64', media_type:'application/pdf', data:PS_FILE_DATA } });
+    } else if (isImage && PS_FILE_DATA) {
+      contentArr.push({ type:'image', source:{ type:'base64', media_type:fileType, data:PS_FILE_DATA } });
+    }
+
+    contentArr.push({ type:'text', text: psPrompt(jContext, jurisdiction, projType) });
+
+    psLog('Sending to AI — this takes ~30 seconds…');
+
+    var resp = await fetch('/api/analyze', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-6',
+        max_tokens:4096,
+        messages:[{ role:'user', content:contentArr }]
+      })
+    });
+
+    if (!resp.ok) {
+      var errData = await resp.json();
+      throw new Error(errData.error?.message || 'API error ' + resp.status);
+    }
+
+    var data = await resp.json();
+    var rawText = data.content.map(function(b){ return b.text||''; }).join('');
+
+    psLog('Parsing results…');
+    var jsonMatch = rawText.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) throw new Error('Could not parse results — please try again.');
+
+    var result = JSON.parse(jsonMatch[0]);
+    psLog('Done ✓ — ' + (result.summary?.passCount||0) + ' pass · ' + (result.summary?.warnCount||0) + ' warn · ' + (result.summary?.failCount||0) + ' fail', 'var(--ok)');
+
+    PS_RESULT_CACHE = result;
+
+    // Render PDF if it was a PDF upload
+    if (isPDF && PS_FILE_DATA) {
+      psRenderPdf(PS_FILE_DATA);
+    }
+
+    // Show results
+    psShowResults(result, PS_FILE.name);
+
+  } catch(err) {
+    psAnalysisError(err.message || 'Analysis failed. Check file and try again.', btn);
+    console.error('Plans analysis error:', err);
+  }
+}
+
+function psAnalysisError(msg, btn) {
+  var errEl = document.getElementById('ps-error');
+  if (errEl) { errEl.textContent = msg; errEl.style.display = 'block'; }
+  if (btn) {
+    btn.innerHTML = '<i class="ti ti-cpu" style="font-size:14px"></i> Read plans + run code check';
+    btn.disabled = false;
+    btn.style.opacity = '1';
+  }
+}
+
+/* ── Prompt for Claude ── */
+function psPrompt(jContext, jurisdiction, projType) {
+  return 'You are a California licensed architect and building code expert reviewing architectural plans.\n\nJURISDICTION: ' + jContext + '\n\nYOUR TASK — read every page of the plans carefully, then:\n\n1. EXTRACT all measurable data: total square footage, room dimensions, setbacks, lot coverage, building height, number of units, ceiling heights, egress windows, electrical panel info, smoke/CO detector locations, accessibility features.\n\n2. IDENTIFY all rooms and spaces shown.\n\n3. RUN A COMPLIANCE CHECK against California Title 24, CBC (California Building Code), and local ' + jurisdiction.replace(/_/g,' ') + ' municipal code for the project type: ' + projType.replace(/_/g,' ') + '. Also flag field-learned best practices — e.g. exposed sliding door tracks with no weep path (water damage risk), missing expansion joints in long concrete runs, MEP coordination clashes.\n\n4. IMPORTANT: Flag anything you CANNOT verify from the plans as a "warn" — do not assume compliance for items not shown. Be thorough. Missing information is a common permit rejection reason.\n\nReturn ONLY valid JSON in this exact format — no markdown fences, no prose before or after:\n{\n  "extraction": {\n    "address": "address if visible, else null",\n    "totalSF": "total square footage as string",\n    "projectType": "what type of project this appears to be",\n    "rooms": ["array","of","room","names"],\n    "trades": ["trades","required","by","scope"],\n    "notes": "key observations the team should know"\n  },\n  "compliance": [\n    {\n      "category": "Setbacks|Height|Egress|Electrical|Fire Safety|Plumbing|Structural|Landscape|Zoning|Weatherproofing|Accessibility",\n      "status": "pass|warn|fail",\n      "item": "what was checked (concise label)",\n      "found": "what the plans show, or \'Not shown\'",\n      "required": "what code requires",\n      "codeRef": "e.g. CBC Section 1203.4 or \'Field best practice\'",\n      "correction": "exactly what must change — null for pass"\n    }\n  ],\n  "summary": {\n    "passCount": 0,\n    "warnCount": 0,\n    "failCount": 0,\n    "readyToSubmit": false,\n    "criticalIssues": ["must-fix items before permit submission"]\n  }\n}\n\nBe precise. Use real California code section numbers. For anything not clearly shown, use status "warn" and note it in \'found\' as \'Not shown on plans\'.';
+}
+
+/* ── Render results into State C ── */
+function psRenderResults(result, fileName) {
+  var ex   = result.extraction  || {};
+  var comp = result.compliance  || [];
+  var sum  = result.summary     || {};
+
+  // Viewer header
+  if (fileName) {
+    var nameEl = document.getElementById('ps-viewer-name');
+    if (nameEl) nameEl.textContent = fileName;
+  }
+
+  // Extraction grid
+  var extGrid = document.getElementById('ps-ext-grid');
+  if (extGrid) {
+    var fields = [
+      ['Total SF',    ex.totalSF   || '—'],
+      ['Project',     ex.projectType || '—'],
+      ['Address',     ex.address   || 'See plans'],
+      ['Trades needed', (ex.trades || []).length ? ex.trades.join(', ') : '—']
+    ];
+    extGrid.innerHTML = fields.map(function(f) {
+      return '<div style="background:var(--d4);border-radius:7px;padding:9px 11px">'
+        + '<div style="font-size:8px;color:var(--sage);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">' + f[0] + '</div>'
+        + '<div style="font-size:12px;font-weight:700;color:var(--white);line-height:1.3">' + f[1] + '</div>'
+        + '</div>';
+    }).join('');
+  }
+
+  // Rooms list
+  var roomsEl = document.getElementById('ps-ext-rooms');
+  if (roomsEl && ex.rooms && ex.rooms.length) {
+    roomsEl.innerHTML = '<span style="color:var(--sage);font-size:9px;text-transform:uppercase;letter-spacing:.06em">Spaces: </span>' + ex.rooms.join(' · ');
+    roomsEl.style.display = 'block';
+  }
+
+  // Notes
+  if (ex.notes) {
+    var notesWrap = document.createElement('div');
+    notesWrap.style.cssText = 'margin-top:10px;padding-top:10px;border-top:1px solid var(--w08);font-size:10px;color:var(--w50);line-height:1.65';
+    notesWrap.innerHTML = '<span style="color:var(--lime);font-weight:600;font-size:9px;text-transform:uppercase;letter-spacing:.06em">Notes: </span>' + ex.notes;
+    var extDiv = document.getElementById('ps-extraction');
+    if (extDiv) extDiv.appendChild(notesWrap);
+  }
+
+  // AI disclosure banner (append once)
+  var extDiv2 = document.getElementById('ps-extraction');
+  if (extDiv2 && !document.getElementById('ps-ai-note')) {
+    var note = document.createElement('div');
+    note.id = 'ps-ai-note';
+    note.style.cssText = 'margin-top:10px;padding:8px 11px;background:var(--am15);border:1px solid var(--am30);border-radius:7px;font-size:9px;color:var(--amb);line-height:1.55';
+    note.textContent = '⚡ AI-extracted — verify dimensions and room labels against the actual plan sheets before submitting to the building department.';
+    extDiv2.appendChild(note);
+  }
+
+  // Compliance list
+  var compEl = document.getElementById('ps-compliance-list');
+  if (compEl) {
+    compEl.innerHTML = comp.map(function(item) {
+      var bg, border, color, icon;
+      if (item.status === 'pass') {
+        bg='var(--ok15)'; border='var(--ok30)'; color='var(--ok)'; icon='ti-check';
+      } else if (item.status === 'warn') {
+        bg='var(--am15)'; border='var(--am30)'; color='var(--amb)'; icon='ti-alert-triangle';
+      } else {
+        bg='rgba(224,100,80,.12)'; border='rgba(224,100,80,.3)'; color='#E07A5F'; icon='ti-x';
+      }
+      var html = '<div style="padding:10px 12px;background:' + bg + ';border:1px solid ' + border + ';border-radius:9px">';
+      html += '<div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:' + (item.status !== 'pass' ? '8' : '0') + 'px">';
+      html += '<i class="ti ' + icon + '" style="font-size:13px;color:' + color + ';flex-shrink:0;margin-top:1px"></i>';
+      html += '<div style="flex:1">';
+      html += '<div style="font-size:11px;font-weight:600;color:var(--white);margin-bottom:2px">' + item.item + '</div>';
+      html += '<div style="font-size:10px;color:' + color + '">' + (item.found || '') + '</div>';
+      if (item.required && item.status !== 'pass') {
+        html += '<div style="font-size:9px;color:var(--w50);margin-top:2px">Required: ' + item.required + '</div>';
+      }
+      if (item.codeRef) html += '<div style="font-size:9px;color:var(--w30);margin-top:2px">' + item.codeRef + '</div>';
+      html += '</div></div>';
+      if (item.status !== 'pass' && item.correction) {
+        html += '<div style="padding:8px 10px;background:var(--d4);border-radius:6px;font-size:10px;color:var(--w60);line-height:1.6"><span style="color:var(--lime);font-weight:600">Fix: </span>' + item.correction + '</div>';
+      }
+      html += '</div>';
+      return html;
+    }).join('');
+  }
+
+  // Summary counts
+  var passEl = document.getElementById('ps-sum-pass');
+  var warnEl = document.getElementById('ps-sum-warn');
+  var failEl = document.getElementById('ps-sum-fail');
+  if (passEl) passEl.textContent = sum.passCount || 0;
+  if (warnEl) warnEl.textContent = sum.warnCount || 0;
+  if (failEl) failEl.textContent = sum.failCount || 0;
+
+  // Ready badge
+  var badge = document.getElementById('ps-ready-badge');
+  if (badge) {
+    if (sum.readyToSubmit) {
+      badge.textContent = '✓ Ready to submit';
+      badge.style.background = 'var(--ok15)';
+      badge.style.border = '1px solid var(--ok30)';
+      badge.style.color = 'var(--ok)';
+    } else {
+      badge.textContent = '⚠ Issues to resolve';
+      badge.style.background = 'rgba(224,100,80,.1)';
+      badge.style.border = '1px solid rgba(224,100,80,.3)';
+      badge.style.color = '#E07A5F';
+    }
+  }
+
+  // Critical issues
+  if (sum.criticalIssues && sum.criticalIssues.length) {
+    var sumBar = document.getElementById('ps-summary-bar');
+    if (sumBar) {
+      var ci = document.createElement('div');
+      ci.style.cssText = 'margin-top:10px;padding:10px 12px;background:rgba(224,100,80,.08);border:1px solid rgba(224,100,80,.2);border-radius:8px;width:100%';
+      ci.innerHTML = '<div style="font-size:9px;font-weight:700;color:#E07A5F;margin-bottom:6px;text-transform:uppercase;letter-spacing:.08em">Must fix before permit submission</div>'
+        + sum.criticalIssues.map(function(iss) {
+            return '<div style="font-size:10px;color:var(--w60);margin-bottom:4px;display:flex;gap:6px"><span style="color:#E07A5F;flex-shrink:0">→</span>' + iss + '</div>';
+          }).join('');
+      sumBar.appendChild(ci);
+    }
+  }
+}
+
+/* ── PDF.js renderer ── */
+function psRenderPdf(base64Data) {
+  var wrap = document.getElementById('ps-viewer-wrap');
+  var pages = document.getElementById('ps-pdf-pages');
+  if (!wrap || !pages) return;
+  wrap.style.display = 'block';
+  pages.innerHTML = '<div style="font-size:10px;color:var(--w30);padding:8px;text-align:center">Loading PDF…</div>';
+
+  // Lazily load PDF.js from CDN
+  if (window.pdfjsLib) {
+    _psRenderPdfWithLib(base64Data, pages);
+    return;
+  }
+  var script = document.createElement('script');
+  script.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+  script.onload = function() {
+    window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    _psRenderPdfWithLib(base64Data, pages);
+  };
+  document.head.appendChild(script);
+}
+
+async function _psRenderPdfWithLib(base64Data, pagesEl) {
+  try {
+    var binary = atob(base64Data);
+    var bytes = new Uint8Array(binary.length);
+    for (var i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+
+    var pdf = await pdfjsLib.getDocument({ data: bytes }).promise;
+    pagesEl.innerHTML = '';
+
+    var maxPages = Math.min(pdf.numPages, 8); // cap at 8 pages for performance
+    for (var p = 1; p <= maxPages; p++) {
+      var page = await pdf.getPage(p);
+      var viewport = page.getViewport({ scale: 1.2 });
+      var canvas = document.createElement('canvas');
+      canvas.width  = viewport.width;
+      canvas.height = viewport.height;
+      canvas.style.cssText = 'width:100%;border-radius:6px;display:block';
+
+      var label = document.createElement('div');
+      label.style.cssText = 'font-size:9px;color:var(--w30);margin-bottom:4px;text-align:center';
+      label.textContent = 'Sheet ' + p + ' of ' + pdf.numPages;
+
+      var wrap = document.createElement('div');
+      wrap.appendChild(label);
+      wrap.appendChild(canvas);
+      pagesEl.appendChild(wrap);
+
+      await page.render({ canvasContext: canvas.getContext('2d'), viewport: viewport }).promise;
+    }
+
+    if (pdf.numPages > maxPages) {
+      var more = document.createElement('div');
+      more.style.cssText = 'font-size:10px;color:var(--w30);text-align:center;padding:8px';
+      more.textContent = '+ ' + (pdf.numPages - maxPages) + ' more sheets (open original file to view all)';
+      pagesEl.appendChild(more);
+    }
+  } catch(e) {
+    pagesEl.innerHTML = '<div style="font-size:10px;color:var(--w30);padding:12px;text-align:center">Could not render PDF preview — analysis results are still complete above.</div>';
+    console.warn('PDF render error:', e);
+  }
+}
+
+/* ── Hook goScreen to init Plans on tab open ── */
+(function() {
+  var _origGoScreen = goScreen;
+  goScreen = function(name) {
+    _origGoScreen(name);
+    if (name === 'scanner') {
+      psInitPlans();
+    }
+  };
+  // Add spin keyframes for loader
+  if (!document.getElementById('ps-spin-style')) {
+    var st = document.createElement('style');
+    st.id = 'ps-spin-style';
+    st.textContent = '@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}';
+    document.head.appendChild(st);
+  }
+})();
 
 </script>
 
