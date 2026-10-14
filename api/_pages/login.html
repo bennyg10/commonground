@@ -76,6 +76,21 @@ var ERR = {bad_login:'That email/phone and password don\'t match.', account_disa
 function showMsg(t, kind){ var m=$('msg'); if(!m) return; m.className='msg '+(kind||'err'); m.textContent=t; }
 function roleUrl(r){ return r==='client' ? 'homeowner' : (r||''); }
 function dest(role){ return (!role && L.next && /^\/[a-z]/.test(L.next)) ? L.next : '/'+(L.path||L.project)+'/'+roleUrl(role||L.role||''); }
+function safeDest(role, userProjects){
+  // If there's no project context, go to dashboard
+  var proj = L.path || L.project;
+  if (!proj) return '/dashboard';
+  // If we have the user's project list, verify they're a member
+  // userProjects is keyed by project ID; L.path may be the URL path (different for builtins)
+  // L.project is the internal project ID
+  if (userProjects) {
+    var projId = L.project || proj; // prefer the id the server set
+    var isMember = Object.prototype.hasOwnProperty.call(userProjects, projId) ||
+                   Object.prototype.hasOwnProperty.call(userProjects, proj);
+    if (!isMember) return '/dashboard';
+  }
+  return dest(role);
+}
 function post(body){
   return fetch('/api/auth',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify(body)})
     .then(function(r){ return r.json().then(function(j){ j._status=r.status; return j; }); })
@@ -99,7 +114,7 @@ function viewSignIn(){
   $('f').onsubmit = function(e){
     e.preventDefault(); var b=$('go'); busy(b,true,'Sign in');
     post({action:'login', identifier:$('id').value, password:$('pw').value}).then(function(j){
-      if (j.ok) { location.href = dest(); return; }
+      if (j.ok) { location.href = safeDest(null, j.user && j.user.projects); return; }
       busy(b,false,'Sign in'); showMsg(ERR[j.error]||j.message||'Sign-in failed.');
     });
   };

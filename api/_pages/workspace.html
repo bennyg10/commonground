@@ -172,7 +172,23 @@ function load(){
     api('/api/tools?action=scans&project='+encodeURIComponent(PID)),
     api('/api/tools?action=schedule&project='+encodeURIComponent(PID))
   ]).then(function(r){
-    if (r[0].error) { $('main').innerHTML='<div class="card">Couldn’t load this project. <a href="/dashboard">Back to dashboard</a></div>'; return; }
+    if (r[0].error) {
+      var errCode = r[0].error;
+      var errMsg = errCode === ‘bad_project’
+        ? ‘This project wasn\’t found — it may have been removed or the link is incorrect.’
+        : errCode === ‘forbidden’
+        ? ‘You don\’t have access to this project. Ask the project owner to invite you.’
+        : errCode === ‘storage_not_configured’
+        ? ‘Service is temporarily unavailable. Try again in a moment.’
+        : ‘Couldn\’t load this project. Try refreshing, or go back to the dashboard.’;
+      $(‘main’).innerHTML = ‘<div class="card" style="max-width:480px;margin:60px auto;text-align:center;padding:32px 28px">’
+        + ‘<div style="font-size:32px;margin-bottom:16px">⚠️</div>’
+        + ‘<div style="font-size:16px;font-weight:600;margin-bottom:8px">Project not available</div>’
+        + ‘<div style="font-size:13px;color:var(--w60);line-height:1.6;margin-bottom:24px">’ + errMsg + ‘</div>’
+        + ‘<a href="/dashboard" class="btn pri">Back to dashboard</a>’
+        + ‘</div>’;
+      return;
+    }
     ST=r[0]; DEC=r[1].decisions||[]; NOTES=r[1].notifications||[]; MEMBERS=r[2].members||[]; RESULTS=r[3].results||[]; SCANS=r[4].scans||[]; SCHED=(r[5].schedule||{items:[]}); TASKS=(r[5].tasks||{items:[]});
     render();
     if (NEXT_STEP) runNextStep();
