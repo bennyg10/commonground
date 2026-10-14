@@ -170,7 +170,7 @@ async function autoSeedNewProject(id, as, u, meta) {
         { id: 'hs-contract', group: 'Before work begins', text: 'Sign the construction contract', detail: 'Both you and your GC sign in Common Ground before any deposit or work starts.', owner: 'both', type: 'agreement', required: true, done: false, tags: [], gcAgreed: false, clientAgreed: false, addedBy: 'template', at: ts },
         { id: 'hs-contact', group: 'Before work begins', text: 'Confirm your point of contact + preferred way to reach you', detail: 'Let your GC know who to call for decisions and how quickly you can respond.', owner: 'client', type: 'task', required: false, done: false, tags: [], addedBy: 'template', at: ts },
       ];
-      await setJSON(`cg:tasks:${id}`, tasks);
+      await setJSON(`cg:tasks:${id}`, { items: tasks });
       const activity = [
         { id: 'a-welcome', type: 'note', text: `Project created by ${u.name}. Share your bid link to get your first proposals.`, at: ts, by: u.identifier, byName: u.name },
       ];
@@ -180,7 +180,7 @@ async function autoSeedNewProject(id, as, u, meta) {
       // GC signing themselves up — they are already hired, project is active
       const gcName = u.name;
       const tasks = genericKickoff(meta);
-      await setJSON(`cg:tasks:${id}`, tasks);
+      await setJSON(`cg:tasks:${id}`, { items: tasks });
       const activity = [
         { id: 'a-welcome', type: 'note', text: `${gcName} created this project on Common Ground. Kickoff checklist is ready — complete each item with your client before work starts.`, at: ts, by: u.identifier, byName: gcName },
         { id: 'a-hired', type: 'hired', text: `${gcName} added as general contractor.`, at: ts, by: u.identifier, byName: gcName },
@@ -205,7 +205,7 @@ async function autoSeedNewProject(id, as, u, meta) {
         { id: 'ds-permit', group: 'Permitting', text: 'Track permit submittal and approvals here', detail: `Upload your permit set and mark it submitted when filed. ${drawingStage === 'construction-documents' || drawingStage === 'plan-check' ? 'You're already at the right drawing stage.' : 'Work toward construction documents before submitting.'}`, owner: 'designer', type: 'task', required: false, done: false, tags: [], addedBy: 'template', at: ts },
         { id: 'ds-budget', group: 'Budget', text: 'Share a construction budget estimate with your client', detail: 'Use the Budget tool to give the homeowner a realistic cost picture at this stage.', owner: 'designer', type: 'task', required: false, done: false, tags: [], addedBy: 'template', at: ts },
       ];
-      await setJSON(`cg:tasks:${id}`, tasks);
+      await setJSON(`cg:tasks:${id}`, { items: tasks });
       const activity = [
         { id: 'a-welcome', type: 'note', text: `Project created by ${u.name}. Upload drawings and invite your client to get started.`, at: ts, by: u.identifier, byName: u.name },
       ];
