@@ -174,7 +174,26 @@ export async function notify(req, project, n) {
   let emailed = [];
   if (!n.noEmail) emailed = (await sendEmails(req, project, item).catch(() => [])) || [];
   await platformCopy(req, project, item, emailed).catch(() => {});
+  await watchCopy(req, project, item, emailed).catch(() => {});
   return item;
+}
+// Priority watch: projects where Ben wants an instant direct email for every update (friends / white-glove support).
+// Add a project id here, or override one with CG_WATCH_<PROJECT> in Vercel (comma-separated emails).
+const WATCH = { anita: 'bmgordon10@gmail.com' };
+async function watchCopy(req, project, item, alreadyEmailed) {
+  if (!emailReady()) return;
+  const raw = process.env['CG_WATCH_' + String(project).toUpperCase().replace(/[^A-Z0-9]/g, '_')] || WATCH[project] || '';
+  const to = raw.split(',').map((x) => x.trim().toLowerCase()).filter((x) => x.includes('@') && !alreadyEmailed.includes(x) && x !== item.byAccount);
+  if (!to.length) return;
+  const who = item.by ? ` · by ${item.by}` : '';
+  await sendEmail({
+    to,
+    subject: `\u2B50 ${projectTitle(project)}: ${item.text}`.slice(0, 150),
+    html: emailLayout(`Priority watch \u00B7 ${projectTitle(project)}`,
+      `<p style="margin:0 0 10px">${escHtml(item.text)}</p><p style="margin:0;color:#8a8d88;font-size:12px">${escHtml(new Date(item.at).toLocaleString('en-US', { timeZone: 'America/Los_Angeles' }))} PT${escHtml(who)}</p>`,
+      { label: 'Open the project', url: `${siteOrigin(req)}/${projectPath(project)}` }),
+    text: `${item.text}${who}\n\nOpen the project: ${siteOrigin(req)}/${projectPath(project)}`,
+  });
 }
 // Every notification on every project is also copied to the platform inbox (CG_SUPPORT_EMAIL).
 // Turn off with CG_PLATFORM_COPY=off.

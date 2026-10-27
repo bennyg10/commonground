@@ -537,6 +537,7 @@ export default async function handler(req, res) {
         amount: isFinite(amount) && amount > 0 ? Math.round(amount) : null, note: clean(b.note, 600), status: 'submitted', submittedAt: now(), source: 'uploaded by owner', uploadedBy: u.name,
         file: { id: fileId, name: clean(f.name, 120) || 'proposal', type, size: Math.round(data.length * 0.75) } };
       await redis(['HSET', `cg:bids:${project}`, bidId, JSON.stringify(bid)]);
+      await notify(req, project, { text: `Proposal uploaded: ${gcName}${bid.amount ? ' \u00B7 $' + bid.amount.toLocaleString('en-US') : ''}`, targets: ['client'], by: u.name, byAccount: u.identifier }).catch(() => {});
       return res.status(200).json({ ok: true, bid: publicBid(bid) });
     }
 
