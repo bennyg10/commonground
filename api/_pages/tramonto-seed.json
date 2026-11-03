@@ -1,0 +1,206 @@
+{
+  "projectName": "Tramonto",
+  "address": "Tramonto, AZ",
+  "phase": "Landscape Bid",
+  "formspreeEndpoint": "https://formspree.io/f/mzeerykz",
+  "gc": {
+    "name": "Javier Trujillo",
+    "company": "Trujillo Construction"
+  },
+  "homeowner": {
+    "name": "Heather"
+  },
+  "items": [
+    {
+      "id": "fh1_price",
+      "zone": "front",
+      "cat": "Prep",
+      "name": "Demo / Hauling",
+      "qty": 1,
+      "unit": "lot",
+      "pricingUnit": "lot",
+      "required": true
+    },
+    {
+      "id": "fh2_price",
+      "zone": "front",
+      "cat": "Ground Cover",
+      "name": "Decomposed Granite",
+      "qty": null,
+      "unit": "",
+      "pricingUnit": "cuyd",
+      "required": true
+    },
+    {
+      "id": "fh3_price",
+      "zone": "front",
+      "cat": "Edging",
+      "name": "Mow Curb / Edging",
+      "qty": 1,
+      "unit": "lot",
+      "pricingUnit": "lot",
+      "required": true
+    },
+    {
+      "id": "fh4_price",
+      "zone": "front",
+      "cat": "Plants",
+      "name": "Lantana (5 gal)",
+      "qty": 6,
+      "unit": "ea",
+      "pricingUnit": "ea",
+      "required": true
+    },
+    {
+      "id": "fh5_price",
+      "zone": "front",
+      "cat": "Plants",
+      "name": "Yellow Bird of Paradise (5 gal)",
+      "qty": 4,
+      "unit": "ea",
+      "pricingUnit": "ea",
+      "required": true
+    },
+    {
+      "id": "fh6_price",
+      "zone": "front",
+      "cat": "Plants",
+      "name": "Desert Marigold (1 gal)",
+      "qty": 12,
+      "unit": "ea",
+      "pricingUnit": "ea",
+      "required": true
+    },
+    {
+      "id": "fh7_price",
+      "zone": "front",
+      "cat": "Plants",
+      "name": "Agave (5 gal)",
+      "qty": 3,
+      "unit": "ea",
+      "pricingUnit": "ea",
+      "required": true
+    },
+    {
+      "id": "fh8_price",
+      "zone": "front",
+      "cat": "Irrigation",
+      "name": "Drip Irrigation Install",
+      "qty": 1,
+      "unit": "lot",
+      "pricingUnit": "lot",
+      "required": true
+    },
+    {
+      "id": "sh1_price",
+      "zone": "side",
+      "cat": "Prep",
+      "name": "Demo / Hauling",
+      "qty": 1,
+      "unit": "lot",
+      "pricingUnit": "lot",
+      "required": true
+    },
+    {
+      "id": "sh2_price",
+      "zone": "side",
+      "cat": "Edging",
+      "name": "Mow Curb / Edging",
+      "qty": 1,
+      "unit": "lot",
+      "pricingUnit": "lot",
+      "required": false
+    },
+    {
+      "id": "sh3_price",
+      "zone": "side",
+      "cat": "Ground Cover",
+      "name": "Pea Gravel",
+      "qty": null,
+      "unit": "",
+      "pricingUnit": "cuyd",
+      "required": true
+    },
+    {
+      "id": "sh4_price",
+      "zone": "side",
+      "cat": "Plants",
+      "name": "Bougainvillea (5 gal)",
+      "qty": 4,
+      "unit": "ea",
+      "pricingUnit": "ea",
+      "required": true
+    },
+    {
+      "id": "rh1_price",
+      "zone": "rear",
+      "cat": "Prep",
+      "name": "Demo / Hauling",
+      "qty": 1,
+      "unit": "lot",
+      "pricingUnit": "lot",
+      "required": true
+    },
+    {
+      "id": "rh2_price",
+      "zone": "rear",
+      "cat": "Ground Cover",
+      "name": "Decomposed Granite",
+      "qty": null,
+      "unit": "",
+      "pricingUnit": "cuyd",
+      "required": true
+    },
+    {
+      "id": "rh3_price",
+      "zone": "rear",
+      "cat": "Patio",
+      "name": "Flagstone Patio",
+      "qty": 1,
+      "unit": "lot",
+      "pricingUnit": "lot",
+      "required": true
+    },
+    {
+      "id": "rh4_price",
+      "zone": "rear",
+      "cat": "Plants",
+      "name": "Palo Verde (15 gal)",
+      "qty": 2,
+      "unit": "ea",
+      "pricingUnit": "ea",
+      "required": true
+    },
+    {
+      "id": "rh5_price",
+      "zone": "rear",
+      "cat": "Plants",
+      "name": "Mexican Bush Sage (1 gal)",
+      "qty": 8,
+      "unit": "ea",
+      "pricingUnit": "ea",
+      "required": true
+    },
+    {
+      "id": "rh6_price",
+      "zone": "rear",
+      "cat": "Plants",
+      "name": "Ocotillo (5 ft)",
+      "qty": 2,
+      "unit": "ea",
+      "pricingUnit": "ea",
+      "required": false
+    },
+    {
+      "id": "rh7_price",
+      "zone": "rear",
+      "cat": "Irrigation",
+      "name": "Drip Irrigation Install",
+      "qty": 1,
+      "unit": "lot",
+      "pricingUnit": "lot",
+      "required": true
+    }
+  ],
+  "seedRev": 1
+}

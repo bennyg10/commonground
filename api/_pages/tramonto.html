@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Common Ground — Tramonto</title>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ── ROLE VISIBILITY ── */
+.role-hidden{display:none!important}
+
+/* ── TOKENS ── */
+:root{
+  --lime:#D5DC99;--sage:#737F73;--white:#FDFFFE;--black:#111015;
+  --d1:#161819;--d2:#1C201D;--d3:#232826;--d4:#2C312E;--d5:#363C39;
+  --l10:rgba(213,220,153,.10);--l20:rgba(213,220,153,.20);--l30:rgba(213,220,153,.30);
+  --w04:rgba(253,255,254,.04);--w08:rgba(253,255,254,.08);--w15:rgba(253,255,254,.15);
+  --w30:rgba(253,255,254,.30);--w50:rgba(253,255,254,.50);--w70:rgba(253,255,254,.70);
+  --del:#E07A5F;--dl15:rgba(224,122,95,.15);--dl30:rgba(224,122,95,.30);
+  --amb:#C9A84C;--am15:rgba(201,168,76,.15);--am30:rgba(201,168,76,.30);
+  --ok:#4A9B6F;--ok15:rgba(74,155,111,.15);--ok30:rgba(74,155,111,.30);
+  --r:9px;--sm:6px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;font-family:"DM Sans",sans-serif;
+  background:var(--black);color:var(--white);font-size:14px;line-height:1.6}
+button{font-family:inherit;cursor:pointer}
+a{color:var(--lime);text-decoration:none}
+textarea,input,select{font-family:inherit}
+::-webkit-scrollbar{width:3px;height:3px}
+::-webkit-scrollbar-thumb{background:var(--d5);border-radius:2px}
+
+/* ── SHELL ── */
+.shell{display:grid;grid-template-rows:44px 1fr;height:100vh;overflow:hidden}
+
+/* ── TOPBAR ── */
+.top{background:var(--d1);border-bottom:1px solid var(--w08);
+  display:flex;align-items:center;padding:0 14px;gap:10px}
+.top-mark{width:22px;height:22px;background:var(--lime);border-radius:5px;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.top-mark span{font-family:"Bungee",sans-serif;font-weight:800;font-size:9px;color:var(--black)}
+.top-name{font-family:"Bungee",sans-serif;font-size:12px;font-weight:700;color:var(--lime);letter-spacing:-.01em}
+.top-sep{color:var(--w15);margin:0 2px}
+.top-proj{font-size:11px;color:var(--w50);font-weight:500}
+.top-pill{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--w50);
+  background:var(--w04);border:1px solid var(--w08);border-radius:20px;padding:3px 10px}
+.top-dot{width:5px;height:5px;border-radius:50%;background:var(--ok);animation:blink 2s ease infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.top-right{margin-left:auto;display:flex;align-items:center;gap:8px}
+.top-role-badge{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;
+  padding:3px 9px;border-radius:20px;background:var(--l10);color:var(--lime);border:1px solid var(--l20)}
+.top-role-badge.gc{background:var(--am15);color:var(--amb);border-color:var(--am30)}
+.top-role-badge.homeowner{background:var(--ok15);color:var(--ok);border-color:var(--ok30)}
+.top-avatar{width:26px;height:26px;border-radius:50%;background:var(--d4);
+  border:1.5px solid var(--sage);display:flex;align-items:center;justify-content:center;
+  font-size:9px;font-weight:600;color:var(--lime)}
+
+/* ── BODY ── */
+.body{display:grid;grid-template-columns:220px 1fr;height:100%;overflow:hidden}
+
+/* ── SIDEBAR ── */
+.sb{background:var(--d1);border-right:1px solid var(--w08);
+  display:flex;flex-direction:column;overflow:hidden}
+.sb-proj{padding:14px 13px 12px;border-bottom:1px solid var(--w08)}
+.sb-eyebrow{font-size:9px;text-transform:uppercase;letter-spacing:.1em;
+  color:rgba(115,127,115,.55);margin-bottom:3px}
+.sb-proj-name{font-family:"Bungee",sans-serif;font-size:14px;font-weight:700;
+  color:var(--white);letter-spacing:-.02em;line-height:1.2}
+.sb-addr{font-size:10px;color:rgba(213,220,153,.4);margin-top:2px}
+.sb-phase{display:inline-flex;align-items:center;gap:4px;margin-top:7px;
+  font-size:9px;font-weight:600;color:var(--amb);background:var(--am15);
+  padding:2px 8px;border-radius:20px}
+.sb-nav{flex:1;overflow-y:auto;padding:6px}
+.nav-btn{display:flex;align-items:center;gap:8px;padding:7px 10px;margin:1px 0;
+  border-radius:7px;border:none;background:none;color:var(--w50);
+  font-size:11px;width:100%;text-align:left;transition:all .15s}
+.nav-btn:hover{background:var(--w04);color:var(--w70)}
+.nav-btn.on{background:var(--l10);color:var(--lime);font-weight:500}
+.nav-icon{font-size:15px;width:16px;text-align:center;flex-shrink:0}
+.nav-badge{margin-left:auto;font-size:9px;background:var(--l10);
+  color:rgba(213,220,153,.75);padding:1px 6px;border-radius:20px;font-weight:600}
+.nav-badge.red{background:var(--dl15);color:var(--del)}
+.nav-badge.amb{background:var(--am15);color:var(--amb)}
+.nav-badge.grn{background:var(--ok15);color:var(--ok)}
+
+/* Sidebar section divider */
+.sb-divider{margin:4px 10px;height:1px;background:var(--w08)}
+.sb-label{font-size:9px;text-transform:uppercase;letter-spacing:.1em;
+  color:rgba(115,127,115,.45);padding:8px 10px 2px}
+
+/* ── CENTER ── */
+.ctr{background:var(--d2);display:flex;flex-direction:column;overflow:hidden}
+.screen{display:none;flex:1;flex-direction:column;overflow:hidden}
+.screen.on{display:flex}
+.scrl{flex:1;overflow-y:auto;padding:24px}
+
+/* ── PAGE HEADER ── */
+.ph{padding:0 0 20px}
+.ph-eyebrow{font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--sage);margin-bottom:4px}
+.ph-title{font-family:"Bungee",sans-serif;font-size:22px;font-weight:700;
+  color:var(--white);letter-spacing:-.03em;line-height:1.1}
+.ph-sub{font-size:12px;color:var(--w50);margin-top:5px}
+
+/* ── CARDS ── */
+.card{background:var(--d3);border:1px solid var(--w08);border-radius:var(--r);
+  overflow:hidden;margin-bottom:16px}
+.card-head{padding:12px 14px;border-bottom:1px solid var(--w08);
+  display:flex;align-items:center;gap:8px}
+.card-icon{font-size:16px;width:18px;text-align:center;flex-shrink:0}
+.card-title{font-size:12px;font-weight:600;color:var(--white)}
+.card-sub{font-size:10px;color:var(--w50);margin-left:auto}
+.card-body{padding:14px}
+
+/* ── LOCKOUT SCREEN ── */
+.lockout{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:12px;padding:40px;text-align:center}
+.lockout-icon{font-size:40px;opacity:.4}
+.lockout-title{font-family:"Bungee",sans-serif;font-size:18px;color:var(--w50)}
+.lockout-sub{font-size:12px;color:var(--w30);max-width:280px;line-height:1.6}
+
+/* ── TABLES ── */
+.bid-table{width:100%;border-collapse:collapse;font-size:12px}
+.bid-table th{font-size:9px;text-transform:uppercase;letter-spacing:.08em;
+  color:var(--sage);padding:7px 10px;text-align:left;border-bottom:1px solid var(--w08)}
+.bid-table td{padding:9px 10px;border-bottom:1px solid var(--w08);color:var(--w70);vertical-align:middle}
+.bid-table tr:last-child td{border-bottom:none}
+.bid-table td.r{text-align:right;font-variant-numeric:tabular-nums}
+.bid-table th.r{text-align:right}
+.iname{font-weight:500;color:var(--white)}
+.qty-cell{color:var(--w50);font-size:11px}
+
+/* ── INPUTS ── */
+.fi{width:100%;background:var(--d4);border:1.5px solid var(--w08);
+  border-radius:var(--sm);padding:6px 9px;color:var(--white);font-size:12px;
+  outline:none;transition:border-color .15s;text-align:right}
+.fi:focus{border-color:var(--l20)}
+.fi::placeholder{color:var(--w30)}
+.fi-inline{width:90px;background:var(--d4);border:1.5px solid var(--w08);
+  border-radius:var(--sm);padding:5px 8px;color:var(--white);font-size:12px;
+  outline:none;transition:border-color .15s;text-align:right}
+.fi-inline:focus{border-color:var(--l20)}
+
+/* Unit selector */
+.unit-sel{border:1.5px solid var(--w08);border-radius:var(--sm);padding:4px 6px;
+  font-size:11px;font-family:inherit;background:var(--d4);color:var(--w70);outline:none;
+  cursor:pointer;transition:border-color .15s;width:76px}
+.unit-sel:focus{border-color:var(--l20)}
+.unit-cell{display:flex;align-items:center;justify-content:flex-end;gap:5px;flex-wrap:nowrap}
+.unit-tag{font-size:10px;color:var(--w50);margin-left:2px;letter-spacing:.01em}
+
+/* ── ZONE SECTION ── */
+.zone-sec{margin-bottom:20px}
+.zone-head{font-size:9px;text-transform:uppercase;letter-spacing:.1em;
+  color:var(--sage);padding:0 0 8px;border-bottom:1px solid var(--w08);margin-bottom:0}
+
+/* ── MARKUP ROW ── */
+.mk-row{display:flex;align-items:center;gap:10px;padding:8px 10px;border-bottom:1px solid var(--w08)}
+.mk-row:last-child{border-bottom:none}
+.mk-name{flex:1;font-size:12px;color:var(--white);font-weight:500}
+.mk-sub{font-size:11px;color:var(--w50);min-width:90px;text-align:right;font-variant-numeric:tabular-nums}
+.mk-pct{display:flex;align-items:center;gap:5px}
+.mk-pct-in{width:56px;background:var(--d4);border:1.5px solid var(--w08);border-radius:var(--sm);
+  padding:5px 7px;color:var(--white);font-size:12px;outline:none;text-align:right;
+  transition:border-color .15s}
+.mk-pct-in:focus{border-color:var(--l20)}
+.mk-pct-sym{font-size:11px;color:var(--w50)}
+.mk-total{min-width:90px;text-align:right;font-size:12px;color:var(--lime);font-weight:500;font-variant-numeric:tabular-nums}
+.mk-locked{min-width:90px;text-align:right;font-size:12px;color:var(--w30);font-variant-numeric:tabular-nums}
+
+/* ── PROPOSAL CARDS ── */
+.prop-zone{margin-bottom:24px}
+.prop-zone-title{font-family:"Bungee",sans-serif;font-size:14px;color:var(--lime);
+  letter-spacing:-.01em;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--l10)}
+.prop-items{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.prop-item{background:var(--d4);border:1px solid var(--w08);border-radius:var(--r);
+  padding:12px 14px}
+.prop-item-name{font-size:12px;font-weight:500;color:var(--white);margin-bottom:4px}
+.prop-item-qty{font-size:10px;color:var(--w50);margin-bottom:8px}
+.prop-item-price{font-size:16px;font-weight:600;color:var(--lime);font-family:"Bungee",sans-serif;
+  letter-spacing:-.03em}
+.prop-item-price-sub{font-size:9px;color:var(--w30);margin-left:3px}
+.prop-total-row{display:flex;align-items:center;justify-content:space-between;
+  padding:12px 14px;background:var(--d3);border-top:1px solid var(--w08)}
+.prop-total-label{font-size:11px;color:var(--w50)}
+.prop-total-val{font-family:"Bungee",sans-serif;font-size:18px;color:var(--lime);letter-spacing:-.03em}
+
+/* ── SUMMARY ROW ── */
+.sum-row{display:flex;align-items:center;justify-content:space-between;
+  padding:10px 14px;border-bottom:1px solid var(--w08)}
+.sum-row:last-child{border-bottom:none}
+.sum-label{font-size:12px;color:var(--w70)}
+.sum-val{font-size:12px;font-weight:600;color:var(--white);font-variant-numeric:tabular-nums}
+.sum-val.lime{color:var(--lime)}
+.sum-val.del{color:var(--del)}
+
+/* ── STATUS BADGE ── */
+.status-badge{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;
+  padding:2px 8px;border-radius:20px}
+.status-badge.pending{background:var(--am15);color:var(--amb)}
+.status-badge.submitted{background:var(--ok15);color:var(--ok)}
+.status-badge.approved{background:var(--ok15);color:var(--ok)}
+
+/* ── SUBMIT BUTTON ── */
+.btn-submit{background:var(--lime);color:var(--black);font-weight:700;font-size:13px;
+  border:none;border-radius:var(--r);padding:11px 22px;transition:opacity .15s;width:100%}
+.btn-submit:hover{opacity:.85}
+.btn-submit:disabled{opacity:.4;cursor:not-allowed}
+.btn-secondary{background:var(--d4);color:var(--w70);font-weight:500;font-size:12px;
+  border:1px solid var(--w08);border-radius:var(--r);padding:9px 16px;transition:all .15s}
+.btn-secondary:hover{background:var(--d5);border-color:var(--w15)}
+
+/* ── NOTICE BANNER ── */
+.notice{padding:10px 14px;border-radius:var(--sm);font-size:11px;line-height:1.5;
+  display:flex;align-items:flex-start;gap:8px;margin-bottom:14px}
+.notice.info{background:var(--l10);border:1px solid var(--l20);color:rgba(213,220,153,.8)}
+.notice.warn{background:var(--am15);border:1px solid var(--am30);color:var(--amb)}
+.notice.ok{background:var(--ok15);border:1px solid var(--ok30);color:var(--ok)}
+.notice.lock{background:var(--dl15);border:1px solid var(--dl30);color:var(--del)}
+.notice-icon{flex-shrink:0;margin-top:1px}
+
+/* ── ACCEPTANCE ── */
+.accept-wrap{padding:20px;text-align:center}
+.accept-title{font-family:"Bungee",sans-serif;font-size:20px;color:var(--white);
+  margin-bottom:8px;letter-spacing:-.02em}
+.accept-sub{font-size:12px;color:var(--w50);margin-bottom:20px}
+.accept-sig{background:var(--d4);border:1px solid var(--w08);border-radius:var(--r);
+  padding:14px;margin-bottom:14px}
+.accept-sig label{font-size:9px;text-transform:uppercase;letter-spacing:.08em;
+  color:var(--sage);display:block;margin-bottom:4px}
+.accept-sig input{background:none;border:none;border-bottom:1px solid var(--w15);
+  color:var(--white);font-size:14px;width:100%;outline:none;padding:4px 0}
+.accept-sig input::placeholder{color:var(--w30)}
+.btn-accept{background:var(--ok);color:var(--white);font-weight:700;font-size:13px;
+  border:none;border-radius:var(--r);padding:12px 24px;width:100%;transition:opacity .15s;margin-top:4px}
+.btn-accept:hover{opacity:.85}
+
+/* ── SAVE STATE ── */
+.save-state{font-size:10px;color:var(--w30);display:flex;align-items:center;gap:5px;
+  margin-left:auto;padding:3px 8px;border-radius:20px;transition:all .3s}
+.save-state.saving{color:var(--amb)}
+.save-state.saved{color:var(--ok)}
+.save-dot{width:5px;height:5px;border-radius:50%;background:currentColor;flex-shrink:0}
+
+/* ── SUPPLIER SECTION ── */
+.sup-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.sup-field label{font-size:9px;text-transform:uppercase;letter-spacing:.08em;
+  color:var(--sage);display:block;margin-bottom:4px}
+.sup-field input{width:100%;background:var(--d4);border:1.5px solid var(--w08);
+  border-radius:var(--sm);padding:7px 10px;color:var(--white);font-size:12px;
+  outline:none;transition:border-color .15s}
+.sup-field input:focus{border-color:var(--l20)}
+.sup-field input::placeholder{color:var(--w30)}
+
+/* ── CAT HEADERS ── */
+.cat-head{display:none;align-items:center;gap:7px;padding:9px 10px 5px;
+  border-top:1px solid var(--w08);margin-top:4px}
+.cat-head.show{display:flex}
+.cat-head.first{border-top:none;margin-top:0;padding-top:4px}
+.cat-icon{font-size:12px}
+.cat-label{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--w30)}
+
+/* ── HW ITEM GRID ── */
+.hw-items{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:8px;padding:0 10px 10px}
+.hw-card{background:var(--d4);border:1px solid var(--w08);border-radius:var(--sm);padding:10px 12px}
+.hw-card-name{font-size:11px;font-weight:500;color:var(--white);margin-bottom:2px}
+.hw-card-qty{font-size:9px;color:var(--w50);margin-bottom:6px}
+.hw-card-price{font-size:14px;font-weight:600;color:var(--lime);font-variant-numeric:tabular-nums}
+.hw-card-unit{font-size:9px;color:var(--w30);margin-left:2px}
+
+/* ── EMPTY STATE ── */
+.empty-state{padding:28px;text-align:center;color:var(--w30);font-size:11px}
+.empty-icon{font-size:28px;opacity:.3;margin-bottom:8px}
+
+/* ── RESPONSIVE ── */
+@media(max-width:680px){
+  .body{grid-template-columns:1fr}
+  .sb{display:none}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <!-- TOPBAR -->
+  <div class="top">
+    <div class="top-mark"><span>CG</span></div>
+    <span class="top-name">CommonGround</span>
+    <span class="top-sep">·</span>
+    <span class="top-proj" id="top-proj-name">Tramonto</span>
+    <div class="top-pill"><span class="top-dot"></span><span id="top-pill-label">Landscape Bid</span></div>
+    <div class="top-right">
+      <span class="top-role-badge" id="top-role-badge">Sub</span>
+      <div class="top-avatar" id="top-avatar">?</div>
+    </div>
+  </div>
+
+  <!-- BODY -->
+  <div class="body">
+
+    <!-- SIDEBAR -->
+    <div class="sb">
+      <div class="sb-proj">
+        <div class="sb-eyebrow">Project</div>
+        <div class="sb-proj-name" id="sb-proj-name">Tramonto</div>
+        <div class="sb-addr" id="sb-addr">—</div>
+        <div class="sb-phase">🌿 Landscape Bid</div>
+      </div>
+
+      <div class="sb-nav" id="sb-nav">
+        <!-- nav items rendered by role -->
+      </div>
+    </div>
+
+    <!-- CENTER -->
+    <div class="ctr">
+
+      <!-- ═══════════════════════════════════════
+           SUB VIEW — Pricing Entry
+           role-gate: sub only
+      ═══════════════════════════════════════ -->
+      <div class="screen" id="screen-sub-pricing" data-role-gate="sub">
+        <div class="scrl">
+          <div class="ph">
+            <div class="ph-eyebrow">Subcontractor Portal</div>
+            <div class="ph-title">Submit Your Pricing</div>
+            <div class="ph-sub">Enter your unit prices for each scope item. All fields with quantities are required.</div>
+          </div>
+
+          <div class="notice info">
+            <span class="notice-icon">🔒</span>
+            <span>Your pricing is submitted directly to the GC. Final markups and homeowner totals are not visible to you.</span>
+          </div>
+
+          <!-- Supplier Info -->
+          <div class="card">
+            <div class="card-head">
+              <span class="card-icon">🏢</span>
+              <span class="card-title">Company Info</span>
+              <span class="save-state" id="save-state-sub"><span class="save-dot"></span><span id="save-state-txt">Unsaved</span></span>
+            </div>
+            <div class="card-body">
+              <div class="sup-grid">
+                <div class="sup-field">
+                  <label>Company Name</label>
+                  <input type="text" id="sup_company" placeholder="Your company name">
+                </div>
+                <div class="sup-field">
+                  <label>Contact Name</label>
+                  <input type="text" id="sup_name" placeholder="Your name">
+                </div>
+                <div class="sup-field">
+                  <label>Email</label>
+                  <input type="email" id="sup_email" placeholder="email@company.com">
+                </div>
+                <div class="sup-field">
+                  <label>Phone</label>
+                  <input type="tel" id="sup_phone" placeholder="(xxx) xxx-xxxx">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- FRONT YARD -->
+          <div class="card">
+            <div class="card-head">
+              <span class="card-icon">🌿</span>
+              <span class="card-title">Front Yard</span>
+              <span class="card-sub" id="sub-front-status"></span>
+            </div>
+            <table class="bid-table">
+              <thead>
+                <tr>
+                  <th>Item</th>
+                  <th>Qty</th>
+                  <th class="r">Unit</th>
+                  <th class="r">Your Price</th>
+                </tr>
+              </thead>
+              <tbody id="sub-front-body">
+                <!-- rows injected from seed -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- SIDE YARDS -->
+          <div class="card">
+            <div class="card-head">
+              <span class="card-icon">🪨</span>
+              <span class="card-title">Side Yards</span>
+              <span class="card-sub" id="sub-side-status"></span>
+            </div>
+            <table class="bid-table">
+              <thead>
+                <tr>
+                  <th>Item</th>
+                  <th>Qty</th>
+                  <th class="r">Unit</th>
+                  <th class="r">Your Price</th>
+                </tr>
+              </thead>
+              <tbody id="sub-side-body">
+              </tbody>
+            </table>
+          </div>
+
+          <!-- REAR YARD -->
+          <div class="card">
+            <div class="card-head">
+              <span class="card-icon">🌳</span>
+              <span class="card-title">Rear Yard</span>
+              <span class="card-sub" id="sub-rear-status"></span>
+            </div>
+            <table class="bid-table">
+              <thead>
+                <tr>
+                  <th>Item</th>
+                  <th>Qty</th>
+                  <th class="r">Unit</th>
+                  <th class="r">Your Price</th>
+                </tr>
+              </thead>
+              <tbody id="sub-rear-body">
+              </tbody>
+            </table>
+          </div>
+
+          <!-- SUBMIT -->
+          <div class="card">
+            <div class="card-body">
+              <div id="sub-validation-msg"></div>
+              <button class="btn-submit" id="btn-sub-submit" onclick="subSubmit()">
+                Submit Pricing to General Contractor
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════════
+           GC VIEW — Markups + Proposal Builder
+           role-gate: gc only
+      ═══════════════════════════════════════ -->
+      <div class="screen" id="screen-gc-pricing" data-role-gate="gc">
+        <div class="scrl">
+          <div class="ph">
+            <div class="ph-eyebrow">General Contractor</div>
+            <div class="ph-title">Markup &amp; Proposal Builder</div>
+            <div class="ph-sub">Set your markups on sub pricing. Final totals auto-generate the homeowner proposal.</div>
+          </div>
+
+          <div class="notice info">
+            <span class="notice-icon">👁</span>
+            <span>Sub pricing is read-only. Apply your markup percentages below to build the homeowner proposal.</span>
+          </div>
+
+          <!-- Sub status -->
+          <div class="card" style="margin-bottom:16px">
+            <div class="card-head">
+              <span class="card-icon">📋</span>
+              <span class="card-title">Subcontractor Submissions</span>
+            </div>
+            <div class="card-body">
+              <div id="gc-sub-status-block" class="empty-state">
+                <div class="empty-icon">⏳</div>
+                <div>Waiting for sub to submit pricing…</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- FRONT YARD MARKUPS -->
+          <div class="card">
+            <div class="card-head">
+              <span class="card-icon">🌿</span>
+              <span class="card-title">Front Yard — Markups</span>
+              <span class="save-state" id="save-state-gc"><span class="save-dot"></span><span id="save-state-gc-txt">Unsaved</span></span>
+            </div>
+            <div id="gc-front-rows">
+              <div class="empty-state">Sub pricing pending</div>
+            </div>
+          </div>
+
+          <!-- SIDE YARDS MARKUPS -->
+          <div class="card">
+            <div class="card-head">
+              <span class="card-icon">🪨</span>
+              <span class="card-title">Side Yards — Markups</span>
+            </div>
+            <div id="gc-side-rows">
+              <div class="empty-state">Sub pricing pending</div>
+            </div>
+          </div>
+
+          <!-- REAR YARD MARKUPS -->
+          <div class="card">
+            <div class="card-head">
+              <span class="card-icon">🌳</span>
+              <span class="card-title">Rear Yard — Markups</span>
+            </div>
+            <div id="gc-rear-rows">
+              <div class="empty-state">Sub pricing pending</div>
+            </div>
+          </div>
+
+          <!-- TOTALS SUMMARY -->
+          <div class="card">
+            <div class="card-head">
+              <span class="card-icon">💰</span>
+              <span class="card-title">Proposal Totals</span>
+            </div>
+            <div id="gc-totals-block">
+              <div class="sum-row">
+                <span class="sum-label">Sub Total</span>
+                <span class="sum-val" id="gc-sum-sub">—</span>
+              </div>
+              <div class="sum-row">
+                <span class="sum-label">GC Markup</span>
+                <span class="sum-val" id="gc-sum-markup">—</span>
+              </div>
+              <div class="sum-row">
+                <span class="sum-label">Proposal Total</span>
+                <span class="sum-val lime" id="gc-sum-total">—</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <button class="btn-submit" id="btn-gc-publish" onclick="gcPublishProposal()" disabled>
+                Publish Proposal to Homeowner
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════════
+           HOMEOWNER VIEW — Proposal Review
+           role-gate: homeowner/client only
+      ═══════════════════════════════════════ -->
+      <div class="screen" id="screen-hw-proposal" data-role-gate="homeowner">
+        <div class="scrl">
+          <div class="ph">
+            <div class="ph-eyebrow">Your Landscape Proposal</div>
+            <div class="ph-title" id="hw-ph-title">Tramonto</div>
+            <div class="ph-sub" id="hw-ph-sub">Review your custom landscape proposal below.</div>
+          </div>
+
+          <div id="hw-proposal-block">
+            <div class="card">
+              <div class="card-body">
+                <div class="empty-state">
+                  <div class="empty-icon">⏳</div>
+                  <div>Your proposal is being prepared. Check back soon.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ACCEPTANCE -->
+          <div id="hw-accept-block" style="display:none">
+            <div class="card">
+              <div class="card-head">
+                <span class="card-icon">✍️</span>
+                <span class="card-title">Accept Proposal</span>
+              </div>
+              <div class="card-body">
+                <div class="accept-sig">
+                  <label>Your Name (signature)</label>
+                  <input type="text" id="hw-sig-name" placeholder="Type your full name to sign">
+                </div>
+                <button class="btn-accept" onclick="hwAccept()">Accept &amp; Approve Proposal</button>
+              </div>
+            </div>
+          </div>
+
+          <div id="hw-accepted-block" style="display:none">
+            <div class="notice ok">
+              <span class="notice-icon">✅</span>
+              <span id="hw-accepted-msg">Proposal accepted. The team has been notified.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- LOCKOUT screen for roles that don't match a view -->
+      <div class="screen" id="screen-lockout">
+        <div class="lockout">
+          <div class="lockout-icon">🔒</div>
+          <div class="lockout-title">Access Restricted</div>
+          <div class="lockout-sub" id="lockout-msg">You don't have permission to view this section.</div>
+        </div>
+      </div>
+
+    </div><!-- /ctr -->
+  </div><!-- /body -->
+</div><!-- /shell -->
+
+<script>
+// ── SEED DATA ──────────────────────────────────────────────────────────────
+// Loaded from tramonto-seed.json (injected server-side as window.SEED)
+// Falls back to embedded default if not injected.
+var SEED = window.SEED || null;
+
+// ── CG SESSION ────────────────────────────────────────────────────────────
+// Injected server-side by api/page.js as window.CG_SESSION
+var CG = window.CG_SESSION || {role:'',user:{name:'',email:''},project:'tramonto',admin:false};
+
+// ── STORAGE KEY ──────────────────────────────────────────────────────────
+// Namespaced by project slug so each project is isolated
+var SLUG = CG.project || 'tramonto';
+var KEY_SUB  = SLUG + '/sub-pricing';
+var KEY_GC   = SLUG + '/gc-markups';
+var KEY_PROP = SLUG + '/hw-proposal';
+
+// ── STATE ─────────────────────────────────────────────────────────────────
+var subData = null;   // {prices:{id:val}, units:{id:'cuyd'}, supplier:{...}, ts, submitted}
+var gcData  = null;   // {markups:{id:pct}, ts, published}
+var propData= null;   // {items:[...], total, publishedTs, accepted, acceptedBy, acceptedTs}
+var saveTimer = null;
+
+// ── HELPERS ──────────────────────────────────────────────────────────────
+function $(id){return document.getElementById(id)}
+function fmt(n){return n!=null&&!isNaN(n)?'$'+Number(n).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,','):'—'}
+function fmtQty(item){
+  if(!item||!item.qty)return'';
+  return item.qty+' '+(item.unit||'');
+}
+
+// ── ROLE SYSTEM ───────────────────────────────────────────────────────────
+function applyRole(role){
+  // Show/hide based on data-role-gate
+  document.querySelectorAll('[data-role-gate]').forEach(function(el){
+    var gates = el.getAttribute('data-role-gate').split(',').map(function(s){return s.trim()});
+    var allowed = gates.indexOf(role) !== -1;
+    el.classList.toggle('role-hidden', !allowed);
+  });
+  // Role badge
+  var badge = $('top-role-badge');
+  if(badge){
+    badge.className = 'top-role-badge';
+    if(role==='gc') badge.classList.add('gc');
+    else if(role==='homeowner'||role==='client') badge.classList.add('homeowner');
+    badge.textContent = role==='homeowner'?'Homeowner':role.toUpperCase();
+  }
+}
+
+// ── SCREEN ROUTER ─────────────────────────────────────────────────────────
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('on')});
+  var s = $(id);
+  if(s) s.classList.add('on');
+  // Update nav active state
+  document.querySelectorAll('.nav-btn').forEach(function(b){
+    b.classList.toggle('on', b.dataset.screen===id);
+  });
+}
+
+// ── NAV BUILDER ──────────────────────────────────────────────────────────
+function buildNav(role){
+  var nav = $('sb-nav');
+  if(!nav) return;
+  nav.innerHTML='';
+  var items=[];
+  if(role==='sub'){
+    items=[
+      {icon:'📝',label:'Pricing Entry',screen:'screen-sub-pricing'},
+    ];
+  } else if(role==='gc'){
+    items=[
+      {icon:'📊',label:'Markups & Proposal',screen:'screen-gc-pricing'},
+    ];
+  } else if(role==='homeowner'||role==='client'){
+    items=[
+      {icon:'🌿',label:'Your Proposal',screen:'screen-hw-proposal'},
+    ];
+  }
+  items.forEach(function(it){
+    var btn=document.createElement('button');
+    btn.className='nav-btn';
+    btn.dataset.screen=it.screen;
+    btn.innerHTML='<span class="nav-icon">'+it.icon+'</span>'+it.label;
+    btn.onclick=function(){showScreen(it.screen);};
+    nav.appendChild(btn);
+  });
+}
+
+// ── SEED → TABLE ROWS (Sub) ───────────────────────────────────────────────
+function buildSubTable(zone, tbodyId){
+  if(!SEED) return;
+  var tbody = $(tbodyId);
+  if(!tbody) return;
+  var items = SEED.items.filter(function(it){return it.zone===zone});
+  if(!items.length){ tbody.innerHTML='<tr><td colspan="4" style="text-align:center;color:var(--w30);padding:16px;font-size:11px">No items for this zone</td></tr>'; return; }
+  tbody.innerHTML='';
+  items.forEach(function(item){
+    var tr=document.createElement('tr');
+    var hasUnitSel = (item.id==='fh2_price'||item.id==='sh3_price');
+    var unitCell='';
+    if(hasUnitSel){
+      unitCell='<td class="r"><select class="unit-sel" data-unit-for="'+item.id+'" onchange="debounceSave()">'
+        +'<option value="cuyd">/ cu yd</option>'
+        +'<option value="cuft">/ cu ft</option>'
+        +'<option value="ton">/ ton</option>'
+        +'</select></td>';
+    } else {
+      unitCell='<td class="r qty-cell">'+(item.pricingUnit||item.unit||'ea')+'</td>';
+    }
+    tr.innerHTML='<td><span class="iname">'+item.name+'</span></td>'
+      +'<td class="qty-cell">'+fmtQty(item)+'</td>'
+      +unitCell
+      +'<td class="r"><div class="unit-cell"><input class="fi" type="number" data-id="'+item.id+'" data-zone="'+zone+'" data-req="1" placeholder="$" oninput="debounceSave()"></div></td>';
+    tbody.appendChild(tr);
+  });
+}
+
+// ── SUB DATA COLLECT ──────────────────────────────────────────────────────
+function collectSub(){
+  var prices={};
+  document.querySelectorAll('.fi').forEach(function(el){
+    if(el.dataset.id&&el.value) prices[el.dataset.id]=parseFloat(el.value)||0;
+  });
+  var units={};
+  document.querySelectorAll('.unit-sel').forEach(function(el){
+    if(el.dataset.unitFor) units[el.dataset.unitFor]=el.value;
+  });
+  return{
+    prices:prices,
+    units:units,
+    supplier:{
+      company:$('sup_company')?$('sup_company').value:'',
+      name:$('sup_name')?$('sup_name').value:'',
+      email:$('sup_email')?$('sup_email').value:'',
+      phone:$('sup_phone')?$('sup_phone').value:''
+    },
+    ts:Date.now()
+  };
+}
+
+function hydrateSub(data){
+  if(!data) return;
+  if(data.supplier){
+    if($('sup_company')) $('sup_company').value=data.supplier.company||'';
+    if($('sup_name')) $('sup_name').value=data.supplier.name||'';
+    if($('sup_email')) $('sup_email').value=data.supplier.email||'';
+    if($('sup_phone')) $('sup_phone').value=data.supplier.phone||'';
+  }
+  if(data.prices){
+    Object.entries(data.prices).forEach(function(kv){
+      var el=document.querySelector('.fi[data-id="'+kv[0]+'"]');
+      if(el) el.value=kv[1];
+    });
+  }
+  if(data.units){
+    Object.entries(data.units).forEach(function(kv){
+      var sel=document.querySelector('.unit-sel[data-unit-for="'+kv[0]+'"]');
+      if(sel) sel.value=kv[1];
+    });
+  }
+  if(data.submitted){
+    var msg=$('sub-validation-msg');
+    if(msg) msg.innerHTML='<div class="notice ok"><span class="notice-icon">✅</span><span>Pricing submitted. You can update and resubmit anytime before the GC publishes.</span></div>';
+  }
+}
+
+// ── DEBOUNCE SAVE (Sub) ───────────────────────────────────────────────────
+function debounceSave(){
+  setSaveState('saving');
+  if(saveTimer) clearTimeout(saveTimer);
+  saveTimer=setTimeout(function(){saveSubToStorage();},800);
+}
+
+function setSaveState(state,label){
+  var el=$('save-state-sub');
+  var txt=$('save-state-txt');
+  if(!el||!txt) return;
+  el.className='save-state '+state;
+  txt.textContent=label||(state==='saving'?'Saving…':state==='saved'?'Saved':'Unsaved');
+}
+
+function saveSubToStorage(){
+  var d=collectSub();
+  try{ localStorage.setItem(KEY_SUB, JSON.stringify(d)); setSaveState('saved'); }
+  catch(e){ setSaveState('','Error saving'); }
+}
+
+function loadSubFromStorage(){
+  try{
+    var raw=localStorage.getItem(KEY_SUB);
+    return raw?JSON.parse(raw):null;
+  }catch(e){return null;}
+}
+
+// ── SUB SUBMIT ───────────────────────────────────────────────────────────
+function subSubmit(){
+  var data=collectSub();
+  // Validate required fields
+  var missing=[];
+  if(!data.supplier.company) missing.push('Company name');
+  if(!data.supplier.name) missing.push('Contact name');
+  if(!data.supplier.email) missing.push('Email');
+  // Check all required price fields
+  if(SEED){
+    SEED.items.forEach(function(item){
+      if(item.required && !data.prices[item.id]){
+        missing.push(item.name);
+      }
+    });
+  }
+  if(missing.length){
+    var msg=$('sub-validation-msg');
+    if(msg) msg.innerHTML='<div class="notice warn"><span class="notice-icon">⚠️</span><span>Missing: '+missing.join(', ')+'</span></div>';
+    return;
+  }
+  data.submitted=true;
+  data.ts=Date.now();
+  try{
+    localStorage.setItem(KEY_SUB, JSON.stringify(data));
+    var msg=$('sub-validation-msg');
+    if(msg) msg.innerHTML='<div class="notice ok"><span class="notice-icon">✅</span><span>Pricing submitted to general contractor.</span></div>';
+    setSaveState('saved','Submitted');
+  } catch(e){
+    var msg=$('sub-validation-msg');
+    if(msg) msg.innerHTML='<div class="notice warn"><span class="notice-icon">⚠️</span><span>Error saving. Please try again.</span></div>';
+  }
+}
+
+// ── GC: BUILD MARKUP ROWS ─────────────────────────────────────────────────
+function buildGcRows(zone, containerId){
+  if(!SEED||!subData) return;
+  var container=$(containerId);
+  if(!container) return;
+  var items=SEED.items.filter(function(it){return it.zone===zone});
+  if(!items.length){
+    container.innerHTML='<div class="empty-state">No items for this zone</div>';
+    return;
+  }
+  // Check if sub has pricing for any item in this zone
+  var hasPricing=items.some(function(it){return subData.prices&&subData.prices[it.id]!=null;});
+  if(!hasPricing){
+    container.innerHTML='<div class="empty-state">Sub pricing pending for this zone</div>';
+    return;
+  }
+  container.innerHTML='';
+  items.forEach(function(item){
+    var subPrice=subData.prices?subData.prices[item.id]:null;
+    var unitKey=subData.units?subData.units[item.id]:null;
+    var unitLabel=unitKey?({'cuyd':'/ cu yd','cuft':'/ cu ft','ton':'/ ton'}[unitKey]||''):'';
+    var mk=gcData&&gcData.markups?gcData.markups[item.id]:null;
+    var mkPct=mk!=null?mk:20;
+    var total=subPrice!=null?subPrice*(1+mkPct/100):null;
+    var row=document.createElement('div');
+    row.className='mk-row';
+    row.dataset.id=item.id;
+    row.innerHTML=
+      '<div class="mk-name">'+item.name+'</div>'
+      +'<div class="mk-sub">'+(subPrice!=null?fmt(subPrice)+(unitLabel?' <span style="font-size:9px;color:var(--w30)">'+unitLabel+'</span>':''):'—')+'</div>'
+      +'<div class="mk-pct">'
+        +'<input class="mk-pct-in" type="number" min="0" max="200" value="'+mkPct+'" data-id="'+item.id+'" oninput="onMkChange(this)">'
+        +'<span class="mk-pct-sym">%</span>'
+      +'</div>'
+      +'<div class="mk-total" id="mk-total-'+item.id+'">'+(total!=null?fmt(total):'—')+'</div>';
+    container.appendChild(row);
+  });
+}
+
+function onMkChange(input){
+  var id=input.dataset.id;
+  var pct=parseFloat(input.value)||0;
+  var subPrice=subData&&subData.prices?subData.prices[id]:null;
+  var totalEl=$('mk-total-'+id);
+  if(totalEl&&subPrice!=null){
+    totalEl.textContent=fmt(subPrice*(1+pct/100));
+  }
+  updateGcTotals();
+  debounceGcSave();
+}
+
+function updateGcTotals(){
+  if(!subData||!SEED) return;
+  var subTotal=0, markupTotal=0;
+  SEED.items.forEach(function(item){
+    var subPrice=subData.prices?subData.prices[item.id]:null;
+    if(subPrice==null) return;
+    subTotal+=subPrice;
+    var inp=document.querySelector('.mk-pct-in[data-id="'+item.id+'"]');
+    var pct=inp?parseFloat(inp.value)||0:20;
+    markupTotal+=subPrice*pct/100;
+  });
+  if($('gc-sum-sub')) $('gc-sum-sub').textContent=fmt(subTotal);
+  if($('gc-sum-markup')) $('gc-sum-markup').textContent=fmt(markupTotal);
+  if($('gc-sum-total')) $('gc-sum-total').textContent=fmt(subTotal+markupTotal);
+  var btn=$('btn-gc-publish');
+  if(btn) btn.disabled=(subTotal===0);
+}
+
+var gcSaveTimer=null;
+function debounceGcSave(){
+  setSaveStateGc('saving');
+  if(gcSaveTimer) clearTimeout(gcSaveTimer);
+  gcSaveTimer=setTimeout(function(){saveGcToStorage();},800);
+}
+
+function setSaveStateGc(state,label){
+  var el=$('save-state-gc');
+  var txt=$('save-state-gc-txt');
+  if(!el||!txt) return;
+  el.className='save-state '+state;
+  txt.textContent=label||(state==='saving'?'Saving…':state==='saved'?'Saved':'Unsaved');
+}
+
+function saveGcToStorage(){
+  var markups={};
+  document.querySelectorAll('.mk-pct-in').forEach(function(inp){
+    if(inp.dataset.id) markups[inp.dataset.id]=parseFloat(inp.value)||0;
+  });
+  var d={markups:markups,ts:Date.now()};
+  try{ localStorage.setItem(KEY_GC, JSON.stringify(d)); setSaveStateGc('saved'); }
+  catch(e){}
+}
+
+function loadGcFromStorage(){
+  try{
+    var raw=localStorage.getItem(KEY_GC);
+    return raw?JSON.parse(raw):null;
+  }catch(e){return null;}
+}
+
+// ── GC PUBLISH PROPOSAL ──────────────────────────────────────────────────
+function gcPublishProposal(){
+  if(!SEED||!subData) return;
+  var markups={};
+  document.querySelectorAll('.mk-pct-in').forEach(function(inp){
+    if(inp.dataset.id) markups[inp.dataset.id]=parseFloat(inp.value)||0;
+  });
+  var propItems=[];
+  var grandTotal=0;
+  SEED.items.forEach(function(item){
+    var subPrice=subData.prices?subData.prices[item.id]:null;
+    if(subPrice==null) return;
+    var pct=markups[item.id]!=null?markups[item.id]:20;
+    var clientPrice=subPrice*(1+pct/100);
+    grandTotal+=clientPrice;
+    var unitKey=subData.units?subData.units[item.id]:null;
+    propItems.push({
+      id:item.id,
+      name:item.name,
+      zone:item.zone,
+      cat:item.cat||'',
+      qty:item.qty,
+      unit:item.unit,
+      pricingUnit:unitKey||item.pricingUnit||item.unit,
+      clientPrice:clientPrice
+    });
+  });
+  var prop={
+    items:propItems,
+    total:grandTotal,
+    publishedTs:Date.now(),
+    gcNote:'',
+    accepted:false
+  };
+  try{
+    localStorage.setItem(KEY_PROP, JSON.stringify(prop));
+    // Also save markups
+    localStorage.setItem(KEY_GC, JSON.stringify({markups:markups,ts:Date.now(),published:true}));
+    setSaveStateGc('saved','Published ✓');
+    var btn=$('btn-gc-publish');
+    if(btn){ btn.textContent='Proposal Published ✓'; btn.style.background='var(--ok)'; }
+  } catch(e){
+    alert('Error publishing proposal.');
+  }
+}
+
+// ── HOMEOWNER VIEW ────────────────────────────────────────────────────────
+function buildHwProposal(){
+  var block=$('hw-proposal-block');
+  if(!block) return;
+  if(!propData||!propData.items||!propData.items.length){
+    block.innerHTML='<div class="card"><div class="card-body"><div class="empty-state"><div class="empty-icon">⏳</div><div>Your proposal is being prepared. Check back soon.</div></div></div></div>';
+    return;
+  }
+  var html='';
+  var zones=['front','side','rear'];
+  var zoneLabels={front:'🌿 Front Yard',side:'🪨 Side Yards',rear:'🌳 Rear Yard'};
+  zones.forEach(function(zone){
+    var items=propData.items.filter(function(it){return it.zone===zone});
+    if(!items.length) return;
+    html+='<div class="prop-zone">';
+    html+='<div class="prop-zone-title">'+zoneLabels[zone]+'</div>';
+    html+='<div class="prop-items">';
+    items.forEach(function(it){
+      var unitLabel=it.pricingUnit?' / '+it.pricingUnit:'';
+      html+='<div class="prop-item">'
+        +'<div class="prop-item-name">'+it.name+'</div>'
+        +'<div class="prop-item-qty">'+fmtQty(it)+'</div>'
+        +'<div class="prop-item-price">'+fmt(it.clientPrice)+'<span class="prop-item-price-sub">'+unitLabel+'</span></div>'
+        +'</div>';
+    });
+    html+='</div></div>';
+  });
+  // Total
+  html+='<div class="card" style="margin-bottom:16px">';
+  html+='<div class="sum-row"><span class="sum-label">Proposal Total</span><span class="sum-val lime" style="font-size:18px;font-family:Bungee,sans-serif">'+fmt(propData.total)+'</span></div>';
+  html+='</div>';
+  block.innerHTML=html;
+  // Show accept or accepted
+  if(propData.accepted){
+    var accBlock=$('hw-accepted-block');
+    if(accBlock){
+      accBlock.style.display='';
+      var msg=$('hw-accepted-msg');
+      if(msg) msg.textContent='Proposal accepted by '+propData.acceptedBy+'. The team has been notified.';
+    }
+  } else {
+    var acceptBlock=$('hw-accept-block');
+    if(acceptBlock) acceptBlock.style.display='';
+  }
+}
+
+function hwAccept(){
+  var sig=$('hw-sig-name');
+  if(!sig||!sig.value.trim()){
+    alert('Please type your name to sign.');
+    return;
+  }
+  if(!propData) return;
+  propData.accepted=true;
+  propData.acceptedBy=sig.value.trim();
+  propData.acceptedTs=Date.now();
+  try{
+    localStorage.setItem(KEY_PROP, JSON.stringify(propData));
+    var acceptBlock=$('hw-accept-block');
+    if(acceptBlock) acceptBlock.style.display='none';
+    var accBlock=$('hw-accepted-block');
+    if(accBlock){
+      accBlock.style.display='';
+      var msg=$('hw-accepted-msg');
+      if(msg) msg.textContent='Proposal accepted by '+propData.acceptedBy+'. The team has been notified.';
+    }
+    // Also send to Formspree if available
+    var fs=SEED&&SEED.formspreeEndpoint;
+    if(fs){
+      fetch(fs,{
+        method:'POST',
+        headers:{'Content-Type':'application/json','Accept':'application/json'},
+        body:JSON.stringify({
+          project:SLUG,
+          acceptedBy:propData.acceptedBy,
+          total:propData.total,
+          ts:new Date().toISOString()
+        })
+      }).catch(function(){});
+    }
+  } catch(e){
+    alert('Error saving acceptance. Please try again.');
+  }
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────
+function init(){
+  var role = CG.role || 'sub';
+  // Normalize client/homeowner
+  if(role==='client') role='homeowner';
+
+  // Set sidebar project info from seed
+  if(SEED){
+    if($('sb-proj-name')) $('sb-proj-name').textContent=SEED.projectName||'Tramonto';
+    if($('sb-addr')) $('sb-addr').textContent=SEED.address||'';
+    if($('top-proj-name')) $('top-proj-name').textContent=SEED.projectName||'Tramonto';
+    if($('hw-ph-title')) $('hw-ph-title').textContent=SEED.projectName||'Tramonto';
+    if($('hw-ph-sub')) $('hw-ph-sub').textContent='Custom landscape proposal for '+((SEED.homeowner&&SEED.homeowner.name)||'homeowner');
+  }
+
+  // Set avatar initials
+  var user=CG.user||{};
+  var initials=(user.name||'').split(' ').map(function(w){return w[0]||''}).join('').toUpperCase().slice(0,2)||role[0].toUpperCase();
+  if($('top-avatar')) $('top-avatar').textContent=initials;
+
+  // Role logic
+  applyRole(role);
+  buildNav(role);
+
+  if(role==='sub'){
+    // Build sub tables
+    if(SEED){
+      buildSubTable('front','sub-front-body');
+      buildSubTable('side','sub-side-body');
+      buildSubTable('rear','sub-rear-body');
+    }
+    // Load from storage
+    subData=loadSubFromStorage();
+    hydrateSub(subData);
+    setSaveState('','');
+    showScreen('screen-sub-pricing');
+
+  } else if(role==='gc'){
+    // Load sub data (read-only for GC)
+    subData=loadSubFromStorage();
+    gcData=loadGcFromStorage();
+
+    // Show sub status
+    var statusBlock=$('gc-sub-status-block');
+    if(statusBlock){
+      if(subData&&subData.submitted){
+        statusBlock.innerHTML='<div class="notice ok"><span class="notice-icon">✅</span><span>Sub pricing received from '+(subData.supplier&&subData.supplier.company?subData.supplier.company:'subcontractor')+'.</span></div>';
+      } else if(subData&&Object.keys(subData.prices||{}).length>0){
+        statusBlock.innerHTML='<div class="notice warn"><span class="notice-icon">⏳</span><span>Sub has started entering pricing but has not submitted yet.</span></div>';
+      } else {
+        statusBlock.innerHTML='<div class="notice warn"><span class="notice-icon">⏳</span><span>Waiting for sub to submit pricing…</span></div>';
+      }
+    }
+
+    // Build markup rows
+    if(subData&&subData.prices&&Object.keys(subData.prices).length>0){
+      buildGcRows('front','gc-front-rows');
+      buildGcRows('side','gc-side-rows');
+      buildGcRows('rear','gc-rear-rows');
+      updateGcTotals();
+    }
+
+    setSaveStateGc('','');
+    showScreen('screen-gc-pricing');
+
+  } else if(role==='homeowner'||role==='client'){
+    // Load proposal (read-only)
+    try{ var raw=localStorage.getItem(KEY_PROP); propData=raw?JSON.parse(raw):null; }catch(e){}
+    buildHwProposal();
+    showScreen('screen-hw-proposal');
+
+  } else {
+    // Unknown role — show lockout
+    var lockMsg=$('lockout-msg');
+    if(lockMsg) lockMsg.textContent='Role "'+role+'" does not have access to this project view.';
+    showScreen('screen-lockout');
+  }
+}
+
+// Run after DOM ready
+if(document.readyState==='loading'){
+  document.addEventListener('DOMContentLoaded',init);
+} else {
+  init();
+}
+</script>
+</body>
+</html>

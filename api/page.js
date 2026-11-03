@@ -133,7 +133,18 @@ export default async function handler(req, res) {
     // the built-in demo pages have homeowner / GC / trade views only; a designer there gets the trade-level view (no pricing)
     const pageRole = meta.builtin && role === 'designer' ? 'trade' : role;
     const session = { user: publicUser(u), project, path: P, projectInfo: projInfo, role: pageRole, roleSlug: roleSlug(role), admin: !!u.admin, memberRole: mine, designer: role === 'designer' };
-    return send(res, inject(readPage(meta.builtin ? meta.page : 'workspace.html'), 'CG_SESSION', session));
+    let html = readPage(meta.builtin ? meta.page : 'workspace.html');
+    html = inject(html, 'CG_SESSION', session);
+    // inject seed JSON for builtin pages that ship a {page}-seed.json alongside
+    if (meta.builtin && meta.page) {
+      const seedName = meta.page.replace(/\.html$/, '-seed.json');
+      const seedPath = path.join(process.cwd(), 'api', '_pages', seedName);
+      try {
+        const seedRaw = cache[seedName] || (cache[seedName] = fs.readFileSync(seedPath, 'utf8'));
+        html = inject(html, 'SEED', JSON.parse(seedRaw));
+      } catch (_) { /* no seed file — SEED stays null */ }
+    }
+    return send(res, html);
   } catch (err) {
     return send(res, '<h1>Something went wrong</h1><p>' + String(err.message || err).replace(/</g, '&lt;').slice(0, 200) + '</p>', 500);
   }
