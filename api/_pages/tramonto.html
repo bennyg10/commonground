@@ -283,8 +283,10 @@ textarea,input,select{font-family:inherit}
 
   <!-- TOPBAR -->
   <div class="top">
-    <div class="top-mark"><span>CG</span></div>
-    <span class="top-name">CommonGround</span>
+    <a href="/dashboard" style="display:flex;align-items:center;gap:8px;text-decoration:none">
+      <div class="top-mark"><span>CG</span></div>
+      <span class="top-name">CommonGround</span>
+    </a>
     <span class="top-sep">·</span>
     <span class="top-proj" id="top-proj-name">Tramonto</span>
     <div class="top-pill"><span class="top-dot"></span><span id="top-pill-label">Landscape Bid</span></div>
@@ -531,6 +533,71 @@ textarea,input,select{font-family:inherit}
       </div>
 
       <!-- ═══════════════════════════════════════
+           GC INVITE TEAM VIEW
+           role-gate: gc only
+      ═══════════════════════════════════════ -->
+      <div class="screen" id="screen-gc-invite" data-role-gate="gc">
+        <div class="scrl">
+          <div class="ph">
+            <div class="ph-eyebrow">General Contractor</div>
+            <div class="ph-title">Invite Team</div>
+            <div class="ph-sub">Send each person their role-specific link. They set a password and land directly in their view.</div>
+          </div>
+
+          <!-- SUB INVITE -->
+          <div class="card" style="margin-bottom:16px">
+            <div class="card-head">
+              <span class="card-icon">🔧</span>
+              <span class="card-title">Subcontractor</span>
+              <span class="save-state" id="inv-sub-state" style="display:none"><span class="save-dot" style="background:var(--ok)"></span><span id="inv-sub-state-txt">Sent</span></span>
+            </div>
+            <div class="card-body" style="display:flex;flex-direction:column;gap:10px">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+                <div>
+                  <label class="field-label">Name</label>
+                  <input class="field-input" id="inv-sub-name" placeholder="e.g. Carlos Reyes" autocomplete="off">
+                </div>
+                <div>
+                  <label class="field-label">Email or phone</label>
+                  <input class="field-input" id="inv-sub-id" placeholder="email or mobile #" autocomplete="off">
+                </div>
+              </div>
+              <div id="inv-sub-msg" style="display:none;font-size:12px;padding:8px 10px;border-radius:6px"></div>
+              <button class="btn-submit" id="btn-inv-sub" onclick="sendInvite('sub')" style="max-width:200px">Send Sub Invite</button>
+            </div>
+          </div>
+
+          <!-- HOMEOWNER INVITE -->
+          <div class="card">
+            <div class="card-head">
+              <span class="card-icon">🏡</span>
+              <span class="card-title">Homeowner</span>
+              <span class="save-state" id="inv-hw-state" style="display:none"><span class="save-dot" style="background:var(--ok)"></span><span id="inv-hw-state-txt">Sent</span></span>
+            </div>
+            <div class="card-body" style="display:flex;flex-direction:column;gap:10px">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+                <div>
+                  <label class="field-label">Name</label>
+                  <input class="field-input" id="inv-hw-name" placeholder="e.g. Heather" autocomplete="off">
+                </div>
+                <div>
+                  <label class="field-label">Email or phone</label>
+                  <input class="field-input" id="inv-hw-id" placeholder="email or mobile #" autocomplete="off">
+                </div>
+              </div>
+              <div id="inv-hw-msg" style="display:none;font-size:12px;padding:8px 10px;border-radius:6px"></div>
+              <button class="btn-submit" id="btn-inv-hw" onclick="sendInvite('homeowner')" style="max-width:220px">Send Homeowner Invite</button>
+            </div>
+          </div>
+
+          <div class="notice info" style="margin-top:16px">
+            <span class="notice-icon">🔗</span>
+            <span>Each person gets a unique link. They set their own password and land directly in their role view — no admin setup needed.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════════
            HOMEOWNER VIEW — Proposal Review
            role-gate: homeowner/client only
       ═══════════════════════════════════════ -->
@@ -665,6 +732,7 @@ function buildNav(role){
   } else if(role==='gc'){
     items=[
       {icon:'📊',label:'Markups & Proposal',screen:'screen-gc-pricing'},
+      {icon:'✉️',label:'Invite Team',screen:'screen-gc-invite'},
     ];
   } else if(role==='homeowner'||role==='client'){
     items=[
@@ -966,6 +1034,67 @@ function gcPublishProposal(){
   } catch(e){
     alert('Error publishing proposal.');
   }
+}
+
+// ── GC INVITE TEAM ───────────────────────────────────────────────────────
+function sendInvite(role){
+  var isHw = role==='homeowner';
+  var nameEl = $(isHw?'inv-hw-name':'inv-sub-name');
+  var idEl   = $(isHw?'inv-hw-id':'inv-sub-id');
+  var msgEl  = $(isHw?'inv-hw-msg':'inv-sub-msg');
+  var btnEl  = $(isHw?'btn-inv-hw':'btn-inv-sub');
+  var stateEl= $(isHw?'inv-hw-state':'inv-sub-state');
+
+  var name = nameEl.value.trim();
+  var identifier = idEl.value.trim();
+  if(!name||!identifier){
+    msgEl.style.display='block';
+    msgEl.style.background='var(--dl15)';
+    msgEl.style.color='var(--del)';
+    msgEl.textContent='Please enter both a name and an email or phone number.';
+    return;
+  }
+
+  btnEl.disabled=true;
+  btnEl.textContent='Sending…';
+  msgEl.style.display='none';
+
+  // Map 'homeowner' → 'client' for the API (platform internal role name)
+  var apiRole = role==='homeowner'?'client':role;
+
+  fetch('/api/auth',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({action:'invite',project:SLUG,role:apiRole,name:name,identifier:identifier})
+  })
+  .then(function(r){return r.json();})
+  .then(function(d){
+    if(d.ok){
+      msgEl.style.display='block';
+      msgEl.style.background='var(--ok15)';
+      msgEl.style.color='var(--ok)';
+      msgEl.innerHTML='✅ Invite sent to <strong>'+name+'</strong>. They\'ll receive a link to set their password and access their view.';
+      stateEl.style.display='flex';
+      btnEl.textContent=isHw?'Resend Homeowner Invite':'Resend Sub Invite';
+      btnEl.disabled=false;
+    } else {
+      var errMap={forbidden:'Your account doesn\'t have permission to invite for this project.',bad_identifier:'Enter a valid email address or mobile number.',name_required:'Name is required.',bad_role:'Invalid role.'};
+      msgEl.style.display='block';
+      msgEl.style.background='var(--dl15)';
+      msgEl.style.color='var(--del)';
+      msgEl.textContent=errMap[d.error]||('Error: '+(d.error||'unknown'));
+      btnEl.disabled=false;
+      btnEl.textContent=isHw?'Send Homeowner Invite':'Send Sub Invite';
+    }
+  })
+  .catch(function(){
+    msgEl.style.display='block';
+    msgEl.style.background='var(--dl15)';
+    msgEl.style.color='var(--del)';
+    msgEl.textContent='Network error — please try again.';
+    btnEl.disabled=false;
+    btnEl.textContent=isHw?'Send Homeowner Invite':'Send Sub Invite';
+  });
 }
 
 // ── HOMEOWNER VIEW ────────────────────────────────────────────────────────
