@@ -3,14 +3,11 @@
 // GET  /tramonto-proposal  → HTML page
 // POST /tramonto-proposal  → record acceptance, email bmgordon10@gmail.com, return JSON
 import { readFileSync } from 'node:fs';
-import { join, dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { join } from 'node:path';
 import { sendEmail, emailLayout, emailReady, clean } from './_lib.js';
 
-const __dir = dirname(fileURLToPath(import.meta.url));
-
 function page() {
-  return readFileSync(join(__dir, '_pages', 'tramonto-proposal.html'), 'utf8');
+  return readFileSync(join(process.cwd(), 'api', '_pages', 'tramonto-proposal.html'), 'utf8');
 }
 
 const NOTIFY_EMAIL = 'bmgordon10@gmail.com';
