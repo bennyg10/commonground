@@ -10,7 +10,7 @@ function page() {
   return readFileSync(join(process.cwd(), 'api', '_pages', 'tramonto-proposal.html'), 'utf8');
 }
 
-const NOTIFY_EMAIL = 'commonground.helpme@gmail.com';
+const NOTIFY_EMAIL = 'bmgordon10@gmail.com';
 const PROJECT_NAME = 'Tramonto Landscape Proposal';
 
 export default async function handler(req, res) {
