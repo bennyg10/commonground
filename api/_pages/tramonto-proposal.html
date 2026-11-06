@@ -507,7 +507,7 @@ var propData={items:[
   ,{id:'gw-labor',       name:'Ground Works Labor',                    cat:'Ground Works', qty:1,unit:'ls',clientPrice:2000.00,
     desc:'Skilled labor for hardscape, irrigation, drainage, grading, and site work.',
     spec:'Full ground works crew'}
-  ,{id:'gw-proj-mgmt',   name:'Project Management & Site Coordination', cat:'Ground Works', qty:1,unit:'ls',clientPrice:3000.00,
+  ,{id:'gw-proj-mgmt',   name:'Project Management & Site Coordination', cat:'Site Finishing', qty:1,unit:'ls',clientPrice:3000.00,
     desc:'Scheduling, vendor coordination, material procurement, permit tracking, delivery logistics, and site supervision throughout the project.',
     spec:'End-to-end project oversight'}
 ]};
@@ -523,9 +523,9 @@ var workCats=[
   {id:'site-prep',     label:'Site Prep',     icon:'🚧',filterLabel:'Site Prep',
     groups:[{label:'Excavation & Grading',itemIds:['sp-excavation']}]},
   {id:'ground-works',  label:'Ground Works',  icon:'🪨',filterLabel:'Ground Works',
-    groups:[{label:'Foundation',itemIds:['gw-boulder']},{label:'Soil & Lawn',itemIds:['gw-soil','gw-sod']},{label:'Gravel & Drainage',itemIds:['gw-gravel','gw-drain']},{label:'Irrigation',itemIds:['gw-irrigation']},{label:'Labor & Services',itemIds:['gw-labor','gw-proj-mgmt']}]},
+    groups:[{label:'Foundation',itemIds:['gw-boulder']},{label:'Soil & Lawn',itemIds:['gw-soil','gw-sod']},{label:'Gravel & Drainage',itemIds:['gw-gravel','gw-drain']},{label:'Irrigation',itemIds:['gw-irrigation']},{label:'Labor & Services',itemIds:['gw-labor']}]},
   {id:'site-finishing',label:'Site Finishing',icon:'✨',filterLabel:'Site Finishing',
-    groups:[{label:'Precast Stepping Stone',itemIds:['sf-step']},{label:'Labor',itemIds:['sf-curb']}]}
+    groups:[{label:'Precast Stepping Stone',itemIds:['sf-step']},{label:'Labor',itemIds:['sf-curb']},{label:'Management',itemIds:['gw-proj-mgmt']}]}
 ];
 
 var itemMap={};
