@@ -33,7 +33,7 @@ export default async function handler(req, res) {
     if (emailReady()) {
       sendEmail({
         to: NOTIFY_EMAIL,
-        subject: `✅ Proposal Accepted — ${PROJECT_NAME}`,
+        subject: `✅ Project Approved! — ${PROJECT_NAME}`,
         html: emailLayout(
           PROJECT_NAME,
           `<p style="margin:0 0 14px"><strong>${escHtml(name)}</strong> has accepted and signed the ${PROJECT_NAME}.</p>
