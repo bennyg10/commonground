@@ -10,7 +10,7 @@ function page() {
   return readFileSync(join(process.cwd(), 'api', '_pages', 'tramonto-proposal.html'), 'utf8');
 }
 
-const NOTIFY_EMAIL = 'bmgordon10@gmail.com';
+const NOTIFY_EMAIL = 'commonground.helpme@gmail.com';
 const PROJECT_NAME = 'Tramonto Landscape Proposal';
 
 export default async function handler(req, res) {
@@ -29,7 +29,7 @@ export default async function handler(req, res) {
 
     const ts = new Date().toLocaleString('en-US', { timeZone: 'America/Los_Angeles', dateStyle: 'full', timeStyle: 'short' });
 
-    // Fire-and-forget email — don't block on failure
+    // Fire-and-forget email — log errors for debugging
     if (emailReady()) {
       sendEmail({
         to: NOTIFY_EMAIL,
@@ -42,7 +42,9 @@ export default async function handler(req, res) {
           `<p style="margin:0;font-size:12px">This notification was sent to ${NOTIFY_EMAIL} because you are the project owner.</p>`
         ),
         text: `${name} accepted the ${PROJECT_NAME}.\nSigned: ${ts} PT`,
-      }).catch(() => {});
+      }).catch((err) => { console.error('[tramonto] email error:', err); });
+    } else {
+      console.error('[tramonto] emailReady() false — RESEND_API_KEY or CG_NOTIFY_FROM not set');
     }
 
     return res.status(200).json({ ok: true, name, ts });
