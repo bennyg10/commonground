@@ -155,11 +155,21 @@ img{max-width:100%}
 .hw-cat-body.open{display:block}
 .hw-subcat-label{font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--sage);
   font-weight:600;padding:8px 16px 4px;background:var(--d2)}
-.hw-line{display:flex;align-items:center;gap:8px;padding:9px 16px;border-bottom:1px solid var(--w06)}
+/* Column header row */
+.hw-col-header{
+  display:grid;grid-template-columns:1fr auto;
+  padding:5px 16px 5px;background:var(--d2);border-bottom:1px solid var(--w08);
+  align-items:center;gap:16px}
+.hw-col-header-left{font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--sage);font-weight:600}
+.hw-col-header-right{font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--sage);font-weight:600;text-align:right}
+/* Line items — name + spec badge + price */
+.hw-line{display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--w06)}
 .hw-line:last-of-type{border-bottom:none}
-.hw-line-name{flex:1;font-size:12px;color:var(--ink);font-weight:500;min-width:0}
-.hw-line-qty{font-size:11px;color:var(--w30);min-width:72px;text-align:right}
-.hw-line-price{font-size:12px;font-weight:600;color:var(--lime);font-variant-numeric:tabular-nums;min-width:76px;text-align:right}
+.hw-line-main{flex:1;min-width:0}
+.hw-line-name{font-size:12px;color:var(--ink);font-weight:500;line-height:1.3}
+.hw-line-spec{font-size:10px;color:var(--w50);margin-top:1px}
+.hw-line-price{font-size:13px;font-weight:700;color:var(--lime);font-variant-numeric:tabular-nums;
+  white-space:nowrap;text-align:right;flex-shrink:0}
 .hw-cat-footer{display:flex;justify-content:space-between;align-items:center;
   padding:9px 16px;background:var(--l10);border-top:1px solid var(--l20)}
 .hw-cat-footer-label{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--lime);font-weight:600}
@@ -236,8 +246,8 @@ img{max-width:100%}
   .hw-toc{grid-template-columns:1fr}
   .concept-grid{grid-template-columns:1fr}
   .hw-hero{padding:24px 20px}.hw-hero-title{font-size:24px}.hw-hero-price-val{font-size:30px}
-  .hw-line{flex-wrap:wrap;gap:4px}
-  .hw-line-qty{min-width:auto;font-size:10px}.hw-line-price{min-width:auto}
+  .hw-line-name{font-size:11px}
+  .hw-line-price{font-size:12px}
   .hw-filter-btn{font-size:10px;padding:4px 9px}
   .pay-row{flex-wrap:wrap;gap:4px}.pay-amt{min-width:auto}
 }
@@ -634,14 +644,23 @@ function buildBreakdown(){
     var bodyHtml='';
     cat.groups.forEach(function(g){
       bodyHtml+='<div class="hw-subcat-label">'+g.label+'</div>';
+      bodyHtml+='<div class="hw-col-header">'
+        +'<span class="hw-col-header-left">Item</span>'
+        +'<span class="hw-col-header-right">Total</span>'
+        +'</div>';
       g.itemIds.forEach(function(id){
         var it=itemMap[id];
         if(!it) return;
         var t=lineTotal(it);
-        var qtyStr=it.unit==='ls'?'lump sum':(it.qty+' '+it.unit);
+        // Build the spec line: "Qty 3 · 5-gal" or "Lump sum"
+        var spec=it.unit==='ls'
+          ? 'Lump sum'
+          : 'Qty '+it.qty+' · '+it.unit;
         bodyHtml+='<div class="hw-line">'
-          +'<span class="hw-line-name">'+it.name+'</span>'
-          +'<span class="hw-line-qty">'+qtyStr+'</span>'
+          +'<div class="hw-line-main">'
+          +'<div class="hw-line-name">'+it.name+'</div>'
+          +'<div class="hw-line-spec">'+spec+'</div>'
+          +'</div>'
           +'<span class="hw-line-price">'+fmt(t)+'</span>'
           +'</div>';
       });
