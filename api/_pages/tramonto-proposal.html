@@ -167,6 +167,7 @@ img{max-width:100%}
 .hw-line:last-of-type{border-bottom:none}
 .hw-line-main{flex:1;min-width:0}
 .hw-line-name{font-size:12px;color:var(--ink);font-weight:500;line-height:1.3}
+.hw-line-desc{font-size:10px;color:var(--ink);opacity:.7;margin-top:2px;line-height:1.4}
 .hw-line-spec{font-size:10px;color:var(--w50);margin-top:1px}
 .hw-line-price{font-size:13px;font-weight:700;color:var(--lime);font-variant-numeric:tabular-nums;
   white-space:nowrap;text-align:right;flex-shrink:0}
@@ -490,15 +491,26 @@ var propData={items:[
   {id:'p-tuscan-rose',   name:'Tuscan Blue Rosemary',                  cat:'Plants', qty:2,  unit:'5-gal',    clientPrice:35.00},
   {id:'p-annuals',       name:'Shade Annuals (Seasonal)',              cat:'Plants', qty:1,  unit:'4-in pack',clientPrice:5.00},
   {id:'p-pot-tbd',       name:'Pottery Barn Sienna Outdoor Planter',  cat:'Plants', qty:1,  unit:'ls',       clientPrice:550.00, priceRange:[400,700]},
-  {id:'sp-excavation',   name:'Excavation, Soil Removal, Hauling & Grading',cat:'Site Prep',    qty:1,unit:'ls',clientPrice:7000.00},
-  {id:'gw-soil',         name:'Fresh Organic Soil Blend',              cat:'Ground Works', qty:1,unit:'ls',clientPrice:600.00},
-  {id:'gw-sod',          name:'Sod — Marathon II',                    cat:'Ground Works', qty:1,unit:'ls',clientPrice:750.00},
-  {id:'gw-gravel',       name:'Gravel',                                cat:'Ground Works', qty:1,unit:'ls',clientPrice:675.00},
-  {id:'gw-irrigation',   name:'Irrigation Valves (3-zone system)',     cat:'Ground Works', qty:1,unit:'ls',clientPrice:4500.00},
-  {id:'gw-drain',        name:'Drain Heads',                           cat:'Ground Works', qty:1,unit:'ls',clientPrice:240.00},
-  {id:'gw-boulder',      name:'Boulder',                               cat:'Ground Works', qty:1,unit:'ls',clientPrice:1000.00},
-  {id:'sf-step',         name:'Precast Stepping Stone',                cat:'Site Finishing',qty:7,unit:'ea',clientPrice:30.00},
-  {id:'sf-curb',         name:'Stone Curb Edge',                       cat:'Site Finishing',qty:1,unit:'ls',clientPrice:1800.00}
+  {id:'sp-excavation',   name:'Excavation, Soil Removal, Hauling & Grading',cat:'Site Prep',    qty:1,unit:'ls',clientPrice:7000.00,
+    desc:'Remove 6" of soil from the backyard, both side yards, and front yard, graded for proper drainage.',
+    spec:'Est. 4 loads @ $1,200/load · Labor: 2–3 man crew'},
+  {id:'gw-soil',         name:'Fresh Organic Soil Blend',              cat:'Ground Works', qty:1,unit:'ls',clientPrice:600.00,
+    desc:'Perfect blend of organic soil with fundamental nutrients to most effectively feed your plants. Regular amendments recommended — we provide a monthly plant service that includes our supercharged organic plant food.',
+    spec:'$60/yard · est. 10 yards'},
+  {id:'gw-sod',          name:'Sod — Marathon II',                    cat:'Ground Works', qty:1,unit:'ls',clientPrice:750.00,
+    spec:'$1.20/sqft · 500 sqft'},
+  {id:'gw-gravel',       name:'Gravel',                                cat:'Ground Works', qty:1,unit:'ls',clientPrice:675.00,
+    spec:'480 sqft · ~5 cu yd @ $135/cu yd (3" coverage)'},
+  {id:'gw-irrigation',   name:'Irrigation Valves',                     cat:'Ground Works', qty:3,unit:'ea',clientPrice:1500.00,
+    desc:'Each valve includes hose bibs, Y-strainer, back flow preventer, pressure reducer, drip line and pop-ups.'},
+  {id:'gw-drain',        name:'Drain Heads',                           cat:'Ground Works', qty:3,unit:'ea',clientPrice:80.00},
+  {id:'gw-boulder',      name:'Boulder',                               cat:'Ground Works', qty:1,unit:'ls',clientPrice:1000.00,
+    spec:'Per stone · $500–$2,000 range'},
+  {id:'sf-step',         name:'Precast Stepping Stone',                cat:'Site Finishing',qty:7,unit:'ea',clientPrice:30.00,
+    spec:'$30 ea · 7 pavers'},
+  {id:'sf-curb',         name:'Stone Curb Edge',                       cat:'Site Finishing',qty:1,unit:'ls',clientPrice:1800.00,
+    desc:'Includes cement base for proper foundation, rebar, the bricks themselves, and labor.',
+    spec:'$37.50/ft · 48 linear ft'}
 ]};
 
 var PLANT_IDS=['p-agave-bb','p-russian-sage','p-fescue','p-iceberg-rose','p-dwarf-olive',
@@ -652,14 +664,16 @@ function buildBreakdown(){
         var it=itemMap[id];
         if(!it) return;
         var t=lineTotal(it);
-        // Build the spec line: "Qty 3 · 5-gal" or "Lump sum"
-        var spec=it.unit==='ls'
-          ? 'Lump sum'
-          : 'Qty '+it.qty+' · '+it.unit;
+        // Build the spec/desc lines
+        var specLine=it.spec
+          ? it.spec
+          : (it.unit==='ls' ? 'Lump sum' : 'Qty '+it.qty+' · '+it.unit);
+        var descLine=it.desc||'';
         bodyHtml+='<div class="hw-line">'
           +'<div class="hw-line-main">'
           +'<div class="hw-line-name">'+it.name+'</div>'
-          +'<div class="hw-line-spec">'+spec+'</div>'
+          +(descLine?'<div class="hw-line-desc">'+descLine+'</div>':'')
+          +'<div class="hw-line-spec">'+specLine+'</div>'
           +'</div>'
           +'<span class="hw-line-price">'+fmt(t)+'</span>'
           +'</div>';
