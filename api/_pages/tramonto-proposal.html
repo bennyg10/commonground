@@ -506,13 +506,25 @@ var propData={items:[
   {id:'gw-irrigation',   name:'Irrigation Valves',                     cat:'Ground Works', qty:3,unit:'ea',clientPrice:1500.00,
     desc:'Each valve includes hose bibs, Y-strainer, back flow preventer, pressure reducer, drip line and pop-ups.'},
   {id:'gw-drain',        name:'Drain Heads',                           cat:'Ground Works', qty:3,unit:'ea',clientPrice:80.00},
-  {id:'gw-boulder',      name:'Boulder',                               cat:'Ground Works', qty:1,unit:'ls',clientPrice:1000.00,
-    spec:'Per stone · $500–$2,000 range'},
+  {id:'gw-boulder',      name:'Boulder',                               cat:'Ground Works', qty:1,unit:'ea',clientPrice:1000.00,
+    spec:'$500–$2,000 range per stone'},
   {id:'sf-step',         name:'Precast Stepping Stone',                cat:'Site Finishing',qty:7,unit:'ea',clientPrice:30.00,
     spec:'$30 ea · 7 pavers'},
   {id:'sf-curb',         name:'Stone Curb Edge',                       cat:'Site Finishing',qty:1,unit:'ls',clientPrice:1800.00,
     desc:'Includes cement base for proper foundation, rebar, the bricks themselves, and labor.',
     spec:'$37.50/ft · 48 linear ft'}
+  ,{id:'pl-labor',       name:'Installation Labor',                    cat:'Planting',     qty:1,unit:'ls',clientPrice:2000.00,
+    desc:'Planting crew labor for all plant installation, soil amendment, and cleanup.',
+    spec:'Full installation crew'}
+  ,{id:'gw-labor',       name:'Ground Works Labor',                    cat:'Ground Works', qty:1,unit:'ls',clientPrice:2000.00,
+    desc:'Skilled labor for hardscape, irrigation, drainage, grading, and site work.',
+    spec:'Full ground works crew'}
+  ,{id:'gw-proj-mgmt',   name:'Project Management & Coordination',     cat:'Ground Works', qty:1,unit:'ls',clientPrice:2000.00,
+    desc:'Scheduling, vendor coordination, procurement, permit tracking, and site supervision throughout the project.',
+    spec:'End-to-end project oversight'}
+  ,{id:'gw-procurement', name:'Material Procurement & Logistics',      cat:'Ground Works', qty:1,unit:'ls',clientPrice:1000.00,
+    desc:'Sourcing specialty materials, coordinating deliveries, and staging all materials on site.',
+    spec:'Materials sourcing & delivery'}
 ]};
 
 var PLANT_IDS=['p-agave-bb','p-russian-sage','p-fescue','p-iceberg-rose','p-dwarf-olive',
@@ -522,11 +534,11 @@ var PLANT_BUFFER=0.15;
 
 var workCats=[
   {id:'planting',      label:'Planting',      icon:'🌿',filterLabel:'Planting',
-    groups:[{label:'Plants & Materials',itemIds:['p-agave-bb','p-russian-sage','p-fescue','p-iceberg-rose','p-dwarf-olive','p-heather','p-rosemary','p-lemon','p-podo','p-camellia','p-foxtail-fern','p-sweet-box','p-sedge','p-climbing-rose','p-tuscan-rose','p-annuals','p-pot-tbd']}]},
+    groups:[{label:'Plants & Materials',itemIds:['p-agave-bb','p-russian-sage','p-fescue','p-iceberg-rose','p-dwarf-olive','p-heather','p-rosemary','p-lemon','p-podo','p-camellia','p-foxtail-fern','p-sweet-box','p-sedge','p-climbing-rose','p-tuscan-rose','p-annuals','p-pot-tbd']},{label:'Labor',itemIds:['pl-labor']}]},
   {id:'site-prep',     label:'Site Prep',     icon:'🚧',filterLabel:'Site Prep',
     groups:[{label:'Excavation & Grading',itemIds:['sp-excavation']}]},
   {id:'ground-works',  label:'Ground Works',  icon:'🪨',filterLabel:'Ground Works',
-    groups:[{label:'Foundation',itemIds:['gw-boulder']},{label:'Soil & Lawn',itemIds:['gw-soil','gw-sod']},{label:'Gravel & Drainage',itemIds:['gw-gravel','gw-drain']},{label:'Irrigation',itemIds:['gw-irrigation']}]},
+    groups:[{label:'Foundation',itemIds:['gw-boulder']},{label:'Soil & Lawn',itemIds:['gw-soil','gw-sod']},{label:'Gravel & Drainage',itemIds:['gw-gravel','gw-drain']},{label:'Irrigation',itemIds:['gw-irrigation']},{label:'Labor & Services',itemIds:['gw-labor','gw-proj-mgmt','gw-procurement']}]},
   {id:'site-finishing',label:'Site Finishing',icon:'✨',filterLabel:'Site Finishing',
     groups:[{label:'Precast Stepping Stone',itemIds:['sf-step']},{label:'Labor',itemIds:['sf-curb']}]}
 ];
