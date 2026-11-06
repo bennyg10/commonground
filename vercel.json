@@ -15,6 +15,9 @@
     "api/admin.js": {
       "includeFiles": "api/_pages/**",
       "maxDuration": 60
+    },
+    "api/tramonto-proposal.js": {
+      "includeFiles": "api/_pages/**"
     }
   },
   "redirects": [
@@ -61,6 +64,10 @@
     {
       "source": "/2560coolidge/:role(homeowner|client|gc|trade|designer|bid)",
       "destination": "/api/page?project=coolidge&role=:role"
+    },
+    {
+      "source": "/tramonto-proposal",
+      "destination": "/api/tramonto-proposal"
     },
     {
       "source": "/tramonto",

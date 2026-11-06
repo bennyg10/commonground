@@ -1,0 +1,750 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Tramonto Landscape Proposal — CommonGround</title>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+/* ── TOKENS ── */
+:root{
+  --lime:#5C6B2A;--sage:#7A7260;
+  --ink:#2A2518;--parch:#F5F0E8;
+  --d1:#EDE8DC;--d2:#F5F0E8;--d3:#FFFFFF;--d4:#EDE8DC;--d5:#E2DCCF;
+  --l10:rgba(92,107,42,.10);--l20:rgba(92,107,42,.20);--l30:rgba(92,107,42,.30);
+  --w04:rgba(42,37,24,.04);--w06:rgba(42,37,24,.06);--w08:rgba(42,37,24,.08);
+  --w15:rgba(42,37,24,.15);--w30:rgba(42,37,24,.30);--w50:rgba(42,37,24,.50);--w70:rgba(42,37,24,.70);
+  --del:#C0392B;--dl15:rgba(192,57,43,.12);--dl30:rgba(192,57,43,.25);
+  --amb:#8A6914;--am15:rgba(138,105,20,.12);--am30:rgba(138,105,20,.25);
+  --ok:#2E7D4F;--ok15:rgba(46,125,79,.12);--ok30:rgba(46,125,79,.25);
+  --r:9px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:var(--d1);color:var(--ink);font-family:"DM Sans",sans-serif;font-size:14px;line-height:1.6}
+body{min-height:100vh;background:var(--d1)}
+button{font-family:inherit;cursor:pointer}
+img{max-width:100%}
+
+/* ── TOP HEADER ── */
+.site-header{
+  background:var(--d3);border-bottom:1px solid var(--w08);
+  padding:12px max(20px,env(safe-area-inset-left,0px));
+  display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:100;
+}
+.site-mark{width:28px;height:28px;background:var(--lime);border-radius:6px;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.site-mark span{font-family:"Bungee",sans-serif;font-size:11px;color:var(--parch)}
+.site-name{font-family:"Bungee",sans-serif;font-size:14px;color:var(--lime);letter-spacing:-.01em}
+.site-sep{color:var(--w30);margin:0 2px}
+.site-proj{font-size:11px;color:var(--w50);font-weight:500}
+.site-pill{margin-left:auto;display:flex;align-items:center;gap:5px;font-size:11px;
+  color:var(--w50);background:var(--w04);border:1px solid var(--w08);border-radius:20px;padding:3px 10px}
+.site-dot{width:5px;height:5px;border-radius:50%;background:var(--ok);animation:blink 2s ease infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* ── CONTENT WRAPPER ── */
+.page{
+  max-width:720px;margin:0 auto;
+  padding:28px max(20px,env(safe-area-inset-left,0px)) 60px;
+}
+
+/* ── CARDS ── */
+.card{background:var(--d3);border:1px solid var(--w08);border-radius:var(--r);overflow:hidden;margin-bottom:16px}
+.card-head{padding:12px 14px;border-bottom:1px solid var(--w08);display:flex;align-items:center;gap:8px}
+.card-icon{font-size:16px;width:18px;text-align:center;flex-shrink:0}
+.card-title{font-size:12px;font-weight:600;color:var(--ink)}
+.card-sub{font-size:10px;color:var(--w50);margin-left:auto}
+.card-body{padding:14px}
+
+/* ── HERO ── */
+.hw-hero{
+  background:linear-gradient(135deg,#2A3A10 0%,#3D4F1A 50%,#2A3A10 100%);
+  border-radius:var(--r);padding:36px 32px;margin-bottom:20px;position:relative;overflow:hidden
+}
+.hw-hero::before{content:"";position:absolute;inset:0;
+  background:radial-gradient(ellipse at 80% 50%,rgba(255,255,255,.04) 0%,transparent 60%)}
+.hw-hero-eyebrow{font-size:9px;text-transform:uppercase;letter-spacing:.18em;
+  color:rgba(200,210,160,.7);margin-bottom:10px;font-weight:600}
+.hw-hero-title{font-family:"Bungee",sans-serif;font-size:30px;color:#F5F0E8;
+  letter-spacing:-.04em;line-height:1.1;margin-bottom:6px;text-wrap:balance}
+.hw-hero-sub{font-size:12px;color:rgba(245,240,232,.5);line-height:1.6}
+.hw-hero-price{margin-top:20px;padding-top:16px;border-top:1px solid rgba(255,255,255,.12)}
+.hw-hero-price-label{font-size:9px;text-transform:uppercase;letter-spacing:.12em;
+  color:rgba(200,210,160,.5);margin-bottom:4px}
+.hw-hero-price-val{font-family:"Bungee",sans-serif;font-size:38px;color:#A8BE4A;
+  letter-spacing:-.05em;line-height:1}
+.hw-hero-price-note{font-size:10px;color:rgba(245,240,232,.35);margin-top:4px}
+
+/* ── TOC ── */
+.hw-toc{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
+.hw-toc-item{background:var(--d3);border:1px solid var(--w08);border-radius:var(--r);
+  padding:14px;text-align:center;cursor:pointer;transition:all .15s}
+.hw-toc-item:hover{border-color:var(--l20);background:var(--l10)}
+.hw-toc-num{font-family:"Bungee",sans-serif;font-size:11px;color:var(--lime);
+  letter-spacing:-.01em;margin-bottom:2px}
+.hw-toc-label{font-size:11px;font-weight:500;color:var(--w70)}
+
+/* ── SECTION HEAD ── */
+.hw-section-head{display:flex;align-items:center;gap:10px;margin:24px 0 12px}
+.hw-section-num{font-family:"Bungee",sans-serif;font-size:11px;color:rgba(92,107,42,.5);min-width:28px}
+.hw-section-title{font-family:"Bungee",sans-serif;font-size:16px;color:var(--ink);letter-spacing:-.02em}
+.hw-divider{height:1px;background:var(--w08);margin:20px 0}
+
+/* ── CONCEPT CARDS ── */
+.concept-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:20px}
+.concept-card{background:var(--d3);border:1px solid var(--w08);border-radius:var(--r);overflow:hidden}
+.concept-card-img{height:90px;display:flex;align-items:center;justify-content:center;font-size:40px}
+.concept-card-body{padding:12px 14px}
+.concept-card-title{font-size:12px;font-weight:600;color:var(--ink);margin-bottom:3px}
+.concept-card-desc{font-size:10px;color:var(--w50);line-height:1.5}
+
+/* ── TAGS ── */
+.tag{background:var(--l10);border:1px solid var(--l20);border-radius:20px;
+  padding:4px 11px;font-size:10px;color:var(--lime);font-weight:500}
+.tag-amber{background:var(--am15);border:1px solid var(--am30);border-radius:20px;
+  padding:4px 11px;font-size:10px;color:var(--amb);font-weight:500}
+
+/* ── ZONE CARDS ── */
+.zone-pres{background:var(--d3);border:1px solid var(--w08);border-radius:var(--r);overflow:hidden;margin-bottom:14px}
+.zone-pres-header{padding:16px 18px 12px;border-bottom:1px solid var(--w08)}
+.zone-pres-num{font-size:9px;text-transform:uppercase;letter-spacing:.12em;
+  color:var(--lime);margin-bottom:3px;font-weight:600}
+.zone-pres-title{font-family:"Bungee",sans-serif;font-size:16px;color:var(--parch);letter-spacing:-.02em}
+.zone-pres-items{display:flex;flex-wrap:wrap;gap:6px;padding:12px 18px;border-bottom:1px solid var(--w08)}
+.zone-pres-footer{display:flex;align-items:center;justify-content:space-between;padding:12px 18px}
+.zone-pres-footer-label{font-size:11px;color:var(--w30);text-transform:uppercase;
+  letter-spacing:.06em;font-weight:600}
+.zone-pres-footer-price{font-family:"Bungee",sans-serif;font-size:18px;color:var(--lime);letter-spacing:-.03em}
+
+/* ── INVESTMENT BARS ── */
+.invest-row{display:flex;align-items:center;gap:12px;padding:11px 16px;border-bottom:1px solid var(--w08)}
+.invest-row:last-child{border-bottom:none}
+.invest-bar-wrap{flex:1;height:4px;background:var(--w08);border-radius:2px;overflow:hidden}
+.invest-bar{height:100%;background:var(--lime);border-radius:2px}
+.invest-label{font-size:12px;color:var(--w70);min-width:90px}
+.invest-val{font-size:12px;font-weight:600;color:var(--ink);min-width:90px;
+  text-align:right;font-variant-numeric:tabular-nums}
+.zone-subtotal{display:flex;align-items:center;justify-content:space-between;
+  padding:10px 14px;background:var(--d1);border-top:1px solid var(--w08)}
+.zone-subtotal-label{font-size:11px;color:var(--w50);font-weight:600;text-transform:uppercase;letter-spacing:.06em}
+.zone-subtotal-val{font-size:13px;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums}
+
+/* ── BREAKDOWN (filterable) ── */
+.hw-filter-section-label{font-size:10px;text-transform:uppercase;letter-spacing:.1em;
+  color:var(--sage);font-weight:600;margin-bottom:8px;margin-top:4px}
+.hw-filter-bar{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px}
+.hw-filter-btn{font-size:11px;font-weight:600;padding:5px 12px;border-radius:20px;
+  border:1px solid var(--w15);background:transparent;color:var(--w50);
+  cursor:pointer;transition:all .15s;white-space:nowrap}
+.hw-filter-btn:hover{border-color:var(--w30);color:var(--w70)}
+.hw-filter-btn.active{background:var(--sage);border-color:var(--sage);color:#fff}
+.hw-cat-block{background:var(--d3);border:1px solid var(--w08);border-radius:var(--r);overflow:hidden;margin-bottom:10px}
+.hw-cat-block.hidden{display:none}
+.hw-cat-header{display:flex;align-items:center;gap:10px;padding:12px 16px;
+  cursor:pointer;user-select:none;border-bottom:1px solid transparent;transition:background .15s}
+.hw-cat-header:hover{background:var(--w04)}
+.hw-cat-header.open{border-bottom-color:var(--w08)}
+.hw-cat-icon{font-size:17px;flex-shrink:0;width:20px;text-align:center}
+.hw-cat-name{font-family:"Bungee",sans-serif;font-size:13px;color:var(--ink);letter-spacing:-.01em;flex:1}
+.hw-cat-count{font-size:10px;color:var(--w30);background:var(--w06);border-radius:20px;padding:2px 8px;font-weight:600}
+.hw-cat-total{font-size:14px;font-weight:700;color:var(--lime);font-family:"Bungee",sans-serif;
+  letter-spacing:-.02em;font-variant-numeric:tabular-nums;margin-left:8px}
+.hw-cat-chevron{font-size:10px;color:var(--w30);transition:transform .2s;flex-shrink:0}
+.hw-cat-chevron.open{transform:rotate(180deg)}
+.hw-cat-body{display:none;border-top:1px solid var(--w06)}
+.hw-cat-body.open{display:block}
+.hw-subcat-label{font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--sage);
+  font-weight:600;padding:8px 16px 4px;background:var(--d2)}
+.hw-line{display:flex;align-items:center;gap:8px;padding:9px 16px;border-bottom:1px solid var(--w06)}
+.hw-line:last-of-type{border-bottom:none}
+.hw-line-name{flex:1;font-size:12px;color:var(--ink);font-weight:500;min-width:0}
+.hw-line-qty{font-size:11px;color:var(--w30);min-width:72px;text-align:right}
+.hw-line-price{font-size:12px;font-weight:600;color:var(--lime);font-variant-numeric:tabular-nums;min-width:76px;text-align:right}
+.hw-cat-footer{display:flex;justify-content:space-between;align-items:center;
+  padding:9px 16px;background:var(--l10);border-top:1px solid var(--l20)}
+.hw-cat-footer-label{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--lime);font-weight:600}
+.hw-cat-footer-val{font-size:13px;font-weight:700;color:var(--lime);font-variant-numeric:tabular-nums;
+  font-family:"Bungee",sans-serif;letter-spacing:-.02em}
+.hw-plant-note{font-size:10px;color:var(--sage);font-style:italic;padding:6px 16px 8px;
+  background:var(--d2);border-top:1px solid var(--w06)}
+.hw-breakdown-total{display:flex;justify-content:space-between;align-items:center;
+  background:var(--d3);border:1px solid var(--w08);border-radius:var(--r);
+  padding:14px 18px;margin-bottom:16px}
+.hw-breakdown-total-label{font-size:13px;font-weight:700;color:var(--ink)}
+.hw-breakdown-total-val{font-size:22px;font-weight:700;color:var(--lime);
+  font-family:"Bungee",sans-serif;letter-spacing:-.04em;font-variant-numeric:tabular-nums}
+.hw-breakdown-total-note{font-size:10px;color:var(--sage);margin-top:2px}
+
+/* ── EXCLUSIONS ── */
+.excl-block{background:var(--dl15);border:1px solid var(--dl30);border-radius:var(--r);padding:12px 14px;margin-bottom:16px}
+.excl-label{font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--del);margin-bottom:6px;font-weight:600}
+.excl-item{font-size:11px;color:var(--w70);padding:2px 0 2px 14px;position:relative;line-height:1.5}
+.excl-item::before{content:"✕";position:absolute;left:0;color:var(--del);font-size:9px;top:3px}
+
+/* ── PAYMENT ── */
+.pay-row{display:flex;align-items:center;gap:12px;padding:10px 14px;border-bottom:1px solid var(--w08)}
+.pay-row:last-child{border-bottom:none}
+.pay-num{width:22px;height:22px;border-radius:50%;background:var(--l10);border:1px solid var(--l20);
+  display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:var(--lime);flex-shrink:0}
+.pay-label{flex:1;font-size:12px;color:var(--w70)}
+.pay-pct{font-size:13px;font-weight:700;color:var(--ink)}
+.pay-amt{font-size:11px;color:var(--lime);min-width:90px;text-align:right;font-variant-numeric:tabular-nums}
+
+/* ── TIMELINE ── */
+.tl-row{display:flex;gap:14px;padding:10px 0;position:relative}
+.tl-row:not(:last-child)::after{content:"";position:absolute;left:12px;top:30px;
+  bottom:-10px;width:1px;background:var(--w08)}
+.tl-dot{width:24px;height:24px;border-radius:50%;background:var(--l10);border:2px solid var(--l20);
+  display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;
+  color:var(--lime);flex-shrink:0;position:relative;z-index:1}
+.tl-content{flex:1;padding-top:2px}
+.tl-title{font-size:12px;font-weight:600;color:var(--ink)}
+.tl-sub{font-size:11px;color:var(--w50);margin-top:1px}
+
+/* ── WARRANTY ── */
+.warranty-row{display:flex;align-items:flex-start;gap:10px;padding:8px 14px;border-bottom:1px solid var(--w08)}
+.warranty-row:last-child{border-bottom:none}
+.warranty-icon{font-size:14px;flex-shrink:0;margin-top:1px}
+.warranty-label{font-size:12px;font-weight:500;color:var(--ink)}
+.warranty-period{font-size:11px;color:var(--ok);margin-top:1px}
+
+/* ── ACCEPT FORM ── */
+.accept-sig{background:var(--d4);border:1px solid var(--w08);border-radius:var(--r);padding:14px;margin-bottom:14px}
+.accept-sig label{font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--sage);display:block;margin-bottom:4px}
+.accept-sig input{background:none;border:none;border-bottom:1px solid var(--w15);
+  color:var(--ink);font-size:14px;width:100%;outline:none;padding:4px 0;
+  font-family:"DM Sans",sans-serif}
+.accept-sig input::placeholder{color:var(--w30)}
+.btn-accept{background:var(--ok);color:var(--parch);font-weight:700;font-size:13px;
+  border:none;border-radius:var(--r);padding:12px 24px;width:100%;transition:opacity .15s;margin-top:4px;
+  font-family:"DM Sans",sans-serif}
+.btn-accept:hover{opacity:.85}
+.btn-accept:disabled{opacity:.5;cursor:not-allowed}
+
+/* ── SPINNER ── */
+@keyframes spin{to{transform:rotate(360deg)}}
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.3);
+  border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px}
+
+/* ── FOOTER ── */
+.site-footer{margin-top:40px;padding-top:20px;border-top:1px solid var(--w08);
+  font-size:10px;color:var(--w30);line-height:1.6;text-align:center}
+.site-footer strong{color:var(--w50)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:600px){
+  .hw-toc{grid-template-columns:1fr}
+  .concept-grid{grid-template-columns:1fr}
+  .hw-hero{padding:24px 20px}.hw-hero-title{font-size:24px}.hw-hero-price-val{font-size:30px}
+  .hw-line{flex-wrap:wrap;gap:4px}
+  .hw-line-qty{min-width:auto;font-size:10px}.hw-line-price{min-width:auto}
+  .hw-filter-btn{font-size:10px;padding:4px 9px}
+  .pay-row{flex-wrap:wrap;gap:4px}.pay-amt{min-width:auto}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="site-header">
+  <div class="site-mark"><span>CG</span></div>
+  <span class="site-name">CommonGround</span>
+  <span class="site-sep">·</span>
+  <span class="site-proj">Tramonto</span>
+  <div class="site-pill"><span class="site-dot"></span><span>Landscape Proposal</span></div>
+</header>
+
+<!-- MAIN CONTENT -->
+<main class="page">
+
+  <!-- HERO -->
+  <div class="hw-hero">
+    <div class="hw-hero-eyebrow">Prepared by Trujillo Construction · November 5, 2026</div>
+    <div class="hw-hero-title">Your Landscape<br>Vision, Built.</div>
+    <div class="hw-hero-sub">Mediterranean Coastal · Lush &amp; Layered · Private Retreat<br>Full property transformation across 3 zones</div>
+    <div class="hw-hero-price">
+      <div class="hw-hero-price-label">Total Investment</div>
+      <div class="hw-hero-price-val" id="hw-grand-total">—</div>
+      <div class="hw-hero-price-note">Includes 15% plant material buffer · Valid 30 days · Materials subject to market pricing</div>
+    </div>
+  </div>
+
+  <!-- TOC -->
+  <div class="hw-toc">
+    <div class="hw-toc-item" onclick="document.getElementById('hw-s1').scrollIntoView({behavior:'smooth'})">
+      <div class="hw-toc-num">I</div><div class="hw-toc-label">Design Concept</div>
+    </div>
+    <div class="hw-toc-item" onclick="document.getElementById('hw-s2').scrollIntoView({behavior:'smooth'})">
+      <div class="hw-toc-num">II</div><div class="hw-toc-label">Scope &amp; Cost</div>
+    </div>
+    <div class="hw-toc-item" onclick="document.getElementById('hw-s3').scrollIntoView({behavior:'smooth'})">
+      <div class="hw-toc-num">III</div><div class="hw-toc-label">Accept &amp; Sign</div>
+    </div>
+  </div>
+
+  <!-- SECTION I: DESIGN CONCEPT -->
+  <div id="hw-s1" class="hw-section-head">
+    <span class="hw-section-num">I</span>
+    <span class="hw-section-title">Design Concept</span>
+  </div>
+
+  <div class="concept-grid">
+    <div class="concept-card">
+      <div class="concept-card-img" style="background:linear-gradient(135deg,#2A3A10,#3D5020)">🌿</div>
+      <div class="concept-card-body">
+        <div class="concept-card-title">Mediterranean Coastal</div>
+        <div class="concept-card-desc">Lush, layered plantings inspired by coastal hillsides — soft textures, cool greens, and fragrant herbs throughout.</div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-card-img" style="background:linear-gradient(135deg,#8A6914,#B08020)">🌸</div>
+      <div class="concept-card-body">
+        <div class="concept-card-title">Year-Round Color</div>
+        <div class="concept-card-desc">Iceberg Roses, Heather, and seasonal annuals deliver continuous bloom through every season.</div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-card-img" style="background:linear-gradient(135deg,#1A3030,#2A4040)">🏡</div>
+      <div class="concept-card-body">
+        <div class="concept-card-title">Private Retreat</div>
+        <div class="concept-card-desc">Dense rear plantings of Podocarpus and Climbing Roses create a secluded, resort-like backyard oasis.</div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-card-img" style="background:linear-gradient(135deg,#2E4A18,#3A5A20)">🌱</div>
+      <div class="concept-card-body">
+        <div class="concept-card-title">Low Water, High Impact</div>
+        <div class="concept-card-desc">Russian Sage, Rosemary, and Fescue bring drama while thriving in the local climate with minimal irrigation.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:20px">
+    <div class="card-head"><span class="card-icon">🌿</span><span class="card-title">Plant Palette</span><span class="card-sub">Selected for this property</span></div>
+    <div class="card-body">
+      <div style="display:flex;flex-wrap:wrap;gap:7px">
+        <span class="tag">Foxtail Agave "Blue Boy"</span>
+        <span class="tag">Lacey Blue Russian Sage</span>
+        <span class="tag">Elijah Blue Fescue</span>
+        <span class="tag">Iceberg Rose (shrub)</span>
+        <span class="tag">Little Ollie® Dwarf Olive</span>
+        <span class="tag">Itsy Bitsy White Heather</span>
+        <span class="tag">Coast Rosemary</span>
+        <span class="tag">Improved Meyer Lemon</span>
+        <span class="tag">Podocarpus</span>
+        <span class="tag">Camellia "Nuccio's Gem"</span>
+        <span class="tag">Foxtail Fern</span>
+        <span class="tag">Fragrant Sweet Box</span>
+        <span class="tag">Grassland Sedge</span>
+        <span class="tag">Iceberg Climbing Rose</span>
+        <span class="tag">Tuscan Blue Rosemary</span>
+        <span class="tag">Shade Annuals (Seasonal)</span>
+        <span class="tag">Pottery Barn Sienna Outdoor Planter</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:20px">
+    <div class="card-head"><span class="card-icon">🪨</span><span class="card-title">Hardscape Elements</span></div>
+    <div class="card-body">
+      <div style="display:flex;flex-wrap:wrap;gap:7px">
+        <span class="tag-amber">Excavation &amp; Grading</span>
+        <span class="tag-amber">Fresh Organic Soil Blend</span>
+        <span class="tag-amber">Marathon II Sod</span>
+        <span class="tag-amber">Gravel</span>
+        <span class="tag-amber">3-Zone Irrigation System</span>
+        <span class="tag-amber">Drain Heads</span>
+        <span class="tag-amber">Precast Stepping Stone</span>
+        <span class="tag-amber">Stone Curb Edge</span>
+        <span class="tag-amber">Boulder</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION II: SCOPE & COST -->
+  <div class="hw-divider"></div>
+  <div id="hw-s2" class="hw-section-head">
+    <span class="hw-section-num">II</span>
+    <span class="hw-section-title">Scope &amp; Cost</span>
+  </div>
+
+  <div id="hw-zones-block"></div>
+
+  <div class="hw-divider" style="margin:8px 0 16px"></div>
+  <div class="hw-filter-section-label">Cost breakdown by work type</div>
+  <div class="hw-filter-bar" id="hw-filter-bar"></div>
+  <div id="hw-breakdown-block"></div>
+
+  <div class="excl-block" style="margin-bottom:20px">
+    <div class="excl-label">Not Included in This Proposal</div>
+    <div class="excl-item">Permits, plans, or inspections of any kind</div>
+    <div class="excl-item">Electrical, landscape lighting, or low-voltage wiring</div>
+    <div class="excl-item">Ongoing maintenance after installation</div>
+    <div class="excl-item">Unforeseen subsurface conditions (quoted separately if encountered)</div>
+  </div>
+
+  <!-- INVESTMENT & SCHEDULE -->
+  <div class="card" style="margin-bottom:14px">
+    <div class="card-head"><span class="card-icon">💰</span><span class="card-title">Investment Breakdown</span></div>
+    <div id="hw-invest-rows"></div>
+    <div class="zone-subtotal">
+      <span class="zone-subtotal-label">Total Investment</span>
+      <span class="zone-subtotal-val" id="hw-invest-total">—</span>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:14px">
+    <div class="card-head"><span class="card-icon">📅</span><span class="card-title">Payment Schedule</span></div>
+    <div class="pay-row"><div class="pay-num">1</div><div class="pay-label">Initial deposit — due 1 week before start</div><div class="pay-pct">20%</div><div class="pay-amt" id="pay-1">—</div></div>
+    <div class="pay-row"><div class="pay-num">2</div><div class="pay-label">Progress — site prep &amp; demo complete</div><div class="pay-pct">30%</div><div class="pay-amt" id="pay-2">—</div></div>
+    <div class="pay-row"><div class="pay-num">3</div><div class="pay-label">Progress — plants &amp; hardscape installed</div><div class="pay-pct">30%</div><div class="pay-amt" id="pay-3">—</div></div>
+    <div class="pay-row"><div class="pay-num">4</div><div class="pay-label">Final balance — walkthrough &amp; sign-off</div><div class="pay-pct">20%</div><div class="pay-amt" id="pay-4">—</div></div>
+  </div>
+
+  <div class="card" style="margin-bottom:14px">
+    <div class="card-head"><span class="card-icon">🗓</span><span class="card-title">Estimated Timeline</span></div>
+    <div style="padding:14px 16px">
+      <div class="tl-row"><div class="tl-dot">1</div><div class="tl-content"><div class="tl-title">Pre-Construction</div><div class="tl-sub">Site walk, material ordering, crew scheduling · 1 week</div></div></div>
+      <div class="tl-row"><div class="tl-dot">2</div><div class="tl-content"><div class="tl-title">Demo &amp; Site Prep</div><div class="tl-sub">Removal, grading, layout · 3–4 days</div></div></div>
+      <div class="tl-row"><div class="tl-dot">3</div><div class="tl-content"><div class="tl-title">Hardscape Installation</div><div class="tl-sub">Curbing, gravel, edging, boulders · 3–5 days</div></div></div>
+      <div class="tl-row"><div class="tl-dot">4</div><div class="tl-content"><div class="tl-title">Planting &amp; Irrigation</div><div class="tl-sub">All plants, drip system, timer setup · 2–3 days</div></div></div>
+      <div class="tl-row"><div class="tl-dot" style="background:var(--ok15);border-color:var(--ok30);color:var(--ok)">✓</div><div class="tl-content"><div class="tl-title">Final Walkthrough</div><div class="tl-sub">Client walk, punch list, care instructions</div></div></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:14px">
+    <div class="card-head"><span class="card-icon">🛡️</span><span class="card-title">Warranties</span></div>
+    <div class="warranty-row"><span class="warranty-icon">💧</span><div><div class="warranty-label">Drip Irrigation — parts &amp; labor</div><div class="warranty-period">1 year from completion</div></div></div>
+    <div class="warranty-row"><span class="warranty-icon">🌱</span><div><div class="warranty-label">Ground cover, shrubs &amp; vines</div><div class="warranty-period">90 days with active maintenance contract</div></div></div>
+    <div class="warranty-row"><span class="warranty-icon">🌳</span><div><div class="warranty-label">Trees &amp; large specimens (5 gal+)</div><div class="warranty-period">1 year with active maintenance contract</div></div></div>
+  </div>
+
+  <!-- SECTION III: ACCEPT -->
+  <div class="hw-divider"></div>
+  <div id="hw-s3" class="hw-section-head">
+    <span class="hw-section-num">III</span>
+    <span class="hw-section-title">Accept &amp; Sign</span>
+  </div>
+
+  <div id="hw-accept-block">
+    <div class="card" style="margin-bottom:20px">
+      <div class="card-head"><span class="card-icon">✍️</span><span class="card-title">Accept &amp; Approve Proposal</span></div>
+      <div class="card-body">
+        <div style="font-size:11px;color:var(--w50);margin-bottom:14px;line-height:1.6">By signing below you agree to the scope, payment schedule, and terms outlined in this proposal. This does not commit you to a start date.</div>
+        <div class="accept-sig">
+          <label>Your Name (electronic signature)</label>
+          <input type="text" id="hw-sig-name" placeholder="Type your full legal name to sign" autocomplete="name">
+        </div>
+        <div id="accept-error" style="display:none;color:var(--del);font-size:11px;margin-bottom:8px"></div>
+        <button class="btn-accept" id="btn-accept" onclick="hwAccept()">Accept &amp; Approve Proposal</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="hw-accepted-block" style="display:none">
+    <div class="card" style="margin-bottom:20px;border-color:var(--ok30)">
+      <div class="card-head" style="background:var(--ok15)">
+        <span class="card-icon">✅</span>
+        <span class="card-title" style="color:var(--ok)">Proposal Accepted</span>
+      </div>
+      <div class="card-body">
+        <div style="font-size:12px;color:var(--w70);line-height:1.6">Thank you, <strong id="accepted-name"></strong>! Your proposal has been accepted and Trujillo Construction has been notified. They'll reach out within 48 hours to confirm your project start date.</div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <strong>Tramonto Landscape Proposal</strong> · Prepared by Trujillo Construction via CommonGround<br>
+    Valid 30 days from issue date · Material costs subject to market pricing
+  </footer>
+
+</main>
+
+<script>
+// ── PROPOSAL DATA (homeowner-visible clientPrice only) ──
+var propData={items:[
+  {id:'p-agave-bb',      name:'Foxtail Agave "Blue Boy"',              cat:'Plants', qty:3,  unit:'5-gal',    clientPrice:35.00},
+  {id:'p-russian-sage',  name:'Lacey Blue Russian Sage',               cat:'Plants', qty:6,  unit:'1-gal',    clientPrice:10.00},
+  {id:'p-fescue',        name:'Elijah Blue Fescue',                    cat:'Plants', qty:9,  unit:'1-gal',    clientPrice:10.00},
+  {id:'p-iceberg-rose',  name:'Iceberg Rose (shrub)',                  cat:'Plants', qty:3,  unit:'5-gal',    clientPrice:75.00},
+  {id:'p-dwarf-olive',   name:'Little Ollie® Dwarf Olive',             cat:'Plants', qty:2,  unit:'5-gal',    clientPrice:90.00},
+  {id:'p-heather',       name:'Itsy Bitsy White Heather',              cat:'Plants', qty:12, unit:'1-gal',    clientPrice:12.00},
+  {id:'p-rosemary',      name:'Coast Rosemary',                        cat:'Plants', qty:2,  unit:'5-gal',    clientPrice:35.00},
+  {id:'p-lemon',         name:'Improved Meyer Lemon',                  cat:'Plants', qty:1,  unit:'15-gal',   clientPrice:180.00},
+  {id:'p-podo',          name:'Podocarpus',                            cat:'Plants', qty:1,  unit:'15-gal',   clientPrice:250.00},
+  {id:'p-camellia',      name:'Camellia "Nuccio\'s Gem"',              cat:'Plants', qty:3,  unit:'5-gal',    clientPrice:70.00},
+  {id:'p-foxtail-fern',  name:'Foxtail Fern',                         cat:'Plants', qty:6,  unit:'5-gal',    clientPrice:30.00},
+  {id:'p-sweet-box',     name:'Fragrant Sweet Box',                    cat:'Plants', qty:6,  unit:'1-gal',    clientPrice:20.00},
+  {id:'p-sedge',         name:'Grassland Sedge',                       cat:'Plants', qty:12, unit:'1-gal',    clientPrice:20.00},
+  {id:'p-climbing-rose', name:'Iceberg Climbing Rose',                 cat:'Plants', qty:2,  unit:'5-gal',    clientPrice:70.00},
+  {id:'p-tuscan-rose',   name:'Tuscan Blue Rosemary',                  cat:'Plants', qty:2,  unit:'5-gal',    clientPrice:35.00},
+  {id:'p-annuals',       name:'Shade Annuals (Seasonal)',              cat:'Plants', qty:1,  unit:'4-in pack',clientPrice:5.00},
+  {id:'p-pot-tbd',       name:'Pottery Barn Sienna Outdoor Planter',  cat:'Plants', qty:1,  unit:'ls',       clientPrice:550.00, priceRange:[400,700]},
+  {id:'sp-excavation',   name:'Excavation, Soil Removal, Hauling & Grading',cat:'Site Prep',    qty:1,unit:'ls',clientPrice:7000.00},
+  {id:'gw-soil',         name:'Fresh Organic Soil Blend',              cat:'Ground Works', qty:1,unit:'ls',clientPrice:600.00},
+  {id:'gw-sod',          name:'Sod — Marathon II',                    cat:'Ground Works', qty:1,unit:'ls',clientPrice:750.00},
+  {id:'gw-gravel',       name:'Gravel',                                cat:'Ground Works', qty:1,unit:'ls',clientPrice:675.00},
+  {id:'gw-irrigation',   name:'Irrigation Valves (3-zone system)',     cat:'Ground Works', qty:1,unit:'ls',clientPrice:4500.00},
+  {id:'gw-drain',        name:'Drain Heads',                           cat:'Ground Works', qty:1,unit:'ls',clientPrice:240.00},
+  {id:'gw-boulder',      name:'Boulder',                               cat:'Ground Works', qty:1,unit:'ls',clientPrice:1000.00},
+  {id:'sf-step',         name:'Precast Stepping Stone',                cat:'Site Finishing',qty:7,unit:'ea',clientPrice:30.00},
+  {id:'sf-curb',         name:'Stone Curb Edge',                       cat:'Site Finishing',qty:1,unit:'ls',clientPrice:1800.00}
+]};
+
+var PLANT_IDS=['p-agave-bb','p-russian-sage','p-fescue','p-iceberg-rose','p-dwarf-olive',
+  'p-heather','p-rosemary','p-lemon','p-podo','p-camellia','p-foxtail-fern',
+  'p-sweet-box','p-sedge','p-climbing-rose','p-tuscan-rose','p-annuals','p-pot-tbd'];
+var PLANT_BUFFER=0.15;
+
+var workCats=[
+  {id:'planting',      label:'Planting',      icon:'🌿',filterLabel:'Planting',
+    groups:[{label:'Plants & Materials',itemIds:['p-agave-bb','p-russian-sage','p-fescue','p-iceberg-rose','p-dwarf-olive','p-heather','p-rosemary','p-lemon','p-podo','p-camellia','p-foxtail-fern','p-sweet-box','p-sedge','p-climbing-rose','p-tuscan-rose','p-annuals','p-pot-tbd']}]},
+  {id:'site-prep',     label:'Site Prep',     icon:'🚧',filterLabel:'Site Prep',
+    groups:[{label:'Excavation & Grading',itemIds:['sp-excavation']}]},
+  {id:'ground-works',  label:'Ground Works',  icon:'🪨',filterLabel:'Ground Works',
+    groups:[{label:'Foundation',itemIds:['gw-boulder']},{label:'Soil & Lawn',itemIds:['gw-soil','gw-sod']},{label:'Gravel & Drainage',itemIds:['gw-gravel','gw-drain']},{label:'Irrigation',itemIds:['gw-irrigation']}]},
+  {id:'site-finishing',label:'Site Finishing',icon:'✨',filterLabel:'Site Finishing',
+    groups:[{label:'Precast Stepping Stone',itemIds:['sf-step']},{label:'Labor',itemIds:['sf-curb']}]}
+];
+
+var itemMap={};
+propData.items.forEach(function(it){itemMap[it.id]=it;});
+
+function $i(id){return document.getElementById(id);}
+function fmt(n){return'$'+Math.round(n).toLocaleString();}
+function fmtRange(lo,hi){return Math.round(lo)===Math.round(hi)?fmt(lo):fmt(lo)+' – '+fmt(hi);}
+function lineTotal(it){return it.clientPrice*(it.qty||1);}
+function isPlant(it){return PLANT_IDS.indexOf(it.id)!==-1;}
+
+function calcTotals(){
+  var plantBase=0,nonPlant=0;
+  propData.items.forEach(function(it){
+    var t=lineTotal(it);
+    if(isPlant(it)) plantBase+=t; else nonPlant+=t;
+  });
+  return{plantBase:plantBase,nonPlant:nonPlant,
+    grandLow:nonPlant+plantBase,grandHigh:nonPlant+plantBase*(1+PLANT_BUFFER)};
+}
+
+var hwActiveFilter='all';
+
+function buildZoneCards(){
+  var totals=calcTotals();
+  var el=$i('hw-grand-total');
+  if(el) el.textContent=fmtRange(totals.grandLow,totals.grandHigh);
+
+  var zonesMeta=[
+    {label:'Planting',    icon:'🌿',bg:'linear-gradient(135deg,#2A3A10,#3D5020)',items:PLANT_IDS},
+    {label:'Site Works',  icon:'🚧',bg:'linear-gradient(135deg,#8A6914,#A07820)',items:['sp-excavation','gw-boulder','gw-soil','gw-sod','gw-gravel','gw-drain','gw-irrigation']},
+    {label:'Site Finish', icon:'✨',bg:'linear-gradient(135deg,#1A3030,#2A4040)',items:['sf-step','sf-curb']}
+  ];
+  var zoneTotals={};
+  zonesMeta.forEach(function(z){
+    var t=0;
+    z.items.forEach(function(id){var it=itemMap[id];if(it) t+=lineTotal(it);});
+    zoneTotals[z.label]=t;
+  });
+  var zb=$i('hw-zones-block');
+  if(zb){
+    var html='';
+    zonesMeta.forEach(function(z,i){
+      var items=z.items.filter(function(id){return !!itemMap[id];});
+      var tags=items.map(function(id){var it=itemMap[id];return'<span class="tag" style="font-size:10px">'+it.name+'</span>';}).join('');
+      var t=zoneTotals[z.label];
+      html+='<div class="zone-pres">'
+        +'<div class="zone-pres-header" style="background:'+z.bg+'">'
+        +'<div class="zone-pres-num" style="color:rgba(255,255,255,.5)">Category '+(i+1)+'</div>'
+        +'<div class="zone-pres-title">'+z.label+'</div>'
+        +'</div>'
+        +'<div class="zone-pres-items">'+tags+'</div>'
+        +'<div class="zone-pres-footer">'
+        +'<span class="zone-pres-footer-label">Subtotal</span>'
+        +'<span class="zone-pres-footer-price">'+fmt(t)+(z.label==='Planting'?' – '+fmt(t*(1+PLANT_BUFFER)):'')+'</span>'
+        +'</div></div>';
+    });
+    zb.innerHTML=html;
+  }
+
+  var ir=$i('hw-invest-rows');
+  if(ir){
+    var cats=[
+      {label:'🌿 Planting',   val:totals.plantBase, hiVal:totals.plantBase*(1+PLANT_BUFFER)},
+      {label:'🚧 Site Works', val:totals.nonPlant-zoneTotals['Site Finish']},
+      {label:'✨ Site Finish', val:zoneTotals['Site Finish']}
+    ];
+    var maxVal=Math.max.apply(null,cats.map(function(c){return c.hiVal||c.val;}));
+    var ihtml='';
+    cats.forEach(function(c){
+      var dv=c.hiVal?fmtRange(c.val,c.hiVal):fmt(c.val);
+      var bw=maxVal>0?Math.round((c.hiVal||c.val)/maxVal*100):0;
+      ihtml+='<div class="invest-row">'
+        +'<span class="invest-label">'+c.label+'</span>'
+        +'<div class="invest-bar-wrap"><div class="invest-bar" style="width:'+bw+'%"></div></div>'
+        +'<span class="invest-val">'+dv+'</span>'
+        +'</div>';
+    });
+    ir.innerHTML=ihtml;
+  }
+  var itEl=$i('hw-invest-total');
+  if(itEl) itEl.textContent=fmtRange(totals.grandLow,totals.grandHigh);
+  [0.2,0.3,0.3,0.2].forEach(function(p,i){
+    var el=$i('pay-'+(i+1));
+    if(el) el.textContent=fmtRange(totals.grandLow*p,totals.grandHigh*p);
+  });
+}
+
+function buildFilterBar(){
+  var bar=$i('hw-filter-bar'); if(!bar) return;
+  bar.innerHTML='';
+  ['all','Planting','Site Prep','Ground Works','Site Finishing'].forEach(function(f){
+    var btn=document.createElement('button');
+    btn.className='hw-filter-btn'+(f===hwActiveFilter?' active':'');
+    btn.textContent=f==='all'?'All':f;
+    btn.dataset.cat=f;
+    btn.onclick=function(){
+      hwActiveFilter=f;
+      document.querySelectorAll('.hw-filter-btn').forEach(function(b){
+        b.classList.toggle('active',b.dataset.cat===f);
+      });
+      filterBreakdown();
+    };
+    bar.appendChild(btn);
+  });
+}
+
+function buildBreakdown(){
+  var block=$i('hw-breakdown-block'); if(!block) return;
+  var totals=calcTotals();
+  var html='';
+  workCats.forEach(function(cat){
+    var catPlantBase=0,catNonPlant=0,totalItems=0;
+    cat.groups.forEach(function(g){
+      g.itemIds.forEach(function(id){
+        var it=itemMap[id];
+        if(it){
+          if(isPlant(it)) catPlantBase+=lineTotal(it);
+          else catNonPlant+=lineTotal(it);
+          totalItems++;
+        }
+      });
+    });
+    var catLow=catNonPlant+catPlantBase;
+    var catHigh=catNonPlant+catPlantBase*(1+PLANT_BUFFER);
+
+    var bodyHtml='';
+    cat.groups.forEach(function(g){
+      bodyHtml+='<div class="hw-subcat-label">'+g.label+'</div>';
+      g.itemIds.forEach(function(id){
+        var it=itemMap[id];
+        if(!it) return;
+        var t=lineTotal(it);
+        var qtyStr=it.unit==='ls'?'lump sum':(it.qty+' '+it.unit);
+        bodyHtml+='<div class="hw-line">'
+          +'<span class="hw-line-name">'+it.name+'</span>'
+          +'<span class="hw-line-qty">'+qtyStr+'</span>'
+          +'<span class="hw-line-price">'+fmt(t)+'</span>'
+          +'</div>';
+      });
+    });
+    if(cat.id==='planting'&&catPlantBase>0){
+      bodyHtml+='<div class="hw-plant-note">* Plant total shown at base cost. A 15% material buffer is included in the grand total range to account for plant availability and market variation.</div>';
+    }
+    bodyHtml+='<div class="hw-cat-footer">'
+      +'<span class="hw-cat-footer-label">'+cat.label+' Total</span>'
+      +'<span class="hw-cat-footer-val">'+fmtRange(catLow,catHigh)+'</span>'
+      +'</div>';
+
+    html+='<div class="hw-cat-block" id="cat-'+cat.id+'" data-filter="'+cat.filterLabel+'">';
+    html+='<div class="hw-cat-header" id="hdr-'+cat.id+'" onclick="toggleCat(\''+cat.id+'\')">';
+    html+='<span class="hw-cat-icon">'+cat.icon+'</span>';
+    html+='<span class="hw-cat-name">'+cat.label+'</span>';
+    html+='<span class="hw-cat-count">'+totalItems+' items</span>';
+    html+='<span class="hw-cat-total">'+fmtRange(catLow,catHigh)+'</span>';
+    html+='<span class="hw-cat-chevron" id="chev-'+cat.id+'">▼</span>';
+    html+='</div>';
+    html+='<div class="hw-cat-body" id="body-'+cat.id+'">'+bodyHtml+'</div>';
+    html+='</div>';
+  });
+
+  html+='<div class="hw-breakdown-total">'
+    +'<div>'
+    +'<div class="hw-breakdown-total-label">Total Investment</div>'
+    +'<div class="hw-breakdown-total-note">Range reflects 15% plant material buffer</div>'
+    +'</div>'
+    +'<span class="hw-breakdown-total-val">'+fmtRange(totals.grandLow,totals.grandHigh)+'</span>'
+    +'</div>';
+  block.innerHTML=html;
+}
+
+function toggleCat(id){
+  var body=$i('body-'+id);
+  var chev=$i('chev-'+id);
+  var hdr=$i('hdr-'+id);
+  if(!body) return;
+  var open=body.classList.contains('open');
+  body.classList.toggle('open',!open);
+  if(chev) chev.classList.toggle('open',!open);
+  if(hdr) hdr.classList.toggle('open',!open);
+}
+
+function filterBreakdown(){
+  document.querySelectorAll('.hw-cat-block').forEach(function(el){
+    var show=hwActiveFilter==='all'||hwActiveFilter===el.dataset.filter;
+    el.classList.toggle('hidden',!show);
+  });
+}
+
+// ── ACCEPT ──
+function hwAccept(){
+  var sig=$i('hw-sig-name');
+  var errEl=$i('accept-error');
+  if(!sig) return;
+  var name=sig.value.trim();
+  if(!name){
+    sig.style.borderBottomColor='#C0392B';
+    if(errEl){errEl.textContent='Please type your full name to sign.';errEl.style.display='block';}
+    return;
+  }
+  sig.style.borderBottomColor='';
+  if(errEl) errEl.style.display='none';
+
+  var btn=$i('btn-accept');
+  if(btn){btn.disabled=true;btn.innerHTML='<span class="spinner"></span>Submitting…';}
+
+  fetch('/api/tramonto-proposal',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({name:name})
+  })
+  .then(function(r){return r.json();})
+  .then(function(data){
+    if(data.ok){
+      var nameEl=$i('accepted-name');
+      if(nameEl) nameEl.textContent=name;
+      $i('hw-accept-block').style.display='none';
+      $i('hw-accepted-block').style.display='block';
+      $i('hw-s3').scrollIntoView({behavior:'smooth'});
+    } else {
+      if(btn){btn.disabled=false;btn.textContent='Accept & Approve Proposal';}
+      if(errEl){errEl.textContent=data.error||'Something went wrong. Please try again.';errEl.style.display='block';}
+    }
+  })
+  .catch(function(){
+    if(btn){btn.disabled=false;btn.textContent='Accept & Approve Proposal';}
+    if(errEl){errEl.textContent='Network error. Please check your connection and try again.';errEl.style.display='block';}
+  });
+}
+
+// Enter key submits
+document.addEventListener('DOMContentLoaded',function(){
+  var input=$i('hw-sig-name');
+  if(input) input.addEventListener('keydown',function(e){if(e.key==='Enter') hwAccept();});
+});
+
+// ── INIT ──
+buildZoneCards();
+buildFilterBar();
+buildBreakdown();
+</script>
+</body>
+</html>
