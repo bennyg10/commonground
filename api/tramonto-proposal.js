@@ -29,25 +29,33 @@ export default async function handler(req, res) {
 
     const ts = new Date().toLocaleString('en-US', { timeZone: 'America/Los_Angeles', dateStyle: 'full', timeStyle: 'short' });
 
-    // Fire-and-forget email — log errors for debugging
+    // Send email and return result for debugging
+    let emailResult = { skipped: true };
     if (emailReady()) {
-      sendEmail({
-        to: NOTIFY_EMAIL,
-        subject: `✅ Project Approved! — ${PROJECT_NAME}`,
-        html: emailLayout(
-          PROJECT_NAME,
-          `<p style="margin:0 0 14px"><strong>${escHtml(name)}</strong> has accepted and signed the ${PROJECT_NAME}.</p>
-           <p style="margin:0 0 14px;font-size:13px;color:#9BA5A3">Signed: ${escHtml(ts)} PT</p>`,
-          null,
-          `<p style="margin:0;font-size:12px">This notification was sent to ${NOTIFY_EMAIL} because you are the project owner.</p>`
-        ),
-        text: `${name} accepted the ${PROJECT_NAME}.\nSigned: ${ts} PT`,
-      }).catch((err) => { console.error('[tramonto] email error:', err); });
+      try {
+        emailResult = await sendEmail({
+          to: NOTIFY_EMAIL,
+          subject: `✅ Project Approved! — ${PROJECT_NAME}`,
+          html: emailLayout(
+            PROJECT_NAME,
+            `<p style="margin:0 0 14px"><strong>${escHtml(name)}</strong> has accepted and signed the ${PROJECT_NAME}.</p>
+             <p style="margin:0 0 14px;font-size:13px;color:#9BA5A3">Signed: ${escHtml(ts)} PT</p>`,
+            null,
+            `<p style="margin:0;font-size:12px">This notification was sent to ${NOTIFY_EMAIL} because you are the project owner.</p>`
+          ),
+          text: `${name} accepted the ${PROJECT_NAME}.\nSigned: ${ts} PT`,
+        });
+        console.log('[tramonto] email result:', JSON.stringify(emailResult));
+      } catch (err) {
+        console.error('[tramonto] email error:', err);
+        emailResult = { error: String(err) };
+      }
     } else {
       console.error('[tramonto] emailReady() false — RESEND_API_KEY or CG_NOTIFY_FROM not set');
+      emailResult = { skipped: true, reason: 'emailReady false' };
     }
 
-    return res.status(200).json({ ok: true, name, ts });
+    return res.status(200).json({ ok: true, name, ts, _email: emailResult });
   }
 
   res.setHeader('Allow', 'GET, HEAD, POST');
