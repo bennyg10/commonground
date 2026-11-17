@@ -481,15 +481,18 @@ var propData={items:[
   {id:'p-tuscan-rose',   name:'Tuscan Blue Rosemary',                  cat:'Plants', qty:2,  unit:'5-gal',    clientPrice:35.00},
   {id:'p-annuals',       name:'Shade Annuals (Seasonal)',              cat:'Plants', qty:1,  unit:'4-in pack',clientPrice:5.00},
   {id:'p-pot-tbd',       name:'Pottery Barn Sienna Outdoor Planter',  cat:'Plants', qty:1,  unit:'ls',       clientPrice:550.00, priceRange:[400,700]},
-  {id:'sp-haul-front',   name:'Soil Removal & Hauling — Front Yard',   cat:'Site Prep', qty:2,unit:'ea',clientPrice:1200.00,
+  {id:'sp-haul-front',   name:'Soil Removal & Hauling — Front Yard',   cat:'Site Prep', qty:1,unit:'ea',clientPrice:1200.00,
     desc:'Remove and haul 6" of existing soil from the front yard. Additional loads billed at $1,200/load if conditions require.',
-    spec:'$1,200/load · 2 loads · Additional loads: $1,200 ea'},
-  {id:'sp-haul-back',    name:'Soil Removal & Hauling — Backyard',      cat:'Site Prep', qty:2,unit:'ea',clientPrice:1200.00,
+    spec:'$1,200/load · 1 load · Additional loads: $1,200 ea'},
+  {id:'sp-haul-back',    name:'Soil Removal & Hauling — Backyard',      cat:'Site Prep', qty:1,unit:'ea',clientPrice:1200.00,
     desc:'Remove and haul 6" of existing soil from the backyard. Additional loads billed at $1,200/load if conditions require.',
-    spec:'$1,200/load · 2 loads · Additional loads: $1,200 ea'},
+    spec:'$1,200/load · 1 load · Additional loads: $1,200 ea'},
+  {id:'sp-side-ph2',     name:'Side Yard Excavation & Soil Removal',    cat:'Site Prep', qty:1,unit:'ls',clientPrice:0.00,
+    desc:'Side yard excavation and soil removal held for Phase 2 development.',
+    spec:'Phase 2 — not included in current scope'},
   {id:'sp-grading',      name:'Grading & Site Preparation Labor',       cat:'Site Prep', qty:1,unit:'ls',clientPrice:1500.00,
-    desc:'2–3 man crew for full property grading, slope correction, and drainage prep across front yard, backyard, and side yards.',
-    spec:'Full grading crew · Front, back & side yards'},
+    desc:'2–3 man crew for full property grading, slope correction, and drainage prep across front yard and backyard.',
+    spec:'Full grading crew · Front & back yards'},
   {id:'gw-soil',         name:'Fresh Organic Soil Blend',              cat:'Ground Works', qty:1,unit:'ls',clientPrice:600.00,
     desc:'Perfect blend of organic soil with fundamental nutrients to most effectively feed your plants. Regular amendments recommended — we provide a monthly plant service that includes our supercharged organic plant food.',
     spec:'$60/yard · est. 10 yards'},
@@ -502,8 +505,6 @@ var propData={items:[
     spec:'$1,500/ea · 3 valves'},
   {id:'gw-drain',        name:'Drain Heads',                           cat:'Ground Works', qty:3,unit:'ea',clientPrice:80.00,
     spec:'$80/ea · 3 drain heads'},
-  {id:'gw-boulder',      name:'Boulder',                               cat:'Ground Works', qty:1,unit:'ea',clientPrice:1000.00,
-    spec:'$500–$2,000 range per stone'},
   {id:'sf-step',         name:'Precast Stepping Stone',                cat:'Site Finishing',qty:7,unit:'ea',clientPrice:30.00,
     spec:'$30 ea · 7 pavers'},
   {id:'sf-curb',         name:'Stone Curb Edge',                       cat:'Site Finishing',qty:1,unit:'ls',clientPrice:1800.00,
@@ -529,9 +530,9 @@ var workCats=[
   {id:'planting',      label:'Planting',      icon:'🌿',filterLabel:'Planting',
     groups:[{label:'Plants & Materials',itemIds:['p-agave-bb','p-russian-sage','p-fescue','p-iceberg-rose','p-dwarf-olive','p-heather','p-rosemary','p-lemon','p-podo','p-camellia','p-foxtail-fern','p-sweet-box','p-sedge','p-climbing-rose','p-tuscan-rose','p-annuals','p-pot-tbd']},{label:'Labor',itemIds:['pl-labor']}]},
   {id:'site-prep',     label:'Site Prep',     icon:'🚧',filterLabel:'Site Prep',
-    groups:[{label:'Excavation & Grading',itemIds:['sp-haul-front','sp-haul-back','sp-grading']}]},
+    groups:[{label:'Excavation & Grading',itemIds:['sp-haul-front','sp-haul-back','sp-grading']},{label:'Phase 2',itemIds:['sp-side-ph2']}]},
   {id:'ground-works',  label:'Ground Works',  icon:'🪨',filterLabel:'Ground Works',
-    groups:[{label:'Foundation',itemIds:['gw-boulder']},{label:'Soil & Lawn',itemIds:['gw-soil','gw-sod']},{label:'Gravel & Drainage',itemIds:['gw-gravel','gw-drain']},{label:'Irrigation',itemIds:['gw-irrigation']},{label:'Labor & Services',itemIds:['gw-labor']}]},
+    groups:[{label:'Soil & Lawn',itemIds:['gw-soil','gw-sod']},{label:'Gravel & Drainage',itemIds:['gw-gravel','gw-drain']},{label:'Irrigation',itemIds:['gw-irrigation']},{label:'Labor & Services',itemIds:['gw-labor']}]},
   {id:'site-finishing',label:'Site Finishing',icon:'✨',filterLabel:'Site Finishing',
     groups:[{label:'Precast Stepping Stone',itemIds:['sf-step']},{label:'Labor',itemIds:['sf-curb']},{label:'Management',itemIds:['gw-proj-mgmt']}]}
 ];
@@ -564,7 +565,7 @@ function buildZoneCards(){
 
   var zonesMeta=[
     {label:'Planting',    icon:'🌿',bg:'linear-gradient(135deg,#2A3A10,#3D5020)',items:PLANT_IDS},
-    {label:'Site Works',  icon:'🚧',bg:'linear-gradient(135deg,#8A6914,#A07820)',items:['sp-haul-front','sp-haul-back','sp-grading','gw-boulder','gw-soil','gw-sod','gw-gravel','gw-drain','gw-irrigation']},
+    {label:'Site Works',  icon:'🚧',bg:'linear-gradient(135deg,#8A6914,#A07820)',items:['sp-haul-front','sp-haul-back','sp-grading','sp-side-ph2','gw-soil','gw-sod','gw-gravel','gw-drain','gw-irrigation']},
     {label:'Site Finish', icon:'✨',bg:'linear-gradient(135deg,#1A3030,#2A4040)',items:['sf-step','sf-curb']}
   ];
   var zoneTotals={};
