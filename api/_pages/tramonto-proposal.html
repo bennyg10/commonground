@@ -529,7 +529,7 @@ var workCats=[
   {id:'planting',      label:'Planting',      icon:'🌿',filterLabel:'Planting',
     groups:[{label:'Plants & Materials',itemIds:['p-agave-bb','p-russian-sage','p-fescue','p-iceberg-rose','p-dwarf-olive','p-heather','p-rosemary','p-lemon','p-podo','p-camellia','p-foxtail-fern','p-sweet-box','p-sedge','p-climbing-rose','p-tuscan-rose','p-annuals','p-pot-tbd']},{label:'Labor',itemIds:['pl-labor']}]},
   {id:'site-prep',     label:'Site Prep',     icon:'🚧',filterLabel:'Site Prep',
-    groups:[{label:'Excavation & Grading',itemIds:['sp-excavation']}]},
+    groups:[{label:'Excavation & Grading',itemIds:['sp-haul-front','sp-haul-back','sp-grading']}]},
   {id:'ground-works',  label:'Ground Works',  icon:'🪨',filterLabel:'Ground Works',
     groups:[{label:'Foundation',itemIds:['gw-boulder']},{label:'Soil & Lawn',itemIds:['gw-soil','gw-sod']},{label:'Gravel & Drainage',itemIds:['gw-gravel','gw-drain']},{label:'Irrigation',itemIds:['gw-irrigation']},{label:'Labor & Services',itemIds:['gw-labor']}]},
   {id:'site-finishing',label:'Site Finishing',icon:'✨',filterLabel:'Site Finishing',
@@ -564,7 +564,7 @@ function buildZoneCards(){
 
   var zonesMeta=[
     {label:'Planting',    icon:'🌿',bg:'linear-gradient(135deg,#2A3A10,#3D5020)',items:PLANT_IDS},
-    {label:'Site Works',  icon:'🚧',bg:'linear-gradient(135deg,#8A6914,#A07820)',items:['sp-excavation','gw-boulder','gw-soil','gw-sod','gw-gravel','gw-drain','gw-irrigation']},
+    {label:'Site Works',  icon:'🚧',bg:'linear-gradient(135deg,#8A6914,#A07820)',items:['sp-haul-front','sp-haul-back','sp-grading','gw-boulder','gw-soil','gw-sod','gw-gravel','gw-drain','gw-irrigation']},
     {label:'Site Finish', icon:'✨',bg:'linear-gradient(135deg,#1A3030,#2A4040)',items:['sf-step','sf-curb']}
   ];
   var zoneTotals={};
